@@ -1,0 +1,45 @@
+apply plugin: 'cpp'
+apply plugin: 'google-test-test-suite'
+apply plugin: 'edu.wpi.first.GradleRIO'
+
+model {
+  components {
+    curtinFrcCommonRobot(NativeLibrarySpec) {
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.roborio
+
+      sources.cpp {
+        source {
+          srcDir 'src/main/cpp'
+        }
+        exportedHeaders {
+          srcDir 'src/main/include'
+        }
+      }
+
+      binaries.all {
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+      }
+
+      useLibrary(it, 'wpilib')
+    }
+  }
+
+  testSuites {
+    curtinFrcCommonRobotTest(GoogleTestTestSuiteSpec) {
+      testing $.components.curtinFrcCommonRobot
+
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+        }
+      }
+
+      binaries.all {
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+      }
+
+      useLibrary(it, 'wpilib', 'googletest')
+    }
+  }
+}

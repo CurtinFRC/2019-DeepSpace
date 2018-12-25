@@ -1,0 +1,37 @@
+apply plugin: 'cpp'
+apply plugin: 'google-test-test-suite'
+apply plugin: 'edu.wpi.first.GradleRIO'
+toolchainsPlugin.withRaspbian()
+
+model {
+  components {
+    curtinFrcCommon(NativeLibrarySpec) {
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.roborio
+      targetPlatform wpi.platforms.raspbian
+
+      sources.cpp {
+        source {
+          srcDir 'src/main/cpp'
+        }
+        exportedHeaders {
+          srcDir 'src/main/include'
+        }
+      }
+    }
+  }
+
+  testSuites {
+    curtinFrcCommonTest(GoogleTestTestSuiteSpec) {
+      testing $.components.curtinFrcCommon
+
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+        }
+      }
+
+      useLibrary(it, 'googletest')
+    }
+  }
+}

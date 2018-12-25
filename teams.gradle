@@ -1,0 +1,79 @@
+// Included by team projects (:5333 and :5663), since both follow the same build pattern
+
+apply plugin: 'cpp'
+apply plugin: 'google-test-test-suite'
+apply plugin: 'edu.wpi.first.GradleRIO'
+
+deploy {
+  targets {
+    roboRIO('roborio') {
+      team = 5333
+    }
+  }
+
+  artifacts {
+    frcNativeArtifact('frcCpp') {
+      targets << 'roborio'
+      component = 'frcUserProgram'
+      // Debug can be overridden by command line, for use with VSCode (with -PdebugMode)
+      debug = frc.getDebugOrDefault(false)
+    }
+    fileTreeArtifact('frcStaticFileDeploy') {
+      targets << 'roborio'
+      files = fileTree(dir: 'src/main/deploy')
+      // Deploy to RoboRIO target, into /home/lvuser/deploy
+      directory = '/home/lvuser/deploy'
+    }
+  }
+}
+
+model {
+  components {
+    frcUserProgram(NativeExecutableSpec) {
+      targetPlatform wpi.platforms.roborio
+      targetPlatform wpi.platforms.desktop
+
+      sources.cpp {
+        source {
+          srcDir 'src/main/cpp'
+        }
+        exportedHeaders {
+          srcDir 'src/main/include'
+        }
+      }
+
+      binaries.all {
+        if (targetPlatform == wpi.platforms.desktop) {
+          cppCompiler.define 'SIMULATION'
+          lib project: ':simulation', library: 'curtinFrcSimulation', linkage: 'static'
+        }
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+        lib project: ':commonRobot', library: 'curtinFrcCommonRobot', linkage: 'static'
+      }
+
+      useLibrary(it, "wpilib")
+      wpi.deps.vendor.cpp(it)
+    }
+  }
+
+  testSuites {
+    frcUserProgramTest(GoogleTestTestSuiteSpec) {
+      testing $.components.frcUserProgram
+
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+          include '**/*.cpp'
+        }
+      }
+
+      binaries.all {
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+        lib project: ':commonRobot', library: 'curtinFrcCommonRobot', linkage: 'static'
+      }
+
+      useLibrary(it, "wpilib", "googletest")
+      wpi.deps.vendor.cpp(it)
+    }
+  }
+}

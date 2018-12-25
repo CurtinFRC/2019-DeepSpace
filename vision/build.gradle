@@ -1,0 +1,48 @@
+apply plugin: 'cpp'
+apply plugin: 'google-test-test-suite'
+apply plugin: 'edu.wpi.first.GradleRIO'
+toolchainsPlugin.withRaspbian()
+
+model {
+  components {
+    curtinFrcVision(NativeExecutableSpec) {
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.raspbian
+
+      sources.cpp {
+        source {
+          srcDir 'src/main/cpp'
+        }
+        exportedHeaders {
+          srcDir 'src/main/include'
+        }
+      }
+
+      binaries.all {
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+      }
+
+      useLibrary(it, 'opencv', 'wpiutil')
+    }
+  }
+
+  testSuites {
+    curtinFrcVisionTest(GoogleTestTestSuiteSpec) {
+      testing $.components.curtinFrcVision
+
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+        }
+      }
+
+      binaries.all {
+        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+      }
+
+      useLibrary(it, 'opencv', 'wpiutil', 'googletest')
+    }
+  }
+}
+
+task runVision(dependsOn: "simulateCurtinFrcVision${wpi.platforms.desktop.capitalize()}ReleaseExecutable")

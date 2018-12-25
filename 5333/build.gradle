@@ -1,0 +1,3 @@
+apply from: rootProject.file('teams.gradle')
+
+task sim5333(dependsOn: "simulateFrcUserProgram${wpi.platforms.desktop.capitalize()}ReleaseExecutable")

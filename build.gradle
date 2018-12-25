@@ -1,0 +1,7 @@
+plugins {
+  id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4a" apply false
+}
+
+wrapper {
+  gradleVersion = '5.0'
+}
