@@ -1,0 +1,12 @@
+﻿---
+BasedOnStyle: Google
+AlignOperands: 'true'
+ColumnLimit: '110'
+NamespaceIndentation: Inner
+TabWidth: '2'
+UseTab: Never
+AllowShortFunctionsOnASingleLine: Inline
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
+
+...
