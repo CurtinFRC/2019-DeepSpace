@@ -4,6 +4,8 @@ resources:
     image: jaci/azure-native-linux:2018.12.06
   - container: wpilib2019
     image: wpilib/roborio-cross-ubuntu:2019-18.04
+  - container: raspbian
+    image:  wpilib/raspbian-cross-ubuntu:18.04
 
 jobs:
 - job: windows
@@ -45,14 +47,8 @@ jobs:
 - job: pi
   pool: 
     vmImage: 'Ubuntu-16.04'
-  container: linux
+  container: raspbian
   steps:
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      tasks: 'installRaspbianToolchain'
-      options: '-Pno-roborio --scan --stacktrace'
   - template: azure-steps.yml
     parameters:
       args: '-Pno-roborio -xcheck'
