@@ -6,12 +6,14 @@ resources:
     image: wpilib/roborio-cross-ubuntu:2019-18.04
 
 jobs:
-- job: Windows
+- job: windows
   pool:
     vmImage: 'VS2017-Win2016'
   steps:
   - template: azure-init.yml
   - template: azure-steps.yml
+    parameters:
+      args: '-Pno-roborio'
 
 - job: macOS
   pool:
@@ -19,6 +21,8 @@ jobs:
   steps:
   - template: azure-init.yml
   - template: azure-steps.yml
+    parameters:
+      args: '-Pno-roborio'
 
 - job: linux
   pool: 
@@ -26,11 +30,22 @@ jobs:
   container: linux
   steps:
   - template: azure-steps.yml
+    parameters:
+      args: '-Pno-roborio'
 
-- job: roborio_and_pi
+- job: roborio
   pool: 
     vmImage: 'Ubuntu-16.04'
   container: wpilib2019
+  steps:
+  - template: azure-steps.yml
+    parameters:
+      args: '-xcheck'
+
+- job: pi
+  pool: 
+    vmImage: 'Ubuntu-16.04'
+  container: linux
   steps:
   - task: Gradle@2
     inputs:
@@ -40,4 +55,4 @@ jobs:
       options: '--scan --stacktrace'
   - template: azure-steps.yml
     parameters:
-      args: '-xcheck'
+      args: '-Pno-roborio -xcheck'

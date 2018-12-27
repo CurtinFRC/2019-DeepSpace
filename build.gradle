@@ -2,6 +2,14 @@ plugins {
   id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4b" apply false
 }
 
+// For Azure
+allprojects {
+  plugins.withType(edu.wpi.first.toolchain.ToolchainPlugin).whenPluginAdded {
+    if (project.hasProperty('no-roborio'))
+      toolchainsPlugin.getByName('roboRio').optional = true
+  }
+}
+
 wrapper {
   gradleVersion = '5.0'
 }
