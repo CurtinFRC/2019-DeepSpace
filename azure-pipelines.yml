@@ -52,7 +52,7 @@ jobs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       tasks: 'installRaspbianToolchain'
-      options: '--scan --stacktrace'
+      options: '-Pno-roborio --scan --stacktrace'
   - template: azure-steps.yml
     parameters:
       args: '-Pno-roborio -xcheck'
