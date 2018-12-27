@@ -27,19 +27,10 @@ jobs:
   steps:
   - template: azure-steps.yml
 
-- job: roborio
+- job: roborio_and_pi
   pool: 
     vmImage: 'Ubuntu-16.04'
   container: wpilib2019
-  steps:
-  - template: azure-steps.yml
-    parameters:
-      args: '-xcheck'
-
-- job: pi
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  container: linux
   steps:
   - task: Gradle@2
     inputs:

@@ -10,4 +10,4 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'clean build'
-    options: ${{ parameters.args }} --stacktrace
+    options: ${{ parameters.args }}

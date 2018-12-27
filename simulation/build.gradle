@@ -7,7 +7,6 @@ model {
   components {
     curtinFrcSimulation(NativeLibrarySpec) {
       targetPlatform wpi.platforms.desktop
-      targetPlatform wpi.platforms.roborio
 
       sources.cpp {
         source {

@@ -1,5 +1,5 @@
 plugins {
-  id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4a" apply false
+  id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4b" apply false
 }
 
 wrapper {
