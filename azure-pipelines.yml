@@ -1,0 +1,52 @@
+resources:
+  containers:
+  - container: linux
+    image: jaci/azure-native-linux:2018.12.06
+  - container: wpilib2019
+    image: wpilib/roborio-cross-ubuntu:2019-18.04
+
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'VS2017-Win2016'
+  steps:
+  - template: azure-init.yml
+  - template: azure-steps.yml
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - template: azure-init.yml
+  - template: azure-steps.yml
+
+- job: linux
+  pool: 
+    vmImage: 'Ubuntu-16.04'
+  container: linux
+  steps:
+  - template: azure-steps.yml
+
+- job: roborio
+  pool: 
+    vmImage: 'Ubuntu-16.04'
+  container: wpilib2019
+  steps:
+  - template: azure-steps.yml
+    parameters:
+      args: '-xcheck'
+
+- job: pi
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  container: linux
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      tasks: 'installRaspbianToolchain'
+      options: '--scan --stacktrace'
+  - template: azure-steps.yml
+    parameters:
+      args: '-xcheck'
