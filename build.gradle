@@ -4,7 +4,7 @@ plugins {
 
 // For Azure
 allprojects {
-  plugins.withType(edu.wpi.first.toolchain.ToolchainPlugin).whenPluginAdded {
+  plugins.withType(edu.wpi.first.toolchain.roborio.RoboRioToolchainPlugin).whenPluginAdded {
     if (project.hasProperty('no-roborio'))
       toolchainsPlugin.getByName('roboRio').optional = true
   }
