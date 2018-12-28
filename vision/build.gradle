@@ -12,7 +12,7 @@ deploy {
         // Change this if you've changed the target hostname, username or password. Or if you
         // want to use a raspberry pi, etc.
         ssh {
-          address = 'linaro-alip' // Tinkerboard = linaro-alip
+          address = '10.0.0.157'  // Tinkerboard = linaro-alip
           user = 'linaro'         // Tinkerboard = linaro
           password = 'linaro'     // Tinkerboard = linaro
         }
@@ -34,16 +34,29 @@ deploy {
       postdeploy << { execute('chmod +x curtinFrcVision') }
     }
 
-    // Install the systemd service. This makes our vision run on startup!
-    fileArtifact('visionService') {
+    // Some extra stuff for our vision program. Includes system configs, also!
+    fileTreeArtifact('visionResources') {
       targets << 'coprocessor'
-      file = file('src/main/vision.service')
+      files = fileTree(dir: 'src/main/resources')
 
+      // Install the systemd service. This makes our vision run on startup!
       postdeploy << { 
         // Install a symlink for the service so the system can run it! A symlink is like a pointer for files
-        execute('sudo ln -sf $(pwd)/vision.service /etc/systemd/system')
-        // Reload the system services and start our vision service. Also print out the status :)
-        execute('sudo systemctl daemon-reload; sudo service vision restart; sudo service vision status')
+        execute('sudo ln -sf $(pwd)/system/vision.service /etc/systemd/system')
+        if (project.hasProperty('stop')) {
+          execute('sudo systemctl daemon-reload; sudo service vision stop; sudo service vision status')
+        } else {
+          // Reload the system services and start our vision service. Also print out the status :)
+          execute('sudo systemctl daemon-reload; sudo service vision restart; sudo service vision status')
+        }
+      }
+
+      // Configure the SSH server. Also backs up the ssh config
+      postdeploy << {
+        // Back up the stock sshd config, just in case!
+        execute('sudo cp -n /etc/ssh/sshd_config /etc/ssh/sshd_config.old')
+        // Replace the stock sshd config with ours (to allow X forwarding)
+        execute('sudo cp $(pwd)/system/sshd_config /etc/ssh/sshd_config')
       }
     }
 
