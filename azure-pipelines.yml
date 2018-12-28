@@ -63,7 +63,7 @@ jobs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       tasks: ':vision:installTinkerboardToolchain'
-      options: '--scan --stacktrace'
+      options: '-Pno-roborio --scan --stacktrace'
   - template: azure-steps.yml
     parameters:
       args: '-Pno-roborio'
