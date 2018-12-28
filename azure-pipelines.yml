@@ -52,3 +52,18 @@ jobs:
   - template: azure-steps.yml
     parameters:
       args: '-Pno-roborio -xcheck'
+
+- job: tinkerboard
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  container: linux
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      tasks: ':vision:installTinkerboardToolchain'
+      options: '--scan --stacktrace'
+  - template: azure-steps.yml
+    parameters:
+      args: '-Pno-roborio'
