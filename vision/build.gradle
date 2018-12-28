@@ -12,7 +12,7 @@ deploy {
         // Change this if you've changed the target hostname, username or password. Or if you
         // want to use a raspberry pi, etc.
         ssh {
-          address = '10.0.0.157'  // Tinkerboard = linaro-alip
+          address = 'linaro-alip' // Tinkerboard = linaro-alip
           user = 'linaro'         // Tinkerboard = linaro
           password = 'linaro'     // Tinkerboard = linaro
         }
