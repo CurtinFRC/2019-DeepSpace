@@ -1,6 +1,7 @@
 apply plugin: 'cpp'
 apply plugin: 'google-test-test-suite'
 apply plugin: 'edu.wpi.first.GradleRIO'
+apply plugin: TinkerboardPlugin
 toolchainsPlugin.withRaspbian()
 
 model {
@@ -9,6 +10,7 @@ model {
       targetPlatform wpi.platforms.desktop
       targetPlatform wpi.platforms.roborio
       targetPlatform wpi.platforms.raspbian
+      targetPlatform TinkerboardPlugin.tinkerboardPlatform
 
       sources.cpp {
         source {

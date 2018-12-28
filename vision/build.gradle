@@ -1,13 +1,73 @@
 apply plugin: 'cpp'
 apply plugin: 'google-test-test-suite'
 apply plugin: 'edu.wpi.first.GradleRIO'
+apply plugin: TinkerboardPlugin
 toolchainsPlugin.withRaspbian()
+
+deploy {
+  targets {
+    target('coprocessor') {
+      directory = '/home/vision'
+      locations {
+        // Change this if you've changed the target hostname, username or password. Or if you
+        // want to use a raspberry pi, etc.
+        ssh {
+          address = 'linaro-alip' // Tinkerboard = linaro-alip
+          user = 'linaro'         // Tinkerboard = linaro
+          password = 'linaro'     // Tinkerboard = linaro
+        }
+      }
+    }
+  }
+
+  artifacts {
+    nativeArtifact('vision') {
+      // Change this to change to a raspberry pi or other coprocessor. Logic from here on in
+      // should be generic for any debian linux platform.
+      targetPlatform = TinkerboardPlugin.tinkerboardPlatform
+
+      targets << 'coprocessor'
+      component = 'curtinFrcVision'
+      buildType = 'release'
+
+      // Make sure we can run our program!
+      postdeploy << { execute('chmod +x curtinFrcVision') }
+    }
+
+    // Install the systemd service. This makes our vision run on startup!
+    fileArtifact('visionService') {
+      targets << 'coprocessor'
+      file = file('src/main/vision.service')
+
+      postdeploy << { 
+        // Install a symlink for the service so the system can run it! A symlink is like a pointer for files
+        execute('sudo ln -sf $(pwd)/vision.service /etc/systemd/system')
+        // Reload the system services and start our vision service. Also print out the status :)
+        execute('sudo systemctl daemon-reload; sudo service vision restart; sudo service vision status')
+      }
+    }
+
+    // Store all the libraries in /home/vision/libraries, that way we don't poison /usr/local.
+    withType(jaci.gradle.deploy.artifact.BinaryLibraryArtifact) {
+      directory = '/home/vision/libraries'
+      predeploy << {
+        execute("sudo mkdir -p ${directory} && sudo chmod -R 777 ${directory}/..")
+        // Make sure the system can find our libraries!
+        execute("echo ${directory} | sudo tee /etc/ld.so.conf.d/vision.conf")
+      }
+
+      // Refresh the system's cache of known libraries, so ours can be found
+      postdeploy << { execute('sudo ldconfig') }
+    }
+  }
+}
 
 model {
   components {
     curtinFrcVision(NativeExecutableSpec) {
       targetPlatform wpi.platforms.desktop
       targetPlatform wpi.platforms.raspbian
+      targetPlatform TinkerboardPlugin.tinkerboardPlatform
 
       sources.cpp {
         source {
@@ -22,25 +82,7 @@ model {
         lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
       }
 
-      useLibrary(it, 'opencv', 'wpiutil')
-    }
-  }
-
-  testSuites {
-    curtinFrcVisionTest(GoogleTestTestSuiteSpec) {
-      testing $.components.curtinFrcVision
-
-      sources.cpp {
-        source {
-          srcDir 'src/test/cpp'
-        }
-      }
-
-      binaries.all {
-        lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
-      }
-
-      useLibrary(it, 'opencv', 'wpiutil', 'googletest')
+      useLibrary(it, 'opencv')
     }
   }
 }

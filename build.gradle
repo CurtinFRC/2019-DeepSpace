@@ -1,6 +1,4 @@
-plugins {
-  id "edu.wpi.first.GradleRIO" version "2019.1.1-beta-4b" apply false
-}
+// GradleRIO plugin is defined in buildSrc!
 
 // For Azure
 allprojects {
