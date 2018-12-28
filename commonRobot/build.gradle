@@ -8,17 +8,34 @@ model {
       targetPlatform wpi.platforms.desktop
       targetPlatform wpi.platforms.roborio
 
-      sources.cpp {
-        source {
-          srcDir 'src/main/cpp'
-        }
-        exportedHeaders {
-          srcDir 'src/main/include'
-        }
-      }
-
       binaries.all {
         lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+
+        if (targetPlatform.name == wpi.platforms.roborio) {
+          sources {
+            robotCpp(CppSourceSet) {
+              source {
+                srcDir 'src/main/cpp'
+                srcDir 'src/main/robot'
+              }
+              exportedHeaders {
+                srcDir 'src/main/include'
+              }
+            }
+          }
+        } else {
+          sources {
+            simCpp(CppSourceSet) {
+              source {
+                srcDir 'src/main/cpp'
+                srcDir 'src/main/sim'
+              }
+              exportedHeaders {
+                srcDir 'src/main/include'
+              }
+            }
+          }
+        }
       }
 
       useLibrary(it, 'wpilib')

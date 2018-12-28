@@ -5,7 +5,7 @@
 #include <opencv2/opencv.hpp>
 
 // This is the main entrypoint into the CurtinFRC Vision Program!
-void CurtinFrcVision::run() {
+void curtin_frc_vision::run() {
   // This is just a demonstration so you can see how this kind of code works. You'll be replacing this
   // with our actual vision tracking software!
 
