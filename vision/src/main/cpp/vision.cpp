@@ -1,3 +1,4 @@
+// Code was put togethor by CJ... just in case someone was wondering.                          ...not that many would
 #include "vision.h"
 
 #include <iostream>
@@ -15,6 +16,8 @@ using namespace std;
 
 RNG rng(12345);
 int thresh = 100;
+int largest_area=0;
+int largest_contour_index=0;
 
 double rectXpoint;
 double rectYpoint;
@@ -73,11 +76,7 @@ void curtin_frc_vision::run() {
 
 		
 		// Threshold the HSV image, keep only the green pixels
-		//cv::Mat lower_green_hue_range;
-		//cv::Mat upper_green_hue_range;
 		cv::Mat green_hue_image;
-		//cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(50, 255, 255), lower_green_hue_range);
-		//cv::inRange(img_HSV, cv::Scalar(50, 100, 100), cv::Scalar(78, 255, 255), upper_green_hue_range);
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
 
 	  //morphological opening (remove small objects from the foreground)
@@ -87,7 +86,7 @@ void curtin_frc_vision::run() {
 		//morphological closing (fill small holes in the foreground)
 		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		
+		*/
 		
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
@@ -108,7 +107,10 @@ void curtin_frc_vision::run() {
 
 		/// Find contours
 		vector<vector<Point> > contours;
-		findContours(canny_output, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+		Mat threshold_output;
+		vector<Vec4i> hierarchy;
+		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
+		findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 		/// Find the convex hull object for each contour
 		vector<vector<Point> >hull(contours.size());
@@ -119,13 +121,14 @@ void curtin_frc_vision::run() {
 
 		/// Draw contours + hull results
 		Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+		vector<Rect> boundRect( contours.size() );
 
 
 		for (size_t i = 0; i < contours.size(); i++)
 		{
 			Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
-			drawContours(drawing, contours, (int)i, color);
-			drawContours(drawing, hull, (int)i, color);
+			//drawContours(drawing, contours, (int)i, color);
+			//drawContours(drawing, hull, (int)i, color);
 		}
 		//namedWindow("hull", WINDOW_AUTOSIZE);
 		//________________________________________________________________________________________________________
@@ -137,59 +140,57 @@ void curtin_frc_vision::run() {
 
 		// Bounding Box Block, (Draws a border around the processed image)
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
-		Mat threshold_output;
-		vector<vector<Point> > contoursBox;
-		vector<Vec4i> hierarchy;
+		
+		//vector<vector<Point> > contoursBox;
 
 		/// Detect edges using Threshold
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
 		/// Find contoursBox
-		findContours( threshold_output, contoursBox, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+		//findContours( threshold_output, contoursBox, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 
 		/// Approximate contoursBox to polygons + get bounding rects and circles
-		vector<vector<Point> > contours_poly( contoursBox.size() );
-		vector<Rect> boundRect( contoursBox.size() );
-		vector<Point2f>center( contoursBox.size() );
-		vector<float>radius( contoursBox.size() );
+		vector<vector<Point> > hull_poly( hull.size() );
+		vector<Point2f>center( hull.size() );
+		vector<float>radius( hull.size() );
 
-		for( int i = 0; i < contoursBox.size(); i++ )
-			{ approxPolyDP( Mat(contoursBox[i]), contours_poly[i], 3, true );
-			boundRect[i] = boundingRect( Mat(contours_poly[i]) );
-			minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
+		for( int i = 0; i < hull.size(); i++ )
+			{ approxPolyDP( Mat(hull[i]), hull_poly[i], 3, true );
+			boundRect[i] = boundingRect( Mat(hull_poly[i]) );
+			minEnclosingCircle( (Mat)hull_poly[i], center[i], radius[i] );
 			}
 
 
 		/// Draw polygonal contour + bonding rects + circles
 		Mat drawingBox = Mat::zeros( threshold_output.size(), CV_8UC3 );
-		for( int i = 0; i< contoursBox.size(); i++ )
+		for( int i = 0; i< hull.size(); i++ )
 			{
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+			drawContours( drawing, hull_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
 			rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
+			//circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
+			
 
-    //_____________________Center Calcs_____________________________
-		//vector<vector<Point> > contoursCenter;
+    //_____________________Center Calcs______(Calculates the center from Border Box)_______
+		//vector<vector<Point> > hullCenter;
       // get the moments 
-    vector<Moments> mu(contoursBox.size());
-    for( int i = 0; i<contoursBox.size(); i++ )
-      { mu[i] = moments( contoursBox[i], false ); }
+    vector<Moments> mu(hull_poly.size());
+    for( int i = 0; i<hull_poly.size(); i++ )
+      { mu[i] = moments( hull_poly[i], false ); }
  
     // get the centroid of figures.
-    vector<Point2f> mc(contoursBox.size());
-    for( int i = 0; i<contoursBox.size(); i++)
+    vector<Point2f> mc(hull_poly.size());
+    for( int i = 0; i<hull_poly.size(); i++)
       { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
 
     // draw contours
-    Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
-    for( int i = 0; i<contoursBox.size(); i++ )
+    //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+    for( int i = 0; i<hull_poly.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
-      drawContours(drawingcenter, contours, i, color, 2, 8, hierarchy, 0, Point());
-      circle( drawingcenter, mc[i], 4, color, -1, 8, 0 );
+      drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
+      circle( drawing, mc[i], 4, color, -1, 8, 0 );
     }
 		
 
@@ -197,24 +198,28 @@ void curtin_frc_vision::run() {
 
 
 
-		// X & Y Calculator (Calculates the x,y offset from the center)
+
+
+
+		// X & Y Calculator Block (Calculates the x,y offset from the center)
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		for (unsigned int Xpoints = 0; Xpoints < contoursBox.size(); Xpoints++)
+		// Have not figured out how to use center, so using contoursbox instead. center may vary
+		for (unsigned int Xpoints = 0; Xpoints < contours.size(); Xpoints++)
 		{
 
-			for (unsigned int Ypoints = 0; Ypoints < contoursBox[Ypoints].size(); Ypoints++)
+			for (unsigned int Ypoints = 0; Ypoints < contours[Ypoints].size(); Ypoints++)
 			{
-				width_offset = width_goal - contoursBox[Xpoints][Ypoints].y;
-				height_offset = height_goal - contoursBox[Xpoints][Ypoints].x;
-        rectXpoint = contoursBox[Xpoints][Ypoints].x;
-        rectYpoint = contoursBox[Xpoints][Ypoints].y;
-        //cout << "Point(x,y)=" << contoursBox[Xpoints][Ypoints].x << "," << contoursBox[Xpoints][Ypoints].y << "\r";
-				break;
+				width_offset = width_goal - contours[Xpoints][Ypoints].y;
+				height_offset = height_goal - contours[Xpoints][Ypoints].x;
+        rectXpoint = contours[Xpoints][Ypoints].x;
+        rectYpoint = contours[Xpoints][Ypoints].y;
 			}
-			break;
 		}
-		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
 
 		// User Outputs Block, uneeded for tracking on bot.
 		//-------------------------------------------------------------------------------------------------------
@@ -222,18 +227,16 @@ void curtin_frc_vision::run() {
 
 
 
-		//cv::addWeighted(green_hue_image, 1.0, drawing, 1.0, 0.0, green_track_output);
-		
+
 		/// Show in a window
 		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
-		imshow("HSV Image", img_HSV);
-    imshow("center Calc", drawingcenter);
+		//imshow("HSV Image", img_HSV);
+    //imshow("center Calc", drawingcenter);
 		//imshow("Contours", drawingBox);
 		//imshow("Original", imgOriginal); //Shows the original image
 		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
-		//imshow("Threshold Image upper", green_hue_image);
-		//imshow("Threshold Image lower", lower_green_hue_range);
+		//imshow("Threshold Image", green_hue_image);
 
 		//-------------------------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------------------------
