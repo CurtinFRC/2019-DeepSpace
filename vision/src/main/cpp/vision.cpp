@@ -15,10 +15,10 @@ using namespace std;
 
 RNG rng(12345);
 int thresh = 100;
-bool heightcentre;
-bool widthcentre;
-bool centre;
-string centreOut;
+bool heightcenter;
+bool widthcenter;
+bool center;
+string centerOut;
 
 double height_lower_between;
 double height_higher_between;
@@ -58,10 +58,10 @@ void curtin_frc_vision::run() {
   width_higher_between = width_goal + 20;
 
   cout << "This Code Is Meant For The 2019 FRC Game" << endl;
-	cout << "Centre May change depending on camera, or cap.set" << endl;
+	cout << "center May change depending on camera, or cap.set" << endl;
 	cout << "Current cap.set = " << width << "x" << height << endl << endl;
-	cout << "x,y Points for Centre Goal = (" << width_goal << "," << height_goal << ")" << endl;
-	cout << "Centre is true when height goal is between " << height_lower_between << "-" << height_higher_between << endl;
+	cout << "x,y Points for center Goal = (" << width_goal << "," << height_goal << ")" << endl;
+	cout << "center is true when height goal is between " << height_lower_between << "-" << height_higher_between << endl;
 	cout << "And Width goal is between " << width_lower_between << "-" << width_higher_between << endl << endl;
 
   	while (true)
@@ -188,33 +188,34 @@ void curtin_frc_vision::run() {
 			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
 
-
+    //_____________________Center Calcs_____________________________
+		//vector<vector<Point> > contoursCenter;
       // get the moments 
-    vector<Moments> mu(contours.size());
-    for( int i = 0; i<contours.size(); i++ )
-      { mu[i] = moments( contours[i], false ); }
+    vector<Moments> mu(contoursBox.size());
+    for( int i = 0; i<contoursBox.size(); i++ )
+      { mu[i] = moments( contoursBox[i], false ); }
  
     // get the centroid of figures.
-    vector<Point2f> mc(contours.size());
-    for( int i = 0; i<contours.size(); i++)
+    vector<Point2f> mc(contoursBox.size());
+    for( int i = 0; i<contoursBox.size(); i++)
       { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
 
     // draw contours
-    Mat drawingCentre(canny_output.size(), CV_8UC3, Scalar(255,255,255));
-    for( int i = 0; i<contours.size(); i++ )
+    Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+    for( int i = 0; i<contoursBox.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
-      drawContours(drawingCentre, contours, i, color, 2, 8, hierarchy, 0, Point());
-      circle( drawingCentre, mc[i], 4, color, -1, 8, 0 );
+      //drawContours(drawingcenter, contours, i, color, 2, 8, hierarchy, 0, Point());
+      circle( drawingcenter, mc[i], 4, color, -1, 8, 0 );
     }
+		
 
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
 
-		// X & Y Calculator (Calculates the x,y offset from the centre)
+		// X & Y Calculator (Calculates the x,y offset from the center)
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 		for (unsigned int Xpoints = 0; Xpoints < contoursBox.size(); Xpoints++)
 		{
 
@@ -225,50 +226,6 @@ void curtin_frc_vision::run() {
         rectXpoint = contoursBox[Xpoints][Ypoints].x;
         rectYpoint = contoursBox[Xpoints][Ypoints].y;
         //cout << "Point(x,y)=" << contoursBox[Xpoints][Ypoints].x << "," << contoursBox[Xpoints][Ypoints].y << "\r";
-
-				if (height_offset > -20 && height_offset < 20);
-				{
-					heightcentre = true;
-				}
-				if (width_offset > -20 && width_offset < 20);
-				{
-					widthcentre = true;
-				}
-				if (heightcentre == true && widthcentre == true);
-				{
-					centre = true;
-				}
-        if (centre == true)
-        {
-          centreOut = "True";
-        }
-
-
-
-        if (height_offset < -20);
-				{
-					heightcentre = false;
-				}
-        if (height_offset > 20);
-				{
-					heightcentre = false;
-				}
-				if (width_offset < -20);
-				{
-					widthcentre = false;
-				}
-        if (width_offset > 20);
-				{
-					widthcentre = false;
-				}
-				if (heightcentre == false && widthcentre == false);
-				{
-					centre = false;
-				}
-        if (centre == false)
-        {
-          centreOut = "False";
-        }
 				break;
 			}
 			break;
@@ -285,10 +242,10 @@ void curtin_frc_vision::run() {
 		//cv::addWeighted(green_hue_image, 1.0, drawing, 1.0, 0.0, green_track_output);
 		
 		/// Show in a window
-		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << "Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << " Centre = " << centreOut << "\r";
+		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << " center = " << centerOut << "\r";
 		imshow("Shell & Bounding", drawing);
 		imshow("HSV Image", img_HSV);
-    imshow("Centre Calc", drawingCentre);
+    imshow("center Calc", drawingcenter);
 		//imshow("Contours", drawingBox);
 		//imshow("Original", imgOriginal); //Shows the original image
 		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
