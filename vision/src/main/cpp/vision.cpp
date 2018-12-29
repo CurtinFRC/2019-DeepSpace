@@ -25,6 +25,9 @@ double height_higher_between;
 double width_lower_between;
 double width_higher_between;
 
+double rectXpoint;
+double rectYpoint;
+
 double height_offset;
 double width_offset;
 // This is the main entrypoint into the CurtinFRC Vision Program!
@@ -34,8 +37,8 @@ void curtin_frc_vision::run() {
   // /dev/video1, third on /dev/video2, etc.
   // In our case, we just say '0'. This lets it work on mac, linux and windows!
   VideoCapture cap{0};
-  cap.set(CAP_PROP_FRAME_WIDTH, 1280);
-	cap.set(CAP_PROP_FRAME_HEIGHT, 720);
+  cap.set(CAP_PROP_FRAME_WIDTH, 640);
+	cap.set(CAP_PROP_FRAME_HEIGHT, 360);
 	float width_goal;
 	float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
@@ -133,7 +136,8 @@ void curtin_frc_vision::run() {
 
 		/// Draw contours + hull results
 		Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-		
+
+
 		for (size_t i = 0; i < contours.size(); i++)
 		{
 			Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
@@ -184,6 +188,26 @@ void curtin_frc_vision::run() {
 			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
 
+
+      // get the moments 
+    vector<Moments> mu(contours.size());
+    for( int i = 0; i<contours.size(); i++ )
+      { mu[i] = moments( contours[i], false ); }
+ 
+    // get the centroid of figures.
+    vector<Point2f> mc(contours.size());
+    for( int i = 0; i<contours.size(); i++)
+      { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
+
+    // draw contours
+    Mat drawingCentre(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+    for( int i = 0; i<contours.size(); i++ )
+      {
+      Scalar color = Scalar(167,151,0); // B G R values
+      drawContours(drawingCentre, contours, i, color, 2, 8, hierarchy, 0, Point());
+      circle( drawingCentre, mc[i], 4, color, -1, 8, 0 );
+    }
+
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
@@ -196,9 +220,11 @@ void curtin_frc_vision::run() {
 
 			for (unsigned int Ypoints = 0; Ypoints < contoursBox[Ypoints].size(); Ypoints++)
 			{
-				cout << "Point(x,y)=" << contoursBox[Xpoints][Ypoints].x << "," << contoursBox[Xpoints][Ypoints].y << "\r";
-				width_offset = width_goal - contoursBox[Xpoints][Ypoints].x;
-				height_offset = height_goal - contoursBox[Xpoints][Ypoints].y;
+				width_offset = width_goal - contoursBox[Xpoints][Ypoints].y;
+				height_offset = height_goal - contoursBox[Xpoints][Ypoints].x;
+        rectXpoint = contoursBox[Xpoints][Ypoints].x;
+        rectYpoint = contoursBox[Xpoints][Ypoints].y;
+        //cout << "Point(x,y)=" << contoursBox[Xpoints][Ypoints].x << "," << contoursBox[Xpoints][Ypoints].y << "\r";
 
 				if (height_offset > -20 && height_offset < 20);
 				{
@@ -259,9 +285,10 @@ void curtin_frc_vision::run() {
 		//cv::addWeighted(green_hue_image, 1.0, drawing, 1.0, 0.0, green_track_output);
 		
 		/// Show in a window
-		cout << "Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << " Centre = " << centreOut << "\r";
+		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << "Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << " Centre = " << centreOut << "\r";
 		imshow("Shell & Bounding", drawing);
 		imshow("HSV Image", img_HSV);
+    imshow("Centre Calc", drawingCentre);
 		//imshow("Contours", drawingBox);
 		//imshow("Original", imgOriginal); //Shows the original image
 		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
@@ -277,5 +304,6 @@ void curtin_frc_vision::run() {
 			cout << "esc key is pressed by user" << endl;
 			break;
 		}
+
 	}
 }
