@@ -11,7 +11,8 @@ void curtin_frc_vision::run() {
 
   // Note that the first webcam plugged in is always on /dev/video0. Likewise, the second is on
   // /dev/video1, third on /dev/video2, etc.
-  cv::VideoCapture cap{"/dev/video0"};
+  // In our case, we just say '0'. This lets it work on mac, linux and windows!
+  cv::VideoCapture cap{0};
 
   if (!cap.isOpened()) {
     std::cout << "ERROR: Could not open camera!" << std::endl;
@@ -24,6 +25,7 @@ void curtin_frc_vision::run() {
   std::cout << "Res: " << width << "x" << height << std::endl;
 
   cv::Mat frame;
+  cap.read(frame);
   cap.read(frame);
   cv::imwrite("capture.png", frame);
 }

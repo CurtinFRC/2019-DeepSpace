@@ -2,7 +2,7 @@
 
 // This is an example 'shim'
 // This include file is the same for desktop simulation and on the robot, but the actual logic
-// in the .cpp files is different. See src/main/sim and src/main/robot to see how the implementations
+// in the .cpp files is different. See src/sim/cpp and src/robot/cpp to see how the implementations
 // differ.
 // If the logic is the same for both, it can go in src/main/cpp.
 
@@ -17,7 +17,7 @@
 
 class example_shim {
  public:
-  // This changes depending on whether we're in simulation (src/main/sim), or on an actual robot (src/main/robot)
+  // This changes depending on whether we're in simulation (src/sim/cpp), or on an actual robot (src/robot/cpp)
   std::string who_am_i();
   // This is the same in both cases! (src/main/cpp)
   std::string who_are_you();

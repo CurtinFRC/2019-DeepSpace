@@ -1,25 +1,31 @@
 apply plugin: 'cpp'
 apply plugin: 'google-test-test-suite'
 apply plugin: 'edu.wpi.first.GradleRIO'
-apply plugin: TinkerboardPlugin
-toolchainsPlugin.withRaspbian()
 
 model {
   components {
     curtinFrcCommon(NativeLibrarySpec) {
       targetPlatform wpi.platforms.desktop
       targetPlatform wpi.platforms.roborio
-      targetPlatform wpi.platforms.raspbian
-      targetPlatform TinkerboardPlugin.tinkerboardPlatform
 
-      sources.cpp {
-        source {
-          srcDir 'src/main/cpp'
-        }
-        exportedHeaders {
-          srcDir 'src/main/include'
+      binaries.all {
+        sources {
+          cpp(CppSourceSet) {
+            def src = "src/${targetPlatform.name == wpi.platforms.roborio ? 'robot' : 'sim' }/cpp"
+            source {
+              srcDir 'src/main/cpp'
+              srcDir src
+              include '**/*.cpp'
+            }
+            exportedHeaders {
+              srcDir 'src/main/include'
+              srcDir src
+            }
+          }
         }
       }
+
+      useLibrary(it, 'wpilib')
     }
   }
 
@@ -33,7 +39,7 @@ model {
         }
       }
 
-      useLibrary(it, 'googletest')
+      useLibrary(it, 'wpilib', 'googletest')
     }
   }
 }

@@ -26,4 +26,4 @@ pluginManagement {
 
 rootProject.name = 'CurtinFRC2019'
 
-include 'common', 'commonRobot', '5333', '5663', 'vision', 'simulation'
+include 'common', '5333', '5663', 'vision', 'simulation'
