@@ -28,7 +28,7 @@ class TinkerboardGcc extends GccToolChain {
 @CompileStatic
 class TinkerboardPlugin implements Plugin<Project> {
   static final String toolchainVersion = "6.3.0"
-  static final String toolchainTag = "20181227.8"
+  static final String toolchainTag = "20181229.2"
 
   static final String tinkerboardToolchainName = "tinkerboard"
   static final String tinkerboardPlatform = "linuxtinkerboard"

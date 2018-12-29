@@ -43,10 +43,6 @@ model {
       }
 
       binaries.all {
-        if (targetPlatform.name == wpi.platforms.desktop) {
-          cppCompiler.define 'SIMULATION'
-          lib project: ':simulation', library: 'curtinFrcSimulation', linkage: 'static'
-        }
         lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
       }
 

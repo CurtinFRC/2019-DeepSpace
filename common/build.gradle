@@ -11,15 +11,15 @@ model {
       binaries.all {
         sources {
           cpp(CppSourceSet) {
-            def src = "src/${targetPlatform.name == wpi.platforms.roborio ? 'robot' : 'sim' }/cpp"
+            def target = targetPlatform.name == wpi.platforms.roborio ? 'robot' : 'simulation'
             source {
               srcDir 'src/main/cpp'
-              srcDir src
+              srcDir "src/${target}/cpp"
               include '**/*.cpp'
             }
             exportedHeaders {
               srcDir 'src/main/include'
-              srcDir src
+              srcDir "src/${target}/include"
             }
           }
         }

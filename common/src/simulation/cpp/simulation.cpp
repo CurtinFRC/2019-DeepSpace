@@ -1,5 +1,5 @@
-#include "simulation.h"
-#include "windows/control.h"
+#include "simulation/simulation.h"
+#include "simulation/windows/control.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
