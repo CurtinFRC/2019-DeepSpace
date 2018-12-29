@@ -15,15 +15,6 @@ using namespace std;
 
 RNG rng(12345);
 int thresh = 100;
-bool heightcenter;
-bool widthcenter;
-bool center;
-string centerOut;
-
-double height_lower_between;
-double height_higher_between;
-double width_lower_between;
-double width_higher_between;
 
 double rectXpoint;
 double rectYpoint;
@@ -43,7 +34,6 @@ void curtin_frc_vision::run() {
 	float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
   double height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-
   
   if (!cap.isOpened()) {
     std::cout << "ERROR: Could not open camera!" << std::endl;
@@ -52,19 +42,12 @@ void curtin_frc_vision::run() {
   width_goal = width / 2;
   height_goal = height / 2;
 
-  height_lower_between = height_goal - 20;
-  height_higher_between = height_goal + 20;
-  width_lower_between = width_goal - 20;
-  width_higher_between = width_goal + 20;
-
   cout << "This Code Is Meant For The 2019 FRC Game" << endl;
-	cout << "center May change depending on camera, or cap.set" << endl;
+	cout << "Center May change depending on camera, or cap.set" << endl;
 	cout << "Current cap.set = " << width << "x" << height << endl << endl;
 	cout << "x,y Points for center Goal = (" << width_goal << "," << height_goal << ")" << endl;
-	cout << "center is true when height goal is between " << height_lower_between << "-" << height_higher_between << endl;
-	cout << "And Width goal is between " << width_lower_between << "-" << width_higher_between << endl << endl;
 
-  	while (true)
+  while (true)
 	{
 
 		//Green Hue Processing Block
@@ -79,7 +62,7 @@ void curtin_frc_vision::run() {
 		if (!bSuccess) //if not success, break loop
 		{
 			cout << "Cannot read a frame from video stream" << endl;
-			break;
+			//break;
 		}
 
 
@@ -150,7 +133,7 @@ void curtin_frc_vision::run() {
 
 
 
-
+		
 
 		// Bounding Box Block, (Draws a border around the processed image)
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -205,7 +188,7 @@ void curtin_frc_vision::run() {
     for( int i = 0; i<contoursBox.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
-      //drawContours(drawingcenter, contours, i, color, 2, 8, hierarchy, 0, Point());
+      drawContours(drawingcenter, contours, i, color, 2, 8, hierarchy, 0, Point());
       circle( drawingcenter, mc[i], 4, color, -1, 8, 0 );
     }
 		
@@ -242,7 +225,7 @@ void curtin_frc_vision::run() {
 		//cv::addWeighted(green_hue_image, 1.0, drawing, 1.0, 0.0, green_track_output);
 		
 		/// Show in a window
-		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << " center = " << centerOut << "\r";
+		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
 		imshow("HSV Image", img_HSV);
     imshow("center Calc", drawingcenter);
@@ -259,8 +242,7 @@ void curtin_frc_vision::run() {
 		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 		{
 			cout << "esc key is pressed by user" << endl;
-			break;
+			//break;
 		}
-
 	}
 }
