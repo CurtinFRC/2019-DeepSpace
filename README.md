@@ -24,24 +24,21 @@ You can run vision on your local computer without needing a Raspberry Pi or Tink
 We break our code up into multiple projects, in order to teach concepts related to code organisation. If you're wondering where some code belongs, or where to put a new feature, here's your reference:
 
 ## [5333](5333) / [5663](5663)
-This is the team code. The code in these projects should be _very minimal_, since most will be put into `commonRobot`. This code should only initialize the layout / configuration of the robot and hand off most control to `commonRobot`. This allows us to share code between the two teams.
+This is the team code. The code in these projects should be _very minimal_, since most will be put into `common`. This code should only initialize the layout / configuration of the robot and hand off most control to `commonRobot`. This allows us to share code between the two teams.
 
-5333 / 5663 both depend on `commonRobot`.
-
-## [Common Robot](commonRobot)
-Common Robot contains shared code that interfaces directly with WPILib (which provides things like `frc::Spark`, `frc::XboxController`, etc). Most of your code should live here, things like classes to control elevators and drivetrains, or code to flash pretty lights. The code should be designed such that both teams can use it. 
-
-CommonRobot depends on `common`.
+5333 / 5663 both depend on `common`.
 
 ## [Common](common)
-Common is shared code that _doesn't_ depend on WPILib. The code in here is pretty limited, but if you write some code that doesn't necessarily apply to the robot (for example, could be used in vision _and_ the robot, or in future projects) it should go here. 
+Common is code that is shared between both teams. It includes the bulk of our code. 
+It also includes the simulation framework, as well as simulation 'wrappers' for vendor parts that don't have builds for desktop (like CTRE and NavX).
+Almost all of the code should be inside of `common`, so if we move parts between the robots, or need to do quick repairs, we don't have to reinvent code that the other team has already written :)
+
+### Where should my code go?
+- Does it work on both simulation and the robot? -> `common/src/main/`
+- Does it only work on the robot? -> `common/src/robot`
+- Does it only work in simulation? -> `common/src/simulation`
+- It is called from both simulation and the robot, but the behaviour is different: -> Headers in `common/src/main/include`, cpp files in `common/src/simulation/cpp` and `common/src/robot/cpp`
+  - If you have a physical device (like a gyro), we're going to need different behaviour / logic depending on if we're in sim, vs on a real robot. In sim, we want a 'fake' gyro, but on a real robot we want to use the real gyro. This is how we split that code up! The header is the same for both, so it's callable from anyway, but the underlying behaviour is something we can make different depending on the platform.
 
 ## [Vision](vision)
-Vision is the code that gets put on our vision system for the competition. Both teams use the same vision system, and so `vision` depends on `common`. Vision doesn't get deployed to the RoboRIO, but instead to a Raspberry Pi or Asus Tinkerboard.
-
-Vision depends on `common`.
-
-## [Simulation (special)](simulation)
-Simulation is special, and is only used when running on desktop. This is what provides all the nice windows that represent the various systems on the robot when you run `./gradlew sim5333` or `./gradlew sim5663`. You can't directly access simulation from any other projects - it's automatically handled. See Jaci for more info on how this works if you're really curious.
-
-`Common` is both accessible by `Simulation`. `Common` allow the robot program to 'talk' to simulation to tell it what windows to pop up, without directly accessing simulation (so we can ignore it when we go on the actual robot!).
+Vision is the code that gets put on our vision system for the competition. Vision doesn't get deployed to the RoboRIO, but instead to a Raspberry Pi or Asus Tinkerboard.
