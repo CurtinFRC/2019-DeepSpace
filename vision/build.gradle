@@ -9,12 +9,11 @@ deploy {
     target('coprocessor') {
       directory = '/home/vision'
       locations {
-        // Change this if you've changed the target hostname, username or password. Or if you
-        // want to use a raspberry pi, etc.
+        // Change this if you've changed the target hostname, username or password.
         ssh {
-          address = 'linaro-alip' // Tinkerboard = linaro-alip
-          user = 'linaro'         // Tinkerboard = linaro
-          password = 'linaro'     // Tinkerboard = linaro
+          address = 'curtinvision.local'
+          user = 'vision'
+          password = 'curtinfrc'
         }
       }
     }
@@ -22,9 +21,7 @@ deploy {
 
   artifacts {
     nativeArtifact('vision') {
-      // Change this to change to a raspberry pi or other coprocessor. Logic from here on in
-      // should be generic for any debian linux platform.
-      targetPlatform = TinkerboardPlugin.tinkerboardPlatform
+      targetPlatform = project.hasProperty('raspberry') ? wpi.platforms.raspbian : TinkerboardPlugin.tinkerboardPlatform
 
       targets << 'coprocessor'
       component = 'curtinFrcVision'
