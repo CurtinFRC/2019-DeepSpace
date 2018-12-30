@@ -16,7 +16,6 @@ using namespace std;
 
 RNG rng(12345);
 int thresh = 100;
-
 float rectXpoint;
 float rectYpoint;
 
@@ -108,8 +107,8 @@ void curtin_frc_vision::run() {
 		Mat threshold_output;
 		vector<Vec4i> hierarchy;
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
-		findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
-
+		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		/// Find the convex hull object for each contour
 		vector<vector<Point> >hull(contours.size());
 		for (size_t i = 0; i < contours.size(); i++)
@@ -154,13 +153,13 @@ void curtin_frc_vision::run() {
 
 		/// Approximate contoursBox to polygons + get bounding rects and circles
 		vector<vector<Point> > hull_poly( hull.size() );
-		//vector<Point2f>center( hull.size() );
-		//vector<float>radius( hull.size() );
+		vector<Point2f>center( hull.size() );
+		vector<float>radius( hull.size() );
 
 		for( int i = 0; i < hull.size(); i++ )
 			{ approxPolyDP( Mat(hull[i]), hull_poly[i], 3, true );
 			boundRect[i] = boundingRect( Mat(hull_poly[i]) );
-			//minEnclosingCircle( (Mat)hull_poly[i], center[i], radius[i] );
+			minEnclosingCircle( (Mat)hull_poly[i], center[i], radius[i] );
 			}
 
 
@@ -170,14 +169,13 @@ void curtin_frc_vision::run() {
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 			drawContours( drawing, hull_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
 			rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-			//circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
+			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
 			
 
-    //_____________________Center Calcs______(Calculates the center from Border Box)_______
-		//vector<vector<Point> > hullCenter;
+    //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______
       // get the moments 
-
+		
     vector<Moments> mu(hull_poly.size());
     for( int i = 0; i<hull_poly.size(); i++ )
       { mu[i] = moments( hull_poly[i], false ); }
@@ -194,30 +192,25 @@ void curtin_frc_vision::run() {
       Scalar color = Scalar(167,151,0); // B G R values
       drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
       circle( drawing, mc[i], 4, color, -1, 8, 0 );
+
+			// offsets from center
+			Point center = Point((mc[i].x), (mc[i].y));
+			width_offset = width_goal - center.y;
+			height_offset = height_goal - center.x;
+			cout << "Point(x,y)=" << width_offset << "," << height_offset << endl; //The output values... are a bit strange, need to look into that
     }
 		
 
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
-
+	
 
 
 
 		// X & Y Calculator Block (Calculates the x,y offset from the center)
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// Have not figured out how to use center, so using hull instead. center probably isn't correct
-		for (float Xpoints = 0; Xpoints < Moments.size(); Xpoints++)
-		{
-
-			for (float Ypoints = 0; Ypoints < Moments[Ypoints].size(); Ypoints++)
-			{
-				width_offset = width_goal - Moments[Xpoints][Ypoints].y;
-				height_offset = height_goal - Moments[Xpoints][Ypoints].x;
-        rectXpoint = Moments[Xpoints][Ypoints].x;
-        rectYpoint = Moments[Xpoints][Ypoints].y;
-			}
-		}
+		// my goodness, an empty block
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -232,7 +225,7 @@ void curtin_frc_vision::run() {
 
 
 		/// Show in a window
-		cout << "Point(x,y)=" << "0" << "," << "0" << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
+		//cout << "Point(x,y)=" << center.x << "," << center.y << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
 		//imshow("HSV Image", img_HSV);
     //imshow("center Calc", drawingcenter);
