@@ -16,14 +16,12 @@ using namespace std;
 
 RNG rng(12345);
 int thresh = 100;
-int largest_area=0;
-int largest_contour_index=0;
 
-double rectXpoint;
-double rectYpoint;
+float rectXpoint;
+float rectYpoint;
 
-double height_offset;
-double width_offset;
+float height_offset;
+float width_offset;
 // This is the main entrypoint into the CurtinFRC Vision Program!
 void curtin_frc_vision::run() {
 
@@ -76,18 +74,18 @@ void curtin_frc_vision::run() {
 
 		
 		// Threshold the HSV image, keep only the green pixels
+		
 		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
-
+		
 	  //morphological opening (remove small objects from the foreground)
+		/*
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		
 		//morphological closing (fill small holes in the foreground)
 		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		*/
-		
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
 		//========================================================================================================
@@ -127,12 +125,17 @@ void curtin_frc_vision::run() {
 		for (size_t i = 0; i < contours.size(); i++)
 		{
 			Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
-			//drawContours(drawing, contours, (int)i, color);
-			//drawContours(drawing, hull, (int)i, color);
+			drawContours(drawing, contours, (int)i, color);
+			drawContours(drawing, hull, (int)i, color);
 		}
 		//namedWindow("hull", WINDOW_AUTOSIZE);
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
+
+
+
+
+
 
 
 
@@ -151,18 +154,17 @@ void curtin_frc_vision::run() {
 
 		/// Approximate contoursBox to polygons + get bounding rects and circles
 		vector<vector<Point> > hull_poly( hull.size() );
-		vector<Point2f>center( hull.size() );
-		vector<float>radius( hull.size() );
+		//vector<Point2f>center( hull.size() );
+		//vector<float>radius( hull.size() );
 
 		for( int i = 0; i < hull.size(); i++ )
 			{ approxPolyDP( Mat(hull[i]), hull_poly[i], 3, true );
 			boundRect[i] = boundingRect( Mat(hull_poly[i]) );
-			minEnclosingCircle( (Mat)hull_poly[i], center[i], radius[i] );
+			//minEnclosingCircle( (Mat)hull_poly[i], center[i], radius[i] );
 			}
 
 
 		/// Draw polygonal contour + bonding rects + circles
-		Mat drawingBox = Mat::zeros( threshold_output.size(), CV_8UC3 );
 		for( int i = 0; i< hull.size(); i++ )
 			{
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
@@ -175,6 +177,7 @@ void curtin_frc_vision::run() {
     //_____________________Center Calcs______(Calculates the center from Border Box)_______
 		//vector<vector<Point> > hullCenter;
       // get the moments 
+
     vector<Moments> mu(hull_poly.size());
     for( int i = 0; i<hull_poly.size(); i++ )
       { mu[i] = moments( hull_poly[i], false ); }
@@ -203,16 +206,16 @@ void curtin_frc_vision::run() {
 
 		// X & Y Calculator Block (Calculates the x,y offset from the center)
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// Have not figured out how to use center, so using contoursbox instead. center may vary
-		for (unsigned int Xpoints = 0; Xpoints < contours.size(); Xpoints++)
+		// Have not figured out how to use center, so using hull instead. center probably isn't correct
+		for (float Xpoints = 0; Xpoints < Moments.size(); Xpoints++)
 		{
 
-			for (unsigned int Ypoints = 0; Ypoints < contours[Ypoints].size(); Ypoints++)
+			for (float Ypoints = 0; Ypoints < Moments[Ypoints].size(); Ypoints++)
 			{
-				width_offset = width_goal - contours[Xpoints][Ypoints].y;
-				height_offset = height_goal - contours[Xpoints][Ypoints].x;
-        rectXpoint = contours[Xpoints][Ypoints].x;
-        rectYpoint = contours[Xpoints][Ypoints].y;
+				width_offset = width_goal - Moments[Xpoints][Ypoints].y;
+				height_offset = height_goal - Moments[Xpoints][Ypoints].x;
+        rectXpoint = Moments[Xpoints][Ypoints].x;
+        rectYpoint = Moments[Xpoints][Ypoints].y;
 			}
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +232,7 @@ void curtin_frc_vision::run() {
 
 
 		/// Show in a window
-		cout << "Point(x,y)=" << rectXpoint << "," << rectYpoint << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
+		cout << "Point(x,y)=" << "0" << "," << "0" << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
 		//imshow("HSV Image", img_HSV);
     //imshow("center Calc", drawingcenter);
