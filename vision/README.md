@@ -2,20 +2,20 @@ Imaging a new Vision Coprocessor
 ===
 
 # Getting started
-1. Grab the image:
+### 1. Grab the image:
   - [Tinkerboard Image](http://dlcdnet.asus.com/pub/ASUS/mb/Linux/Tinker_Board_2GB/20170417-tinker-board-linaro-stretch-alip-v1.8.zip)
   - [Raspberry Pi](https://downloads.raspberrypi.org/raspbian_lite_latest)
-2. Flash the image onto a microsd card using etcher: https://etcher.io/
+### 2. Flash the image onto a microsd card using etcher: https://etcher.io/
   - You will need to grab the .img file from the zip. The .img file is what you give to etcher.
   - After complete, insert the microSD card and startup the coprocessor. It may take a minute or two.
-3. SSH into the Coprocessor
+### 3. SSH into the Coprocessor
   - On Mac/Linux, use `ssh username@hostname`
   - On Windows, download [puTTY](https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.70-installer.msi) and use that.
   - Tinkerboard:
     - Hostname: `linaro-alip`, Username: `linaro`, Password: `linaro`
   - Raspberry Pi:
     - Hostname: `raspberrypi`, Username: `pi`, Password: `raspberry`
-4. Run the following command:
+### 4. Run the following command:
   - `wget -qO - https://github.com/CurtinFRC/2019-DeepSpace/blob/master/vision/bootstrap.sh?raw=1 | bash`
-5. Your Coprocessor will now restart
-6. Run `./gradlew :vision:deploy` (`./gradlew :vision:deploy -Praspberry` for the Raspberry Pi) to deploy your code!
+### 5. Your Coprocessor will now restart
+### 6. Run `./gradlew :vision:deploy` (`./gradlew :vision:deploy -Praspberry` for the Raspberry Pi) to deploy your code!
