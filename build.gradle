@@ -8,6 +8,12 @@ allprojects {
   }
 }
 
+// Put buildDir all in the same place - that means all projects can use the same tmp/expandedArchives folder, 
+// instead of extracting the same libs over and over again.
+subprojects {
+  project.buildDir = rootProject.buildDir
+}
+
 wrapper {
   gradleVersion = '5.0'
 }
