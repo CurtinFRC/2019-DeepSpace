@@ -77,7 +77,6 @@ void curtin_frc_vision::run() {
 		
 		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
-		
 	  //morphological opening (remove small objects from the foreground)
 		/*
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
@@ -111,22 +110,8 @@ void curtin_frc_vision::run() {
 		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		/// Find the convex hull object for each contour
-
-
-		//New Contour Findings 2.0
-		
-		for( int i = 0; i< contours.size(); i++ ) // iterate through each contour. 
-      	{
-       	double a=contourArea( contours[i],false);  //  Find the area of contour
-       	if(a>largest_area){
-       	largest_area=a;
-       	largest_contour_index=i;                //Store the index of largest contour
-		//bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
-       	}
-  
-    }
 	
-
+		
 		vector<vector<Point> >hull(contours.size());
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -187,19 +172,19 @@ void curtin_frc_vision::run() {
 			drawContours( drawing, hull_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
 			bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
 			rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-			//circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
+			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
 			
 
-    //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______
+    //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
       // get the moments 
-	 vector<Moments> mu(hull_poly.size());
-    for( int i = 0; i<hull_poly.size(); i++ )
-      { mu[i] = moments( hull_poly[i], false ); }
+	 vector<Moments> mu(hull.size());
+    for( int i = 0; i<hull.size(); i++ )
+      { mu[i] = moments( hull[i], false ); }
  
     // get the centroid of figures.
-    vector<Point2f> mc(hull_poly.size());
-    for( int i = 0; i<hull_poly.size(); i++)
+    vector<Point2f> mc(hull.size());
+    for( int i = 0; i<hull.size(); i++)
       { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
 
     // draw contours
@@ -219,36 +204,8 @@ void curtin_frc_vision::run() {
    }
 
   }
-	/*	
-    vector<Moments> mu(hull_poly.size());
-    for( int i = 0; i<hull_poly.size(); i++ )
-      { mu[i] = moments( hull_poly[i], false ); }
- 
-    // get the centroid of figures.
-    vector<Point2f> mc(hull_poly.size());
-    for( int i = 0; i<hull_poly.size(); i++)
-      { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
-
-    // draw contours
-    //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
-	 for( int i = 0; i< hull_poly.size(); i++ ) // iterate through each contour. 
-  {
-   double a=contourArea( contours[i],false);  //  Find the area of contour
-
-   if(a>largest_area)
-   {
-   largest_area=a;
-   largest_contour_index=i;                //Store the index of largest contour
-   bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
-   circle( drawing, mc[largest_contour_index], 4, Scalar(0,0,255), -1, 8, 0 );
-   cout << "x1 " << mc[i] << std::endl; 
-   }
-
-  }
-
-  */
-  /*
-    for( int i = 0; i<hull_poly.size(); i++ )
+  
+    for( int i = 0; i<hull.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
       drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
@@ -258,21 +215,14 @@ void curtin_frc_vision::run() {
 			Point center = Point((mc[i].x), (mc[i].y));
 			width_offset = width_goal - center.y;
 			height_offset = height_goal - center.x;
-			cout << "Point(x,y)=" << width_offset << "," << height_offset << endl; //The output values... are a bit strange, need to look into that
+			cout << "Offset From Center x,y =" << width_offset << "," << height_offset << endl; //The output values... are a bit strange, need to look into that
     }
-		
-*/
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
-	
 
 
 
-		// X & Y Calculator Block (Calculates the x,y offset from the center)
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// my goodness, an empty block
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -289,11 +239,11 @@ void curtin_frc_vision::run() {
 		//cout << "Point(x,y)=" << center.x << "," << center.y << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
 		//imshow("HSV Image", img_HSV);
-    //imshow("center Calc", drawingcenter);
+    	//imshow("center Calc", drawingcenter);
 		//imshow("Contours", drawingBox);
 		//imshow("Original", imgOriginal); //Shows the original image
 		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
-		//imshow("Threshold Image", green_hue_image);
+		imshow("Threshold Image", green_hue_image);
 
 		//-------------------------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------------------------
