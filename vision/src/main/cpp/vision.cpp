@@ -15,10 +15,12 @@ using namespace cv;
 using namespace std;
 
 RNG rng(12345);
+int largest_area=0;
+int largest_contour_index=0;
+Rect bounding_rect;
 int thresh = 100;
 float rectXpoint;
 float rectYpoint;
-
 float height_offset;
 float width_offset;
 // This is the main entrypoint into the CurtinFRC Vision Program!
@@ -29,9 +31,9 @@ void curtin_frc_vision::run() {
   // In our case, we just say '0'. This lets it work on mac, linux and windows!
   VideoCapture cap{0};
   cap.set(CAP_PROP_FRAME_WIDTH, 640);
-	cap.set(CAP_PROP_FRAME_HEIGHT, 360);
-	float width_goal;
-	float height_goal;
+  cap.set(CAP_PROP_FRAME_HEIGHT, 360);
+  float width_goal;
+  float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
   double height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
   
@@ -42,11 +44,10 @@ void curtin_frc_vision::run() {
   width_goal = width / 2;
   height_goal = height / 2;
 
-  cout << "This Code Is Meant For The 2019 FRC Game" << endl;
+  	cout << "This Code Is Meant For The 2019 FRC Game" << endl;
 	cout << "Center May change depending on camera, or cap.set" << endl;
 	cout << "Current cap.set = " << width << "x" << height << endl << endl;
 	cout << "x,y Points for center Goal = (" << width_goal << "," << height_goal << ")" << endl;
-
   while (true)
 	{
 
@@ -110,6 +111,22 @@ void curtin_frc_vision::run() {
 		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		/// Find the convex hull object for each contour
+
+
+		//New Contour Findings 2.0
+		
+		for( int i = 0; i< contours.size(); i++ ) // iterate through each contour. 
+      	{
+       	double a=contourArea( contours[i],false);  //  Find the area of contour
+       	if(a>largest_area){
+       	largest_area=a;
+       	largest_contour_index=i;                //Store the index of largest contour
+		//bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
+       	}
+  
+    }
+	
+
 		vector<vector<Point> >hull(contours.size());
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -168,14 +185,41 @@ void curtin_frc_vision::run() {
 			{
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 			drawContours( drawing, hull_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+			bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
 			rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
+			//circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
 			
 
     //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______
       // get the moments 
-		
+	 vector<Moments> mu(hull_poly.size());
+    for( int i = 0; i<hull_poly.size(); i++ )
+      { mu[i] = moments( hull_poly[i], false ); }
+ 
+    // get the centroid of figures.
+    vector<Point2f> mc(hull_poly.size());
+    for( int i = 0; i<hull_poly.size(); i++)
+      { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
+
+    // draw contours
+    //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+
+	  for( int i = 0; i< contours.size(); i++ ) // iterate through each contour. 
+  {
+   double a=contourArea( contours[i],false);  //  Find the area of contour
+
+   if(a>largest_area)
+   {
+   largest_area=a;
+   largest_contour_index=i;                //Store the index of largest contour
+   //bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
+   circle( drawing, mc[largest_contour_index], 4, Scalar(0,0,255), -1, 8, 0 );
+   std::cout << "x1 " << mc[i] << std::endl; 
+   }
+
+  }
+	/*	
     vector<Moments> mu(hull_poly.size());
     for( int i = 0; i<hull_poly.size(); i++ )
       { mu[i] = moments( hull_poly[i], false ); }
@@ -187,6 +231,23 @@ void curtin_frc_vision::run() {
 
     // draw contours
     //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+	 for( int i = 0; i< hull_poly.size(); i++ ) // iterate through each contour. 
+  {
+   double a=contourArea( contours[i],false);  //  Find the area of contour
+
+   if(a>largest_area)
+   {
+   largest_area=a;
+   largest_contour_index=i;                //Store the index of largest contour
+   bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
+   circle( drawing, mc[largest_contour_index], 4, Scalar(0,0,255), -1, 8, 0 );
+   cout << "x1 " << mc[i] << std::endl; 
+   }
+
+  }
+
+  */
+  /*
     for( int i = 0; i<hull_poly.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
@@ -200,7 +261,7 @@ void curtin_frc_vision::run() {
 			cout << "Point(x,y)=" << width_offset << "," << height_offset << endl; //The output values... are a bit strange, need to look into that
     }
 		
-
+*/
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
@@ -210,7 +271,7 @@ void curtin_frc_vision::run() {
 
 		// X & Y Calculator Block (Calculates the x,y offset from the center)
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// my goodness, an empty block (hi hayden)
+		// my goodness, an empty block
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
