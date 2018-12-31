@@ -10,7 +10,10 @@
     "bin/": true,
     ".classpath": true,
     ".project": true,
-    "**/.gradle": true
+    "**/.gradle": true,
+    // Hiding files that just clutter up the workspace
+    "gradle": true,
+    ".wpilib": true
   },
   "files.watcherExclude": {
     "**/.git/objects/**": true,
@@ -18,7 +21,6 @@
     "**/node_modules/**": true,
     "**/.gradle/**": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "wpilib.online": true,
   "files.associations": {
     "chrono": "cpp",
