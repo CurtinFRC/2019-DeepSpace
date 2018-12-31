@@ -6,13 +6,18 @@
 
 #include <iostream>
 #include <thread>
+#include <functional>
 
 using namespace simulation;
 
-control_window _window{};
+// Convenience function that allows you to use a member function in std::for_each.
+template<typename func_type>
+auto bind(func_type func_ref) {
+  return std::bind(func_ref, std::placeholders::_1);
+}
 
-void update() {
-  _window.update();
+harness::harness() {
+  _windows.push_back(std::make_unique<control_window>());
 }
 
 void harness::run() {
@@ -20,12 +25,14 @@ void harness::run() {
   HAL_Initialize(500, 0);
   HALSIM_SetDriverStationDsAttached(true);
 
-  _window.start();
+  auto bound = &ui::window::start;
+
+  std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::start));
 
   std::cout << "[SIM] Starting UI Thread" << std::endl;
-  std::thread thread([]() {
+  std::thread thread([&]() {
     while (true) {
-      update();
+      std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::update));
       cv::waitKey(static_cast<int>(1000.0 / 45.0));
     }
   });
