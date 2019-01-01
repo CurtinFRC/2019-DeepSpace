@@ -34,7 +34,7 @@ bool talon_srx::GetInverted() const {
 }
 
 void talon_srx::Disable() {
-  _talons[_port].mode == control_mode::Disabled;
+  _talons[_port].mode = control_mode::Disabled;
 }
 
 void talon_srx::Set(double speed) {
