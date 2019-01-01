@@ -26,6 +26,7 @@ model {
       }
 
       useLibrary(it, 'wpilib')
+      wpi.deps.vendor.cpp(it)
     }
   }
 
@@ -40,6 +41,7 @@ model {
       }
 
       useLibrary(it, 'wpilib', 'googletest')
+      wpi.deps.vendor.cpp(it)
     }
   }
 }

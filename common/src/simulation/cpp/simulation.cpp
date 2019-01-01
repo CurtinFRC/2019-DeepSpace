@@ -1,5 +1,6 @@
 #include "simulation/simulation.h"
 #include "simulation/windows/control.h"
+#include "simulation/windows/motors.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
@@ -17,7 +18,8 @@ auto bind(func_type func_ref) {
 }
 
 harness::harness() {
-  _windows.push_back(std::make_unique<control_window>());
+  _windows.push_back(std::make_unique<control_window>(_windows));
+  _windows.push_back(std::make_unique<motor_window>());
 }
 
 void harness::run() {
