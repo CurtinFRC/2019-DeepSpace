@@ -36,6 +36,14 @@ namespace ui {
       cv::Point pt{in(m) + cv::Point{-size.width / 2, size.height / 2}};
       cv::putText(m, str, pt, font, font_scale, col.tocv(), thick);
     }
+
+    void textl(cv::Mat &m, const char *str, double font_scale, colour col, int thick = 1, int font = cv::FONT_HERSHEY_SIMPLEX) {
+      int      bline;
+      cv::Size size = cv::getTextSize(str, font, font_scale, thick, &bline);
+
+      cv::Point pt{in(m) + cv::Point{0, size.height / 2}};
+      cv::putText(m, str, pt, font, font_scale, col.tocv(), thick);
+    }
   };
 
   struct box {

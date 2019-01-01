@@ -71,6 +71,7 @@
     "cstdarg": "cpp",
     "list": "cpp",
     "iomanip": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "*.inc": "cpp"
   }
 }
