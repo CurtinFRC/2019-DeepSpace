@@ -5,9 +5,7 @@
 
 #include "frc/Timer.h"
 
-void Robot::RobotInit() {
-  
-}
+void Robot::RobotInit() { }
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
