@@ -30,8 +30,8 @@ void curtin_frc_vision::run() {
   // /dev/video1, third on /dev/video2, etc.
   // In our case, we just say '0'. This lets it work on mac, linux and windows!
   VideoCapture cap{0};
-  cap.set(CAP_PROP_FRAME_WIDTH, 640);
-  cap.set(CAP_PROP_FRAME_HEIGHT, 360);
+  //cap.set(CAP_PROP_FRAME_WIDTH, );
+  //cap.set(CAP_PROP_FRAME_HEIGHT, );
   float width_goal;
   float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
@@ -78,13 +78,15 @@ void curtin_frc_vision::run() {
 		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
 	  //morphological opening (remove small objects from the foreground)
-		/*
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		
+		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
+		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
+
+		
 		//morphological closing (fill small holes in the foreground)
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		*/
+		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
+		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
+		
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
 		//========================================================================================================
@@ -213,9 +215,9 @@ void curtin_frc_vision::run() {
 
 			// offsets from center
 			Point center = Point((mc[i].x), (mc[i].y));
-			width_offset = width_goal - center.y;
-			height_offset = height_goal - center.x;
-			cout << "Offset From Center x,y =" << width_offset << "," << height_offset << endl; //The output values... are a bit strange, need to look into that
+			width_offset = width_goal - center.x;
+			height_offset = height_goal - center.y;
+			cout << "Offset From Center x,y =" << height_offset << "," << width_offset << endl; //The output values... are a bit strange, need to look into that
     }
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -241,7 +243,7 @@ void curtin_frc_vision::run() {
 		//imshow("HSV Image", img_HSV);
     	//imshow("center Calc", drawingcenter);
 		//imshow("Contours", drawingBox);
-		//imshow("Original", imgOriginal); //Shows the original image
+		imshow("Original", imgOriginal); //Shows the original image
 		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
 		imshow("Threshold Image", green_hue_image);
 
