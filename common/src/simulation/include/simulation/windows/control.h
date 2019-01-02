@@ -2,11 +2,14 @@
 
 #include "simulation/ui/window.h"
 
+#include <vector>
+#include <memory>
+
 namespace simulation {
 
 class control_window : public ui::window {
  public:
-  control_window();
+  control_window(std::vector<std::unique_ptr<ui::window>> &all_windows_ref);
 
   void render(cv::Mat &img) override;
 
@@ -19,9 +22,11 @@ class control_window : public ui::window {
   void toggle_modes(bool active, ui::button &me);
 
  private:
-  ui::button exit{ui::box{0, 0.1, 1, 0.1}, "Exit", ui::colour{1, 0.75, 0.75}, ui::colour{1, 0.5, 0.5}};
+  ui::button exit{ui::box{0, 0.1, 0.5, 0.1}, "Exit", ui::colour{1, 0.75, 0.75}, ui::colour{1, 0.5, 0.5}};
+  ui::button respawn{ui::box{0.5, 0.1, 0.5, 0.1}, "Respawn", ui::colour{0.75, 1.0, 0.75}, ui::colour{0.5, 1.0, 0.5}};
 
   std::vector<ui::button> mode_buttons;
+  std::vector<std::unique_ptr<ui::window>> &_all_windows_ref;
 };
 
 }  // namespace simulation

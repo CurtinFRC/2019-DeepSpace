@@ -71,6 +71,8 @@
     "cstdarg": "cpp",
     "list": "cpp",
     "iomanip": "cpp",
-    "cinttypes": "cpp"
-  }
+    "cinttypes": "cpp",
+    "*.inc": "cpp"
+  },
+  "C_Cpp.default.configurationProvider": "vscode-wpilib"
 }

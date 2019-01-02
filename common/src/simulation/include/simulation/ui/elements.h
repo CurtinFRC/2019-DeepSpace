@@ -12,7 +12,7 @@ namespace ui {
     cv::Scalar tocv() { return cv::Scalar{b * 255, g * 255, r * 255}; }
 
     static colour black() { return colour{0, 0, 0}; }
-
+    static colour gray()  { return colour{0.5, 0.5, 0.5}; }
     static colour white() { return colour{1, 1, 1}; }
   };
 
@@ -36,6 +36,14 @@ namespace ui {
       cv::Point pt{in(m) + cv::Point{-size.width / 2, size.height / 2}};
       cv::putText(m, str, pt, font, font_scale, col.tocv(), thick);
     }
+
+    void textl(cv::Mat &m, const char *str, double font_scale, colour col, int thick = 1, int font = cv::FONT_HERSHEY_SIMPLEX) {
+      int      bline;
+      cv::Size size = cv::getTextSize(str, font, font_scale, thick, &bline);
+
+      cv::Point pt{in(m) + cv::Point{0, size.height / 2}};
+      cv::putText(m, str, pt, font, font_scale, col.tocv(), thick);
+    }
   };
 
   struct box {
@@ -56,17 +64,18 @@ namespace ui {
     colour      colour_normal;
     colour      colour_hover;
     colour      colour_active;
-    int id;
+    int         id;
+    bool can_activate = true;
 
     button(box bounds, std::string txt, colour c_normal, colour c_hover_activate)
         : button(bounds, txt, c_normal, c_hover_activate, c_hover_activate) {}
 
     button(box bounds, std::string txt, colour c_normal, colour c_hover, colour c_active)
         : b(bounds), text(txt), colour_normal(c_normal), colour_hover(c_hover), colour_active(c_active) {
-          static int _id = 0;
-          _id++;
-          id = _id;
-        }
+      static int _id = 0;
+      _id++;
+      id = _id;
+    }
 
     void on_click(std::function<void(int, button &)> cb) { click_callback = cb; }
 
@@ -84,20 +93,28 @@ namespace ui {
     }
 
     void activate() {
-      _active = true;
-      if (activate_callback != nullptr) {
-        activate_callback(true, *this);
+      if (can_activate) {
+        _active = true;
+        if (activate_callback != nullptr) {
+          activate_callback(true, *this);
+        }
       }
     }
 
     void deactivate() {
-      _active = false;
-      if (activate_callback != nullptr) {
-        activate_callback(false, *this);
+      if (can_activate) {
+        _active = false;
+        if (activate_callback != nullptr) {
+          activate_callback(false, *this);
+        }
       }
     }
 
     bool active() { return _active; }
+
+    void set_can_activate(bool can_activate) {
+      this->can_activate = can_activate;
+    }
 
     void render(cv::Mat &img) {
       b.fill(img, _active ? colour_active : _hover ? colour_hover : colour_normal);

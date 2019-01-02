@@ -93,4 +93,4 @@ model {
   }
 }
 
-task runVision(dependsOn: "simulateCurtinFrcVision${wpi.platforms.desktop.capitalize()}ReleaseExecutable")
+task runVision(dependsOn: "simulateCurtinFrcVision${wpi.platforms.desktop.capitalize()}DebugExecutable")
