@@ -22,7 +22,7 @@ harness::harness() {
   _windows.push_back(std::make_unique<motor_window>());
 }
 
-void harness::run() {
+void harness::run(std::function<int()> robot_thread) {
   std::cout << "[SIM] Simulation Starting!" << std::endl;
   HAL_Initialize(500, 0);
   HALSIM_SetDriverStationDsAttached(true);
@@ -31,14 +31,16 @@ void harness::run() {
 
   std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::start));
 
-  std::cout << "[SIM] Starting UI Thread" << std::endl;
+  std::cout << "[SIM] Starting Robot Thread" << std::endl;
   std::thread thread([&]() {
-    while (true) {
-      std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::update));
-      cv::waitKey(static_cast<int>(1000.0 / 45.0));
-    }
+    robot_thread();
   });
   thread.detach();
 
   std::cout << "[SIM] Simulation Initialization Complete" << std::endl;
+
+  while (true) {
+    std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::update));
+    cv::waitKey(static_cast<int>(1000.0 / 45.0));
+  }
 }
