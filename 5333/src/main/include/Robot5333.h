@@ -20,5 +20,5 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
   frc::XboxController *Xbox, *Xbox2;
-  curtinfrc::talon_srx *LeftMotors[2], *RightMotors[2];
+  curtinfrc::talon_srx *LeftMotors[2], *RightMotors[2], *ConveyorMotors[2];
 };
