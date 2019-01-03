@@ -1,4 +1,9 @@
 // Code was put togethor by CJ... just in case someone was wondering.                          ...not that many would
+
+
+//To build Program use .\gradlew vision:build
+//To Run Program use .\gradlew vision:runvision
+//To deploy to a tinkerboard or pi us .\gradlew vision:deploy  Note that when using tinkerboard deploy might not work to OS, you might need to use Raspbian ISO properly installed to the sd
 #include "vision.h"
 
 #include <iostream>
@@ -15,12 +20,8 @@ using namespace cv;
 using namespace std;
 
 RNG rng(12345);
-int largest_area=0;
-int largest_contour_index=0;
 Rect bounding_rect;
 int thresh = 100;
-float rectXpoint;
-float rectYpoint;
 float height_offset;
 float width_offset;
 // This is the main entrypoint into the CurtinFRC Vision Program!
@@ -29,6 +30,8 @@ void curtin_frc_vision::run() {
   // Note that the first webcam plugged in is always on /dev/video0. Likewise, the second is on
   // /dev/video1, third on /dev/video2, etc.
   // In our case, we just say '0'. This lets it work on mac, linux and windows!
+
+  //if you can... just because i wanna see how it works, try use with an xbox kinect
   VideoCapture cap{0};
   //cap.set(CAP_PROP_FRAME_WIDTH, );
   //cap.set(CAP_PROP_FRAME_HEIGHT, );
@@ -77,16 +80,19 @@ void curtin_frc_vision::run() {
 		
 		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
-	  //morphological opening (remove small objects from the foreground)
-		
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
 
-		
+//__________________________________________________________________________VERY PROCCESSING HEAVY use low numbers or don't at if all if you can.__________
+	  //morphological opening (remove small objects from the foreground)
+	  
+		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+	/*
 		//morphological closing (fill small holes in the foreground)
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(20, 20)));
-		
+		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
+		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
+*/
+
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
 		//========================================================================================================
@@ -97,7 +103,7 @@ void curtin_frc_vision::run() {
 
 
 
-		// Contours Blocks (Draws a convex shell over the thresholded image.
+		// Contours Blocks (Draws a convex shell over the thresholded image.)
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 		/// Detect edges using Canny
@@ -111,9 +117,9 @@ void curtin_frc_vision::run() {
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
 		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+
 		/// Find the convex hull object for each contour
-	
-		
 		vector<vector<Point> >hull(contours.size());
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -131,7 +137,6 @@ void curtin_frc_vision::run() {
 			drawContours(drawing, contours, (int)i, color);
 			drawContours(drawing, hull, (int)i, color);
 		}
-		//namedWindow("hull", WINDOW_AUTOSIZE);
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 
@@ -152,7 +157,6 @@ void curtin_frc_vision::run() {
 		/// Detect edges using Threshold
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
 		/// Find contoursBox
-		//findContours( threshold_output, contoursBox, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 
 		/// Approximate contoursBox to polygons + get bounding rects and circles
@@ -191,33 +195,20 @@ void curtin_frc_vision::run() {
 
     // draw contours
     //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
-
-	  for( int i = 0; i< contours.size(); i++ ) // iterate through each contour. 
-  {
-   double a=contourArea( contours[i],false);  //  Find the area of contour
-
-   if(a>largest_area)
-   {
-   largest_area=a;
-   largest_contour_index=i;                //Store the index of largest contour
-   //bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
-   circle( drawing, mc[largest_contour_index], 4, Scalar(0,0,255), -1, 8, 0 );
-   std::cout << "x1 " << mc[i] << std::endl; 
-   }
-
-  }
   
+
     for( int i = 0; i<hull.size(); i++ )
       {
       Scalar color = Scalar(167,151,0); // B G R values
-      drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
-      circle( drawing, mc[i], 4, color, -1, 8, 0 );
+      //drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
+	  circle( drawing, mc[i], 4, color, -1, 8, 0 );
 
 			// offsets from center
 			Point center = Point((mc[i].x), (mc[i].y));
 			width_offset = width_goal - center.x;
 			height_offset = height_goal - center.y;
 			cout << "Offset From Center x,y =" << height_offset << "," << width_offset << endl; //The output values... are a bit strange, need to look into that
+			
     }
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
