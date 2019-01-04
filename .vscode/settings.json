@@ -72,7 +72,10 @@
     "list": "cpp",
     "iomanip": "cpp",
     "cinttypes": "cpp",
-    "*.inc": "cpp"
+    "*.inc": "cpp",
+    "__config": "cpp",
+    "__nullptr": "cpp",
+    "algorithm": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib"
 }

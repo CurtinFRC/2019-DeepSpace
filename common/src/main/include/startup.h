@@ -9,7 +9,7 @@ namespace curtinfrc {
  */
 class robot_startup {
  public:
-  static void start();
+  static void start(std::function<int()> func);
 };
 
 /**
@@ -17,8 +17,8 @@ class robot_startup {
  */
 template <class robot_class>
 int start_robot() {
-  robot_startup::start();
-  return frc::StartRobot<robot_class>();
+  robot_startup::start(frc::StartRobot<robot_class>);
+  return 0;
 }
 
 #ifndef RUNNING_FRC_TESTS
