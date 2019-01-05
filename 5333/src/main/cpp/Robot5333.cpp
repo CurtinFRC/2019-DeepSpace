@@ -27,12 +27,12 @@ void Robot::RobotInit() {
   ConveyorMotors[1] = new talon_srx(5);
   ConveyorMotors[1]->SetInverted(true);
   ConveyorMotors[1]->Set(talon_srx::control_mode::Follower, ConveyorMotors[0]->get_port());
-};
+}
 
-void Robot::AutonomousInit() {};
-void Robot::AutonomousPeriodic() {};
+void Robot::AutonomousInit() {}
+void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {};
+void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   double leftSpeed = -Xbox->GetY(Xbox->kLeftHand);
   double rightSpeed = -Xbox->GetY(Xbox->kRightHand);
@@ -45,7 +45,7 @@ void Robot::TeleopPeriodic() {
   LeftMotors[0]->Set(leftSpeed);
   RightMotors[0]->Set(rightSpeed);
   ConveyorMotors[0]->Set(conveyorSpeed);
-};
+}
 
-void Robot::TestInit() {};
-void Robot::TestPeriodic() {};
+void Robot::TestInit() {}
+void Robot::TestPeriodic() {}
