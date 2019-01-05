@@ -6,8 +6,7 @@ namespace curtinfrc {
   namespace sensors {
     class encoder {
      public:
-      encoder();
-      virtual double get_encoder_ticks();
+      virtual double get_encoder_ticks() = 0;
     };
 
     class encoder_translator : public encoder {
