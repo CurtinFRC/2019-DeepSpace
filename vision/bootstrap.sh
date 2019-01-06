@@ -15,5 +15,10 @@ echo "vision:curtinfrc" | sudo chpasswd
 # Set hostname, user and password
 echo curtinvision | sudo tee /etc/hostname
 
+# Set Team #
+echo Team Number?
+read teamnum
+echo $teamnum > /home/vision/team
+
 # Reboot to commit changes
 sudo reboot
