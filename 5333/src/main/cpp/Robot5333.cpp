@@ -36,7 +36,7 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   double leftSpeed = -Xbox->GetY(Xbox->kLeftHand);
   double rightSpeed = -Xbox->GetY(Xbox->kRightHand);
-  double conveyorSpeed = Xbox2->GetY(Xbox2->kLeftHand);
+  double conveyorSpeed = Xbox->GetBumper(Xbox->kRightHand);
 
   leftSpeed *= abs(leftSpeed);
   rightSpeed *= abs(rightSpeed);
