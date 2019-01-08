@@ -2,6 +2,7 @@
 
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
+#include <frc/DoubleSolenoid.h>
 
 #include "curtin_ctre.h"
 #include <frc/Timer.h>
@@ -21,4 +22,5 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController *Xbox, *Xbox2;
   curtinfrc::talon_srx *LeftMotors[2], *RightMotors[2], *ConveyorMotors[2];
+  frc::DoubleSolenoid *FlappyBoi;
 };
