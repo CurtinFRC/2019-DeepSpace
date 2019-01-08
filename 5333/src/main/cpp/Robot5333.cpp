@@ -27,8 +27,6 @@ void Robot::RobotInit() {
   ConveyorMotors[1] = new talon_srx(15);
   ConveyorMotors[1]->SetInverted(true);
   ConveyorMotors[1]->Set(talon_srx::control_mode::Follower, ConveyorMotors[0]->get_port());
-
-  FlappyBoi = new DoubleSolenoid(0,1);
 }
 
 void Robot::AutonomousInit() {}
@@ -46,10 +44,7 @@ void Robot::TeleopPeriodic() {
 
   LeftMotors[0]->Set(leftSpeed);
   RightMotors[0]->Set(rightSpeed);
-  
-  ConveyorMotors[0]->Set(Xbox->GetTriggerAxis(Xbox->kRightHand));
-
-  FlappyBoi->Set(Xbox->GetBumper(Xbox->kLeftHand) ? FlappyBoi->kReverse : FlappyBoi->kForward);
+  ConveyorMotors[0]->Set(conveyorSpeed);
 }
 
 void Robot::TestInit() {}
