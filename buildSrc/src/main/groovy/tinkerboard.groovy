@@ -93,17 +93,16 @@ class TinkerboardRules extends RuleSource {
 
     // Expand headers, sources and combined lib to support tinkerboard
     libs.all { BaseLibSpec lib ->
-      if (lib.name.contains("opencv") && (lib instanceof CombinedNativeLib || lib.name.contains("headers") || lib.name.contains("sources")))
+      def lib_applies = ['opencv', 'cscore', 'cameraserver', 'ntcore', 'wpiutil'].any { lib.name.contains(it) }
+      if (lib_applies && (lib instanceof CombinedNativeLib || lib.name.contains("headers") || lib.name.contains("sources")))
         lib.targetPlatforms << TinkerboardPlugin.tinkerboardPlatform
     }
 
     // Add new tinkerboard lib
     for (boolean shared in [true, false]) {
-      def mavenRoot = "thirdparty.frc.edu.wpi.first.thirdparty.frc2019.opencv:opencv-cpp:${wpi.opencvVersion}"
       def suf = shared ? '' : '_static'
       ['debug', ''].each { String buildKind ->
         String buildType    = buildKind.contains('debug') ? 'debug' : 'release'
-        String config       = "native_opencv${buildKind}".toString()
         String linkSuff     = shared ? '' : 'static'
         boolean isShared    = shared   // Action calls are deferred, so the value of shared can be broken since
 
@@ -122,10 +121,34 @@ class TinkerboardRules extends RuleSource {
           lib.targetPlatforms = [TinkerboardPlugin.tinkerboardPlatform]
           lib.libraryName = "opencv${suf}_binaries"
           lib.buildType = buildType
+
+          def mavenRoot = "thirdparty.frc.edu.wpi.first.thirdparty.frc2019.opencv:opencv-cpp:${wpi.opencvVersion}"
           lib.maven = "${mavenRoot}:${TinkerboardPlugin.tinkerboardPlatform}${linkSuff}${buildKind}@zip"
-          lib.configuration = "${config}_tinkerboard"
+          lib.configuration = "native_opencv${buildKind}_tinker".toString()
         } as Action<? extends NativeLib>)
+
+        ['cscore', 'cameraserver', 'ntcore', 'wpiutil'].each { wpi_lib ->
+          libs.create("${wpi_lib}${suf}_tinkerboard${buildKind}".toString(), NativeLib, { NativeLib lib ->
+            lib.debugMatchers = ['**/*.pdb', '**/*.so.debug']
+            if (isShared) {
+              lib.sharedMatchers = ['**/*.so']
+              lib.dynamicMatchers = lib.sharedMatchers
+            } else {
+              lib.staticMatchers = ['**/*.a']
+            }
+
+            lib.targetPlatforms = [TinkerboardPlugin.tinkerboardPlatform]
+            lib.libraryName = "${wpi_lib}${suf}_binaries"
+            lib.buildType = buildType
+
+            def mavenRoot = "thirdparty.frc.edu.wpi.first:${wpi_lib}:tinker-2019.01.06"
+            lib.maven = "${mavenRoot}:${TinkerboardPlugin.tinkerboardPlatform}${linkSuff}${buildKind}@zip"
+            lib.configuration = "native_${wpi_lib}${buildKind}_tinker".toString()
+          } as Action<? extends NativeLib>)
+        }
       }
     }
+
+
   }
 }

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
+#include <frc/XboxController.h>
+
+#include "curtin_ctre.h"
+#include <frc/Timer.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -15,5 +19,6 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
- private:
+  frc::XboxController *Xbox, *Xbox2;
+  curtinfrc::talon_srx *LeftMotors[2], *RightMotors[2], *ConveyorMotors[2];
 };
