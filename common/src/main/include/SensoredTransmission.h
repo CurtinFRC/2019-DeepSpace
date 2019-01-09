@@ -7,14 +7,8 @@
 so that both Spark + encoder and Talon SRX can be treated the same. */
 
 namespace curtinfrc {
-  class SensoredTransmission {
-   public:
-    // Constructs _transmission and _encoder
-    SensoredTransmission(frc::SpeedController &_transmission, sensors::Encoder &_encoder) : transmission(_transmission), encoder(_encoder) {};
-    frc::SpeedController &transmission;
+  struct SensoredTransmission {
+    frc::SpeedController &motor;
     sensors::Encoder &encoder;
-
-    double Get();
-    void Set(double speed);
   };
 }
