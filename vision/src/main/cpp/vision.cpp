@@ -35,13 +35,17 @@ void curtin_frc_vision::run() {
   VideoCapture cap{0};
   //cap.set(CAP_PROP_FRAME_WIDTH, );
   //cap.set(CAP_PROP_FRAME_HEIGHT, );
-  cap.set(15, -100);
+  cap.set(15, -100); //sets the exposure value
   float width_goal;
   float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
   double height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
   vector<float> angles;
   vector<cv::Point2f> centres;
+  vector<float> heights;
+  vector<bool> lefts;
+  vector<bool> rights;
+  vector<cv::Point2f> targets;
   
   if (!cap.isOpened()) {
     std::cout << "ERROR: Could not open camera!" << std::endl;
@@ -63,8 +67,6 @@ void curtin_frc_vision::run() {
 		//========================================================================================================
 		Mat imgOriginal;
 		//Mat green_track_output;
-
-		bool bSuccess = cap.read(imgOriginal); // read a new frame from video
 
 		if (!cap.read(imgOriginal)) //if not success, break loop
 		{
@@ -143,8 +145,11 @@ void curtin_frc_vision::run() {
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 
-		angles.clear();
+		
+		//Get RotatedRectangles
+		angles.clear(); //clear the vectors
 		centres.clear();
+		heights.clear();
 
 		for (int i=0; i<contours.size(); i++) {
 			
@@ -154,14 +159,65 @@ void curtin_frc_vision::run() {
 
 			cv::Point2f centre = rotatedRect.center;
 
-			angles.push_back(angle);
-			centres.push_back(centre);
+			cv::Point2f rectPoints[4];
+			rotatedRect.points(rectPoints);
 
-			std::stringstream ss;	ss<<angle;
-			cv::putText(green_hue_image, ss.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255));
+			float min = rectPoints[0].y;
+			float max = rectPoints[0].y;
+			
+			for (int j=1; j<4; j++) { //find the minimum and maximum y-values of each rectangle
+				if (rectPoints[j].y > max) {
+					max = rectPoints[j].y;
+				}
+				if (rectPoints[j].y < min) {
+					min = rectPoints[j].y;
+				}
+			}
+
+			float height = max - min; //get the height of each rectangle
+
+			angles.push_back(angle); //add the current RotatedRectangle values to their respective vectors
+			centres.push_back(centre);
+			heights.push_back(height);
+
+			std::stringstream ss;	ss<<angle; //magic shit, idk
+			std::stringstream hei;	hei<<height;	
+			cv::putText(green_hue_image, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
 		}
 
+		lefts.clear();
+		rights.clear();
 
+		for (int i=0; i<contours.size(); i++) { //find left and right vision targets, and indicate in respective vectors where these contours are
+			if (angles[i] > 10 && angles[i] < 19) {
+				rights.push_back(true);
+				lefts.push_back(false);
+			} else if (angles[i] < -10 && angles[i] > -19) {
+				rights.push_back(false);
+				lefts.push_back(true);
+			} else {
+				rights.push_back(false);
+				lefts.push_back(false);
+			}
+		}
+
+		int leftmost = -1;
+		float leftPos = 1280;
+		targets.clear();	
+
+		for (int i=0; i<contours.size(); i++) {
+			if (lefts[i]) { //checks if current iteration is a left
+				for (int j=0; j<contours.size(); j++) {
+					if (rights[j] && centres[j].x < leftPos) { //checks if nested iteration is a right and left of the last checked one
+						leftmost = j;
+					}
+				}
+
+				if (leftmost > -1) {
+					targets.push_back((centres[i]+centres[leftmost])/2);
+				}
+			}
+		}
 
 
 
