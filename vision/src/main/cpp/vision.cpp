@@ -1,12 +1,7 @@
-// Code was put togethor by CJ... just in case someone was wondering.                          ...not that many would
-
-
 //To build Program use .\gradlew vision:build
 //To Run Program use .\gradlew vision:runvision
 //To deploy to a tinkerboard or pi us .\gradlew vision:deploy  Note that when using tinkerboard deploy might not work to OS, you might need to use Raspbian ISO properly installed to the sd
 #include "vision.h"
-
-#include <iostream>
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
@@ -15,16 +10,23 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
 #include <stdio.h>
+#include <iostream>
 
 using namespace cv;
 using namespace std;
+
 
 RNG rng(12345);
 Rect bounding_rect;
 int thresh = 100;
 float height_offset;
 float width_offset;
+float width_goal;
+float height_goal;
+
+VideoCapture cap{0};
 // This is the main entrypoint into the CurtinFRC Vision Program!
+
 void curtin_frc_vision::run() {
 
   // Note that the first webcam plugged in is always on /dev/video0. Likewise, the second is on
@@ -32,14 +34,13 @@ void curtin_frc_vision::run() {
   // In our case, we just say '0'. This lets it work on mac, linux and windows!
 
   //if you can... just because i wanna see how it works, try use with an xbox kinect
-  VideoCapture cap{0};
-  //cap.set(CAP_PROP_FRAME_WIDTH, );
-  //cap.set(CAP_PROP_FRAME_HEIGHT, );
-  float width_goal;
-  float height_goal;
+  
+  //VideoCapture cap{0};
+  //cap.set(CAP_PROP_FRAME_WIDTH, 320);
+  //cap.set(CAP_PROP_FRAME_HEIGHT, 240);
+
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
   double height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-  
   if (!cap.isOpened()) {
     std::cout << "ERROR: Could not open camera!" << std::endl;
     return;
@@ -47,12 +48,11 @@ void curtin_frc_vision::run() {
   width_goal = width / 2;
   height_goal = height / 2;
 
-  	cout << "This Code Is Meant For The 2019 FRC Game" << endl;
+  	/*cout << "This Code Is Meant For The 2019 FRC Game" << endl;
 	cout << "Center May change depending on camera, or cap.set" << endl;
 	cout << "Current cap.set = " << width << "x" << height << endl << endl;
-	cout << "x,y Points for center Goal = (" << width_goal << "," << height_goal << ")" << endl;
-  while (true)
-	{
+	cout << "x,y Points for center Goal = (" << width_goal << "," << height_goal << ")" << endl;*/
+
 
 		//Green Hue Processing Block
 		//========================================================================================================
@@ -81,17 +81,18 @@ void curtin_frc_vision::run() {
 		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
 
-//__________________________________________________________________________VERY PROCCESSING HEAVY use low numbers or don't at if all if you can.__________
-	  //morphological opening (remove small objects from the foreground)
+		//__________________________________________VERY PROCCESSING HEAVY! use low numbers or don't at if all if you can.__________
+
+	  	//morphological opening (remove small objects from the foreground)
 	  
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
-	/*
+		/*
 		//morphological closing (fill small holes in the foreground)
 		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
 		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
-*/
+		*/
 
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
@@ -115,7 +116,6 @@ void curtin_frc_vision::run() {
 		Mat threshold_output;
 		vector<Vec4i> hierarchy;
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
-		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 
@@ -182,34 +182,34 @@ void curtin_frc_vision::run() {
 			}
 			
 
-    //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
-      // get the moments 
-	 vector<Moments> mu(hull.size());
-    for( int i = 0; i<hull.size(); i++ )
-      { mu[i] = moments( hull[i], false ); }
+    	//_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
+      	// get the moments 
+	 	vector<Moments> mu(hull.size());
+    	for( int i = 0; i<hull.size(); i++ )
+      	{ mu[i] = moments( hull[i], false ); }
  
-    // get the centroid of figures.
-    vector<Point2f> mc(hull.size());
-    for( int i = 0; i<hull.size(); i++)
-      { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
+    	// get the centroid of figures.
+    	vector<Point2f> mc(hull.size());
+    	for( int i = 0; i<hull.size(); i++)
+      	{ mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
 
-    // draw contours
-    //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
+    	// draw contours
+    	//Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
   
 
-    for( int i = 0; i<hull.size(); i++ )
-      {
-      Scalar color = Scalar(167,151,0); // B G R values
-      //drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
-	  circle( drawing, mc[i], 4, color, -1, 8, 0 );
+    	for( int i = 0; i<hull.size(); i++ )
+      	{
+      	Scalar color = Scalar(167,151,0); // B G R values
+      	//drawContours(drawing, hull_poly, i, color, 2, 8, hierarchy, 0, Point());
+	  	circle( drawing, mc[i], 4, color, -1, 8, 0 );
 
-			// offsets from center
-			Point center = Point((mc[i].x), (mc[i].y));
-			width_offset = width_goal - center.x;
-			height_offset = height_goal - center.y;
-			cout << "Offset From Center x,y =" << height_offset << "," << width_offset << endl; //The output values... are a bit strange, need to look into that
+		// offsets from center
+		Point center = Point((mc[i].x), (mc[i].y));
+		width_offset = width_goal - center.x;
+		height_offset = height_goal - center.y;
+		cout << "Offset From Center x,y =" << height_offset << "," << width_offset << endl; //The output values... are a bit strange, need to look into that
 			
-    }
+    	}
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
@@ -229,7 +229,6 @@ void curtin_frc_vision::run() {
 
 
 		/// Show in a window
-		//cout << "Point(x,y)=" << center.x << "," << center.y << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
 		imshow("Shell & Bounding", drawing);
 		//imshow("HSV Image", img_HSV);
     	//imshow("center Calc", drawingcenter);
@@ -247,5 +246,4 @@ void curtin_frc_vision::run() {
 			cout << "esc key is pressed by user" << endl;
 			//break;
 		}
-	}
 }
