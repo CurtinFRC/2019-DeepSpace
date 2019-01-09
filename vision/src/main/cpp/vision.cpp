@@ -219,6 +219,12 @@ void curtin_frc_vision::run() {
 			}
 		}
 
+		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+
+		for (int i=0; i<targets.size(); i++) {
+			cv::rectangle(green_hue_image, target[i], target[i] + Point2f(5,5), color, 2); //draw small rectangle on target locations
+		}
+
 
 
 		
