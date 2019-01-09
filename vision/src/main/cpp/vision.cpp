@@ -39,6 +39,8 @@ void curtin_frc_vision::run() {
   float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
   double height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+  vector<float> angles;
+  vector<cv::Point2f> centres;
   
   if (!cap.isOpened()) {
     std::cout << "ERROR: Could not open camera!" << std::endl;
@@ -63,7 +65,7 @@ void curtin_frc_vision::run() {
 
 		bool bSuccess = cap.read(imgOriginal); // read a new frame from video
 
-		if (!bSuccess) //if not success, break loop
+		if (!cap.read(imgOriginal)) //if not success, break loop
 		{
 			cout << "Cannot read a frame from video stream" << endl;
 			//break;
@@ -140,8 +142,21 @@ void curtin_frc_vision::run() {
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 
+		angles.clear();
+		centres.clear();
 
+		for (int i=0; i<contours.size(); i++) {
+			
+			cv::RotatedRect rotatedRect = cv::minAreaRect(contours[i]);
 
+			float angle = rotatedRect.angle;
+
+			cv::Point2f centre = rotatedRect.center;
+
+			angles.push_back(angle);
+			centres.push_back(centre);
+
+		}
 
 
 
