@@ -7,26 +7,17 @@ using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
-  Xbox = new XboxController(0);
-  Xbox2 = new XboxController(1);
+  xbox = new XboxController(0);
   
-  LeftMotors[0] = new talon_srx(0);
-  LeftMotors[0]->SetInverted(false);
-  LeftMotors[1] = new talon_srx(1);
-  LeftMotors[1]->SetInverted(false);
-  LeftMotors[1]->Set(talon_srx::control_mode::Follower, LeftMotors[0]->get_port());
+  leftMotors[0] = new Spark(2);
+  leftMotors[0]->SetInverted(false);
+  left = new SpeedControllerGroup(*leftMotors[0]);
 
-  RightMotors[0] = new talon_srx(2);
-  RightMotors[0]->SetInverted(true);
-  RightMotors[1] = new talon_srx(3);
-  RightMotors[1]->SetInverted(true);
-  RightMotors[1]->Set(talon_srx::control_mode::Follower, RightMotors[0]->get_port());
+  rightMotors[0] = new Spark(3);
+  rightMotors[0]->SetInverted(true);
+  right = new SpeedControllerGroup(*rightMotors[0]);
 
-  ConveyorMotors[0] = new talon_srx(4);
-  ConveyorMotors[0]->SetInverted(false);
-  ConveyorMotors[1] = new talon_srx(5);
-  ConveyorMotors[1]->SetInverted(true);
-  ConveyorMotors[1]->Set(talon_srx::control_mode::Follower, ConveyorMotors[0]->get_port());
+  hatchEjector = new DoubleSolenoid(0, 1);
 }
 
 void Robot::AutonomousInit() {}
@@ -34,17 +25,16 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double leftSpeed = -Xbox->GetY(Xbox->kLeftHand);
-  double rightSpeed = -Xbox->GetY(Xbox->kRightHand);
-  double conveyorSpeed = Xbox->GetBumper(Xbox->kRightHand);
+  double leftSpeed = -xbox->GetY(xbox->kLeftHand);
+  double rightSpeed = -xbox->GetY(xbox->kRightHand);
 
   leftSpeed *= abs(leftSpeed);
   rightSpeed *= abs(rightSpeed);
-  conveyorSpeed *= abs(conveyorSpeed);
 
-  LeftMotors[0]->Set(leftSpeed);
-  RightMotors[0]->Set(rightSpeed);
-  ConveyorMotors[0]->Set(conveyorSpeed);
+  left->Set(leftSpeed);
+  right->Set(rightSpeed);
+
+  hatchEjector->Set(xbox->GetBumper(xbox->kRightHand) ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
 }
 
 void Robot::TestInit() {}
