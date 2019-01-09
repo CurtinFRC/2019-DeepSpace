@@ -10,7 +10,7 @@ namespace curtinfrc {
   class SensoredTransmission {
    public:
     // Passing _transmission and _encoder
-    SensoredTransmission(frc::SpeedController &_transmission, sensors::Encoder &_encoder;) : transmission(_transmission), encoder(_encoder) {};
+    SensoredTransmission(frc::SpeedController &_transmission, sensors::Encoder &_encoder) : transmission(_transmission), encoder(_encoder) {};
     frc::SpeedController &transmission;
     sensors::Encoder &encoder;
   };
