@@ -7,7 +7,7 @@ apply plugin: 'edu.wpi.first.GradleRIO'
 deploy {
   targets {
     roboRIO('roborio') {
-      team = project.name.toInteger()
+      team = project.hasProperty("team") ? project.team.toInteger() : project.name.toInteger()
     }
   }
 
