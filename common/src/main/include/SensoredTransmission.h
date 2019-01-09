@@ -3,10 +3,14 @@
 #include <frc/SpeedController.h>
 #include <sensors/Encoder.h>
 
-/* Combines the encoder and motor parts into one data structure,
-so that both Spark + encoder and Talon SRX can be treated the same. */
-
 namespace curtinfrc {
+
+  /**
+   * Struct for motor and encoder pairs.
+   * 
+   * Combines the motor and encoder parts into one data structure,
+   * so that both Spark + Encoder and Talon SRX are treated the same.
+   */
   struct SensoredTransmission {
     frc::SpeedController &motor;
     sensors::Encoder &encoder;

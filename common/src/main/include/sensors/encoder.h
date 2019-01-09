@@ -2,8 +2,6 @@
 
 #include <frc/CounterBase.h>
 
-// Blame Nathan and the rest of the programming team for the case change
-
 namespace curtinfrc {
   namespace sensors {
     class Encoder {
