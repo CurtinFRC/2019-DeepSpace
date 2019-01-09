@@ -35,6 +35,7 @@ void curtin_frc_vision::run() {
   VideoCapture cap{0};
   //cap.set(CAP_PROP_FRAME_WIDTH, );
   //cap.set(CAP_PROP_FRAME_HEIGHT, );
+  cap.set(15, -100);
   float width_goal;
   float height_goal;
   double width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
