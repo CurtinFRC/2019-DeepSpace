@@ -156,6 +156,8 @@ void curtin_frc_vision::run() {
 			angles.push_back(angle);
 			centres.push_back(centre);
 
+			std::stringstream ss;	ss<<angle;
+			cv::putText(green_hue_image, ss.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255));
 		}
 
 
