@@ -1,6 +1,6 @@
-// Simulation harness for the curtinfrc::talon_srx.
+// Simulation harness for the curtinfrc::TalonSrx.
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 #include "simulation/ctre_sim.h"
 
 using namespace curtinfrc;
@@ -11,58 +11,58 @@ std::map<int, simulation::ctre::talon_data> &simulation::ctre::all_talons() {
   return _talons;
 }
 
-talon_srx::talon_srx(int port) {
+TalonSrx::TalonSrx(int port) {
   _talons[port] = simulation::ctre::talon_data{};
   _talons[port].port = port;
   _port = port;
 }
 
-talon_srx::~talon_srx() {
+TalonSrx::~TalonSrx() {
   _talons.erase(_port);
 }
 
-int talon_srx::get_port() {
+int TalonSrx::GetPort() {
   return (int) _port;
 }
 
-void talon_srx::SetInverted(bool invert) {
+void TalonSrx::SetInverted(bool invert) {
   _talons[_port].inverted = true;
 }
 
-bool talon_srx::GetInverted() const {
+bool TalonSrx::GetInverted() const {
   return _talons[_port].inverted;
 }
 
-void talon_srx::Disable() {
-  _talons[_port].mode = control_mode::Disabled;
+void TalonSrx::Disable() {
+  _talons[_port].mode = ControlMode::Disabled;
 }
 
-void talon_srx::Set(double speed) {
-  Set(control_mode::PercentOutput, speed);
+void TalonSrx::Set(double speed) {
+  Set(ControlMode::PercentOutput, speed);
 }
 
-void talon_srx::Set(talon_srx::control_mode mode, double value) {
+void TalonSrx::Set(TalonSrx::ControlMode mode, double value) {
   _talons[_port].mode = mode;
   _talons[_port].value = value;
   _value = value;
 }
 
-talon_srx::control_mode talon_srx::GetMode() {
+TalonSrx::ControlMode TalonSrx::GetMode() {
   return _talons[_port].mode;
 }
 
-int talon_srx::GetSensorPosition() {
+int TalonSrx::GetSensorPosition() {
   return _talons[_port].sensor_pos;
 }
 
-int talon_srx::GetSensorVelocity() {
+int TalonSrx::GetSensorVelocity() {
   return _talons[_port].sensor_vel;
 }
 
-void talon_srx::load_config(talon_srx::configuration &config) {
+void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {
   _talons[_port].config = config;
 }
 
-talon_srx::configuration talon_srx::save_config() {
+TalonSrx::Configuration TalonSrx::SaveConfig() {
   return _talons[_port].config;
 }

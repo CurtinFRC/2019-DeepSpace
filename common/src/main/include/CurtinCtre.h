@@ -13,23 +13,23 @@ namespace curtinfrc {
   /**
    * Curtin FRC Wrapper around the CTRE Talon SRX.
    */
-  class talon_srx : public frc::SpeedController {
+  class TalonSrx : public frc::SpeedController {
    public:
-    using configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
-    using control_mode = ctre::phoenix::motorcontrol::ControlMode;
+    using Configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
+    using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
 
     /**
      * Create a new Talon SRX.
      * 
      * @param port The device ID of the Talon SRX on the CAN Bus.
      */
-    talon_srx(int port);
-    ~talon_srx();
+    TalonSrx(int port);
+    ~TalonSrx();
 
     /**
      * Get the CAN Device ID of the Talon SRX.
      */
-    int get_port();
+    int GetPort();
 
     /**
      * Set or unset this Talon SRX as 'inverted' for all calls to .Set().
@@ -63,17 +63,17 @@ namespace curtinfrc {
     /**
      * Set the value of the Talon SRX in a given control mode. 
      * 
-     * @param mode The control mode of the Talon SRX. See @ref control_mode.
+     * @param mode The control mode of the Talon SRX. See @ref ControlMode.
      * @param value The value to set. Units dependent on value of mode.
      */
-    void Set(control_mode mode, double value);
+    void Set(ControlMode mode, double value);
 
     /**
      * Get the currently active control mode of the Talon SRX.
      * 
-     * @returns The control mode of the Talon SRX. See @ref control_mode.
+     * @returns The control mode of the Talon SRX. See @ref ControlMode.
      */
-    control_mode GetMode();
+    ControlMode GetMode();
 
     /**
      * Get the current value of the Talon SRX.
@@ -97,26 +97,26 @@ namespace curtinfrc {
     int GetSensorVelocity();
 
     /**
-     * Load a talon configuration.
+     * Load a talon Configuration.
      * 
-     * @param configuration The talon configuration
+     * @param Configuration The talon Configuration
      */
-    void load_config(configuration &config);
+    void LoadConfig(Configuration &config);
 
     /**
-     * Save (get) the current talon configuration
+     * Save (get) the current talon Configuration
      * 
-     * @returns The current talon configuration
+     * @returns The current talon Configuration
      */
-    configuration save_config();
+    Configuration SaveConfig();
 
     /**
-     * Modify a talon configuration. This is the equivilent of calling @ref save_config(), changing
-     * a value, followed by @ref load_config(configuration &).
+     * Modify a talon Configuration. This is the equivilent of calling @ref SaveConfig(), changing
+     * a value, followed by @ref LoadConfig(Configuration &).
      * 
-     * @param func The configuration function. This is a function that takes in a configuration reference.
+     * @param func The Configuration function. This is a function that takes in a Configuration reference.
      */
-    void modify_config(std::function<void(configuration &)> func);
+    void ModifyConfig(std::function<void(Configuration &)> func);
     
     int _port;
     void *_handle;

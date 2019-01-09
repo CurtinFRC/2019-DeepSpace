@@ -6,7 +6,7 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 #include <frc/Timer.h>
 
 class Robot : public frc::TimedRobot {
