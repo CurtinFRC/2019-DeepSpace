@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
   curtin_frc_vision vision;  
   vision.run();
 
+
   std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
   return -1;
 }

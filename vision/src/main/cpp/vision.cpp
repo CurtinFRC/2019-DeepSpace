@@ -78,22 +78,8 @@ void curtin_frc_vision::process() {
 
 		
 		// Threshold the HSV image, keep only the green pixels
-		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
+		cv::inRange(img_HSV, cv::Scalar(35, 100, 30), cv::Scalar(78, 255, 255), green_hue_image);
 
-//__________________________________________________________________________VERY PROCCESSING HEAVY use low numbers or don't at if all if you can.__________
-
-
-
-	  //morphological opening (remove small objects from the foreground)
-	  /*
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-*/
-	/*
-		//morphological closing (fill small holes in the foreground)
-		dilate(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
-		erode(green_hue_image, green_hue_image, getStructuringElement(MORPH_ELLIPSE, Size(2, 2)));
-*/
 
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
@@ -360,12 +346,5 @@ void curtin_frc_vision::run() {
 		curtin_frc_vision::capture();
 		curtin_frc_vision::process();
 		curtin_frc_vision::display();
-		
-		// Required escape button. Waits for 30ms for esc
-		if (waitKey(30) == 27)
-		{
-			cout << "esc key is pressed by user" << endl;
-			//break;
-		}
   }
 }
