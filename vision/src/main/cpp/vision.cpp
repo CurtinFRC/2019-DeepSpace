@@ -100,45 +100,91 @@ void curtin_frc_vision::run() {
 		//========================================================================================================
 
 
-		
-
-
 
 
 		// Contours Blocks (Draws a convex shell over the thresholded image.)
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
+
+    
+    //KinectProcessor();
+    //void processRGB(Mat mat);
+    //void processIR(Mat mat);
+        
+    //kinectCondition t_condition;
+    vector<vector<Point> > contours;
+    vector<vector<Point> > filteredContours;
+    vector<vector<Point> > filteredHulls;
+    vector<Rect> ir_rects;
+    int active_contour;
+    Scalar hsl_low, hsl_high;
+    bool show_window;
+
+    //cv::Mat tmp(image);
+    
+    // Usually this is used to convert it to HLS, but since it's an IR (monochrome) image,
+    // there's no need to waste the CPU Time doing this 
+    // cvtColor(tmp, tmp, CV_RGB2HLS);
+    
+    double largestArea = 0.0;
+    active_contour = -1;
+    
+    findContours(green_hue_image, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    int i;
+    for (i = 0; i < contours.size(); i++) {
+        vector<Point> contour = contours[i];
+        Rect r = boundingRect(contour);
+       
+        double area = contourArea(contour);
+        if (area > 300.0) {
+            vector<Point> hull;
+            convexHull(contour, hull);
+            double solidity = 100 * area / contourArea(hull);
+            
+            if (solidity < 60.0) {
+                if (area > largestArea) {
+                    largestArea = area;
+                    active_contour = filteredContours.size();
+                }
+                filteredContours.push_back(contour);
+                filteredHulls.push_back(hull);
+                ir_rects.push_back(r);
+            }
+        }
+    }
+
 		/// Detect edges using Canny
 		cv::Mat canny_output;
 		Canny(green_hue_image, canny_output, thresh, thresh * 2);
 
 		/// Find contours
-		vector<vector<Point> > contours;
+		//vector<vector<Point> > contours;
 		cv::Mat threshold_output;
 		vector<Vec4i> hierarchy;
 		threshold( green_hue_image, threshold_output, thresh, 255, THRESH_BINARY );
 		//findContours( threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
-		findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+		//findContours(green_hue_image, contours, hierarchy, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
-
+    
 		/// Find the convex hull object for each contour
-		vector<vector<Point> >hull(contours.size());
-		for (size_t i = 0; i < contours.size(); i++)
+		vector<vector<Point> >hull(filteredContours.size());
+		for (size_t i = 0; i < filteredContours.size(); i++)
 		{
-			convexHull(contours[i], hull[i]);
+			convexHull(filteredContours[i], hull[i]);
 		}
 
-		/// Draw contours + hull results
+		/// Draw filteredContours + hull results
 		cv::Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-		vector<Rect> boundRect( contours.size() );
+		vector<Rect> boundRect( filteredContours.size() );
 
 
-		for (size_t i = 0; i < contours.size(); i++)
+		for (size_t i = 0; i < filteredContours.size(); i++)
 		{
 			Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
-			drawContours(drawing, contours, (int)i, color);
+			drawContours(drawing, filteredContours, (int)i, color);
 			drawContours(drawing, hull, (int)i, color);
 		}
+    
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 
@@ -178,7 +224,7 @@ void curtin_frc_vision::run() {
 			{
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 			drawContours( drawing, hull_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
-			bounding_rect=boundingRect(contours[i]); // Find the bounding rectangle for biggest contour
+			bounding_rect=boundingRect(filteredContours[i]); // Find the bounding rectangle for biggest contour
 			rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
 			circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
 			}
@@ -195,7 +241,7 @@ void curtin_frc_vision::run() {
     for( int i = 0; i<hull.size(); i++)
       { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 ); }
 
-    // draw contours
+    // draw filteredContours
     //Mat drawingcenter(canny_output.size(), CV_8UC3, Scalar(255,255,255));
   
 
