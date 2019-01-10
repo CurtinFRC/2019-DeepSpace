@@ -35,7 +35,6 @@ void curtin_frc_vision::run() {
   // with our actual vision tracking software!
   // You can view the vision output with Shuffleboard. Launch with `./gradlew :vision:ShuffleBoard`
 
-  vector<float> angles;
   vector<cv::Point2f> centres;
   vector<float> heights;
   vector<bool> lefts;
@@ -196,10 +195,11 @@ void curtin_frc_vision::run() {
 		//________________________________________________________________________________________________________
 
 		
-		//Get RotatedRectangles
-		angles.clear(); //clear the vectors
-		centres.clear();
+		//Get RotatedRectangles 
+		centres.clear(); //clear the vectors
 		heights.clear();
+		lefts.clear();
+		rights.clear();
 
 		for (int i=0; i<contours.size(); i++) {
 			
@@ -226,29 +226,23 @@ void curtin_frc_vision::run() {
 
 			float height = max - min; //get the height of each rectangle
 
-			angles.push_back(angle); //add the current RotatedRectangle values to their respective vectors
 			centres.push_back(centre);
 			heights.push_back(height);
 
-			std::stringstream ss;	ss<<angle; //magic shit, idk
-			std::stringstream hei;	hei<<height;	
-			cv::putText(green_hue_image, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
-		}
-
-		lefts.clear();
-		rights.clear();
-
-		for (int i=0; i<contours.size(); i++) { //find left and right vision targets, and indicate in respective vectors where these contours are
-			if (angles[i] > 10 && angles[i] < 19) {
+			if (angle > 10 && angle < 19) {
 				rights.push_back(true);
 				lefts.push_back(false);
-			} else if (angles[i] < -10 && angles[i] > -19) {
+			} else if (angle < -10 && angle > -19) {
 				rights.push_back(false);
 				lefts.push_back(true);
 			} else {
 				rights.push_back(false);
 				lefts.push_back(false);
 			}
+
+			std::stringstream ss;	ss<<angle; //magic shit, idk
+			std::stringstream hei;	hei<<height;	
+			cv::putText(green_hue_image, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
 		}
 
 		int leftmost = -1;
@@ -272,7 +266,7 @@ void curtin_frc_vision::run() {
 		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 
 		for (int i=0; i<targets.size(); i++) {
-			cv::rectangle(green_hue_image, target[i], target[i] + Point2f(5,5), color, 2); //draw small rectangle on target locations
+			cv::rectangle(green_hue_image, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
 		}
 
 
