@@ -11,7 +11,8 @@ deploy {
       locations {
         // Change this if you've changed the target hostname, username or password.
         ssh {
-          address = 'curtinvision.local'
+          // address = 'curtinvision.local'
+          address = '192.168.0.100'
           user = 'vision'
           password = 'curtinfrc'
         }
@@ -88,7 +89,7 @@ model {
         }
       }
 
-      useLibrary(it, 'opencv')
+      useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
     }
   }
 }

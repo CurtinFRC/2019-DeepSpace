@@ -11,11 +11,11 @@ namespace curtinfrc {
 
     class EncoderTranslator : public Encoder {
      public:
-      EncoderTranslator(frc::CounterBase &counter_base) : _counter_base(counter_base) {};
+      EncoderTranslator(frc::CounterBase &counterBase) : _counterBase(counterBase) {};
       double GetEncoderTicks() override;
     
      private:
-      frc::CounterBase &_counter_base;
+      frc::CounterBase &_counterBase;
     };
   } // ns sensors
 } // ns curtinfrc
