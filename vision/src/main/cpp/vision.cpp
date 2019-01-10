@@ -36,10 +36,12 @@ void curtin_frc_vision::run() {
   // You can view the vision output with Shuffleboard. Launch with `./gradlew :vision:ShuffleBoard`
 
   vector<cv::Point2f> centres;
-  vector<float> heights;
   vector<bool> lefts;
   vector<bool> rights;
   vector<cv::Point2f> targets;
+  vector<float> angles;
+  vector<float> heights;
+  vector<float> distances;
   
   // This creates a webcam on USB, and dumps it into a sink. The sink allows us to access the image with sink.GrabFrame
   cs::UsbCamera cam{"USBCam", 1};
@@ -242,12 +244,14 @@ void curtin_frc_vision::run() {
 
 			std::stringstream ss;	ss<<angle; //magic shit, idk
 			std::stringstream hei;	hei<<height;	
-			cv::putText(green_hue_image, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+			cv::putText(drawing, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
 		}
 
 		int leftmost = -1;
 		float leftPos = 1280;
-		targets.clear();	
+		targets.clear();
+		angles.clear();
+		distances.clear();
 
 		for (int i=0; i<contours.size(); i++) {
 			if (lefts[i]) { //checks if current iteration is a left
@@ -258,7 +262,8 @@ void curtin_frc_vision::run() {
 				}
 
 				if (leftmost > -1) {
-					targets.push_back((centres[i]+centres[leftmost])/2);
+					targets.push_back((centres[i]+centres[leftmost])/2); //adds the Points2f position of each target to a vector
+					distances.push_back(200/(heights[i]+heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
 				}
 			}
 		}
@@ -266,7 +271,9 @@ void curtin_frc_vision::run() {
 		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 
 		for (int i=0; i<targets.size(); i++) {
-			cv::rectangle(green_hue_image, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+			std::stringstream dis;	dis<<distances[i];
+			cv::rectangle(drawing, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+			cv::putText(drawing, dis.str(), targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255));
 		}
 
 
