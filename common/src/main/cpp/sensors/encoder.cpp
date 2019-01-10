@@ -1,5 +1,5 @@
-#include "sensors/encoder.h"
+#include "sensors/Encoder.h"
 
-double curtinfrc::sensors::encoder_translator::get_encoder_ticks() {
-    return _counter_base.Get();
+double curtinfrc::sensors::EncoderTranslator::getEncoderTicks() {
+    return _counterBase.Get();
 }

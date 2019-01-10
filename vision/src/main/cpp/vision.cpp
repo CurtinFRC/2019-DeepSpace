@@ -24,57 +24,51 @@ Rect bounding_rect;
 int thresh = 100;
 float height_offset;
 float width_offset;
-float width_goal;
-float height_goal;
+float width_goal = 320;
+float height_goal = 240;
 
-// This is the main entrypoint into the CurtinFRC Vision Program!
+cs::UsbCamera cam{"USBCam", 1};
+cs::CvSink sink{"USB"};
+auto video_mode = cam.GetVideoMode();
+cv::Mat drawing;
+cv::Mat green_hue_image;
 
-void curtin_frc_vision::run() {
+// Target vectors
+vector<cv::Point2f> centres;
+vector<bool> lefts;
+vector<bool> rights;
+vector<cv::Point2f> targets;
+vector<float> angles;
+vector<float> heights;
+vector<float> distances;
 
-  // This is just a demonstration so you can see how this kind of code works. You'll be replacing this
-  // with our actual vision tracking software!
-  // You can view the vision output with Shuffleboard. Launch with `./gradlew :vision:ShuffleBoard`
+// This lets us see the camera output on the robot dashboard. We give it a name, and a width and height.
+cs::CvSource output = frc::CameraServer::GetInstance()->PutVideo("USB Camera", video_mode.width, video_mode.height);
 
-  vector<cv::Point2f> centres;
-  vector<bool> lefts;
-  vector<bool> rights;
-  vector<cv::Point2f> targets;
-  vector<float> angles;
-  vector<float> heights;
-  vector<float> distances;
-  
-  // This creates a webcam on USB, and dumps it into a sink. The sink allows us to access the image with sink.GrabFrame
-  cs::UsbCamera cam{"USBCam", 1};
-  cs::CvSink sink{"USB"};
+// The capMat is what comes from the camera, and the outMat is what goes to the dashboard. Note: 
+// the height - width order is reversed here (height first, width second), unlike other parts.
+cv::Mat imgOriginal{video_mode.height, video_mode.width, CV_8UC3};
+cv::Mat img_HSV{video_mode.height, video_mode.width, CV_8UC3};
+
+void curtin_frc_vision::init() {
+	// This creates a webcam on USB, and dumps it into a sink. The sink allows us to access the image with sink.GrabFrame
   sink.SetSource(cam);
 
   // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
   cam.SetResolution(640, 480);
 
-  width_goal = 320;
-  height_goal = 240;
-
-
-  auto video_mode = cam.GetVideoMode();
   std::cout << "Width: " << video_mode.width << " Height: " << video_mode.height << std::endl;
+};
 
-  // This lets us see the camera output on the robot dashboard. We give it a name, and a width and height.
-  cs::CvSource output = frc::CameraServer::GetInstance()->PutVideo("USB Camera", video_mode.width, video_mode.height);
+void curtin_frc_vision::capture() {
+	// Grab a frame when possible, then convert to grayscale and send to the dashboard.
+	if (sink.GrabFrame(imgOriginal) != 0) {
+		cv::cvtColor(imgOriginal, img_HSV, cv::COLOR_RGB2HSV);
+  }
+};
 
-  // The capMat is what comes from the camera, and the outMat is what goes to the dashboard. Note: 
-  // the height - width order is reversed here (height first, width second), unlike other parts.
-  cv::Mat imgOriginal{video_mode.height, video_mode.width, CV_8UC3};
-  cv::Mat img_HSV{video_mode.height, video_mode.width, CV_8UC3};
-
-
-  while (true) {
-    // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
-    if (sink.GrabFrame(imgOriginal) != 0) {
-      //cv::cvtColor(imgOriginal, img_HSV, COLOR_RGB2HSV);
-      cv::cvtColor(imgOriginal, img_HSV, cv::COLOR_RGB2HSV);
-      //output.PutFrame(drawing);
-    }
-    //Green Hue Processing Block
+void curtin_frc_vision::process() {
+	//Green Hue Processing Block
 		//========================================================================================================
 		//--------------------------------------------------------------------------------------------------------
 		//========================================================================================================
@@ -84,8 +78,6 @@ void curtin_frc_vision::run() {
 
 		
 		// Threshold the HSV image, keep only the green pixels
-		
-		cv::Mat green_hue_image;
 		cv::inRange(img_HSV, cv::Scalar(35, 100, 100), cv::Scalar(78, 255, 255), green_hue_image);
 
 //__________________________________________________________________________VERY PROCCESSING HEAVY use low numbers or don't at if all if you can.__________
@@ -182,7 +174,7 @@ void curtin_frc_vision::run() {
 		}
 
 		/// Draw filteredContours + hull results
-		cv::Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+		drawing = Mat::zeros(canny_output.size(), CV_8UC3);
 		vector<Rect> boundRect( filteredContours.size() );
 
 
@@ -342,47 +334,38 @@ void curtin_frc_vision::run() {
 			
     }
 		//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+};
 
+void curtin_frc_vision::display() {
+	// Show in a window
+	//cout << "Point(x,y)=" << center.x << "," << center.y << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
+	
+	imshow("Shell & Bounding", drawing);
+	//imshow("HSV Image", img_HSV);
+	//imshow("center Calc", drawingcenter);
+	//imshow("Contours", drawingBox);
+	imshow("Original", imgOriginal); // Shows the original image
+	//imshow("Track Output", green_hue_image); // Shows the Threhold Image
+	imshow("Threshold Image", green_hue_image);
+	
+	output.PutFrame(drawing);
+};
 
+void curtin_frc_vision::run() {
+  // This is just a demonstration so you can see how this kind of code works. You'll be replacing this
+  // with our actual vision tracking software!
+  // You can view the vision output with Shuffleboard. Launch with `./gradlew :vision:ShuffleBoard`
 
-
-
-
-
-
-
-
-		// User Outputs Block, uneeded for tracking on bot.
-		//-------------------------------------------------------------------------------------------------------
-		//-------------------------------------------------------------------------------------------------------
-
-
-
-
-		/// Show in a window
-		//cout << "Point(x,y)=" << center.x << "," << center.y << " Offset: Height(" << height_offset << ") Width(" << width_offset << ")" << "\r";
+  while (true) {
+		curtin_frc_vision::capture();
+		curtin_frc_vision::process();
+		curtin_frc_vision::display();
 		
-    imshow("Shell & Bounding", drawing);
-		//imshow("HSV Image", img_HSV);
-    	//imshow("center Calc", drawingcenter);
-		//imshow("Contours", drawingBox);
-		imshow("Original", imgOriginal); //Shows the original image
-		//imshow("Track Output", green_hue_image);//Shows the Threhold Image
-		imshow("Threshold Image", green_hue_image);
-    
-    output.PutFrame(drawing);
-
-		//-------------------------------------------------------------------------------------------------------
-		//-------------------------------------------------------------------------------------------------------
-		
-		
-		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+		// Required escape button. Waits for 30ms for esc
+		if (waitKey(30) == 27)
 		{
 			cout << "esc key is pressed by user" << endl;
 			//break;
 		}
-
-
-
   }
 }

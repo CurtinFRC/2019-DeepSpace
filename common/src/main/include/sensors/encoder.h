@@ -4,18 +4,18 @@
 
 namespace curtinfrc {
   namespace sensors {
-    class encoder {
+    class Encoder {
      public:
-      virtual double get_encoder_ticks() = 0;
+      virtual double getEncoderTicks() = 0;
     };
 
-    class encoder_translator : public encoder {
+    class EncoderTranslator : public Encoder {
      public:
-      encoder_translator(frc::CounterBase &counter_base) : _counter_base(counter_base) {};
-      double get_encoder_ticks() override;
+      EncoderTranslator(frc::CounterBase &counterBase) : _counterBase(counterBase) {};
+      double getEncoderTicks() override;
     
      private:
-      frc::CounterBase &_counter_base;
+      frc::CounterBase &_counterBase;
     };
   } // ns sensors
 } // ns curtinfrc
