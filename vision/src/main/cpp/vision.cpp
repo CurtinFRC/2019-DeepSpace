@@ -33,6 +33,15 @@ auto video_mode = cam.GetVideoMode();
 cv::Mat drawing;
 cv::Mat green_hue_image;
 
+// Target vectors
+vector<cv::Point2f> centres;
+vector<bool> lefts;
+vector<bool> rights;
+vector<cv::Point2f> targets;
+vector<float> angles;
+vector<float> heights;
+vector<float> distances;
+
 // This lets us see the camera output on the robot dashboard. We give it a name, and a width and height.
 cs::CvSource output = frc::CameraServer::GetInstance()->PutVideo("USB Camera", video_mode.width, video_mode.height);
 
@@ -179,10 +188,85 @@ void curtin_frc_vision::process() {
 		//________________________________________________________________________________________________________
 		//________________________________________________________________________________________________________
 
+		
+		//Get RotatedRectangles 
+		centres.clear(); //clear the vectors
+		heights.clear();
+		lefts.clear();
+		rights.clear();
 
+		for (int i=0; i<contours.size(); i++) {
+			
+			cv::RotatedRect rotatedRect = cv::minAreaRect(contours[i]);
 
+			float angle = rotatedRect.angle;
 
+			cv::Point2f centre = rotatedRect.center;
 
+			cv::Point2f rectPoints[4];
+			rotatedRect.points(rectPoints);
+
+			float min = rectPoints[0].y;
+			float max = rectPoints[0].y;
+			
+			for (int j=1; j<4; j++) { //find the minimum and maximum y-values of each rectangle
+				if (rectPoints[j].y > max) {
+					max = rectPoints[j].y;
+				}
+				if (rectPoints[j].y < min) {
+					min = rectPoints[j].y;
+				}
+			}
+
+			float height = max - min; //get the height of each rectangle
+
+			centres.push_back(centre);
+			heights.push_back(height);
+
+			if (angle > 10 && angle < 19) {
+				rights.push_back(true);
+				lefts.push_back(false);
+			} else if (angle < -10 && angle > -19) {
+				rights.push_back(false);
+				lefts.push_back(true);
+			} else {
+				rights.push_back(false);
+				lefts.push_back(false);
+			}
+
+			std::stringstream ss;	ss<<angle; //magic shit, idk
+			std::stringstream hei;	hei<<height;	
+			cv::putText(drawing, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+		}
+
+		int leftmost = -1;
+		float leftPos = 1280;
+		targets.clear();
+		angles.clear();
+		distances.clear();
+
+		for (int i=0; i<contours.size(); i++) {
+			if (lefts[i]) { //checks if current iteration is a left
+				for (int j=0; j<contours.size(); j++) {
+					if (rights[j] && centres[j].x < leftPos) { //checks if nested iteration is a right and left of the last checked one
+						leftmost = j;
+					}
+				}
+
+				if (leftmost > -1) {
+					targets.push_back((centres[i]+centres[leftmost])/2); //adds the Points2f position of each target to a vector
+					distances.push_back(200/(heights[i]+heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
+				}
+			}
+		}
+
+		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+
+		for (int i=0; i<targets.size(); i++) {
+			std::stringstream dis;	dis<<distances[i];
+			cv::rectangle(drawing, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+			cv::putText(drawing, dis.str(), targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255));
+		}
 
 
 
