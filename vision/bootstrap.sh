@@ -10,10 +10,13 @@ sudo apt-get install -y avahi-daemon libnss-mdns v4l-utils imagemagick
 # Add vision user and password
 sudo adduser vision --disabled-password --gecos ""
 sudo adduser vision sudo
+sudo adduser vision video
+sudo adduser vision audio
 echo "vision:curtinfrc" | sudo chpasswd
 
 # Set hostname, user and password
 echo curtinvision | sudo tee /etc/hostname
+echo "127.0.0.1 curtinvision" | sudo tee /etc/hosts
 
 # Set Team #
 echo Team Number?
