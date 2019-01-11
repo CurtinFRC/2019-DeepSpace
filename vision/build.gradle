@@ -90,6 +90,11 @@ model {
         }
       }
 
+      binaries.all {
+        if (targetPlatform.name == wpi.platforms.desktop)
+          cppCompiler.define '__DESKTOP__'
+      }
+
       useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
     }
   }
