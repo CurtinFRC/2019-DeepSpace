@@ -1,13 +1,16 @@
 #pragma once
 
+#include <frc/Timer.h>
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
+#include <frc/Talon.h>
 #include <frc/DoubleSolenoid.h>
 
 #include "CurtinCtre.h"
-#include <frc/Timer.h>
+#include "SensoredTransmission.h"
+#include "Drivetrain.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -24,6 +27,8 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController *xbox;
   frc::Spark *leftMotors[1], *rightMotors[1];
-  frc::SpeedControllerGroup *left, *right;
+  curtinfrc::SensoredTransmission *left, *right;
+  curtinfrc::Drivetrain *drivetrain;
+
   frc::DoubleSolenoid *hatchEjector;
 };
