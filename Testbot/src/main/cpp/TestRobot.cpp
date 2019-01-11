@@ -1,4 +1,4 @@
-#include "Robot5333.h"
+#include "TestRobot.h"
 
 #include <math.h>
 #include <iostream>
@@ -16,6 +16,8 @@ void Robot::RobotInit() {
   rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
   right = new SpeedControllerGroup(*rightMotors[0]);
+
+  hatchEjector = new DoubleSolenoid(0, 1);
 }
 
 void Robot::AutonomousInit() {}
@@ -26,11 +28,13 @@ void Robot::TeleopPeriodic() {
   double leftSpeed = -xbox->GetY(xbox->kLeftHand);
   double rightSpeed = -xbox->GetY(xbox->kRightHand);
 
-  leftSpeed *= abs(leftSpeed);
-  rightSpeed *= abs(rightSpeed);
+  leftSpeed *= fabs(leftSpeed);
+  rightSpeed *= fabs(rightSpeed);
 
   left->Set(leftSpeed);
   right->Set(rightSpeed);
+
+  hatchEjector->Set(!xbox->GetBumper(xbox->kRightHand) ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
 }
 
 void Robot::TestInit() {}

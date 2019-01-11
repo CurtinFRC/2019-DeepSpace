@@ -6,13 +6,13 @@ namespace curtinfrc {
   namespace sensors {
     class Encoder {
      public:
-      virtual double getEncoderTicks() = 0;
+      virtual double GetEncoderTicks() = 0;
     };
 
     class EncoderTranslator : public Encoder {
      public:
       EncoderTranslator(frc::CounterBase &counterBase) : _counterBase(counterBase) {};
-      double getEncoderTicks() override;
+      double GetEncoderTicks() override;
     
      private:
       frc::CounterBase &_counterBase;

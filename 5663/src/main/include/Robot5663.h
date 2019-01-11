@@ -4,7 +4,7 @@
 #include <frc/XboxController.h>
 #include <frc/Spark.h>
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -20,6 +20,6 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
   frc::XboxController *xbox;
-  frc::Spark *left_motors, *right_motors;
+  frc::Spark *leftMotors, *rightMotors;
   frc::Spark *shooter, *intake;
 };

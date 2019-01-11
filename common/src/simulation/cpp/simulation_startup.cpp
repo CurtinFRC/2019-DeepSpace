@@ -1,7 +1,7 @@
 #include "simulation/simulation.h"
 #include "startup.h"
 
-void curtinfrc::robot_startup::start(std::function<int()> robot_func) {
+void curtinfrc::RobotStartup::Start(std::function<int()> robotFunc) {
   static simulation::harness sim_harness;
-  sim_harness.run(robot_func);
+  sim_harness.run(robotFunc);
 }

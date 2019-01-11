@@ -1,6 +1,6 @@
 #pragma once
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 
 #include <map>
 
@@ -13,12 +13,12 @@ namespace simulation {
 
       bool inverted;
       double value;
-      curtinfrc::talon_srx::control_mode mode = curtinfrc::talon_srx::control_mode::Disabled;
+      curtinfrc::TalonSrx::ControlMode mode = curtinfrc::TalonSrx::ControlMode::Disabled;
 
       int sensor_pos;
       int sensor_vel;
 
-      curtinfrc::talon_srx::configuration config;
+      curtinfrc::TalonSrx::Configuration config;
     };
 
     static std::map<int, simulation::ctre::talon_data> &all_talons();
