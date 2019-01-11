@@ -5,8 +5,8 @@ using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
 void Robot::RobotInit() {
   // Sparks
-  left_motors = new frc::Spark(0);
-  right_motors = new frc::Spark(1);
+  leftMotors = new frc::Spark(0);
+  rightMotors = new frc::Spark(1);
   shooter = new frc::Spark(2);
   intake = new frc::Spark(3);
 
@@ -19,17 +19,17 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   // Tank drive and intake
-  double left_speed = -xbox->GetY(hand::kLeftHand);
-  double right_speed = xbox->GetY(hand::kRightHand);
-  //double intake_speed = xbox->GetTriggerAxis(hand::kLeftHand);
+  double leftSpeed = -xbox->GetY(hand::kLeftHand);
+  double rightSpeed = xbox->GetY(hand::kRightHand);
+  //double intakeSpeed = xbox->GetTriggerAxis(hand::kLeftHand);
 
-  left_speed *= std::abs(left_speed);
-  right_speed *= std::abs(right_speed);
-  //intake_speed *= std::abs(intake_speed);
+  leftSpeed *= std::abs(leftSpeed);
+  rightSpeed *= std::abs(rightSpeed);
+  //intakeSpeed *= std::abs(intakeSpeed);
 
-  left_motors->Set(left_speed);
-  right_motors->Set(right_speed);
-  //intake->Set(intake_speed);
+  left_motors->Set(leftSpeed);
+  right_motors->Set(rightSpeed);
+  //intake->Set(intakeSpeed);
 
   // Shooter
   if(xbox->GetTriggerAxis(hand::kLeftHand) != 0.0) {
