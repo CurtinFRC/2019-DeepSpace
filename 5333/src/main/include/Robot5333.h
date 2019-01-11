@@ -1,7 +1,7 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
-#include <frc/XboxController.h>
+#include <frc/Joystick.h>
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
@@ -22,7 +22,7 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  frc::XboxController *xbox;
+  frc::Joystick *joy;
   frc::Spark *leftMotors[1], *rightMotors[1];
   frc::SpeedControllerGroup *left, *right;
 };

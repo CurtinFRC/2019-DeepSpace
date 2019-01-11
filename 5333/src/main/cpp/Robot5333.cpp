@@ -7,7 +7,7 @@ using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
-  xbox = new XboxController(0);
+  joy = new Joystick(0);
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
@@ -23,8 +23,8 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double leftSpeed = -xbox->GetY(xbox->kLeftHand);
-  double rightSpeed = -xbox->GetY(xbox->kRightHand);
+  double leftSpeed = -joy->GetY() + joy->GetZ();
+  double rightSpeed = -joy->GetY() - joy->GetZ();
 
   leftSpeed *= abs(leftSpeed);
   rightSpeed *= abs(rightSpeed);

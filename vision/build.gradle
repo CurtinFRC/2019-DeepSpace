@@ -28,8 +28,9 @@ deploy {
       component = 'curtinFrcVision'
       buildType = 'release'
 
+      predeploy << { execute('sudo systemctl stop vision || true') }
       // Make sure we can run our program!
-      postdeploy << { execute('chmod +x curtinFrcVision') }
+      postdeploy << { execute('chmod +x curtinFrcVision'); execute('sudo systemctl restart vision || true') }
     }
 
     // Some extra stuff for our vision program. Includes system configs, also!
@@ -87,6 +88,11 @@ model {
         exportedHeaders {
           srcDir 'src/main/include'
         }
+      }
+
+      binaries.all {
+        if (targetPlatform.name == wpi.platforms.desktop)
+          cppCompiler.define '__DESKTOP__'
       }
 
       useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
