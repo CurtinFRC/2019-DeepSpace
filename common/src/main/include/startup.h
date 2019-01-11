@@ -1,3 +1,5 @@
+#pragma once
+
 #include <frc/RobotBase.h>
 
 namespace curtinfrc {
