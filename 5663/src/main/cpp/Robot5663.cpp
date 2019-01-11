@@ -27,8 +27,8 @@ void Robot::TeleopPeriodic() {
   rightSpeed *= std::abs(rightSpeed);
   //intakeSpeed *= std::abs(intakeSpeed);
 
-  left_motors->Set(leftSpeed);
-  right_motors->Set(rightSpeed);
+  leftMotors->Set(leftSpeed);
+  rightMotors->Set(rightSpeed);
   //intake->Set(intakeSpeed);
 
   // Shooter
