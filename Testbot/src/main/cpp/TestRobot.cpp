@@ -11,11 +11,11 @@ void Robot::RobotInit() {
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
-  left = new SpeedControllerGroup(*leftMotors[0]);
+  left = new SensoredTransmission{new SpeedControllerGroup(*leftMotors[0]), nullptr};
 
   rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
-  right = new SpeedControllerGroup(*rightMotors[0]);
+  right = new SensoredTransmission{new SpeedControllerGroup(*rightMotors[0]), nullptr};
 
   hatchEjector = new DoubleSolenoid(0, 1);
 }
@@ -31,10 +31,16 @@ void Robot::TeleopPeriodic() {
   leftSpeed *= fabs(leftSpeed);
   rightSpeed *= fabs(rightSpeed);
 
-  left->Set(leftSpeed);
-  right->Set(rightSpeed);
+  drivetrain->Set(leftSpeed, rightSpeed);
 
   hatchEjector->Set(!xbox->GetBumper(xbox->kRightHand) ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
+  // if (xbox->GetBumper(xbox->kRightHand)) {
+  //   solState++;
+  //   solState %= 2; //2;
+  //   hatchEjector->Set((bool)solState ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
+  // }
+
+  // if (xbox->GetBumper(xbox->kLeftHand)) hatchEjector->Set(DoubleSolenoid::kReverse);
 }
 
 void Robot::TestInit() {}
