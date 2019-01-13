@@ -96,6 +96,7 @@ model {
       }
 
       useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
+      wpi.deps.vendor.cpp(it)
     }
   }
 }
