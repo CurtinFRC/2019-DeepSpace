@@ -20,7 +20,8 @@ echo "127.0.0.1 curtinvision" | sudo tee /etc/hosts
 
 # Set Team #
 echo Team Number?
-read teamnum
+read teamnum < /dev/tty
+mkdir -p /home/vision
 echo $teamnum > /home/vision/team
 
 # Reboot to commit changes

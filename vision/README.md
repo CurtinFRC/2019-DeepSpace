@@ -3,7 +3,8 @@ Imaging a new Vision Coprocessor
 
 # Getting started
 ### 1. Grab the image:
-  - [Tinkerboard Image](http://dlcdnet.asus.com/pub/ASUS/mb/Linux/Tinker_Board_2GB/20170417-tinker-board-linaro-stretch-alip-v1.8.zip)
+  - [Tinkerboard Image](https://dlcdnets.asus.com/pub/ASUS/mb/Linux/Tinker_Board_S/20181023-tinker-board-linaro-stretch-alip-v2.0.8.img.zip)
+    - Make sure you use version 2.0.8! v1.8 doesn't work with some USB cameras (nor the Kinect) due to a kernel problem.
   - [Raspberry Pi](https://downloads.raspberrypi.org/raspbian_lite_latest)
 ### 2. Flash the image onto a microsd card using etcher: https://etcher.io/
   - You will need to grab the .img file from the zip. The .img file is what you give to etcher.
