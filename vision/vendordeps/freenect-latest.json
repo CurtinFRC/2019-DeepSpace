@@ -34,7 +34,6 @@
           "sharedLibrary": true,
           "skipInvalidPlatforms": true,
           "binaryPlatforms": [
-              "linuxx86-64",
               "windowsx86-64",
               "osxx86-64",
               "linuxraspbian",
