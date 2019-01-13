@@ -35,8 +35,8 @@ void kinect_driver::run() {
   while (freenect_process_events(_ctx) >= 0);
 }
 
-void kinect_driver::run_single() {
-  freenect_process_events(_ctx);
+int kinect_driver::run_single() {
+  return freenect_process_events(_ctx);
 }
 
 // Device //

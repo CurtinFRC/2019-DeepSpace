@@ -17,6 +17,6 @@ Imaging a new Vision Coprocessor
   - Raspberry Pi:
     - Hostname: `raspberrypi`, Username: `pi`, Password: `raspberry`
 ### 4. Run the following command:
-  - `wget -qO - https://github.com/CurtinFRC/2019-DeepSpace/blob/master/vision/bootstrap.sh?raw=1 | bash`
+  - `wget --no-check-certificate -qO - https://github.com/CurtinFRC/2019-DeepSpace/blob/master/vision/bootstrap.sh?raw=1 | bash`
 ### 5. Your Coprocessor will now restart
 ### 6. Run `./gradlew :vision:deploy` (`./gradlew :vision:deploy -Praspberry` for the Raspberry Pi) to deploy your code!

@@ -1,7 +1,7 @@
 {
   "fileName": "freenect.json",
   "name": "freenect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "uuid": "3cdffad1-6d30-472a-9717-966d590eee38",
   "mavenUrls": [
       "https://dev.imjac.in/maven/"
@@ -11,7 +11,7 @@
       {
           "groupId": "thirdparty.freenect",
           "artifactId": "libfreenect",
-          "version": "1.0.0",
+          "version": "1.0.1",
           "libName": "freenect",
           "configuration": "native_freenect",
           "headerClassifier": "headers",
@@ -28,7 +28,7 @@
       {
           "groupId": "thirdparty.freenect",
           "artifactId": "libfreenectDeps",
-          "version": "1.0.0",
+          "version": "1.0.1",
           "libName": "",
           "configuration": "native_freenect",
           "sharedLibrary": true,

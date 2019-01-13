@@ -35,8 +35,10 @@ class kinect_driver {
   
   /**
    * Single-shot capture. Does not loop.
+   * 
+   * @return 0 if successful, non-0 if error
    */
-  void run_single();
+  int run_single();
 
  private:
   kinect_driver();
