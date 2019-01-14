@@ -75,3 +75,6 @@ model {
 }
 
 task "sim${project.name}"(dependsOn: "simulateFrcUserProgram${project.name}${wpi.platforms.desktop.capitalize()}DebugExecutable")
+
+if (!project.hasProperty('no-common-check'))
+  tasks.check.dependsOn(':common:check')

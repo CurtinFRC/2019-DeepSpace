@@ -9,6 +9,12 @@ int main(int argc, char **argv) {
     team = std::stoi(argv[1]);
   }
 
+#ifdef __DESKTOP__
+  std::cout << "Running on Desktop - imshow enabled" << std::endl;
+#else
+  std::cout << "Running embedded  -imshow disabled" << std::endl;
+#endif
+
   auto ntinst = nt::NetworkTableInstance::GetDefault();
   if (team != 0) {
     std::cout << "Starting CurtinFRC Vision Program (Client Mode - Team " << team << ")" << std::endl;
