@@ -8,12 +8,14 @@
 
 #include <functional>
 
+#include "sensors/Encoder.h"
+
 namespace curtinfrc {
 
   /**
    * Curtin FRC Wrapper around the CTRE Talon SRX.
    */
-  class TalonSrx : public frc::SpeedController {
+  class TalonSrx : public frc::SpeedController, curtinfrc::sensors::Encoder {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
