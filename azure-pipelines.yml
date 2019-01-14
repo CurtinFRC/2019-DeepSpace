@@ -13,47 +13,78 @@ jobs:
     vmImage: 'VS2017-Win2016'
   steps:
   - template: azure-init.yml
-  - template: azure-steps.yml
-    parameters:
-      args: '-Pno-roborio'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean build'
+      options: '-Pno-roborio'
 
 - job: macOS
   pool:
     vmImage: 'macOS-10.13'
   steps:
   - template: azure-init.yml
-  - template: azure-steps.yml
-    parameters:
-      args: '-Pno-roborio'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean build'
+      options: '-Pno-roborio'
 
 - job: linux
   pool: 
     vmImage: 'Ubuntu-16.04'
   container: linux
   steps:
-  - template: azure-steps.yml
-    parameters:
-      args: '-Pno-roborio'
+  - script: sudo apt-get install -y libusb-1.0-0-dev
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean build'
+      options: '-Pno-roborio'
 
 - job: roborio
   pool: 
     vmImage: 'Ubuntu-16.04'
   container: wpilib2019
   steps:
-  - template: azure-steps.yml
-    parameters:
-      args: '-xcheck'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean build'
+      options: '-Pno-desktop -xcheck -x:vision:build'
 
-- job: pi
+- job: pi_vision
   pool: 
     vmImage: 'Ubuntu-16.04'
   container: raspbian
   steps:
-  - template: azure-steps.yml
-    parameters:
-      args: '-Pno-roborio -xcheck'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean :vision:build'
+      options: '-Pno-roborio -Pno-desktop -xcheck'
 
-- job: tinkerboard
+- job: tinkerboard_vision
   pool:
     vmImage: 'Ubuntu-16.04'
   container: linux
@@ -63,7 +94,13 @@ jobs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       tasks: ':vision:installTinkerboardToolchain'
-      options: '-Pno-roborio --scan --stacktrace'
-  - template: azure-steps.yml
-    parameters:
-      args: '-Pno-roborio'
+      options: '-Pno-roborio -Pno-desktop --scan --stacktrace'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'clean :vision:build'
+      options: '-Pno-roborio -Pno-desktop -xcheck'
