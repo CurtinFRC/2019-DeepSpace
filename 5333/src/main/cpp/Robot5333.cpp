@@ -7,7 +7,7 @@ using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
-  joy = new Joystick(0);
+  joy = new curtinfrc::Joystick(0);
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
@@ -23,8 +23,11 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double leftSpeed = -joy->GetY() + joy->GetZ();
-  double rightSpeed = -joy->GetY() - joy->GetZ();
+  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis);
+  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis);
+
+  double leftSpeed = joyY + joyZ;
+  double rightSpeed = joyY - joyZ;
 
   leftSpeed *= abs(leftSpeed);
   rightSpeed *= abs(rightSpeed);
