@@ -11,11 +11,14 @@ void Robot::RobotInit() {
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
-  left = new SpeedControllerGroup(*leftMotors[0]);
+  left = new SensoredTransmission{new SpeedControllerGroup(*leftMotors[0]), nullptr};
 
   rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
-  right = new SpeedControllerGroup(*rightMotors[0]);
+  right = new SensoredTransmission{new SpeedControllerGroup(*rightMotors[0]), nullptr};
+
+  DrivetrainConfig drivetrainConfig{*left, *right};
+  drivetrain = new Drivetrain(drivetrainConfig);
 }
 
 void Robot::AutonomousInit() {}
@@ -32,8 +35,7 @@ void Robot::TeleopPeriodic() {
   leftSpeed *= abs(leftSpeed);
   rightSpeed *= abs(rightSpeed);
 
-  left->Set(leftSpeed);
-  right->Set(rightSpeed);
+  drivetrain->Set(leftSpeed, rightSpeed);
 }
 
 void Robot::TestInit() {}
