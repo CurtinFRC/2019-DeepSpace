@@ -32,29 +32,6 @@ float height_goal;
 
 // This is the main entrypoint into the CurtinFRC Vision Program!
 
-<<<<<<< HEAD
-=======
-void curtin_frc_vision::run() {
-	// Create and setup the first kinect present on the system
-	kinect_device *kinect = kinect_driver::instance()->create(0);
-	kinect->open();
-	kinect->set_video(kinect_device::video_mode::IR);
-
-	auto table = nt::NetworkTableInstance::GetDefault().GetTable("TestTable");
-	table->GetEntry("KinectAngle").AddListener([&](const nt::EntryNotification &ev) {
-		kinect->set_tilt(ev.value->GetDouble());
-	}, NT_NotifyKind::NT_NOTIFY_UPDATE);
-
-	cs::CvSource outputimg = frc::CameraServer::GetInstance()->PutVideo("Kinect Camera", 640, 480);
-
-	kinect->set_video_callback([&](kinect_device &kin) {
-		outputimg.PutFrame(*kin.video());
-	});
-
-	// Run kinect capture loop
-	kinect_driver::instance()->run();
-
->>>>>>> master
 
   // This is just a demonstration so you can see how this kind of code works. You'll be replacing this
   // with our actual vision tracking software!
