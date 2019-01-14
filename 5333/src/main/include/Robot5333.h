@@ -11,6 +11,8 @@
 #include "Drivetrain.h"
 #include "CurtinControllers.h"
 
+#include "Lift.h"
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -28,4 +30,8 @@ class Robot : public frc::TimedRobot {
   frc::Spark *leftMotors[1], *rightMotors[1];
   curtinfrc::SensoredTransmission *left, *right;
   curtinfrc::Drivetrain *drivetrain;
+
+  frc::Spark *liftMotors[1];
+  curtinfrc::Gearbox *liftGearbox;
+  Lift *beElevator;
 };

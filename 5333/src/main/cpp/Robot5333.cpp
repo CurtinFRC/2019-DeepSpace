@@ -19,6 +19,13 @@ void Robot::RobotInit() {
 
   DrivetrainConfig drivetrainConfig{*left, *right};
   drivetrain = new Drivetrain(drivetrainConfig);
+
+
+  liftMotors[0] = new Spark(5);
+  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
+
+  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr };
+  beElevator = new Lift(elevatorConfig);
 }
 
 void Robot::AutonomousInit() {}
@@ -36,6 +43,11 @@ void Robot::TeleopPeriodic() {
   rightSpeed *= abs(rightSpeed);
 
   drivetrain->Set(leftSpeed, rightSpeed);
+
+
+  double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
+
+  beElevator->Set(beElevatorSpeed);
 }
 
 void Robot::TestInit() {}
