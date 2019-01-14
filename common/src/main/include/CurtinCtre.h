@@ -8,12 +8,14 @@
 
 #include <functional>
 
+#include "sensors/Encoder.h"
+
 namespace curtinfrc {
 
   /**
    * Curtin FRC Wrapper around the CTRE Talon SRX.
    */
-  class TalonSrx : public frc::SpeedController {
+  class TalonSrx : public frc::SpeedController, public curtinfrc::sensors::Encoder {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
@@ -95,6 +97,8 @@ namespace curtinfrc {
      * @return The current sensor velocity, in encoder ticks per 100 millisecond.
      */
     int GetSensorVelocity();
+
+    int GetEncoderTicks() override;
 
     /**
      * Load a talon Configuration.
