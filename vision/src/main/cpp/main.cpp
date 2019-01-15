@@ -1,4 +1,4 @@
-#include "Run.h"
+#include "VisionRunner.h"
 #include <iostream>
 #include <networktables/NetworkTableInstance.h>
 
@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  curtin_frc_vision vision; 
-  vision.run();
+  VisionRunner vision; 
+  vision.Runner();
   
   std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
   return -1;

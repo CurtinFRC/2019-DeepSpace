@@ -1,4 +1,4 @@
-#include "Run.h"
+#include "VisionRunner.h"
 #include "TapeInit.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
@@ -23,14 +23,9 @@
 using namespace cv;
 using namespace std;
 
-
-void curtin_frc_vision::run() {
-  curtin_frc_vision::TapeInit();
-  
-  while(true) {
-    curtin_frc_vision::Capture();
-    curtin_frc_vision::TapeProcessing();
-    curtin_frc_vision::Display();
-  }
-  
+// Handles threading
+void VisionRunner::Run() {
+  VisionRunner(Runnable); // how do i specify which stereotype to take up
+  VisionRunner(Runnable);
+  VisionRunner(Runnable);
 }
