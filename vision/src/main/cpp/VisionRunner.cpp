@@ -1,5 +1,4 @@
 #include "VisionRunner.h"
-#include "TapeInit.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
 #include "Display.h"
@@ -25,7 +24,5 @@ using namespace std;
 
 // Handles threading
 void VisionRunner::Run() {
-  VisionRunner(Runnable); // how do i specify which stereotype to take up
-  VisionRunner(Runnable);
-  VisionRunner(Runnable);
+  Capture::init();
 }

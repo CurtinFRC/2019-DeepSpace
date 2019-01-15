@@ -1,5 +1,7 @@
 #pragma once
-class curtin_frc_vision {
+#include "Process.h"
+class BallProcessing : public Process {
  public:
-  void BallProcessing();
+  void Init() override;
+  void Periodic() override;
 };

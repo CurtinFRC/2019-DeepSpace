@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   }
 
   VisionRunner vision; 
-  vision.Runner();
+  vision.Run();
   
   std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
   return -1;
