@@ -24,7 +24,7 @@ void Robot::RobotInit() {
   liftMotors[0] = new Spark(5);
   liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
 
-  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr };
+  ElevatorConfig elevatorConfig{ *liftGearbox, 1, nullptr, nullptr };
   beElevator = new Lift(elevatorConfig);
 }
 

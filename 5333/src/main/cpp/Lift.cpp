@@ -5,5 +5,5 @@ Lift::Lift(curtinfrc::ElevatorConfig elevatorConfig) {
 }
 
 void Lift::Set(double power) {
-  _elevator->Set(power);
+  _elevator->SetManual(power);
 }
