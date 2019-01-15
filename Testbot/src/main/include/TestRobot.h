@@ -5,7 +5,6 @@
 #include <frc/XboxController.h>
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
-#include <frc/Talon.h>
 #include <frc/DoubleSolenoid.h>
 
 #include "CurtinCtre.h"

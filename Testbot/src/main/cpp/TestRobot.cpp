@@ -18,6 +18,9 @@ void Robot::RobotInit() {
   right = new SensoredTransmission{new SpeedControllerGroup(*rightMotors[0]), nullptr};
 
   hatchEjector = new DoubleSolenoid(0, 1);
+
+  DrivetrainConfig drivetrainConfig{*left, *right};
+  drivetrain = new Drivetrain(drivetrainConfig);
 }
 
 void Robot::AutonomousInit() {}

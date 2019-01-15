@@ -2,13 +2,13 @@
 
 #include "Toggle.h"
 
-TEST(Toggle, DefConstructor) {
+TEST (Toggle, DefConstructor) {
   Toggle toggleDef;
 
   EXPECT_TRUE(toggleDef.tick(true));
 }
 
-TEST(Toggle, Falling) {
+TEST (Toggle, Falling) {
   Toggle toggle(ToggleEvent::ONFALL);
 
   for (int i = 0; i < 2; i++) {
@@ -20,7 +20,7 @@ TEST(Toggle, Falling) {
   }
 }
 
-TEST(Toggle, Rising) {
+TEST (Toggle, Rising) {
   Toggle toggle(ToggleEvent::ONRISE);
 
   for (int i = 0; i < 2; i++) {
@@ -32,7 +32,7 @@ TEST(Toggle, Rising) {
   }
 }
 
-TEST(Toggle, Changing) {
+TEST (Toggle, Changing) {
   Toggle toggle(ToggleEvent::ONCHANGE);
 
   for (int i = 0; i < 2; i++) {
