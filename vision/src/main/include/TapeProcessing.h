@@ -1,6 +1,7 @@
 #pragma once
-class TapeProcessing : public Runnable {
+#include "Process.h"
+class TapeProcessing : public Process {
  public:
-  void Init();
-  void Periodic();
+  void Init() override;
+  void Periodic() override;
 };

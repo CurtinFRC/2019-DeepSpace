@@ -4,6 +4,6 @@
 
 class Display : public Runnable {
  public:
-  void Init();
-  void Periodic();
+  void Init() override;
+  void Periodic() override;
 };
