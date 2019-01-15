@@ -7,7 +7,11 @@
 #include <frc/DoubleSolenoid.h>
 
 #include "CurtinCtre.h"
+#include "SensoredTransmission.h"
+#include "Drivetrain.h"
 #include "CurtinControllers.h"
+
+#include "Lift.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -24,5 +28,10 @@ class Robot : public frc::TimedRobot {
 
   curtinfrc::Joystick *joy;
   frc::Spark *leftMotors[1], *rightMotors[1];
-  frc::SpeedControllerGroup *left, *right;
+  curtinfrc::SensoredTransmission *left, *right;
+  curtinfrc::Drivetrain *drivetrain;
+
+  frc::Spark *liftMotors[1];
+  curtinfrc::Gearbox *liftGearbox;
+  Lift *beElevator;
 };

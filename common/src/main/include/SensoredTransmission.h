@@ -1,7 +1,8 @@
 #pragma once
 
 #include <frc/SpeedController.h>
-#include <sensors/Encoder.h>
+
+#include "sensors/Encoder.h"
 
 namespace curtinfrc {
 
