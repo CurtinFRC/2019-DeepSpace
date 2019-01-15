@@ -2,7 +2,7 @@
 
 #include "Runnable.h"
 
-class Display : public Runnable {
+class Process : public Runnable {
  public:
   void Init();
   void Periodic();

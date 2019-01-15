@@ -1,4 +1,3 @@
-#include "TapeInit.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
 #include "Display.h"
@@ -22,7 +21,7 @@
 using namespace cv;
 using namespace std;
 
-void Capture::Init(){
+void Capture::Init() {
   // This creates a webcam on USB, and dumps it into a sink. The sink allows us to access the image with sink.GrabFrame
   cs::UsbCamera cam{"USBCam", 0};
   cs::CvSink sink{"USB"};
@@ -38,4 +37,8 @@ void Capture::Init(){
   cv::Mat imgOriginal{video_mode.height, video_mode.width, CV_8UC3};
   cv::Mat img_HSV{video_mode.height, video_mode.width, CV_8UC3};
   cv::namedWindow("Original");
+}
+
+void Capture::Periodic() {
+
 }

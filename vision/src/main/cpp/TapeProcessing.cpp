@@ -1,5 +1,4 @@
 #include "Display.h"
-#include "TapeInit.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
 
@@ -22,11 +21,12 @@
 using namespace cv;
 using namespace std;
 
-void curtin_frc_vision::TapeProcessing() {
+void TapeProcessing::Init() {
 
-    sink.GrabFrame();
+}
 
-	if (sink.GrabFrame(imgOrininal) != 0) {
-        cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_RGB2GRAY);
-    }
+void TapeProcessing::Periodic() {
+  if (sink.GrabFrame(imgOriginal) != 0) {
+    cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_RGB2GRAY);
+  }
 }

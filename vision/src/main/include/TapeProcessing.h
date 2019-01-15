@@ -1,5 +1,6 @@
 #pragma once
-class curtin_frc_vision {
+class TapeProcessing : public Runnable {
  public:
-  void TapeProcessing();
+  void Init();
+  void Periodic();
 };

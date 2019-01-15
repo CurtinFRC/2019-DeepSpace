@@ -1,5 +1,9 @@
 #pragma once
-class curtin_frc_vision {
+
+#include "Runnable.h"
+
+class Capture : public Runnable {
  public:
-  void Capture();
+  void Init();
+  void Periodic();
 };

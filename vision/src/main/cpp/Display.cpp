@@ -1,5 +1,4 @@
 #include "Display.h"
-#include "TapeInit.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
 
@@ -22,7 +21,11 @@
 using namespace cv;
 using namespace std;
 
-void curtin_frc_vision::Display() {
+void Display::Init() {
+
+}
+
+void Display::Periodic() {
     if (sink.GrabFrame(imgOriginal) != 0) {
 		imshow("Original", imgOriginal); //Shows the original image
 	}
