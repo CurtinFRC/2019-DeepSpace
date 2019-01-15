@@ -26,13 +26,14 @@ void Display::Init() {
 }
 
 void Display::Periodic() {
-    if (sink.GrabFrame(imgOriginal) != 0) {
+
+    if (sink.GrabFrame(imgHSV) != 0) {
 
 		#ifdef __DESKTOP__
 		imshow("Original", imgOriginal); //Shows the original image
 		#endif
-		
-		outputTape.PutFrame(drawing);
+
+		output.PutFrame(imgHSV);
 	}
 
 

@@ -26,6 +26,7 @@ void Capture::Init() {
   cs::UsbCamera cam{"USBCam", 0};
   cs::CvSink sink{"USB"};
   sink.SetSource(cam);
+  cam.SetExposureManual(-100);
 
   // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
   cam.SetResolution(640, 480);
