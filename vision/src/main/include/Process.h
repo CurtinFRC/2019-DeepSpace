@@ -4,6 +4,6 @@
 
 class Process : public Runnable {
  public:
-  void Init() override;
-  void Periodic() override;
+  virtual void Init();
+  virtual void Periodic();
 };

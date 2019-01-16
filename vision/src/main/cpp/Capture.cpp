@@ -43,3 +43,4 @@ void Capture::Init() {
 void Capture::Periodic() {
 
 }
+

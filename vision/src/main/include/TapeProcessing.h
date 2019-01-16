@@ -2,6 +2,6 @@
 #include "Process.h"
 class TapeProcessing : public Process {
  public:
-  void Init() override;
-  void Periodic() override;
+  void Init();
+  void Periodic();
 };
