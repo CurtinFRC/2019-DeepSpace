@@ -1,12 +1,5 @@
 #include "Elevator.h"
 
-// private
-
-void curtinfrc::Elevator::SetState(curtinfrc::Elevator::ElevatorState state) {
-  _state = state;
-}
-
-
 // public
 
 void curtinfrc::Elevator::SetManual(double setpoint) {
@@ -39,19 +32,9 @@ curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
 }
 
 
-void curtinfrc::Elevator::Update(double dt) {
-  if (_state != _lastState) {
-    OnStateChange(_state, _lastState);
-    _lastState = _state;
-  }
-
-  OnStatePeriodic(_state, dt);
-}
-
-
 // virtual
 
-void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::Elevator::ElevatorState state, double dt) { // Good enough default
+void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) { // Good enough default
   double power = 0;
 
   switch (state) {

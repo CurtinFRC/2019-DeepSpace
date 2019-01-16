@@ -6,6 +6,8 @@
 using namespace frc;
 using namespace curtinfrc;
 
+double lastTimestamp;
+
 void Robot::RobotInit() {
   joy = new curtinfrc::Joystick(0);
   
@@ -31,8 +33,11 @@ void Robot::RobotInit() {
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
 void Robot::TeleopPeriodic() {
+  double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
+  // Calc dt for update functions
+
   double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis);
   double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis);
 
@@ -48,6 +53,9 @@ void Robot::TeleopPeriodic() {
   double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
+
+  // Class update events
+  beElevator->Update(dt);
 }
 
 void Robot::TestInit() {}

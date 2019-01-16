@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StateDevice.h"
 #include "SensoredTransmission.h"
 #include "sensors/BinarySensor.h"
 
@@ -11,10 +12,10 @@ namespace curtinfrc {
     sensors::BinarySensor *limitSensorBottom;
   };
 
-  class Elevator {
+  enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
+  class Elevator : public StateDevice<ElevatorState> {
    public:
     Elevator(ElevatorConfig config) : _config(config) {};
-    enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
 
     void SetManual(double setpoint);
     void SetSetpoint(double setpoint);
@@ -22,19 +23,14 @@ namespace curtinfrc {
     void SetHold();
 
     double GetSetpoint();
-
-    void Update(double dt);
     
-    virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) {};
-    virtual void OnStatePeriodic(ElevatorState state, double dt);
+    virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) override {};
+    virtual void OnStatePeriodic(ElevatorState state, double dt) override;
 
     ElevatorConfig &GetConfig();
 
     private:
-    void SetState(ElevatorState state);
-    
     ElevatorConfig _config;
-    ElevatorState _state, _lastState;
     double _setpoint;
   };
 } // ns curtinfrc
