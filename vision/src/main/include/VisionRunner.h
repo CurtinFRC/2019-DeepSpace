@@ -1,6 +1,7 @@
 #pragma once
+#include "Runnable.h"
 class VisionRunner {
  public:
-  void Run();
+  void Run(Runnable &run);
 };
 

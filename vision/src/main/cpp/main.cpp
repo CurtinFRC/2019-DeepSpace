@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  VisionRunner vision; 
-  vision.Run();
+  VisionRunner vision;
+  
   
   std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
   return -1;

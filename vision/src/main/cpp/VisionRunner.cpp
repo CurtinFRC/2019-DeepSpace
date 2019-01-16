@@ -23,6 +23,12 @@ using namespace cv;
 using namespace std;
 
 // Handles threading
-void VisionRunner::Run() {
-  Capture::init();
+void VisionRunner::Run(Runnable &run) {
+  std::thread t([&]() {
+    run.Init();
+    while (true)
+      run.Periodic();
+  })
+
+  
 }
