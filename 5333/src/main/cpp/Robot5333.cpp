@@ -13,18 +13,28 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
   joy = new curtinfrc::Joystick(0);
-  
+
   leftSRX = new TalonSrx(1);
   leftSRX->SetInverted(false);
   leftSPX = new VictorSpx(2);
   leftSPX->SetInverted(false);
-  left = new SpeedControllerGroup(*leftSRX, *leftSPX);
+  left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
 
   rightSRX = new TalonSrx(3);
   rightSRX->SetInverted(true);
   rightSPX = new VictorSpx(4);
   rightSPX->SetInverted(true);
-  right = new SpeedControllerGroup(*rightSRX, *rightSPX);
+  right = new SensoredTransmission{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
+
+  DrivetrainConfig drivetrainConfig{*left, *right};
+  drivetrain = new Drivetrain(drivetrainConfig);
+
+
+  liftMotors[0] = new Spark(5);
+  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
+
+  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr };
+  beElevator = new Lift(elevatorConfig);
 }
 
 void Robot::AutonomousInit() {}
@@ -41,8 +51,12 @@ void Robot::TeleopPeriodic() {
   double leftSpeed = joyY + joyZ;
   double rightSpeed = joyY - joyZ;
 
-  left->Set(leftSpeed);
-  right->Set(rightSpeed);
+  drivetrain->Set(leftSpeed, rightSpeed);
+
+
+  double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
+
+  beElevator->Set(beElevatorSpeed);
 }
 
 void Robot::TestInit() {}
