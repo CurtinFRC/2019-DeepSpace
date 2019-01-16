@@ -9,13 +9,17 @@ using namespace curtinfrc;
 void Robot::RobotInit() {
   joy = new curtinfrc::Joystick(0);
   
-  leftMotors[0] = new Spark(2);
-  leftMotors[0]->SetInverted(false);
-  left = new SpeedControllerGroup(*leftMotors[0]);
+  leftSRX = new TalonSrx(1);
+  leftSRX->SetInverted(false);
+  leftSPX = new VictorSpx(2);
+  leftSPX->SetInverted(false);
+  left = new SpeedControllerGroup(*leftSRX, *leftSPX);
 
-  rightMotors[0] = new Spark(3);
-  rightMotors[0]->SetInverted(true);
-  right = new SpeedControllerGroup(*rightMotors[0]);
+  rightSRX = new TalonSrx(3);
+  rightSRX->SetInverted(true);
+  rightSPX = new VictorSpx(4);
+  rightSPX->SetInverted(true);
+  right = new SpeedControllerGroup(*rightSRX, *rightSPX);
 }
 
 void Robot::AutonomousInit() {}
@@ -23,8 +27,8 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis);
-  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis);
+  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.6;
+  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.4;
 
   double leftSpeed = joyY + joyZ;
   double rightSpeed = joyY - joyZ;

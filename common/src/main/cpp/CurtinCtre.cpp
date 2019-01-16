@@ -2,6 +2,8 @@
 
 using namespace curtinfrc;
 
+// SRX
+
 void TalonSrx::StopMotor() {
   Disable();
 }
@@ -16,6 +18,27 @@ double TalonSrx::Get() const {
 
 void TalonSrx::ModifyConfig(std::function<void(TalonSrx::Configuration &)> func) {
   TalonSrx::Configuration config = SaveConfig();
+  func(config);
+  LoadConfig(config);
+}
+
+
+// SPX
+
+void VictorSpx::StopMotor() {
+  Disable();
+}
+
+void VictorSpx::PIDWrite(double output) {
+  Set(output);
+}
+
+double VictorSpx::Get() const {
+  return _value;
+}
+
+void VictorSpx::ModifyConfig(std::function<void(VictorSpx::Configuration &)> func) {
+  VictorSpx::Configuration config = SaveConfig();
   func(config);
   LoadConfig(config);
 }
