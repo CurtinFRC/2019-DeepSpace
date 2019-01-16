@@ -28,7 +28,9 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
   curtinfrc::Joystick *joy;
-  frc::Spark *leftMotors[1], *rightMotors[1];
+  
+  curtinfrc::TalonSrx *leftSRX, *rightSRX;
+  curtinfrc::VictorSpx *leftSPX, *rightSPX;
   curtinfrc::SensoredTransmission *left, *right;
   curtinfrc::Drivetrain *drivetrain;
 

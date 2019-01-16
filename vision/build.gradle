@@ -11,8 +11,8 @@ deploy {
       locations {
         // Change this if you've changed the target hostname, username or password.
         ssh {
-          // address = 'curtinvision.local'
-          address = '192.168.0.100'
+          address = 'curtinvision.local'
+          // address = '192.168.0.100'
           user = 'vision'
           password = 'curtinfrc'
         }
@@ -26,7 +26,7 @@ deploy {
 
       targets << 'coprocessor'
       component = 'curtinFrcVision'
-      buildType = 'release'
+      buildType = 'debug'
 
       predeploy << { execute('sudo systemctl stop vision || true') }
       // Make sure we can run our program!
@@ -91,11 +91,16 @@ model {
       }
 
       binaries.all {
-        if (targetPlatform.name == wpi.platforms.desktop)
+        if (targetPlatform.name == wpi.platforms.desktop) {
           cppCompiler.define '__DESKTOP__'
+          if (targetPlatform.operatingSystem.isLinux()) {
+            linker.args << '-lusb-1.0'
+          }
+        }
       }
 
       useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
+      wpi.deps.vendor.cpp(it)
     }
   }
 }

@@ -3,21 +3,30 @@
 #include <math.h>
 #include <iostream>
 
+#include "cameraserver/CameraServer.h"
+
 using namespace frc;
 using namespace curtinfrc;
 
 double lastTimestamp;
 
 void Robot::RobotInit() {
-  joy = new curtinfrc::Joystick(0);
-  
-  leftMotors[0] = new Spark(2);
-  leftMotors[0]->SetInverted(false);
-  left = new SensoredTransmission{ new SpeedControllerGroup(*leftMotors[0]), nullptr };
+  CameraServer::GetInstance()->StartAutomaticCapture(0);
+  CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  rightMotors[0] = new Spark(3);
-  rightMotors[0]->SetInverted(true);
-  right = new SensoredTransmission{ new SpeedControllerGroup(*rightMotors[0]), nullptr };
+  joy = new curtinfrc::Joystick(0);
+
+  leftSRX = new TalonSrx(1);
+  leftSRX->SetInverted(false);
+  leftSPX = new VictorSpx(2);
+  leftSPX->SetInverted(false);
+  left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
+
+  rightSRX = new TalonSrx(3);
+  rightSRX->SetInverted(true);
+  rightSPX = new VictorSpx(4);
+  rightSPX->SetInverted(true);
+  right = new SensoredTransmission{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
 
   DrivetrainConfig drivetrainConfig{*left, *right};
   drivetrain = new Drivetrain(drivetrainConfig);
@@ -37,15 +46,14 @@ void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
 void Robot::TeleopPeriodic() {
   double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
   // Calc dt for update functions
+  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
+  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.65;
 
-  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis);
-  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis);
+  joyY *= abs(joyY);
+  joyZ *= abs(joyZ);
 
   double leftSpeed = joyY + joyZ;
   double rightSpeed = joyY - joyZ;
-
-  leftSpeed *= abs(leftSpeed);
-  rightSpeed *= abs(rightSpeed);
 
   drivetrain->Set(leftSpeed, rightSpeed);
 

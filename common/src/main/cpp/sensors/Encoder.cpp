@@ -8,7 +8,7 @@ int curtinfrc::sensors::Encoder::GetEncoderTicksPerRotation() {
   return _encoderTicksPerRotation;
 }
 
-double curtinfrc::sensors::EncoderTranslator::GetEncoderTicks() {
+int curtinfrc::sensors::EncoderTranslator::GetEncoderTicks() {
   return _counterBase.Get();
 }
 

@@ -7,7 +7,7 @@ namespace curtinfrc {
     class Encoder {
      public:
       Encoder(int encoderTicksPerRotation) : _encoderTicksPerRotation(encoderTicksPerRotation) {};
-      virtual double GetEncoderTicks() = 0;
+      virtual int GetEncoderTicks() = 0;
       virtual void ResetEncoder() = 0;
       double GetEncoderRotations();
 
@@ -20,7 +20,7 @@ namespace curtinfrc {
     class EncoderTranslator : public Encoder {
      public:
       EncoderTranslator(int encoderTicksPerRotation, frc::CounterBase &counterBase) : Encoder(encoderTicksPerRotation), _counterBase(counterBase) {};
-      double GetEncoderTicks() override;
+      int GetEncoderTicks() override;
       void ResetEncoder() override;
     
      private:
