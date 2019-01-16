@@ -27,6 +27,10 @@ deploy {
   }
 }
 
+dependencies {
+  simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
+}
+
 wpi.deps.vendor.loadFrom(project(':common'))
 
 model {
