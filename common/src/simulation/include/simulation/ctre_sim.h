@@ -21,7 +21,18 @@ namespace simulation {
       curtinfrc::TalonSrx::Configuration config;
     };
 
+    struct victor_data {
+      int port;
+
+      bool inverted;
+      double value;
+      curtinfrc::VictorSpx::ControlMode mode = curtinfrc::VictorSpx::ControlMode::Disabled;
+
+      curtinfrc::VictorSpx::Configuration config;
+    };
+
     static std::map<int, simulation::ctre::talon_data> &all_talons();
+    static std::map<int, simulation::ctre::victor_data> &all_victors();
   };
 
 }
