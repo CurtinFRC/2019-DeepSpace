@@ -4,6 +4,7 @@
 #include "BallProcessing.h"
 #include "Display.h"
 #include <iostream>
+#include <list>
 #include <networktables/NetworkTableInstance.h>
 
 #ifndef RUNNING_FRC_TESTS
@@ -29,16 +30,20 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
+  std::list<std::thread> workers;
+
   VisionRunner vision;
   Capture capture;
   TapeProcessing tapeProcess;
   BallProcessing ballProcess;
   Display display;
-
+  
   vision.Run(capture);
   vision.Run(tapeProcess);
   vision.Run(ballProcess);
   vision.Run(display);
+
+  for (auto& w : workers) w.join();
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;

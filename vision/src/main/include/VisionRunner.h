@@ -5,8 +5,6 @@
 class VisionRunner {
  public:
   void Run(Runnable &run);
-
- protected:
-  std::vector<std::thread> threads;
+  std::vector<std::thread> workers;
 };
 

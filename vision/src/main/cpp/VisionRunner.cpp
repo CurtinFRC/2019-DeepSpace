@@ -25,11 +25,9 @@ using namespace std;
 
 // Handles threading
 void VisionRunner::Run(Runnable &run) {
-  std::thread t([&]() {
-    run.Init();
-    while (true)
-      run.Periodic();
-  });
-  t.join();
-  threads.push_back(std::move(t));
+    workers.push_back(std::thread([&]() {
+      run.Init();
+      while (true)
+        run.Periodic();
+    }));
 }
