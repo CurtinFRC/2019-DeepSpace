@@ -7,16 +7,42 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <string>
+#include <mutex>
 
 namespace simulation {
 namespace ui {
+
+  template<typename WIN_TYPE, typename... ARGS>
+  WIN_TYPE *init_window(ARGS... a) {
+    WIN_TYPE *w = new WIN_TYPE(std::forward<ARGS>(a)...);
+    w->start();
+    return w;
+  }
+
+  class window;
+
+  class window_manager {
+   public:
+    static window_manager *INSTANCE();
+
+    void update();
+    void respawn();
+
+   protected:
+    void add(ui::window *window);
+    void remove(ui::window *window);
+    friend class window;
+
+   private:
+    std::vector<ui::window *> _windows;
+    std::mutex _mtx;
+  };
 
   class window {
    public:
     using clock = std::chrono::high_resolution_clock;
 
-    window(std::string name, int width, int height) : _window_name(name), _image(height, width, CV_8UC3) { }
-
+    window(std::string name, int width, int height);
     ~window();
 
     void start();
