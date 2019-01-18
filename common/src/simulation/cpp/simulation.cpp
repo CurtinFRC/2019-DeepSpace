@@ -17,11 +17,6 @@ auto bind(func_type func_ref) {
   return std::bind(func_ref, std::placeholders::_1);
 }
 
-harness::harness() {
-  _windows.push_back(std::make_unique<control_window>(_windows));
-  _windows.push_back(std::make_unique<motor_window>());
-}
-
 void harness::run(std::function<int()> robot_thread) {
   std::cout << "[SIM] Simulation Starting!" << std::endl;
   HAL_Initialize(500, 0);
