@@ -1,6 +1,4 @@
 #include "Capture.h"
-#include "TapeProcessing.h"
-#include "Display.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -20,6 +18,8 @@
 
 using namespace cv;
 using namespace std;
+
+Capture capture{};
 
 void Capture::Init() {
   // This creates a webcam on USB, and dumps it into a sink. The sink allows us to access the image with sink.GrabFrame

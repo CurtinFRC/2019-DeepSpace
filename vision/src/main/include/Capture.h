@@ -6,4 +6,5 @@ class Capture : public Runnable {
  public:
   void Init() override;
   void Periodic() override;
+  Capture();
 };

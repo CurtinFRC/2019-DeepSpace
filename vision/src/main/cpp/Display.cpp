@@ -22,8 +22,10 @@ using namespace cv;
 using namespace std;
 
 void Display::Init() {
-
+	_capture = _process.GetCapture(); //get Capture reference through process
 }
+
+Display::Display(Process &process) : _process(process) {};
 
 void Display::Periodic() {
 
@@ -43,3 +45,4 @@ void Display::Periodic() {
 		//break;
 	}
 }
+
