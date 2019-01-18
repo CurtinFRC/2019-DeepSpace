@@ -12,7 +12,7 @@ inline can::TalonSRX *NativeSrx(const TalonSrx *srx) {
   return static_cast<can::TalonSRX *>(srx->_handle);
 }
 
-TalonSrx::TalonSrx(int port) {
+TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : Encoder::Encoder(encoderTicksPerRotation) {
   _handle = (void *)new can::TalonSRX(port);
   _port = port;
 }
@@ -56,6 +56,10 @@ int TalonSrx::GetSensorPosition() {
 
 int TalonSrx::GetSensorVelocity() {
   return NativeSrx(this)->GetSelectedSensorVelocity();
+}
+
+void TalonSrx::ResetEncoder() {
+  NativeSrx(this)->SetSelectedSensorPosition(0, 0, 0);
 }
 
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {

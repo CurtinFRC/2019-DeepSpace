@@ -10,6 +10,7 @@
 #include "SensoredTransmission.h"
 #include "Drivetrain.h"
 #include "CurtinControllers.h"
+#include "Gearbox.h"
 
 #include "Lift.h"
 

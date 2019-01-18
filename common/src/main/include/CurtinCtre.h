@@ -26,7 +26,7 @@ namespace curtinfrc {
      * 
      * @param port The device ID of the Talon SRX on the CAN Bus.
      */
-    TalonSrx(int port);
+    TalonSrx(int port, int encoderTicksPerRotation);
     ~TalonSrx();
 
     /**
@@ -100,6 +100,7 @@ namespace curtinfrc {
     int GetSensorVelocity();
 
     int GetEncoderTicks() override;
+    void ResetEncoder() override;
 
     /**
      * Load a talon Configuration.
