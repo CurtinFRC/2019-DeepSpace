@@ -7,7 +7,7 @@
 namespace curtinfrc {
   struct ElevatorConfig {
     SensoredTransmission &spool;
-    double spoolRadius; // Plus average thickness of rope wrapped around spool...?
+    double spoolRadius; // In metres    // Plus average thickness of rope wrapped around spool...?
     sensors::BinarySensor *limitSensorTop;
     sensors::BinarySensor *limitSensorBottom;
   };
