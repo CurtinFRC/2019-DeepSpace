@@ -21,28 +21,10 @@
 using namespace cv;
 using namespace std;
 
-void Display::Init() {
-	_capture = _process.GetCapture(); //get Capture reference through process
-}
+Display::Display(Process &process) : _process(process) {}
 
-Display::Display(Process &process) : _process(process) {};
+void Display::Init() { }
 
 void Display::Periodic() {
-
-    if (sink.GrabFrame(imgHSV) != 0) {
-
-		#ifdef __DESKTOP__
-		imshow("Original", imgOriginal); //Shows the original image
-		#endif
-
-		output.PutFrame(imgHSV);
-	}
-
-
-	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-	{
-		cout << "esc key is pressed by user" << endl;
-		//break;
-	}
 }
 

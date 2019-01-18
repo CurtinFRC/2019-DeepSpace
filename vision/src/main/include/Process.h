@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Capture.h"
 #include "Runnable.h"
 
 class Process : public Runnable {

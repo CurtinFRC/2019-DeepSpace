@@ -26,7 +26,5 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  if (sink.GrabFrame(imgOriginal) != 0) {
-    cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_RGB2HSV); //Coverts RGB Frame to HSV
-  }
+  
 }

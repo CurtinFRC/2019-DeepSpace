@@ -30,20 +30,16 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  std::list<std::thread> workers;
-
   VisionRunner vision;
   Capture capture;
-  TapeProcessing tapeProcess;
-  BallProcessing ballProcess;
-  Display display;
+  TapeProcessing tapeProcess{capture};
+  BallProcessing ballProcess{capture};
+  Display display{tapeProcess};
   
   vision.Run(capture);
   vision.Run(tapeProcess);
   vision.Run(ballProcess);
   vision.Run(display);
-
-  for (auto& w : workers) w.join();
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;

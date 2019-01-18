@@ -20,7 +20,7 @@
 using namespace cv;
 using namespace std;
 //Set _capture as a Capture object reference
-Process::Process(Capture &capture) : _capture(capture);
+Process::Process(Capture &capture) : _capture(capture) {}
 
 Capture &Process::GetCapture() {
     return _capture;
