@@ -1,5 +1,10 @@
-#include "Run.h"
+#include "VisionRunner.h"
+#include "Capture.h"
+#include "TapeProcessing.h"
+#include "BallProcessing.h"
+#include "Display.h"
 #include <iostream>
+#include <list>
 #include <networktables/NetworkTableInstance.h>
 
 #ifndef RUNNING_FRC_TESTS
@@ -25,10 +30,22 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  curtin_frc_vision vision; 
-  vision.run();
+  std::list<std::thread> workers;
+
+  VisionRunner vision;
+  Capture capture;
+  TapeProcessing tapeProcess;
+  BallProcessing ballProcess;
+  Display display;
   
-  std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
+  vision.Run(capture);
+  vision.Run(tapeProcess);
+  vision.Run(ballProcess);
+  vision.Run(display);
+
+  for (auto& w : workers) w.join();
+  
+  std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
 }
 #endif

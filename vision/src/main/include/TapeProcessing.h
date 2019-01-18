@@ -1,5 +1,7 @@
 #pragma once
-class curtin_frc_vision {
+#include "Process.h"
+class TapeProcessing : public Process {
  public:
-  void TapeProcessing();
+  void Init();
+  void Periodic();
 };

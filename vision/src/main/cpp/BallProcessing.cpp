@@ -1,5 +1,9 @@
 #include <BallProcessing.h>
 
-void curtin_frc_vision::BallProcessing(){
+void BallProcessing::Init() {
 
+}
+
+void BallProcessing::Periodic() {
+    
 }

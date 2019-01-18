@@ -1,6 +1,5 @@
-#include "Display.h"
+#include "Process.h"
 #include "Capture.h"
-#include "TapeProcessing.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -20,13 +19,9 @@
 
 using namespace cv;
 using namespace std;
+//Set _capture as a Capture object reference
+Process::Process(Capture &capture) : _capture(capture);
 
-void TapeProcessing::Init() {
-
-}
-
-void TapeProcessing::Periodic() {
-  if (sink.GrabFrame(imgOriginal) != 0) {
-    cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_RGB2HSV); //Coverts RGB Frame to HSV
-  }
+Capture &Process::GetCapture() {
+    return _capture;
 }

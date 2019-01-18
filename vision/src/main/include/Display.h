@@ -1,5 +1,13 @@
 #pragma once
-class curtin_frc_vision {
+
+#include "Runnable.h"
+
+class Display : public Runnable {
  public:
-  void Display();
+  void Init() override;
+  void Periodic() override;
+  Display(Process &process);
+ private:
+  Process &_process;
+  Capture &_capture;
 };

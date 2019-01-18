@@ -1,6 +1,8 @@
-#include "Display.h"
+#include "VisionRunner.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
+#include "BallProcessing.h"
+#include "Display.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -21,12 +23,11 @@
 using namespace cv;
 using namespace std;
 
-void TapeProcessing::Init() {
-
-}
-
-void TapeProcessing::Periodic() {
-  if (sink.GrabFrame(imgOriginal) != 0) {
-    cv::cvtColor(imgOriginal, imgHSV, cv::COLOR_RGB2HSV); //Coverts RGB Frame to HSV
-  }
+// Handles threading
+void VisionRunner::Run(Runnable &run) {
+    workers.push_back(std::thread([&]() {
+      run.Init();
+      while (true)
+        run.Periodic();
+    }));
 }
