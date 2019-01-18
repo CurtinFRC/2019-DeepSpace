@@ -16,13 +16,13 @@ void Robot::RobotInit() {
 
   joy = new curtinfrc::Joystick(0);
 
-  leftSRX = new TalonSrx(1);
+  leftSRX = new TalonSrx(1, 2048);
   leftSRX->SetInverted(false);
   leftSPX = new VictorSpx(2);
   leftSPX->SetInverted(false);
   left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
 
-  rightSRX = new TalonSrx(3);
+  rightSRX = new TalonSrx(3, 2048);
   rightSRX->SetInverted(true);
   rightSPX = new VictorSpx(4);
   rightSPX->SetInverted(true);
