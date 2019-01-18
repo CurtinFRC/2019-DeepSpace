@@ -4,9 +4,11 @@
 
 class Display : public Runnable {
  public:
+  Display(Process &process);
+  
   void Init() override;
   void Periodic() override;
-  Display(Process &process);
+
  private:
   Process &_process;
   Capture &_capture;
