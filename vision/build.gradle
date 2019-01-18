@@ -96,6 +96,8 @@ model {
           if (targetPlatform.operatingSystem.isLinux()) {
             linker.args << '-lusb-1.0'
           }
+        } else if (targetPlatform.name == TinkerboardPlugin.tinkerboardPlatform) {
+          linker.args << '-pthread'
         }
       }
 

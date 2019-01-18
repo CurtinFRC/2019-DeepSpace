@@ -1,5 +1,11 @@
 #pragma once
-class curtin_frc_vision {
+
+#include "Process.h"
+
+class TapeProcessing : public Process {
  public:
-  void TapeProcessing();
+  TapeProcessing(Capture &capture) : Process(capture) {}
+
+  void Init() override;
+  void Periodic() override;
 };
