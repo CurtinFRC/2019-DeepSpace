@@ -1,6 +1,7 @@
 #include "VisionRunner.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
+#include "BallProcessing.h"
 #include "Display.h"
 
 #include <opencv2/opencv.hpp>
@@ -28,7 +29,7 @@ void VisionRunner::Run(Runnable &run) {
     run.Init();
     while (true)
       run.Periodic();
-  })
-
-  
+  });
+  t.join();
+  threads.push_back(std::move(t));
 }

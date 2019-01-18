@@ -1,4 +1,8 @@
 #include "VisionRunner.h"
+#include "Capture.h"
+#include "TapeProcessing.h"
+#include "BallProcessing.h"
+#include "Display.h"
 #include <iostream>
 #include <networktables/NetworkTableInstance.h>
 
@@ -26,7 +30,15 @@ int main(int argc, char **argv) {
   }
 
   VisionRunner vision;
-  
+  Capture capture;
+  TapeProcessing tapeProcess;
+  BallProcessing ballProcess;
+  Display display;
+
+  vision.Run(capture);
+  vision.Run(tapeProcess);
+  vision.Run(ballProcess);
+  vision.Run(display);
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;

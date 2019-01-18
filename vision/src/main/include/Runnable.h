@@ -1,4 +1,5 @@
 #pragma once
+
 class Runnable {
  public:
   virtual void Init() = 0;
