@@ -7,9 +7,9 @@ using hand = frc::XboxController::JoystickHand; // Type alias for hand
 void Robot::RobotInit() {
   // Motor_Controllers
   left_motor1 = new curtinfrc::TalonSrx(0, 0);
-  right_motor1 = new curtinfrc::TalonSrx(2, 0);
-  left_motor2 = new curtinfrc::TalonSrx(1, 0);
-  right_motor2 = new curtinfrc::TalonSrx(3, 0);
+  right_motor1 = new curtinfrc::TalonSrx(1, 0);
+  left_motor2 = new curtinfrc::VictorSpx(2);
+  right_motor2 = new curtinfrc::VictorSpx(3);
 
   Cargo = new frc::Spark(2);
   Rotation = new frc::Spark(3);
