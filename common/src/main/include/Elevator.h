@@ -23,13 +23,14 @@ namespace curtinfrc {
     void SetHold();
 
     double GetSetpoint();
+
+    ElevatorConfig &GetConfig();
     
+   protected:
     virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) override {};
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
 
-    ElevatorConfig &GetConfig();
-
-    private:
+   private:
     ElevatorConfig _config;
     double _setpoint;
   };
