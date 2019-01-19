@@ -12,20 +12,13 @@ using ControlMode = typename curtinfrc::TalonSrx::ControlMode;
 
 motor_window::motor_window() : ui::window("Motors", 250, 400) {}
 
-static std::string fmt_precision(double val, int prec) {
-  std::ostringstream out;
-  out.precision(prec);
-  out << std::fixed << val;
-  return out.str();
-}
-
 static std::string ctre_to_string(ControlMode mode, double val) {
   return (mode == ControlMode::Position
-              ? "Position " + fmt_precision(val, 0)
+              ? "Position " + ui::utils::fmt_precision(val, 0)
               : mode == ControlMode::Velocity
-                    ? "Velocity " + fmt_precision(val, 1)
+                    ? "Velocity " + ui::utils::fmt_precision(val, 1)
                           : mode == ControlMode::Follower
-                                ? "Following ID " + fmt_precision(val, 0)
+                                ? "Following ID " + ui::utils::fmt_precision(val, 0)
                                 : mode == ControlMode::Disabled ? "Disabled" : "?????");
 }
 
@@ -84,7 +77,7 @@ void motor_window::render_motor(cv::Mat &img, double yorigin, std::string type, 
     double perc = clamped / (max - min);
     ui::box{0.3, yorigin - 0.02, 0.4 * perc, 0.04}.fill(img, col);
 
-    ui::point{0.85, yorigin}.text(img, (fmt_precision(val, precision) + unit).c_str(), 0.5,
+    ui::point{0.85, yorigin}.text(img, (ui::utils::fmt_precision(val, precision) + unit).c_str(), 0.5,
                                   ui::colour::gray(), 1);
   } else {
     ui::box{0.3, yorigin - 0.02, 0.4, 0.04}.fill(img, ui::colour::gray());

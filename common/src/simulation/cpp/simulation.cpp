@@ -1,9 +1,12 @@
 #include "simulation/simulation.h"
+#include "simulation/physics_updater.h"
 #include "simulation/windows/control.h"
 #include "simulation/windows/motors.h"
+#include "simulation/windows/elevator.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
+#include "mockdata/RoboRioData.h"
 
 #include <iostream>
 #include <thread>
@@ -21,15 +24,23 @@ void harness::run(std::function<int()> robot_thread) {
   std::cout << "[SIM] Simulation Starting!" << std::endl;
   HAL_Initialize(500, 0);
   HALSIM_SetDriverStationDsAttached(true);
+  HALSIM_SetRoboRioVInVoltage(0, 12.9);
 
   (new control_window())->start();
   (new motor_window())->start();
+  elevator_window::init();
 
   std::cout << "[SIM] Starting Robot Thread" << std::endl;
-  std::thread thread([&]() {
+  std::thread r_thread([&]() {
     robot_thread();
   });
-  thread.detach();
+  r_thread.detach();
+
+  std::cout << "[SIM] Starting Physics Thread" << std::endl;
+  std::thread p_thread([&]() {
+    physics_thread::INSTANCE()->threadfunc();
+  });
+  p_thread.detach();
 
   std::cout << "[SIM] Simulation Initialization Complete" << std::endl;
 

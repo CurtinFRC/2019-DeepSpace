@@ -1,6 +1,7 @@
 #pragma once
 
 #include "elements.h"
+#include "utils.h"
 
 #include <chrono>
 #include <opencv2/core/core.hpp>
