@@ -43,7 +43,7 @@ double elevator_window::get_motor_val() {
 }
 
 void elevator_window::add_encoder_position(double pos) {
-  double C = 2 * M_PI * _config->spoolRadius;
+  double C = 2 * 3.14159265 * _config->spoolRadius;
   double rots = pos / C;
   auto encoder = _config->spool.encoder;
   _set_enc_func(static_cast<int16_t>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
