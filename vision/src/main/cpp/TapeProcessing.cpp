@@ -26,5 +26,6 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  
+	if (_capture.IsValidFrame())
+		cv::Mat bgrThreshInput = _capture.GetCaptureMat();
 }

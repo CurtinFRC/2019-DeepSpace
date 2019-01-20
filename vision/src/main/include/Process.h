@@ -7,6 +7,6 @@ class Process : public Runnable {
  public:
   Process(Capture &capture);
   Capture &GetCapture();
- private:
+ protected:
   Capture &_capture;
 };
