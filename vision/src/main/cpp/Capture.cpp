@@ -19,7 +19,13 @@
 using namespace cv;
 using namespace std;
 
+Capture::Capture(int port) {
+  camPort = port;
+}
+
 void Capture::Init() {
+  cs::UsbCamera _cam{"USBCam", camPort};
+
   _sink.SetSource(_cam);
   _cam.SetExposureManual(-100);
 
@@ -42,4 +48,8 @@ cv::Mat &Capture::GetCaptureMat() {
 
 bool Capture::IsValidFrame() {
   return _isValid;
+}
+
+int Capture::GetPort() {
+  return camPort;
 }

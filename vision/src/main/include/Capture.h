@@ -7,6 +7,8 @@
 
 class Capture : public Runnable {
  public:
+  Capture(int port);
+  int GetPort();
   void Init() override;
   void Periodic() override;
 
@@ -14,8 +16,8 @@ class Capture : public Runnable {
   bool IsValidFrame();
 
  private:
-  cs::UsbCamera _cam{"USBCam", 0};
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   bool _isValid = false;
+  int camPort;
 };
