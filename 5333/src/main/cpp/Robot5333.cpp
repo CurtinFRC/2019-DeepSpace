@@ -3,12 +3,18 @@
 #include <math.h>
 #include <iostream>
 
-#include "cameraserver/CameraServer.h"
+#include <SmartDashboard/SmartDashboard.h>
+#include <cameraserver/CameraServer.h>
 
 using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
+  table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
+  yOffset = table->GetEntry("yOffset");
+  xOffset = table->GetEntry("xOffset");
+  endAngle = table->GetEntry("endAngle");
+
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
@@ -42,6 +48,10 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
+  SmartDashboard::PutNumber("Y Offset", yOffset.GetDouble(0));
+  SmartDashboard::PutNumber("X Offset", xOffset.GetDouble(0));
+  SmartDashboard::PutNumber("End Angle", endAngle.GetDouble(0));
+
   double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
   double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.65;
 
