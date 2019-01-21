@@ -22,14 +22,12 @@ using namespace cv;
 using namespace std;
 
 void TapeProcessing::Init() {
-
+	hsvImg = cv::Mat::zeros(_capture.GetHeight(), _capture.GetWidth(), CV_8UC3);
 }
 
 void TapeProcessing::Periodic() {
 	if (_capture.IsValidFrame()) {
-		cv::Mat bgrThreshInput = _capture.GetCaptureMat();
-		double bgrThreshBlue[] = {0.0, 127.0};
-		double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
-		double bgrThreshRed[] = {0.0, 127.0};
+		cv::Mat hsvThreshInput = _capture.GetCaptureMat();
+		cv::cvtColor(hsvThreshInput, hsvImg, cv::COLOR_RGB2HSV);
 	}
 }

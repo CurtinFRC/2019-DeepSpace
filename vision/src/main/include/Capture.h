@@ -11,6 +11,8 @@ class Capture : public Runnable {
   int GetPort();
   void Init() override;
   void Periodic() override;
+  int &GetHeight();
+  int &GetWidth();
 
   cv::Mat &GetCaptureMat();
   bool IsValidFrame();
@@ -20,4 +22,6 @@ class Capture : public Runnable {
   cv::Mat _captureMat;
   bool _isValid = false;
   int camPort;
+  int videoWidth;
+  int videoHeight;
 };
