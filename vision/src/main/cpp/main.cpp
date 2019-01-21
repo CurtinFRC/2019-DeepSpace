@@ -40,6 +40,10 @@ int main(int argc, char **argv) {
   vision.Run(tapeProcess);
   vision.Run(ballProcess);
   vision.Run(display);
+
+  for (int i=0; i<vision.workers.size(); i++) {
+    vision.workers[i].join();
+  }
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;

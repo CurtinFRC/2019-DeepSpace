@@ -19,13 +19,9 @@
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) {
-  camPort = port;
-}
+Capture::Capture(int port) : _cam("USBCam", port) {}
 
 void Capture::Init() {
-  cs::UsbCamera _cam{"USBCam", camPort};
-
   _sink.SetSource(_cam);
   _cam.SetExposureManual(-100);
 

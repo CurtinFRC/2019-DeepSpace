@@ -18,6 +18,7 @@ class Capture : public Runnable {
   bool IsValidFrame();
 
  private:
+  cs::UsbCamera _cam;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   bool _isValid = false;
