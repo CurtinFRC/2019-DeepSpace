@@ -11,11 +11,11 @@ void Robot::RobotInit() {
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
-  left = new SensoredTransmission{new SpeedControllerGroup(*leftMotors[0]), nullptr};
+  left = new Gearbox{new SpeedControllerGroup(*leftMotors[0]), nullptr};
 
   rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
-  right = new SensoredTransmission{new SpeedControllerGroup(*rightMotors[0]), nullptr};
+  right = new Gearbox{new SpeedControllerGroup(*rightMotors[0]), nullptr};
 
   hatchEjector = new DoubleSolenoid(0, 1);
 

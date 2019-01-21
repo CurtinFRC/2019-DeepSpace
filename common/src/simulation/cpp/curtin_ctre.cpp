@@ -19,7 +19,7 @@ std::map<int, simulation::ctre::victor_data> &simulation::ctre::all_victors() {
 
 // Talon SRX
 
-TalonSrx::TalonSrx(int port) {
+TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : Encoder::Encoder(encoderTicksPerRotation) {
   _talons[port] = simulation::ctre::talon_data{};
   _talons[port].port = port;
   _port = port;
@@ -65,6 +65,10 @@ int TalonSrx::GetSensorPosition() {
 
 int TalonSrx::GetSensorVelocity() {
   return _talons[_port].sensor_vel;
+}
+
+void TalonSrx::ResetEncoder() {
+  _talons[_port].sensor_pos = 0;
 }
 
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {

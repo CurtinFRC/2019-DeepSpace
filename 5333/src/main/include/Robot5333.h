@@ -11,9 +11,9 @@
 #include <networktables/NetworkTableInstance.h>
 
 #include "CurtinCtre.h"
-#include "SensoredTransmission.h"
 #include "Drivetrain.h"
 #include "CurtinControllers.h"
+#include "Gearbox.h"
 
 #include "Lift.h"
 
@@ -38,7 +38,7 @@ class Robot : public frc::TimedRobot {
   
   curtinfrc::TalonSrx *leftSRX, *rightSRX;
   curtinfrc::VictorSpx *leftSPX, *rightSPX;
-  curtinfrc::SensoredTransmission *left, *right;
+  curtinfrc::Gearbox *left, *right;
   curtinfrc::Drivetrain *drivetrain;
 
   frc::Spark *liftMotors[1];
