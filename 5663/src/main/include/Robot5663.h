@@ -3,8 +3,10 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/Spark.h>
+#include <frc/DoubleSolenoid.h>
+#include <frc/Encoder.h>
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -19,7 +21,9 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  frc::XboxController *xbox;
-  frc::Spark *left_motors, *right_motors;
-  frc::Spark *shooter, *intake;
+  frc::XboxController *xbox1, *xbox2;
+  frc::Spark *Cargo, *Rotation;
+  frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
+
+  curtinfrc::TalonSrx *left_motor1, *right_motor1, *left_motor2, *right_motor2;
 };

@@ -1,6 +1,10 @@
-#include "vision.h"
-
+#include "VisionRunner.h"
+#include "Capture.h"
+#include "TapeProcessing.h"
+#include "BallProcessing.h"
+#include "Display.h"
 #include <iostream>
+#include <list>
 #include <networktables/NetworkTableInstance.h>
 
 #ifndef RUNNING_FRC_TESTS
@@ -9,6 +13,12 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     team = std::stoi(argv[1]);
   }
+
+#ifdef __DESKTOP__
+  std::cout << "Running on Desktop - imshow enabled" << std::endl;
+#else
+  std::cout << "Running embedded  -imshow disabled" << std::endl;
+#endif
 
   auto ntinst = nt::NetworkTableInstance::GetDefault();
   if (team != 0) {
@@ -20,10 +30,18 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  curtin_frc_vision vision;
-  vision.run();
-
-  std::cout << "Vision Program Exited. Was that meant to happen?" << std::endl;
+  VisionRunner vision;
+  Capture capture{0};
+  TapeProcessing tapeProcess{capture};
+  BallProcessing ballProcess{capture};
+  Display display{tapeProcess};
+  
+  vision.Run(capture);
+  vision.Run(tapeProcess);
+  vision.Run(ballProcess);
+  vision.Run(display);
+  
+  std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
 }
 #endif

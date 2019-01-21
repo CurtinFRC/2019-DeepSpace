@@ -1,11 +1,17 @@
 #pragma once
 
+#include <frc/Timer.h>
 #include <frc/TimedRobot.h>
-#include <frc/XboxController.h>
+#include <frc/SpeedControllerGroup.h>
+#include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
-#include "curtin_ctre.h"
-#include <frc/Timer.h>
+#include "CurtinCtre.h"
+#include "Drivetrain.h"
+#include "CurtinControllers.h"
+#include "Gearbox.h"
+
+#include "Lift.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -20,7 +26,14 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  frc::XboxController *Xbox, *Xbox2;
-  curtinfrc::talon_srx *LeftMotors[2], *RightMotors[2], *ConveyorMotors[2];
-  frc::DoubleSolenoid *FlappyBoi;
+  curtinfrc::Joystick *joy;
+  
+  curtinfrc::TalonSrx *leftSRX, *rightSRX;
+  curtinfrc::VictorSpx *leftSPX, *rightSPX;
+  curtinfrc::Gearbox *left, *right;
+  curtinfrc::Drivetrain *drivetrain;
+
+  frc::Spark *liftMotors[1];
+  curtinfrc::Gearbox *liftGearbox;
+  Lift *beElevator;
 };

@@ -8,25 +8,18 @@
 
 using namespace simulation;
 
-using control_mode = typename curtinfrc::talon_srx::control_mode;
+using ControlMode = typename curtinfrc::TalonSrx::ControlMode;
 
 motor_window::motor_window() : ui::window("Motors", 250, 400) {}
 
-static std::string fmt_precision(double val, int prec) {
-  std::ostringstream out;
-  out.precision(prec);
-  out << std::fixed << val;
-  return out.str();
-}
-
-static std::string ctre_to_string(control_mode mode, double val) {
-  return (mode == control_mode::Position
-              ? "Position " + fmt_precision(val, 0)
-              : mode == control_mode::Velocity
-                    ? "Velocity " + fmt_precision(val, 1)
-                          : mode == control_mode::Follower
-                                ? "Following ID " + fmt_precision(val, 0)
-                                : mode == control_mode::Disabled ? "Disabled" : "?????");
+static std::string ctre_to_string(ControlMode mode, double val) {
+  return (mode == ControlMode::Position
+              ? "Position " + ui::utils::fmt_precision(val, 0)
+              : mode == ControlMode::Velocity
+                    ? "Velocity " + ui::utils::fmt_precision(val, 1)
+                          : mode == ControlMode::Follower
+                                ? "Following ID " + ui::utils::fmt_precision(val, 0)
+                                : mode == ControlMode::Disabled ? "Disabled" : "?????");
 }
 
 void motor_window::render(cv::Mat &img) {
@@ -45,14 +38,28 @@ void motor_window::render(cv::Mat &img) {
 
   auto talons = ctre::all_talons();
   for (auto it = talons.begin(); it != talons.end(); it++) {
-    control_mode mode = it->second.mode;
+    ControlMode mode = it->second.mode;
     double       val  = it->second.value;
-    if (mode == control_mode::PercentOutput) {
+    if (mode == ControlMode::PercentOutput) {
       render_motor(img, yorigin, "SRX", it->second.port, true, val * 100);
-    } else if (mode == control_mode::Current) {
+    } else if (mode == ControlMode::Current) {
       render_motor(img, yorigin, "SRX", it->second.port, true, val, 0, 40, "A");
     } else {
       render_motor(img, yorigin, "SRX", it->second.port, ctre_to_string(mode, val));
+    }
+    yorigin += 0.05;
+  }
+
+  auto victors = ctre::all_victors();
+  for (auto it = victors.begin(); it != victors.end(); it++) {
+    ControlMode mode = it->second.mode;
+    double       val  = it->second.value;
+    if (mode == ControlMode::PercentOutput) {
+      render_motor(img, yorigin, "SPX", it->second.port, true, val * 100);
+    } else if (mode == ControlMode::Current) {
+      render_motor(img, yorigin, "SPX", it->second.port, true, val, 0, 40, "A");
+    } else {
+      render_motor(img, yorigin, "SPX", it->second.port, ctre_to_string(mode, val));
     }
     yorigin += 0.05;
   }
@@ -70,7 +77,7 @@ void motor_window::render_motor(cv::Mat &img, double yorigin, std::string type, 
     double perc = clamped / (max - min);
     ui::box{0.3, yorigin - 0.02, 0.4 * perc, 0.04}.fill(img, col);
 
-    ui::point{0.85, yorigin}.text(img, (fmt_precision(val, precision) + unit).c_str(), 0.5,
+    ui::point{0.85, yorigin}.text(img, (ui::utils::fmt_precision(val, precision) + unit).c_str(), 0.5,
                                   ui::colour::gray(), 1);
   } else {
     ui::box{0.3, yorigin - 0.02, 0.4, 0.04}.fill(img, ui::colour::gray());

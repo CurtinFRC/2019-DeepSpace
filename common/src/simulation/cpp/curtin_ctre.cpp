@@ -1,68 +1,131 @@
-// Simulation harness for the curtinfrc::talon_srx.
+// Simulation harness for the curtinfrc::TalonSrx.
 
-#include "curtin_ctre.h"
+#include "CurtinCtre.h"
 #include "simulation/ctre_sim.h"
 
 using namespace curtinfrc;
 
 static std::map<int, simulation::ctre::talon_data> _talons;
+static std::map<int, simulation::ctre::victor_data> _victors;
 
 std::map<int, simulation::ctre::talon_data> &simulation::ctre::all_talons() {
   return _talons;
 }
 
-talon_srx::talon_srx(int port) {
+std::map<int, simulation::ctre::victor_data> &simulation::ctre::all_victors() {
+  return _victors;
+}
+
+
+// Talon SRX
+
+TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : Encoder::Encoder(encoderTicksPerRotation) {
   _talons[port] = simulation::ctre::talon_data{};
   _talons[port].port = port;
   _port = port;
 }
 
-talon_srx::~talon_srx() {
+TalonSrx::~TalonSrx() {
   _talons.erase(_port);
 }
 
-int talon_srx::get_port() {
+int TalonSrx::GetPort() {
   return (int) _port;
 }
 
-void talon_srx::SetInverted(bool invert) {
+void TalonSrx::SetInverted(bool invert) {
   _talons[_port].inverted = true;
 }
 
-bool talon_srx::GetInverted() const {
+bool TalonSrx::GetInverted() const {
   return _talons[_port].inverted;
 }
 
-void talon_srx::Disable() {
-  _talons[_port].mode = control_mode::Disabled;
+void TalonSrx::Disable() {
+  _talons[_port].mode = ControlMode::Disabled;
 }
 
-void talon_srx::Set(double speed) {
-  Set(control_mode::PercentOutput, speed);
+void TalonSrx::Set(double speed) {
+  Set(ControlMode::PercentOutput, speed);
 }
 
-void talon_srx::Set(talon_srx::control_mode mode, double value) {
+void TalonSrx::Set(TalonSrx::ControlMode mode, double value) {
   _talons[_port].mode = mode;
   _talons[_port].value = value;
   _value = value;
 }
 
-talon_srx::control_mode talon_srx::GetMode() {
+TalonSrx::ControlMode TalonSrx::GetMode() {
   return _talons[_port].mode;
 }
 
-int talon_srx::GetSensorPosition() {
+int TalonSrx::GetSensorPosition() {
   return _talons[_port].sensor_pos;
 }
 
-int talon_srx::GetSensorVelocity() {
+int TalonSrx::GetSensorVelocity() {
   return _talons[_port].sensor_vel;
 }
 
-void talon_srx::load_config(talon_srx::configuration &config) {
+void TalonSrx::ResetEncoder() {
+  _talons[_port].sensor_pos = 0;
+}
+
+void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {
   _talons[_port].config = config;
 }
 
-talon_srx::configuration talon_srx::save_config() {
+TalonSrx::Configuration TalonSrx::SaveConfig() {
   return _talons[_port].config;
+}
+
+
+// Victor SPX
+
+VictorSpx::VictorSpx(int port) {
+  _victors[port] = simulation::ctre::victor_data{};
+  _victors[port].port = port;
+  _port = port;
+}
+
+VictorSpx::~VictorSpx() {
+  _victors.erase(_port);
+}
+
+int VictorSpx::GetPort() {
+  return (int) _port;
+}
+
+void VictorSpx::SetInverted(bool invert) {
+  _victors[_port].inverted = true;
+}
+
+bool VictorSpx::GetInverted() const {
+  return _victors[_port].inverted;
+}
+
+void VictorSpx::Disable() {
+  _victors[_port].mode = ControlMode::Disabled;
+}
+
+void VictorSpx::Set(double speed) {
+  Set(ControlMode::PercentOutput, speed);
+}
+
+void VictorSpx::Set(VictorSpx::ControlMode mode, double value) {
+  _victors[_port].mode = mode;
+  _victors[_port].value = value;
+  _value = value;
+}
+
+VictorSpx::ControlMode VictorSpx::GetMode() {
+  return _victors[_port].mode;
+}
+
+void VictorSpx::LoadConfig(VictorSpx::Configuration &config) {
+  _victors[_port].config = config;
+}
+
+VictorSpx::Configuration VictorSpx::SaveConfig() {
+  return _victors[_port].config;
 }

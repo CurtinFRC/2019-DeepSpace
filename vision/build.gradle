@@ -12,6 +12,7 @@ deploy {
         // Change this if you've changed the target hostname, username or password.
         ssh {
           address = 'curtinvision.local'
+          // address = '192.168.0.100'
           user = 'vision'
           password = 'curtinfrc'
         }
@@ -25,10 +26,11 @@ deploy {
 
       targets << 'coprocessor'
       component = 'curtinFrcVision'
-      buildType = 'release'
+      buildType = 'debug'
 
+      predeploy << { execute('sudo systemctl stop vision || true') }
       // Make sure we can run our program!
-      postdeploy << { execute('chmod +x curtinFrcVision') }
+      postdeploy << { execute('chmod +x curtinFrcVision'); execute('sudo systemctl restart vision || true') }
     }
 
     // Some extra stuff for our vision program. Includes system configs, also!
@@ -88,7 +90,19 @@ model {
         }
       }
 
+      binaries.all {
+        if (targetPlatform.name == wpi.platforms.desktop) {
+          cppCompiler.define '__DESKTOP__'
+          if (targetPlatform.operatingSystem.isLinux()) {
+            linker.args << '-lusb-1.0'
+          }
+        } else if (targetPlatform.name == TinkerboardPlugin.tinkerboardPlatform) {
+          linker.args << '-pthread'
+        }
+      }
+
       useLibrary(it, 'opencv', 'cameraserver', 'cscore', 'ntcore', 'wpiutil')
+      wpi.deps.vendor.cpp(it)
     }
   }
 }

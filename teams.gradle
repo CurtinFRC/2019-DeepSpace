@@ -27,6 +27,10 @@ deploy {
   }
 }
 
+dependencies {
+  simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
+}
+
 wpi.deps.vendor.loadFrom(project(':common'))
 
 model {
@@ -75,3 +79,6 @@ model {
 }
 
 task "sim${project.name}"(dependsOn: "simulateFrcUserProgram${project.name}${wpi.platforms.desktop.capitalize()}DebugExecutable")
+
+if (!project.hasProperty('no-common-check'))
+  tasks.check.dependsOn(':common:check')
