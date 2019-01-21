@@ -23,6 +23,6 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController *xbox1, *xbox2;
   frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
-  curtinfrc::VictorSpx *left_motor2, *right_motor2;
-  curtinfrc::TalonSrx *left_motor1, *right_motor1, *Cargo, *Rotation;
+  curtinfrc::VictorSpx *leftMotor2, *rightMotor2;
+  curtinfrc::TalonSrx *leftMotor1, *rightMotor1, *Cargo, *Rotation;
 };
