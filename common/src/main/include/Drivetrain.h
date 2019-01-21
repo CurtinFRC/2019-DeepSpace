@@ -2,12 +2,12 @@
 
 #include <frc/SpeedController.h>
 
-#include "SensoredTransmission.h"
+#include "Gearbox.h"
 
 namespace curtinfrc {
   struct DrivetrainConfig {
-    SensoredTransmission &leftDrive;
-    SensoredTransmission &rightDrive;
+    Gearbox &leftDrive;
+    Gearbox &rightDrive;
   };
   
   class Drivetrain {

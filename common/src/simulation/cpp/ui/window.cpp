@@ -11,9 +11,16 @@ static void mouse_callback(int event, int x, int y, int flags, void *data) {
   if (pt.x <= 1 && pt.x >= 0 && pt.y <= 1 && pt.y >= 0) ptr->update_mouse(event, pt);
 }
 
+window::window(std::string name, int width, int height) : _window_name(name), _image(height, width, CV_8UC3) {
+  window_manager::INSTANCE()->add(this);
+}
+
 window::~window() {
-  if (_running) stop();
-  std::cout << "[SIM] WARN! Destructed: " << _window_name << std::endl;
+  window_manager::INSTANCE()->remove(this);
+  if (_running) {
+    stop();
+    update();
+  }
 }
 
 void window::start() {
