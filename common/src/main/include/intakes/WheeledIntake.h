@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SensoredTransmission.h"
+#include "Gearbox.h"
 
 #include "Intake.h"
 #include "../sensors/BinarySensor.h"
@@ -8,7 +8,7 @@
 namespace curtinfrc {
   namespace intakes {
     struct WheeledIntakeConfig  {
-      SensoredTransmission &motors;
+      Gearbox &motors;
       sensors::BinarySensor *limitSensorOpen;
       sensors::BinarySensor *limitSensorClosed;
     };
