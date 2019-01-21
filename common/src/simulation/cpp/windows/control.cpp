@@ -7,17 +7,13 @@
 
 using namespace simulation;
 
-control_window::control_window(std::vector<std::unique_ptr<ui::window>> &all_windows_ref)
-    : ui::window("Simulation Control", 250, 400), _all_windows_ref(all_windows_ref) {
+control_window::control_window() : ui::window("Simulation Control", 250, 400) {
 
   exit.on_activate([&](bool, ui::button &) { do_exit(); });
   
   respawn.set_can_activate(false);
   respawn.on_click([&](bool, ui::button &) {
-    std::for_each(all_windows_ref.begin(), all_windows_ref.end(), [](std::unique_ptr<ui::window> &window) {
-      if (!window->is_running())
-        window->start();
-    });
+    ui::window_manager::INSTANCE()->respawn();
   });
 
   register_button(exit);
