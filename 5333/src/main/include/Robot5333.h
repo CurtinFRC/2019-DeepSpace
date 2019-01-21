@@ -6,6 +6,10 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableInstance.h>
+
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
 #include "CurtinControllers.h"
@@ -25,6 +29,10 @@ class Robot : public frc::TimedRobot {
 
   void TestInit() override;
   void TestPeriodic() override;
+
+  std::shared_ptr<nt::NetworkTable> table;
+  nt::NetworkTableEntry yOffset, xOffset, endAngle;
+
 
   curtinfrc::Joystick *joy;
   
