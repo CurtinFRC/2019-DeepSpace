@@ -20,22 +20,22 @@ void Robot::RobotInit() {
   leftSRX->SetInverted(false);
   leftSPX = new VictorSpx(2);
   leftSPX->SetInverted(false);
-  left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
+  left = new Gearbox{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
 
   rightSRX = new TalonSrx(3, 2048);
   rightSRX->SetInverted(true);
   rightSPX = new VictorSpx(4);
   rightSPX->SetInverted(true);
-  right = new SensoredTransmission{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
+  right = new Gearbox{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
 
   DrivetrainConfig drivetrainConfig{*left, *right};
   drivetrain = new Drivetrain(drivetrainConfig);
 
 
   liftMotors[0] = new Spark(5);
-  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
+  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr, 20 };
 
-  ElevatorConfig elevatorConfig{ *liftGearbox, 1, nullptr, nullptr };
+  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
 }
 

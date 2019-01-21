@@ -9,11 +9,7 @@ namespace simulation {
 
 class harness {
  public:
-  harness();
   void run(std::function<int()>);
-
- private:
-  std::vector<std::unique_ptr<ui::window>> _windows;
 };
 
 }  // namespace simulation

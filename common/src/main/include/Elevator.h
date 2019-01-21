@@ -1,15 +1,32 @@
 #pragma once
 
 #include "StateDevice.h"
-#include "SensoredTransmission.h"
+#include "Gearbox.h"
 #include "sensors/BinarySensor.h"
+
+#include "Usage.h"
 
 namespace curtinfrc {
   struct ElevatorConfig {
-    SensoredTransmission &spool;
-    double spoolRadius; // In metres    // Plus average thickness of rope wrapped around spool...?
+    Gearbox &spool;
+    
     sensors::BinarySensor *limitSensorTop;
     sensors::BinarySensor *limitSensorBottom;
+
+    /**
+     * Height of the elevator, in metres.
+     */
+    double height;
+
+    /**
+     * Effective spool radius, in metres.
+     */
+    double spoolRadius;
+
+    /**
+     * Mass of the Elevator and Load in kg.
+     */
+    double mass;
   };
 
   enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
@@ -33,5 +50,7 @@ namespace curtinfrc {
    private:
     ElevatorConfig _config;
     double _setpoint;
+
+    Usage<ElevatorConfig>::Scoped _usage{&_config};
   };
 } // ns curtinfrc
