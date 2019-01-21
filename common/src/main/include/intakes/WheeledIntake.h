@@ -9,8 +9,6 @@ namespace curtinfrc {
   namespace intakes {
     struct WheeledIntakeConfig  {
       Gearbox &motors;
-      sensors::BinarySensor *limitSensorOpen;
-      sensors::BinarySensor *limitSensorClosed;
     };
 
     class WheeledIntake : public Intake {

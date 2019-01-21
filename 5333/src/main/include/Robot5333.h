@@ -6,8 +6,6 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
 #include <networktables/NetworkTableInstance.h>
 
 #include "CurtinCtre.h"
@@ -16,6 +14,7 @@
 #include "Gearbox.h"
 
 #include "Lift.h"
+#include "HarvesterIntake.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -41,7 +40,15 @@ class Robot : public frc::TimedRobot {
   curtinfrc::Gearbox *left, *right;
   curtinfrc::Drivetrain *drivetrain;
 
+
   frc::Spark *liftMotors[1];
   curtinfrc::Gearbox *liftGearbox;
+
+  frc::Spark *harvesterMotor;
+  frc::DoubleSolenoid *harvesterSolenoid;
+  curtinfrc::Gearbox *harvesterGearbox;
+
+  HarvesterIntake *harvester;
+
   Lift *beElevator;
 };

@@ -7,10 +7,8 @@ namespace curtinfrc {
     enum IntakeState { kIn, kOut, kOff };
     class Intake : public StateDevice<IntakeState> {
     public:
-
       virtual void OnStateChange(IntakeState newState, IntakeState oldState) override {};
       virtual void OnStatePeriodic(IntakeState state, double dt) override = 0;
-
 
       private:
       IntakeState _state;

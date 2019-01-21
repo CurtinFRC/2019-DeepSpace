@@ -40,8 +40,13 @@ void Robot::RobotInit() {
   liftMotors[0] = new Spark(5);
   liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr, 20 };
 
+  harvesterSolenoid = new DoubleSolenoid(0, 1);
+
+  HarvesterIntakeConfig harvesterConfig{ *harvesterGearbox, *harvesterSolenoid };
+  harvester = new HarvesterIntake(harvesterConfig);
+
   ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 25 / 1000.0, 20 };
-  beElevator = new Lift(elevatorConfig);
+  beElevator = new Lift(elevatorConfig, *harvester);
 }
 
 void Robot::AutonomousInit() {}
