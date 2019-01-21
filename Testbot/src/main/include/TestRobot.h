@@ -8,7 +8,7 @@
 #include <frc/DoubleSolenoid.h>
 
 #include "CurtinCtre.h"
-#include "SensoredTransmission.h"
+#include "Gearbox.h"
 #include "Drivetrain.h"
 
 class Robot : public frc::TimedRobot {
@@ -26,7 +26,7 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController *xbox;
   frc::Spark *leftMotors[1], *rightMotors[1];
-  curtinfrc::SensoredTransmission *left, *right;
+  curtinfrc::Gearbox *left, *right;
   curtinfrc::Drivetrain *drivetrain;
 
   frc::DoubleSolenoid *hatchEjector;

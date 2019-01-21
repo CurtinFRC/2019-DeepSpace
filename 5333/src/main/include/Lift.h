@@ -2,12 +2,9 @@
 
 #include "Elevator.h"
 
-class Lift {
+class Lift : public curtinfrc::Elevator {
  public:
-  Lift(curtinfrc::ElevatorConfig elevatorConfig);
+  using Elevator::Elevator;
 
   void Set(double power);
-
- private:
-  curtinfrc::Elevator *_elevator;
 };

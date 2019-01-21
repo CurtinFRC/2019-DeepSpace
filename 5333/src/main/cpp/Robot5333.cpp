@@ -8,6 +8,8 @@
 using namespace frc;
 using namespace curtinfrc;
 
+double lastTimestamp;
+
 void Robot::RobotInit() {
   table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
   yOffset = table->GetEntry("yOffset");
@@ -19,34 +21,37 @@ void Robot::RobotInit() {
 
   joy = new curtinfrc::Joystick(0);
 
-  leftSRX = new TalonSrx(1);
+  leftSRX = new TalonSrx(1, 2048);
   leftSRX->SetInverted(false);
   leftSPX = new VictorSpx(2);
   leftSPX->SetInverted(false);
-  left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
+  left = new Gearbox{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
 
-  rightSRX = new TalonSrx(3);
+  rightSRX = new TalonSrx(3, 2048);
   rightSRX->SetInverted(true);
   rightSPX = new VictorSpx(4);
   rightSPX->SetInverted(true);
-  right = new SensoredTransmission{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
+  right = new Gearbox{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
 
   DrivetrainConfig drivetrainConfig{*left, *right};
   drivetrain = new Drivetrain(drivetrainConfig);
 
 
   liftMotors[0] = new Spark(5);
-  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
+  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr, 20 };
 
-  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr };
+  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
 }
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
 void Robot::TeleopPeriodic() {
+  double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
+  // Calc dt for update functions
+  
   double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
   double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.65;
 
@@ -62,6 +67,9 @@ void Robot::TeleopPeriodic() {
   double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
+
+  // Class update events
+  beElevator->Update(dt);
 }
 
 void Robot::TestInit() {}
