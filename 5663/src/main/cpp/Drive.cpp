@@ -24,12 +24,12 @@ void Drive::Stop() {
 }
 
 void Drive::TankDrive(double l, double r) {
-    if(fabs(l) < deadzone) l = 0;
-    if(fabs(r) < deadzone) r = 0;
-    double left = l * fabs(l);
-    double right = r * fabs(r);
-    leftMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, left);
-    rightMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, right);
+    // if(fabs(l) < deadzone) l = 0;
+    // if(fabs(r) < deadzone) r = 0;
+    // double left = l * fabs(l);
+    // double right = r * fabs(r);
+    leftMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, l);
+    rightMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, r);
 }  
 
 bool Drive::DriveForward(double distance, double speed, double timeout) {
