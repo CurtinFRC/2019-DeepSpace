@@ -26,5 +26,10 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  
+	if (_capture.IsValidFrame()) {
+		cv::Mat bgrThreshInput = _capture.GetCaptureMat();
+		double bgrThreshBlue[] = {0.0, 127.0};
+		double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
+		double bgrThreshRed[] = {0.0, 127.0};
+	}
 }

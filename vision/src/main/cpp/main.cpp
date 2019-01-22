@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
   }
 
   VisionRunner vision;
-  Capture capture;
+  Capture capture{0};
   TapeProcessing tapeProcess{capture};
   BallProcessing ballProcess{capture};
   Display display{tapeProcess};
