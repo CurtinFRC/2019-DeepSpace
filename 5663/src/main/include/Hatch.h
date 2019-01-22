@@ -10,7 +10,7 @@ class Hatch{
     public:
         Hatch(int m1);
         void stop();
-        void rotate(double distance, double speed, double timeout=0);
+        void rotate(double distance);
     private:
         TalonSrx *Flooper;
 };

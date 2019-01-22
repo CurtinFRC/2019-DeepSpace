@@ -1,3 +1,4 @@
+#pragma once
 #include "Hatch.h"
 #include "CurtinCtre.h"
 
@@ -13,6 +14,6 @@ void Hatch::stop(){
 
 }
 
-void Hatch::rotate(double distance, double speed, double timeout){
+void Hatch::rotate(double distance){
     Flooper->Set(curtinfrc::TalonSrx::ControlMode::Position, distance);
 }

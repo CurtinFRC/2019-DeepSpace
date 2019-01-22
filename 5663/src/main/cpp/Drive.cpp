@@ -1,9 +1,9 @@
-#include "Drive.h"
-#include "frc/WPILib.h"
 #include "CurtinCtre.h"
+#include "Drive.h"
 
 using namespace curtinfrc;
 using namespace frc;
+
 
 Drive::Drive(int l1, int l2, int r1, int r2) {
     leftMotor1 = new TalonSrx(l1, 2048);
@@ -24,13 +24,14 @@ void Drive::Stop() {
 }
 
 void Drive::TankDrive(double l, double r) {
-    // if(fabs(l) < deadzone) l = 0;
-    // if(fabs(r) < deadzone) r = 0;
-    // double left = l * fabs(l);
-    // double right = r * fabs(r);
-    leftMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, l);
-    rightMotor1->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, r);
-}  
+     l *= std::abs(l);
+     r *= std::abs(r);
+
+     leftMotor1->Set(left_speed);
+     leftMotor2->Set(left_speed);
+     rightMotor1->Set(right_speed);
+     rightMotor2->Set(right_speed);
+   }  
 
 bool Drive::DriveForward(double distance, double speed, double timeout) {
     double leftEncoderFinal = distance * encoderConst;
@@ -43,7 +44,7 @@ bool Drive::DriveForward(double distance, double speed, double timeout) {
 
         leftMotor1->PIDWrite(0);
         rightMotor1->PIDWrite(0);
-/*
+
         //setup PID and start driving...
         leftMotor1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
         leftMotor1->ConfigNominalOutputReverse(0,0);
@@ -68,7 +69,7 @@ bool Drive::DriveForward(double distance, double speed, double timeout) {
         rightMotor1->Config_kP(0,P,0);
         rightMotor1->Config_kI(0,I,0);
         rightMotor1->Config_kD(0,D,0);
-*/
+
         leftMotor1->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, leftEncoderFinal); //drive code in this format
         rightMotor1->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, rightEncoderFinal);
         driving = true;
@@ -103,6 +104,6 @@ bool Drive::DriveForward(double distance, double speed, double timeout) {
         }
     return false;
     }
-}
+ }
 
 
