@@ -1,0 +1,18 @@
+// #include "Hatch.h"
+// #include "CurtinCtre.h"
+
+// using namespace curtinfrc;
+// using namespace curtinfrc;
+
+// Hatch::Hatch(int m1, int s1){
+//     Flooper = new TalonSrx(4, 0);
+// }
+
+// void Hatch::stop(){
+//     Flooper->Set(curtinfrc::TalonSrx::ControlMode::PercentOutput, 0);
+
+// }
+
+// void Hatch::rotate(double distance, double speed, double timeout){
+//     Flooper->Set(curtinfrc::TalonSrx::ControlMode::Position, distance);
+// }

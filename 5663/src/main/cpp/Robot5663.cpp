@@ -17,7 +17,10 @@ void Robot::RobotInit() {
   hatch_deploy1 = new frc::DoubleSolenoid(0, 1);
   hatch_deploy2 = new frc::DoubleSolenoid(2, 3);
   hatch_deploy3 = new frc::DoubleSolenoid(4, 5);
+  hatch_deploy4 = new frc::DoubleSolenoid(6, 7);
 
+  alignment1 = new frc::DoubleSolenoid(8, 9);
+  alignment2 = new frc::DoubleSolenoid(10, 11);
   
   xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
@@ -50,7 +53,15 @@ void Robot::TeleopPeriodic() {
   } else {
     Cargo->Set(xbox2->GetTriggerAxis(hand::kRightHand));
   }
-  
+  //Hatch Rotation
+  if(xbox2->GetBumper(hand::kLeftHand) == 1){
+    alignment1->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kForward);
+    alignment2->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kForward);
+  } else {
+    alignment1->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kReverse);
+    alignment2->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kReverse);
+  }
+
   //Hatch Ejection
   if(xbox2->GetAButton() == 1){
     hatch_deploy1->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
