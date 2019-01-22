@@ -13,7 +13,7 @@ namespace curtinfrc {
       sensors::BinarySensor *limitSensorClosed;
     };
 
-    class PneumaticIntake : public Intake {
+    class PneumaticIntake : public Intake<> {
      public:
       PneumaticIntake(PneumaticIntakeConfig config) : _config(config) {};
 

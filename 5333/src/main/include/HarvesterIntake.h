@@ -1,3 +1,5 @@
+#pragma once
+
 #include "intakes/WheeledIntake.h"
 #include "Gearbox.h"
 
@@ -5,6 +7,8 @@
 
 struct HarvesterIntakeConfig : curtinfrc::intakes::WheeledIntakeConfig {
   frc::DoubleSolenoid &solenoid;
+
+  HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, frc::DoubleSolenoid &solenoidiIn) : curtinfrc::intakes::WheeledIntakeConfig(motorsIn), solenoid(solenoidiIn) {};
 };
 
 class HarvesterIntake : public curtinfrc::intakes::WheeledIntake {

@@ -3,6 +3,7 @@
 void curtinfrc::intakes::WheeledIntake::Set(curtinfrc::intakes::IntakeState state) {
   SetState(state);
 }
+
 void curtinfrc::intakes::WheeledIntake::OnStatePeriodic(curtinfrc::intakes::IntakeState state, double dt) {
   switch(state){
     case kIn:

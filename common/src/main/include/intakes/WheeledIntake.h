@@ -9,9 +9,11 @@ namespace curtinfrc {
   namespace intakes {
     struct WheeledIntakeConfig  {
       Gearbox &motors;
+
+      WheeledIntakeConfig(Gearbox &motorsIn) : motors(motorsIn) {};
     };
 
-    class WheeledIntake : public Intake {
+    class WheeledIntake : public Intake<> {
      public:
     WheeledIntake(WheeledIntakeConfig config) : _config(config) {};
 
