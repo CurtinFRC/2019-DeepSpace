@@ -10,4 +10,7 @@ class TapeProcessing : public Process {
   void Periodic() override;
  private:
   cv::Mat imgHSV;
+  cv::Mat imgBinary;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<std::vector<cv::Point>> filteredContours;
 };
