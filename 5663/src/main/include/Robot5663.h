@@ -8,6 +8,7 @@
 
 #include "CurtinCtre.h"
 
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -22,7 +23,9 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
   frc::XboxController *xbox1, *xbox2;
-  frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3, *hatch_deploy4, *alignment1, *alignment2;
+
+  frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
+
+  curtinfrc::TalonSrx *leftMotor1, *rightMotor1, *rotateM;
   curtinfrc::VictorSpx *leftMotor2, *rightMotor2;
-  curtinfrc::TalonSrx *leftMotor1, *rightMotor1, *Cargo, *Rotation;
 };

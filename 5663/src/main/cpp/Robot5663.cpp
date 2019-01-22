@@ -1,26 +1,22 @@
 #include "Robot5663.h"
 #include <math.h>
-#include "Drive.h"
 
 using namespace curtinfrc;
+using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
-Drive *drive;
-
 void Robot::RobotInit() {
-  drive = new Drive(0,1,2,3);
+  // Motor_Controllers
+    leftMotor1 = new TalonSrx(5, 2048);
+    leftMotor2 = new VictorSpx(4);    
+    rightMotor1 = new TalonSrx(2, 2048);
+    rightMotor2 = new VictorSpx(3);
+    rotateM = new TalonSrx(1, 2048);
 
-  Cargo = new curtinfrc::TalonSrx(4, 0);
-  Rotation = new curtinfrc::TalonSrx(5, 0);
 
   // pistons
   hatch_deploy1 = new frc::DoubleSolenoid(0, 1);
-  hatch_deploy2 = new frc::DoubleSolenoid(2, 3);
-  hatch_deploy3 = new frc::DoubleSolenoid(4, 5);
-  hatch_deploy4 = new frc::DoubleSolenoid(6, 7);
 
-  alignment1 = new frc::DoubleSolenoid(8, 9);
-  alignment2 = new frc::DoubleSolenoid(10, 11);
   
   xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
@@ -38,40 +34,25 @@ void Robot::TeleopPeriodic() {
   left_speed *= std::abs(left_speed);
   right_speed *= std::abs(right_speed);
 
-  drive->TankDrive(left_speed, right_speed);
+  leftMotor1->Set(left_speed);
+  leftMotor2->Set(left_speed);
+  rightMotor1->Set(right_speed);
+  rightMotor2->Set(right_speed);
 
   //Rotation
   double Rotation_speed = xbox2->GetY(hand::kRightHand);
 
   Rotation_speed *= std::abs(Rotation_speed);
 
-  Rotation->Set(Rotation_speed);
+  rotateM->Set(Rotation_speed/2);
 
-  //Cargo
-  if(xbox2->GetTriggerAxis(hand::kLeftHand) != 0.0) {
-    Cargo->Set(-xbox2->GetTriggerAxis(hand::kLeftHand));
-  } else {
-    Cargo->Set(xbox2->GetTriggerAxis(hand::kRightHand));
-  }
-  //Hatch Rotation
-  if(xbox2->GetBumper(hand::kLeftHand) == 1){
-    alignment1->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kForward);
-    alignment2->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kForward);
-  } else {
-    alignment1->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kReverse);
-    alignment2->frc::DoubleSolenoid::Set (frc::DoubleSolenoid::kReverse);
-  }
-
+  
   //Hatch Ejection
-  if(xbox2->GetAButton() == 1){
-    hatch_deploy1->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-    hatch_deploy2->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-    hatch_deploy3->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-  } else  { 
-    hatch_deploy1->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-    hatch_deploy2->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-    hatch_deploy3->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-  }
+  if(xbox2->GetAButtonPressed() == 1){
+    hatch_deploy1->frc::DoubleSolenoid::Set(frc::DoubleSolenoid::kForward);
+    } else  { 
+    hatch_deploy1-> frc::DoubleSolenoid::Set(frc::DoubleSolenoid::kReverse);
+    }
 
 
   }
