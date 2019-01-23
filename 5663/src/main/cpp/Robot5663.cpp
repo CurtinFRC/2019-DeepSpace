@@ -43,16 +43,15 @@ void Robot::TeleopPeriodic() {
   
   //flooper mech
   double Hatch = xbox2->GetY(hand::kRightHand);
-  //Hatch = std::abs(Hatch);      //lachlan's mad code
   rotateTalon2->Set(Hatch);
 
   //cargor mech
   double cargo = xbox2->GetY(hand::kLeftHand);
-  //cargo = std::abs(cargo);      //lachlan's mad code
   rotateTalon1->Set(cargo);
 
   //Hatch Ejection
   if(xbox1->GetBumper(hand::kLeftHand) == 1){
+
     hatch_deploy1->frc::DoubleSolenoid::Set(frc::DoubleSolenoid::kForward);
     } else  { 
     hatch_deploy1-> frc::DoubleSolenoid::Set(frc::DoubleSolenoid::kReverse);
