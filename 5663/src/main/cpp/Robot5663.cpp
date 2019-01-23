@@ -19,6 +19,7 @@ void Robot::RobotInit() {
 
     rotateTalon1 = new TalonSrx(1, 2048);
     rotateTalon2 = new TalonSrx(6, 0);
+    rotateVictor = new VictorSpx(7);
   DrivetrainConfig drivetrainConfig{*Left, *Right};
   drivetrain = new Drivetrain(drivetrainConfig);
 
@@ -40,15 +41,16 @@ void Robot::TeleopPeriodic() {
    double left_speed = -xbox1->GetY(hand::kLeftHand);
    double right_speed = xbox1->GetY(hand::kRightHand);
    drivetrain->Set(left_speed, right_speed);
-  
+   
   //flooper mech
   double Hatch = xbox2->GetY(hand::kRightHand);
-  rotateTalon2->Set(Hatch);
+  rotateTalon2->Set(Hatch/2);     //Lachlan Was Here B)
 
   //cargor mech
+  
   double cargo = xbox2->GetY(hand::kLeftHand);
-  rotateTalon1->Set(cargo);
-
+  rotateTalon1->Set(cargo/3);
+rotateVictor->Set(cargo/3);
   //Hatch Ejection
   if(xbox1->GetBumper(hand::kLeftHand) == 1){
 

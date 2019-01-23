@@ -32,6 +32,6 @@ class Robot : public frc::TimedRobot {
 
   curtinfrc::Drivetrain *drivetrain;
   curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2;
-  curtinfrc::VictorSpx *leftVictor, *rightVictor;
+  curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
   curtinfrc::SensoredTransmission *Left, *Right;
 };
