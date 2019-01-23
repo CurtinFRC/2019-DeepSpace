@@ -1,21 +1,28 @@
 #include "Robot5663.h"
 #include <math.h>
-#include "Drive.h"
-#include "Hatch.h"
+#include "Drivetrain.h"
+
 
 using namespace curtinfrc;
 using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
-Drive *drive;
-Hatch *flooper;
 
 void Robot::RobotInit() {
   // Motor_Controllers
-    rotateM = new TalonSrx(1, 2048);
-  Drive::Drive(5, 4, 2, 3);
+  leftTalon = new TalonSrx(1, 2048);
+  leftVictor = new VictorSpx(2);
+  Left = new SensoredTransmission{ new SpeedControllerGroup(*leftTalon, *leftVictor), nullptr };
 
-  // pistons
+  rightTalon = new TalonSrx(3, 2048);
+  rightVictor = new VictorSpx(4);
+  Right = new SensoredTransmission{ new SpeedControllerGroup(*rightTalon, *rightVictor), nullptr };
+
+    rotateTalon = new TalonSrx(1, 2048);
+  DrivetrainConfig drivetrainConfig{*Left, *Right};
+  drivetrain = new Drivetrain(drivetrainConfig);
+
+  // pistonss
   hatch_deploy1 = new frc::DoubleSolenoid(0, 1);
 
   
@@ -32,12 +39,8 @@ void Robot::TeleopPeriodic() {
   // Tank drive 
    double left_speed = -xbox1->GetY(hand::kLeftHand);
    double right_speed = xbox1->GetY(hand::kRightHand);
-   drive->TankDrive(left_speed, right_speed);
+   drivetrain->Set(left_speed, right_speed);
   
-
-  //Rotation
-  double posIn = xbox1->GetTriggerAxis(hand::kRightHand) * 90;
-  flooper->rotate(posIn);
   
   //Hatch Ejection
   if(xbox1->GetBumper(hand::kLeftHand) == 1){

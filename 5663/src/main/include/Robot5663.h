@@ -5,9 +5,13 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 #include <frc/Encoder.h>
+#include <SpeedControllerGroup.h>
 
 #include "CurtinCtre.h"
-
+#include "Drivetrain.h"
+#include "SensoredTransmission.h"
+#include "CurtinControllers.h"
+#include "Gearbox.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -26,6 +30,8 @@ class Robot : public frc::TimedRobot {
 
   frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
 
-  curtinfrc::TalonSrx *leftMotor1, *rightMotor1, *rotateM;
-  curtinfrc::VictorSpx *leftMotor2, *rightMotor2;
+  curtinfrc::Drivetrain *drivetrain;
+  curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon;
+  curtinfrc::VictorSpx *leftVictor, *rightVictor;
+  curtinfrc::SensoredTransmission *Left, *Right;
 };
