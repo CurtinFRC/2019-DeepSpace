@@ -4,6 +4,8 @@
 #include "Capture.h"
 #include "Runnable.h"
 
+#include <mutex>
+
 class Display : public Runnable {
  public:
   Display(Process &process);

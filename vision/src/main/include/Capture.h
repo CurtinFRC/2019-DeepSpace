@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Runnable.h"
+
 #include <opencv2/core/core.hpp>
 #include <cscore.h>
-
-#include "Runnable.h"
+#include <mutex>
 
 class Capture : public Runnable {
  public:
