@@ -11,7 +11,6 @@
 #include <iostream>
 
 #include <cameraserver/CameraServer.h>
-#include <networktables/NetworkTableInstance.h>
 #include <cscore.h>
 
 #include "devices/kinect.h"
@@ -23,26 +22,15 @@ Capture::Capture(int port) {
   camPort = port;
 }
 
-void Capture::Init() {
-  cs::UsbCamera _cam{"USBCam", camPort};
-  _sink.SetSource(_cam);
-  _cam.SetExposureManual(-100);
-
-  // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
-  _cam.SetResolution(640, 480);
-
-  auto video_mode = _cam.GetVideoMode();
-  std::cout << "Width: " << video_mode.width << " Height: " << video_mode.height << std::endl;
-
-  _captureMat = cv::Mat::zeros(video_mode.height, video_mode.width, CV_8UC3);
+// Getters
+cs::VideoMode Capture::GetVideoMode() {
+  return _videoMode;
 }
 
-void Capture::Periodic() {
-  _isValid = _sink.GrabFrame(_captureMat) == 0;
-}
-
-cv::Mat &Capture::GetCaptureMat() {
-  return _captureMat;
+// Copiers
+void Capture::CopyCaptureMat(cv::Mat &captureMat) {
+  std::lock_guard<std::mutex> lock(classMutex);
+  _captureMat.copyTo(captureMat);
 }
 
 bool Capture::IsValidFrame() {
@@ -51,4 +39,26 @@ bool Capture::IsValidFrame() {
 
 int Capture::GetPort() {
   return camPort;
+}
+
+
+
+void Capture::Init() {
+  cs::UsbCamera _cam{"USBCam", camPort};
+  _sink.SetSource(_cam);
+  _cam.SetExposureManual(-100);
+
+  // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
+  _cam.SetResolution(640, 480);
+
+  _videoMode = _cam.GetVideoMode();
+  std::cout << "Width: " << _videoMode.width << " Height: " << _videoMode.height << std::endl;
+
+  _captureMat = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+  cv::Mat imgTrack{_videoMode.height, _videoMode.width, CV_8UC3};
+	cv::Mat imgOriginal{_videoMode.height, _videoMode.width, CV_8UC3};
+}
+
+void Capture::Periodic() {
+  _isValid = _sink.GrabFrame(_captureMat) == 0;
 }

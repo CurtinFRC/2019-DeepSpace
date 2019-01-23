@@ -12,12 +12,15 @@ class Capture : public Runnable {
   void Init() override;
   void Periodic() override;
 
-  cv::Mat &GetCaptureMat();
+  cs::VideoMode GetVideoMode();
+  void CopyCaptureMat(cv::Mat &captureMat);
   bool IsValidFrame();
 
  private:
+  std::mutex classMutex;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
+  cs::VideoMode _videoMode;
   bool _isValid = false;
   int camPort;
 };

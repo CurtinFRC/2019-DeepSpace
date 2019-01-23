@@ -1,18 +1,9 @@
 #include "Process.h"
-#include "Capture.h"
 
-#include <opencv2/opencv.hpp>
-#include "opencv2/objdetect.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/core/core.hpp"
 #include <stdio.h>
 #include <iostream>
 
 #include <cameraserver/CameraServer.h>
-#include <networktables/NetworkTableInstance.h>
 #include <cscore.h>
 
 #include "devices/kinect.h"
@@ -25,3 +16,19 @@ Process::Process(Capture &capture) : _capture(capture) {}
 Capture &Process::GetCapture() {
     return _capture;
 }
+
+// Copiers
+void Process::CopyImgTrack(cv::Mat &imgTrack) {
+  std::lock_guard<std::mutex> lock(classMutex);
+  _imgTrack.copyTo(imgTrack);
+}
+
+
+
+void Process::Init() {
+  _videoMode = _capture.GetVideoMode();
+  _imgTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+	_imgOriginal = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+}
+
+void Process::Periodic() {}

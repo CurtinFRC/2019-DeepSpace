@@ -13,7 +13,6 @@
 #include <iostream>
 
 #include <cameraserver/CameraServer.h>
-#include <networktables/NetworkTableInstance.h>
 #include <cscore.h>
 
 #include "devices/kinect.h"
@@ -26,10 +25,10 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-	if (_capture.IsValidFrame()) {
-		cv::Mat bgrThreshInput = _capture.GetCaptureMat();
+	/* if (_capture.IsValidFrame()) {
+		cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
 		double bgrThreshBlue[] = {0.0, 127.0};
 		double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
 		double bgrThreshRed[] = {0.0, 127.0};
-	}
+	} */
 }
