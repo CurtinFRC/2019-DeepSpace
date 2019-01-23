@@ -12,12 +12,18 @@ class Capture : public Runnable {
   void Init() override;
   void Periodic() override;
 
+  int &GetHeight();
+  int &GetWidth();
+
   cv::Mat &GetCaptureMat();
   bool IsValidFrame();
 
  private:
+  cs::UsbCamera _cam;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   bool _isValid = false;
   int camPort;
+  int videoWidth;
+  int videoHeight;
 };

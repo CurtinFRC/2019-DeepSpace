@@ -23,8 +23,11 @@ using namespace std;
 
 Display::Display(Process &process) : _process(process) {}
 
-void Display::Init() { }
+void Display::Init() {
+    
+}
 
 void Display::Periodic() {
+
 }
 
