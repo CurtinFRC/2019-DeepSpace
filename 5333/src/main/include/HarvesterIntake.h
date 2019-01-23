@@ -1,9 +1,12 @@
 #pragma once
 
 #include "intakes/WheeledIntake.h"
+#include "StateDevice.h"
 #include "Gearbox.h"
 
 #include <frc/DoubleSolenoid.h>
+
+enum HarvesterIntakeState { kDeployed, kDeploying, kStowing, kStowed };
 
 struct HarvesterIntakeConfig : curtinfrc::intakes::WheeledIntakeConfig {
   frc::DoubleSolenoid &solenoid;
@@ -11,13 +14,12 @@ struct HarvesterIntakeConfig : curtinfrc::intakes::WheeledIntakeConfig {
   HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, frc::DoubleSolenoid &solenoidiIn) : curtinfrc::intakes::WheeledIntakeConfig(motorsIn), solenoid(solenoidiIn) {};
 };
 
-class HarvesterIntake : public curtinfrc::intakes::WheeledIntake {
+class HarvesterIntake : public curtinfrc::StateDevice<HarvesterIntakeState> {
  public:
-  HarvesterIntake(HarvesterIntakeConfig config) : WheeledIntake(config), _config(config) {};
-  using IntakeState = curtinfrc::intakes::IntakeState;
+  HarvesterIntake(HarvesterIntakeConfig config) : _config(config) {};
 
  protected:
-  virtual void OnStateChange(IntakeState newState, IntakeState oldState) override;
+  virtual void OnStatePeriodic(HarvesterIntakeState state, double dt) override;
 
  private:
   HarvesterIntakeConfig _config;

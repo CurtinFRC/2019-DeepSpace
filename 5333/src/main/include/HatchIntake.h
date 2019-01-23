@@ -2,11 +2,11 @@
 
 #include <frc/Servo.h>
 
-#include "intakes/Intake.h"
+#include "StateDevice.h"
 #include "Gearbox.h"
 #include "sensors/BinarySensor.h"
 
-enum HatchIntakeState { kGrab, kEject, kAim, kHold };
+enum HatchIntakeState { kGrab, kAim, kHold, kEject, kStow  };
 
 struct HatchIntakeConfig {
   curtinfrc::Gearbox &pivot;
@@ -15,14 +15,11 @@ struct HatchIntakeConfig {
   frc::Servo &servo;
 };
 
-class HatchIntake : public curtinfrc::intakes::Intake<HatchIntakeState> {
+class HatchIntake : public curtinfrc::StateDevice<HatchIntakeState> {
  public:
   HatchIntake(HatchIntakeConfig config) : _config(config) {};
 
-  void Set(HatchIntakeState state);
-
  protected:
-  virtual void OnStateChange(HatchIntakeState newState, HatchIntakeState lastState) override;
   virtual void OnStatePeriodic(HatchIntakeState state, double dt) override;
 
  private:
