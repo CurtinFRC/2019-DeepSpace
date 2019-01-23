@@ -55,8 +55,6 @@ void Capture::Init() {
   std::cout << "Width: " << _videoMode.width << " Height: " << _videoMode.height << std::endl;
 
   _captureMat = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
-  cv::Mat imgTrack{_videoMode.height, _videoMode.width, CV_8UC3};
-	cv::Mat imgOriginal{_videoMode.height, _videoMode.width, CV_8UC3};
 }
 
 void Capture::Periodic() {
