@@ -16,12 +16,15 @@ class Capture : public Runnable {
   cs::VideoMode GetVideoMode();
   void CopyCaptureMat(cv::Mat &captureMat);
   bool IsValidFrame();
-
+  
  private:
   std::mutex classMutex;
+  cs::UsbCamera _cam;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   cs::VideoMode _videoMode;
   bool _isValid = false;
   int camPort;
+  int videoWidth;
+  int videoHeight;
 };
