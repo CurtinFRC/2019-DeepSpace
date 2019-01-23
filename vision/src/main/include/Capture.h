@@ -11,6 +11,7 @@ class Capture : public Runnable {
   int GetPort();
   void Init() override;
   void Periodic() override;
+
   int &GetHeight();
   int &GetWidth();
 

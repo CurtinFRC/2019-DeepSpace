@@ -19,9 +19,11 @@
 using namespace cv;
 using namespace std;
 
+
 Capture::Capture(int port) : _cam("USBCam", port) {}
 
 void Capture::Init() {
+
   _sink.SetSource(_cam);
   _cam.SetExposureManual(-100);
 
@@ -30,8 +32,10 @@ void Capture::Init() {
 
   auto video_mode = _cam.GetVideoMode();
   std::cout << "Width: " << video_mode.width << " Height: " << video_mode.height << std::endl;
+
   videoWidth = video_mode.width;
   videoHeight = video_mode.height;
+
 
   _captureMat = cv::Mat::zeros(video_mode.height, video_mode.width, CV_8UC3);
 }
