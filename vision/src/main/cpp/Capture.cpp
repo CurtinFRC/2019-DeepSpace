@@ -1,4 +1,5 @@
 #include "Capture.h"
+#include "Process.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -14,6 +15,9 @@
 #include <cscore.h>
 
 #include "devices/kinect.h"
+
+#include <mutex>
+#include <condition_variable>
 
 using namespace cv;
 using namespace std;
@@ -50,7 +54,7 @@ int Capture::GetPort() {
 
 
 void Capture::Init() {
-  std::lock_guard<std::mutex> lock(_classMutex); // do i need this ? *
+  //std::lock_guard<std::mutex> lock(_classMutex); // do i need this ? *
 
   cs::UsbCamera _cam{"USBCam", _camPort};
   _sink.SetSource(_cam);
@@ -62,7 +66,6 @@ void Capture::Init() {
   _videoMode = _cam.GetVideoMode();
   std::cout << "Width: " << _videoMode.width << " Height: " << _videoMode.height << std::endl;
   _captureMat = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
-
   _initCondVar.notify_all();
 }
 

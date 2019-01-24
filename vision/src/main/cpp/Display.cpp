@@ -29,6 +29,7 @@ void Display::Periodic() {
   Capture &capture = _process.GetCapture();
   _process.CopyImgTrack(_imgTrack);
   if(capture.IsValidFrame()) {
+    imshow("Output", _imgTrack);
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
     _output.PutFrame(_imgTrack);
 		std::cout << "Origin Image Processed" << std::endl;
