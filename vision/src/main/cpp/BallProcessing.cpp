@@ -11,6 +11,7 @@
 #include "opencv2/core/core.hpp"
 #include <stdio.h>
 #include <iostream>
+#include <windows.h>
 
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
@@ -35,10 +36,10 @@ void BallProcessing::Periodic() {
     double bgrThreshBlue[] = {0.0, 127.0};
     double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
     double bgrThreshRed[] = {0.0, 127.0}; */
-
+    
+    cv::cvtColor(_imgOriginal, _imgTrack, cv::COLOR_RGB2HSV);
     std::cout << "Origin Image Found" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
-    cv::cvtColor(_imgOriginal, _imgTrack, cv::COLOR_RGB2HSV);
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
 
