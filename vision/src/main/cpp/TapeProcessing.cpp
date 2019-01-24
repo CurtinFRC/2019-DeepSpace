@@ -21,7 +21,7 @@ using namespace cv;
 using namespace std;
 
 void TapeProcessing::Init() {
-
+	Process::Init();
 }
 
 void TapeProcessing::Periodic() {

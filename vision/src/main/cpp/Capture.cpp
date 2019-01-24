@@ -19,17 +19,23 @@ using namespace cv;
 using namespace std;
 
 Capture::Capture(int port) {
-  camPort = port;
+  _camPort = port;
 }
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {
+  if (_videoMode.height == 0 || _videoMode.width == 0) {
+    // If our videoMode is invalid, wait for Init() to be called (thus setting _videoMode)
+    // using our condition variable
+    std::unique_lock<std::mutex> lock(_classMutex);
+    _initCondVar.wait(lock);
+  }
   return _videoMode;
 }
 
 // Copiers
 void Capture::CopyCaptureMat(cv::Mat &captureMat) {
-  std::lock_guard<std::mutex> lock(classMutex);
+  std::lock_guard<std::mutex> lock(_classMutex);
   _captureMat.copyTo(captureMat);
 }
 
@@ -38,13 +44,15 @@ bool Capture::IsValidFrame() {
 }
 
 int Capture::GetPort() {
-  return camPort;
+  return _camPort;
 }
 
 
 
 void Capture::Init() {
-  cs::UsbCamera _cam{"USBCam", camPort};
+  std::lock_guard<std::mutex> lock(_classMutex); // do i need this ? *
+
+  cs::UsbCamera _cam{"USBCam", _camPort};
   _sink.SetSource(_cam);
   _cam.SetExposureManual(-100);
 
@@ -53,8 +61,9 @@ void Capture::Init() {
 
   _videoMode = _cam.GetVideoMode();
   std::cout << "Width: " << _videoMode.width << " Height: " << _videoMode.height << std::endl;
-
   _captureMat = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+
+  _initCondVar.notify_all();
 }
 
 void Capture::Periodic() {

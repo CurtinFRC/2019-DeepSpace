@@ -5,6 +5,7 @@
 #include <opencv2/core/core.hpp>
 #include <cscore.h>
 #include <mutex>
+#include <condition_variable>
 
 class Capture : public Runnable {
  public:
@@ -18,10 +19,11 @@ class Capture : public Runnable {
   bool IsValidFrame();
 
  private:
-  std::mutex classMutex;
+  std::mutex _classMutex;
+  std::condition_variable _initCondVar;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   cs::VideoMode _videoMode;
   bool _isValid = false;
-  int camPort;
+  int _camPort;
 };

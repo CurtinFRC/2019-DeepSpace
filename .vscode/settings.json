@@ -75,7 +75,8 @@
     "*.inc": "cpp",
     "__config": "cpp",
     "__nullptr": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "__mutex_base": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "C_Cpp.intelliSenseEngineFallback": "Enabled"

@@ -22,7 +22,7 @@ class Process : public Runnable {
   Capture &GetCapture();
   void CopyImgTrack(cv::Mat &imgtrack);
  protected:
-  std::mutex classMutex;
+  std::mutex _classMutex;
   Capture &_capture;
   cs::VideoMode _videoMode;
   cv::Mat _imgTrack;

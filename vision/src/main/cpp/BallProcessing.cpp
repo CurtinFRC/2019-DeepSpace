@@ -25,7 +25,9 @@ float width_offset;
 float width_goal = 320;
 float height_goal = 240;
 
-void BallProcessing::Init() {}
+void BallProcessing::Init() {
+  Process::Init();
+}
 
 void BallProcessing::Periodic() {
   if (_capture.IsValidFrame()) {
