@@ -17,7 +17,7 @@ class Capture : public Runnable {
   cs::VideoMode GetVideoMode();
   void CopyCaptureMat(cv::Mat &captureMat);
   bool IsValidFrame();
-
+  
  private:
   std::mutex _classMutex;
   std::condition_variable _initCondVar;
