@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   vision.Run(ballProcess);
   vision.Run(display);
 
-  for (int i=0; i<vision.workers.size(); i++) {
+  for (int i = 0; i < vision.workers.size(); i++) {
     vision.workers[i].join();
   }
   
