@@ -23,7 +23,7 @@ void Robot::RobotInit() {
   DrivetrainConfig drivetrainConfig{*Left, *Right};
   drivetrain = new Drivetrain(drivetrainConfig);
   
-  xbox1 = new frc::XboxController(0);
+  xbox2 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
 
   compressor = new Compressor(9);           //initiate compressor with PCM can ID
@@ -42,46 +42,46 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 
   // Tank drive 
-  //  double left_speed = -xbox1->GetY(hand::kLeftHand);
-  //  double right_speed = xbox1->GetY(hand::kRightHand);
-  //  drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
+   double left_speed = -xbox1->GetY(hand::kLeftHand);
+   double right_speed = xbox1->GetY(hand::kRightHand);
+   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //cargo speed
-  if (xbox1->GetTriggerAxis(hand::kRightHand)){
-    cargo->setRotationSpeed(xbox1->GetTriggerAxis(hand::kRightHand));
+  if (xbox2->GetTriggerAxis(hand::kRightHand)){
+    cargo->setRotationSpeed(xbox2->GetTriggerAxis(hand::kRightHand));
   }else{
-    cargo->setRotationSpeed(-xbox1->GetTriggerAxis(hand::kLeftHand));
+    cargo->setRotationSpeed(-xbox2->GetTriggerAxis(hand::kLeftHand));
   }
   
   //cargo positioning
-  if (xbox1->GetYButton()){
+  if (xbox2->GetYButton()){
     cargo->setAngle(0.1, 10);
   }
 
   //cargo intake/outtake
-  if (xbox1->GetBButton()){
-    cargo->setIntakeSpeed(xbox1->GetY(hand::kLeftHand));
+  if (xbox2->GetBButton()){
+    cargo->setIntakeSpeed(xbox2->GetY(hand::kLeftHand));
   } else {
     cargo->setIntakeSpeed(0);
   }
   
   //manual hatch
-  if (xbox1->GetYButton()){
+  if (xbox2->GetYButton()){
     hatch->setRotationSpeed(-0.3);
   } else {
     hatch->setRotationSpeed(0);
   }
 
   //hatch positioning
-  if (xbox1->GetAButton()){
+  if (xbox2->GetAButton()){
     hatch->downPosition();
-  } //else {
-  //   hatch->upPosition();
-  // }
+  } else {
+    hatch->upPosition();
+  }
 
   //Hatch Ejection
-  hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
-  hatch->alignmentPiston(xbox1->GetAButton());
+  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
+  hatch->alignmentPiston(xbox2->GetAButton());
 
   hatch->update();
   cargo->update();
