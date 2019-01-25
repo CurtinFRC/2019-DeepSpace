@@ -22,9 +22,7 @@
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) {
-  _camPort = port;
-}
+Capture::Capture(int port) : _cam("USBCam", port) {}
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {
@@ -47,16 +45,11 @@ bool Capture::IsValidFrame() {
   return _isValid;
 }
 
-int Capture::GetPort() {
-  return _camPort;
-}
-
 
 
 void Capture::Init() {
   //std::lock_guard<std::mutex> lock(_classMutex); // do i need this ? *
 
-  cs::UsbCamera _cam{"USBCam", _camPort};
   _sink.SetSource(_cam);
   _cam.SetExposureManual(-100);
 
@@ -70,5 +63,6 @@ void Capture::Init() {
 }
 
 void Capture::Periodic() {
-  _isValid = _sink.GrabFrame(_captureMat) == 0;
+  _isValid = _sink.GrabFrame(_captureMat) != 0;
+  // std::cout << _sink.GrabFrame(_captureMat) << std::endl;
 }

@@ -37,6 +37,7 @@ void BallProcessing::Periodic() {
     double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
     double bgrThreshRed[] = {0.0, 127.0}; */
     
+    _capture.CopyCaptureMat(_imgOriginal);
     cv::cvtColor(_imgOriginal, _imgTrack, cv::COLOR_RGB2HSV);
     std::cout << "Origin Image Found" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)

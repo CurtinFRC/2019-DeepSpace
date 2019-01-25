@@ -19,11 +19,11 @@ class Capture : public Runnable {
   bool IsValidFrame();
   
  private:
+  cs::UsbCamera _cam;
   std::mutex _classMutex;
   std::condition_variable _initCondVar;
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   cs::VideoMode _videoMode;
   bool _isValid = false;
-  int _camPort;
 };

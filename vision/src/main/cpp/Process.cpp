@@ -24,6 +24,11 @@ void Process::CopyImgTrack(cv::Mat &imgTrack) {
   _imgTrack.copyTo(imgTrack);
 }
 
+void Process::CopyImgOriginal(cv::Mat &imgOriginal) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgOriginal.copyTo(imgOriginal);
+}
+
 
 
 void Process::Init() {

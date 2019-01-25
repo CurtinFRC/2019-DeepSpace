@@ -21,6 +21,7 @@ class Process : public Runnable {
   Process(Capture &capture);
   Capture &GetCapture();
   void CopyImgTrack(cv::Mat &imgtrack);
+  void Process::CopyImgOriginal(cv::Mat &imgOriginal);
  protected:
   std::mutex _classMutex;
   Capture &_capture;

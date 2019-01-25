@@ -19,4 +19,5 @@ class Display : public Runnable {
   cs::VideoMode _videoMode;
   cv::Mat _imgTrack;
   cv::Mat _imgOriginal;
+  Capture &_capture;
 };
