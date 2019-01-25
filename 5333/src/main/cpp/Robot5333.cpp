@@ -31,7 +31,8 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
 void Robot::TeleopPeriodic() {
-  double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
+  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
+  lastTimestamp = Timer::GetFPGATimestamp();
   // Calc dt for update functions
   
   double joyY = -robotmap.joy->GetCircularisedAxisAgainst(robotmap.joy->kYAxis, robotmap.joy->kZAxis) * 0.9;
