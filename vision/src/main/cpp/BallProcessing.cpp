@@ -11,7 +11,6 @@
 #include "opencv2/core/core.hpp"
 #include <stdio.h>
 #include <iostream>
-#include <windows.h>
 
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
