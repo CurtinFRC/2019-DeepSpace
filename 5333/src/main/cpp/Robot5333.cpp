@@ -19,10 +19,10 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  DrivetrainConfig drivetrainConfig{robotmap.drivetrain.LeftGearbox};
+  DrivetrainConfig drivetrainConfig{robotmap.drivetrain.LeftGearbox, robotmap.drivetrain.RightGearbox};
   drivetrain = new Drivetrain(drivetrainConfig);
 
-  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
+  ElevatorConfig elevatorConfig{ robotmap.lift.ElevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
 }
 
@@ -34,8 +34,8 @@ void Robot::TeleopPeriodic() {
   double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
   // Calc dt for update functions
   
-  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
-  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.65;
+  double joyY = -robotmap.joy->GetCircularisedAxisAgainst(robotmap.joy->kYAxis, robotmap.joy->kZAxis) * 0.9;
+  double joyZ = robotmap.joy->GetCircularisedAxisAgainst(robotmap.joy->kZAxis, robotmap.joy->kYAxis) * 0.65;
 
   joyY *= abs(joyY);
   joyZ *= abs(joyZ);
@@ -46,7 +46,7 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(leftSpeed, rightSpeed);
 
 
-  double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
+  double beElevatorSpeed = (robotmap.joy->GetRawButton(8) - robotmap.joy->GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
 
