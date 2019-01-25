@@ -16,6 +16,7 @@
 #include "Gearbox.h"
 
 #include "Lift.h"
+#include "RobotMap.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -33,15 +34,9 @@ class Robot : public frc::TimedRobot {
   std::shared_ptr<nt::NetworkTable> table;
   nt::NetworkTableEntry yOffset, xOffset, endAngle;
 
+  RobotMap robotmap;
 
-  curtinfrc::Joystick *joy;
-  
-  curtinfrc::TalonSrx *leftSRX, *rightSRX;
-  curtinfrc::VictorSpx *leftSPX, *rightSPX;
-  curtinfrc::Gearbox *left, *right;
   curtinfrc::Drivetrain *drivetrain;
 
-  frc::Spark *liftMotors[1];
-  curtinfrc::Gearbox *liftGearbox;
   Lift *beElevator;
 };

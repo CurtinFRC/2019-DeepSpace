@@ -19,28 +19,10 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  joy = new curtinfrc::Joystick(0);
-
-  leftSRX = new TalonSrx(1, 2048);
-  leftSRX->SetInverted(false);
-  leftSPX = new VictorSpx(2);
-  leftSPX->SetInverted(false);
-  left = new Gearbox{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
-
-  rightSRX = new TalonSrx(3, 2048);
-  rightSRX->SetInverted(true);
-  rightSPX = new VictorSpx(4);
-  rightSPX->SetInverted(true);
-  right = new Gearbox{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
-
-  DrivetrainConfig drivetrainConfig{*left, *right};
+  DrivetrainConfig drivetrainConfig{robotmap.drivetrain.LeftGearbox};
   drivetrain = new Drivetrain(drivetrainConfig);
 
-
-  liftMotors[0] = new Spark(5);
-  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr, 20 };
-
-  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 25 / 1000.0, 20 };
+  ElevatorConfig elevatorConfig{ *liftGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
 }
 
