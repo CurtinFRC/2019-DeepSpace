@@ -3,9 +3,9 @@
 Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant) {
     Flooper = new curtinfrc::TalonSrx(motorID, 1);
     Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
-        config.slot0.kP = 0;
+        config.slot0.kP = 5;
         config.slot1.kI = 0;
-        config.slot2.kD = 0;
+        config.slot2.kD = 0.00;
         config.slot3.kF = 0;
 
         config.nominalOutputForward = 0;
@@ -33,12 +33,12 @@ void Hatch::setAngle(double newAngle) {
 }
 
 void Hatch::downPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, downValue);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 22000);
 }
 
 
 void Hatch::upPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, upValue);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 100);
 }
 
 void Hatch::ejectHatch(bool eject) {
