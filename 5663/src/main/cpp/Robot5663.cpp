@@ -47,34 +47,32 @@ void Robot::TeleopPeriodic() {
    drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //cargo speed
-  if (xbox1->GetTriggerAxis(hand::kRightHand)){
-    cargo->setRotationSpeed(xbox1->GetTriggerAxis(hand::kRightHand));
+  if (xbox2->GetTriggerAxis(hand::kRightHand)){
+    cargo->setRotationSpeed(xbox2->GetTriggerAxis(hand::kRightHand));
   }else{
-    cargo->setRotationSpeed(-xbox1->GetTriggerAxis(hand::kLeftHand));
+    cargo->setRotationSpeed(-xbox2->GetTriggerAxis(hand::kLeftHand));
   }
   
   //cargo positioning
-  if (xbox1->GetYButton()){
+  if (xbox2->GetYButton()){
     cargo->setAngle(0.1, 10);
   }
 
   //cargo intake/outtake
-  if (xbox1->GetXButton()){
-    cargo->setIntakeSpeed(0.2);
+  if (xbox2->GetY(hand::kLeftHand) != 0){
+    cargo->setIntakeSpeed(xbox2->GetY(hand::kLeftHand));
   }
-  if (xbox1->GetBButton()){
-    cargo->setIntakeSpeed(-0.2);
-  }
+  
 
   //hatch positioning
-  if (xbox1->GetBumper(hand::kLeftHand)){
+  if (xbox2->GetAButton()){
     hatch->downPosition();
   } else {
     hatch->upPosition();
   }
 
   //Hatch Ejection
-  hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
+  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
   hatch->alignmentPiston(xbox1->GetAButton());
 
   hatch->update();
