@@ -27,5 +27,5 @@ class Hatch {
         double maxAcceleration = 100;
         double deadzone = 0.01;
         double upValue = 0; 
-        double downValue = 500;
+        double downValue = 25000;
 };

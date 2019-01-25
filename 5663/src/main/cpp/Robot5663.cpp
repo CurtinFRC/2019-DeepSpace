@@ -45,7 +45,33 @@ void Robot::TeleopPeriodic() {
    double left_speed = -xbox1->GetY(hand::kLeftHand);
    double right_speed = xbox1->GetY(hand::kRightHand);
    drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
- 
+  
+  //cargo speed
+  if (xbox1->GetTriggerAxis(hand::kRightHand)){
+    cargo->setRotationSpeed(xbox1->GetTriggerAxis(hand::kRightHand));
+  }else{
+    cargo->setRotationSpeed(-xbox1->GetTriggerAxis(hand::kLeftHand));
+  }
+  
+  //cargo positioning
+  if (xbox1->GetYButton()){
+    cargo->setAngle(0.1, 10);
+  }
+
+  //cargo intake/outtake
+  if (xbox1->GetXButton()){
+    cargo->setIntakeSpeed(0.2);
+  }
+  if (xbox1->GetBButton()){
+    cargo->setIntakeSpeed(-0.2);
+  }
+
+  //hatch positioning
+  if (xbox1->GetBumper(hand::kLeftHand)){
+    hatch->downPosition();
+  } else {
+    hatch->upPosition();
+  }
 
   //Hatch Ejection
   hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
