@@ -1,5 +1,4 @@
 #include "Display.h"
-
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
@@ -9,7 +8,6 @@
 #include "opencv2/core/core.hpp"
 #include <stdio.h>
 #include <iostream>
-#include <windows.h>
 
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
@@ -29,16 +27,16 @@ void Display::Init() {
 void Display::Periodic() {
   //Capture &capture = _process.GetCapture();
   _process.CopyImgTrack(_imgTrack);
-  _process.CopyImgTrack(_imgOriginal);
+  _process.CopyImgOriginal(_imgOriginal);
   if (_capture.IsValidFrame()) {
-#ifdef __DESKTOP__
+// #ifdef __DESKTOP__
     imshow("OutputTrack", _imgTrack);
-    // imshow("OutputOrigin", _imgOriginal);
-#else
+    imshow("OutputOrigin", _imgOriginal);
+// #else
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
+    _output.PutFrame(_imgOriginal);
     _output.PutFrame(_imgTrack);
-    // _output.PutFrame(_imgOriginal);
-#endif
+// #endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
   } else {

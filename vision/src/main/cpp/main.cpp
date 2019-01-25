@@ -32,12 +32,12 @@ int main(int argc, char **argv) {
 
   VisionRunner vision;
   Capture capture{0};
-  TapeProcessing tapeProcess{capture};
+  //TapeProcessing tapeProcess{capture};
   BallProcessing ballProcess{capture};
-  Display display{tapeProcess};
+  Display display{ballProcess};
   
   vision.Run(capture);
-  vision.Run(tapeProcess);
+  //vision.Run(tapeProcess);
   vision.Run(ballProcess);
   vision.Run(display);
 
