@@ -51,7 +51,6 @@ TalonSrx::ControlMode TalonSrx::GetMode() {
 }
 
 int TalonSrx::GetSensorPosition() {
-  NativeSrx(this)->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0);
   return NativeSrx(this)->GetSelectedSensorPosition();
 }
 
