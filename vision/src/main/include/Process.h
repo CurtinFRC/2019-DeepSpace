@@ -20,14 +20,24 @@ class Process : public Runnable {
 
   Process(Capture &capture);
   Capture &GetCapture();
-  void CopyImgTrack(cv::Mat &imgtrack);
   void CopyImgOriginal(cv::Mat &imgOriginal);
-  void CopyImgThresh(cv::Mat &imgThresh);
+
+  void CopyImgBallThresh(cv::Mat &imgballThresh);
+  void CopyImgBallTrack(cv::Mat &imgballtrack);
+
+  void CopyImgHatchThresh(cv::Mat &imghatchThresh);
+  void CopyImgHatchTrack(cv::Mat &imghatchTrack);
+
  protected:
   std::mutex _classMutex;
   Capture &_capture;
   cs::VideoMode _videoMode;
-  cv::Mat _imgTrack;
+
   cv::Mat _imgOriginal;
-  cv::Mat _imgThresh;
+
+  cv::Mat _imgBallThresh;
+  cv::Mat _imgBallTrack;
+
+  cv::Mat _imgHatchThresh;
+  cv::Mat _imgHatchTrack;
 };

@@ -27,20 +27,28 @@ void Display::Init() {
 
 void Display::Periodic() {
   //Capture &capture = _process.GetCapture();
-  _process.CopyImgTrack(_imgTrack);
   _process.CopyImgOriginal(_imgOriginal);
-  _process.CopyImgThresh(_imgThresh);
+
+  _process.CopyImgBallThresh(_imgBallThresh);
+  _process.CopyImgBallTrack(_imgBallTrack);
+
+  _process.CopyImgHatchThresh(_imgHatchThresh);
+  _process.CopyImgHatchTrack(_imgHatchTrack);
   if (_capture.IsValidFrame()) {
 #ifdef __DESKTOP__
-    imshow("OutputTrack", _imgTrack);
     imshow("OutputOrigin", _imgOriginal);
-    imshow("OutputThresh", _imgThresh);
+
+    imshow("OutputThresh", _imgBallThresh);
+    imshow("OutputTrack", _imgBallTrack);
+
+    imshow("OutputHatchThresh", _imgHatchThresh);
+    imshow("OutputHatchTrack", _imgHatchTrack);
     cv::waitKey(1000 / 30);
 #else
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
     _output.PutFrame(_imgOriginal);
-    //_output.PutFrame(_imgTrack);
-    //_output.PutFrame(_imgThresh);
+    //_output.PutFrame(_imgBallThresh);
+    //_output.PutFrame(_imgBallTrack);
 #endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed

@@ -17,27 +17,31 @@ Capture &Process::GetCapture() {
     return _capture;
 }
 
-// Copiers
-void Process::CopyImgTrack(cv::Mat &imgTrack) {
-  std::lock_guard<std::mutex> lock(_classMutex);
-  _imgTrack.copyTo(imgTrack);
-}
-
 void Process::CopyImgOriginal(cv::Mat &imgOriginal) {
   std::lock_guard<std::mutex> lock(_classMutex);
   _imgOriginal.copyTo(imgOriginal);
 }
 
-void Process::CopyImgThresh(cv::Mat &imgThresh) {
+void Process::CopyImgBallThresh(cv::Mat &imgballThresh) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgThresh.copyTo(imgThresh);
+  _imgBallThresh.copyTo(imgballThresh);
+}
+
+// Copiers
+void Process::CopyImgHatchTrack(cv::Mat &imghatchTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgHatchTrack.copyTo(imghatchTrack);
 }
 
 void Process::Init() {
   _videoMode = _capture.GetVideoMode();
-  _imgTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 	_imgOriginal = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
-  _imgThresh = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+
+  _imgBallThresh = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+  _imgBallTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+
+  _imgHatchThresh = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+  _imgHatchTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 }
 
 void Process::Periodic() {}

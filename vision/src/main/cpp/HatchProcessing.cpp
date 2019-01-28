@@ -1,6 +1,6 @@
 #include "Display.h"
 #include "Capture.h"
-#include "BallProcessing.h"
+#include "HatchProcessing.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -17,19 +17,19 @@
 
 #include "devices/kinect.h"
 
-cv::RNG rngBall(12345);
-cv::Rect ball_height_goal;
-int ball_thresh = 100;
-float ball_height_offset;
-float ball_width_offset;
-float ball_width_goal = 320;
-float ball_height_goal = 240;
+cv::RNG rngHatch(12345);
+cv::Rect hatch_bounding_rect;
+int hatch_thresh = 100;
+float hatch_height_offset;
+float hatch_width_offset;
+float hatch_width_goal = 320;
+float hatch_height_goal = 240;
 
-void BallProcessing::Init() {
+void HatchProcessing::Init() {
   Process::Init();
 }
 
-void BallProcessing::Periodic() {
+void HatchProcessing::Periodic() {
   std::lock_guard<std::mutex> lock(_classMutex);
   if (_capture.IsValidFrame()) {
     /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
@@ -38,8 +38,8 @@ void BallProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgOriginal);
-    cv::cvtColor(_imgOriginal, _imgBallTrack, cv::COLOR_RGB2HSV);
-    cv::cvtColor(_imgOriginal, _imgBallThresh, cv::COLOR_RGB2HSV);
+    cv::cvtColor(_imgOriginal, _imgHatchThresh, cv::COLOR_RGB2HSV);
+    cv::cvtColor(_imgOriginal, _imgHatchTrack, cv::COLOR_RGB2HSV);
     std::cout << "Origin Image Found" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
 
@@ -56,10 +56,10 @@ void BallProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgBallTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgBallTrack);
-    cv::inRange(_imgBallTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgBallThresh);
-    cv::findContours(_imgBallTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-    cv::findContours(_imgBallThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::inRange(_imgHatchTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgHatchTrack);
+    cv::inRange(_imgHatchTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgHatchThresh);
+    cv::findContours(_imgHatchTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::findContours(_imgHatchThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
@@ -84,7 +84,7 @@ void BallProcessing::Periodic() {
     }
 
     /// Detect edges using Canny
-    cv::Canny(_imgBallTrack, _imgBallTrack, ball_thresh, ball_thresh * 2);
+    cv::Canny(_imgHatchTrack, _imgHatchTrack, hatch_thresh, hatch_thresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -96,19 +96,19 @@ void BallProcessing::Periodic() {
     }
 
     /// Draw filteredContours + hull results
-    _imgBallTrack = cv::Mat::zeros(_imgBallTrack.size(), CV_8UC3);
+    _imgHatchTrack = cv::Mat::zeros(_imgHatchTrack.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectBall( filteredContoursBall.size() );
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
-      cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
-      cv::drawContours(_imgBallTrack, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgBallTrack, hullBall, (int)i, color);
+      cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
+      cv::drawContours(_imgHatchTrack, filteredContoursBall, (int)i, color);
+      cv::drawContours(_imgHatchTrack, hullBall, (int)i, color);
     }
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
-      cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
-      cv::drawContours(_imgBallTrack, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgBallTrack, hullBall, (int)i, color);
+      cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
+      cv::drawContours(_imgHatchTrack, filteredContoursBall, (int)i, color);
+      cv::drawContours(_imgHatchTrack, hullBall, (int)i, color);
     }
 
     /// Find contoursBox
@@ -126,11 +126,11 @@ void BallProcessing::Periodic() {
 
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hullBall.size(); i++) {
-      cv::Scalar color = cv::Scalar(rngBall.uniform(0, 255), rngBall.uniform(0,255), rngBall.uniform(0,255));
-      cv::drawContours(_imgBallTrack, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-      ball_height_goal = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
-      cv::rectangle(_imgBallTrack, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
-      cv::circle(_imgBallTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
+      cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
+      cv::drawContours(_imgHatchTrack, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+      hatch_bounding_rect = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
+      cv::rectangle(_imgHatchTrack, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
+      cv::circle(_imgHatchTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
     }
 
 
@@ -149,13 +149,13 @@ void BallProcessing::Periodic() {
 
     for(int i = 0; i < hullBall_poly.size(); i++) {
       cv::Scalar color = cv::Scalar(167,151,0); // B G R values
-      cv::circle(_imgBallTrack, mcBall[i], 4, color, -1, 8, 0);
+      cv::circle(_imgHatchTrack, mcBall[i], 4, color, -1, 8, 0);
 
       // offsets from centerBall
       cv::Point centerBall = cv::Point((mcBall[i].x), (mcBall[i].y));
-      ball_width_offset = ball_width_goal - centerBall.x;
-      ball_height_offset = ball_height_goal - centerBall.y;
-      std::cout << "Offset From CenterBall x,y =" << ball_height_offset << "," << ball_width_offset << std::endl;
+      hatch_width_offset = hatch_width_goal - centerBall.x;
+      hatch_height_offset = hatch_height_goal - centerBall.y;
+      std::cout << "Offset From CenterBall x,y =" << hatch_height_offset << "," << hatch_width_offset << std::endl;
     }
   }
 }
