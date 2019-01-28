@@ -40,7 +40,7 @@ void HatchProcessing::Periodic() {
     _capture.CopyCaptureMat(_imgOriginal);
     cv::cvtColor(_imgOriginal, _imgHatchThresh, cv::COLOR_RGB2HSV);
     cv::cvtColor(_imgOriginal, _imgHatchTrack, cv::COLOR_RGB2HSV);
-    std::cout << "Origin Image Found" << std::endl;
+    std::cout << "Origin Image Found For Hatch" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -152,9 +152,9 @@ void HatchProcessing::Periodic() {
       cv::circle(_imgHatchTrack, mcBall[i], 4, color, -1, 8, 0);
 
       // offsets from centerBall
-      cv::Point centerBall = cv::Point((mcBall[i].x), (mcBall[i].y));
-      hatch_width_offset = hatch_width_goal - centerBall.x;
-      hatch_height_offset = hatch_height_goal - centerBall.y;
+      cv::Point centerHatch = cv::Point((mcBall[i].x), (mcBall[i].y));
+      hatch_width_offset = hatch_width_goal - centerHatch.x;
+      hatch_height_offset = hatch_height_goal - centerHatch.y;
       std::cout << "Offset From CenterBall x,y =" << hatch_height_offset << "," << hatch_width_offset << std::endl;
     }
   }

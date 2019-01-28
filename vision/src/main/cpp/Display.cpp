@@ -38,17 +38,20 @@ void Display::Periodic() {
 #ifdef __DESKTOP__
     imshow("OutputOrigin", _imgOriginal);
 
-    imshow("OutputThresh", _imgBallThresh);
-    imshow("OutputTrack", _imgBallTrack);
-
+    imshow("OutputBallThresh", _imgBallThresh);
+    imshow("OutputBallTrack", _imgBallTrack);
+    cv::waitKey(500 / 30);
     imshow("OutputHatchThresh", _imgHatchThresh);
     imshow("OutputHatchTrack", _imgHatchTrack);
-    cv::waitKey(1000 / 30);
+    cv::waitKey(500 / 30);
 #else
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
     _output.PutFrame(_imgOriginal);
     //_output.PutFrame(_imgBallThresh);
     //_output.PutFrame(_imgBallTrack);
+
+    //_output.PutFrame(_imgHatchThresh);
+    //_output.PutFrame(_imgHatchTrack);
 #endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed

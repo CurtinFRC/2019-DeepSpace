@@ -18,7 +18,7 @@
 #include "devices/kinect.h"
 
 cv::RNG rngBall(12345);
-cv::Rect ball_height_goal;
+cv::Rect ball_bounding_rect;
 int ball_thresh = 100;
 float ball_height_offset;
 float ball_width_offset;
@@ -40,7 +40,7 @@ void BallProcessing::Periodic() {
     _capture.CopyCaptureMat(_imgOriginal);
     cv::cvtColor(_imgOriginal, _imgBallTrack, cv::COLOR_RGB2HSV);
     cv::cvtColor(_imgOriginal, _imgBallThresh, cv::COLOR_RGB2HSV);
-    std::cout << "Origin Image Found" << std::endl;
+    std::cout << "Origin Image Found For Ball" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -128,7 +128,7 @@ void BallProcessing::Periodic() {
     for(int i = 0; i < hullBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 255), rngBall.uniform(0,255), rngBall.uniform(0,255));
       cv::drawContours(_imgBallTrack, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-      ball_height_goal = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
+      ball_bounding_rect = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
       cv::rectangle(_imgBallTrack, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
       cv::circle(_imgBallTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
     }

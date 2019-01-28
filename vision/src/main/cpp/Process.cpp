@@ -17,6 +17,7 @@ Capture &Process::GetCapture() {
     return _capture;
 }
 
+// Copiers
 void Process::CopyImgOriginal(cv::Mat &imgOriginal) {
   std::lock_guard<std::mutex> lock(_classMutex);
   _imgOriginal.copyTo(imgOriginal);
@@ -27,7 +28,16 @@ void Process::CopyImgBallThresh(cv::Mat &imgballThresh) {
   _imgBallThresh.copyTo(imgballThresh);
 }
 
-// Copiers
+void Process::CopyImgBallTrack(cv::Mat &imgballTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgBallTrack.copyTo(imgballTrack);
+}
+
+void Process::CopyImgHatchThresh(cv::Mat &imghatchThresh) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgHatchThresh.copyTo(imghatchThresh);
+}
+
 void Process::CopyImgHatchTrack(cv::Mat &imghatchTrack) {
   std::lock_guard<std::mutex> lock(_classMutex);
   _imgHatchTrack.copyTo(imghatchTrack);
