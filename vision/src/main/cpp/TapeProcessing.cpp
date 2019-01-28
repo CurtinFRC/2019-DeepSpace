@@ -13,7 +13,6 @@
 #include <iostream>
 
 #include <cameraserver/CameraServer.h>
-#include <networktables/NetworkTableInstance.h>
 #include <cscore.h>
 
 #include "devices/kinect.h"
@@ -22,17 +21,18 @@ using namespace cv;
 using namespace std;
 
 void TapeProcessing::Init() {
-	imgHSV = cv::Mat::zeros(_capture.GetHeight(), _capture.GetWidth(), CV_8UC3);
+	Process::Init();
 }
 
 void TapeProcessing::Periodic() {
-	if (_capture.IsValidFrame()) {
-		cv::Mat hsvThreshInput = _capture.GetCaptureMat();
-		cv::cvtColor(hsvThreshInput, imgHSV, cv::COLOR_RGB2HSV);
+	// I have a feeling this won't work. imgHSV is deprecated ?
+	/* if (_capture.IsValidFrame()) {
+		_capture.CopyCaptureMat(_captureMat);
+		cv::cvtColor(_captureMat, imgHSV, cv::COLOR_RGB2HSV);
 		cv::inRange(imgHSV, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), imgBinary);
 		cv::findContours(imgBinary, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
-		for (int i=0; i<contours.size(); i++) {
+		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
 		}
@@ -44,7 +44,7 @@ void TapeProcessing::Periodic() {
 	lefts.clear();
 	rights.clear();
 
-	for (int i=0; i<filteredContours.size(); i++) {
+	for (int i = 0; i < filteredContours.size(); i++) {
 
 		cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
 
@@ -133,10 +133,10 @@ void TapeProcessing::Periodic() {
 
   Scalar color = Scalar(255, 255, 255);
 
-  for (int i=0; i<targets.size(); i++) {
+  for (int i = 0; i < targets.size(); i++) {
     std::stringstream dis;	dis<<distances[i];
     std::stringstream ang;	ang<<angles[i];
     cv::rectangle(imgBinary, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
     cv::putText(imgBinary, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
-  }
+  } */
 }
