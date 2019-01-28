@@ -8,7 +8,6 @@
 #include "opencv2/core/core.hpp"
 #include <stdio.h>
 #include <iostream>
-
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
@@ -28,17 +27,21 @@ void Display::Periodic() {
   //Capture &capture = _process.GetCapture();
   _process.CopyImgTrack(_imgTrack);
   _process.CopyImgOriginal(_imgOriginal);
+  _process.CopyImgThresh(_imgThresh);
   if (_capture.IsValidFrame()) {
-// #ifdef __DESKTOP__
+#ifdef __DESKTOP__
     imshow("OutputTrack", _imgTrack);
     imshow("OutputOrigin", _imgOriginal);
-// #else
+    imshow("OutputThresh", _imgThresh);
+#else
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
     _output.PutFrame(_imgOriginal);
     _output.PutFrame(_imgTrack);
-// #endif
+    _output.PutFrame(_imgThresh);
+#endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
+    cv::waitKey(1000 / 30);
   } else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }

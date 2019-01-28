@@ -19,10 +19,13 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <stdlib.h>
+
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) : _cam("USBCam", port) {}
+Capture::Capture(int port) : _cam("USBCam", port) {
+}
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {
@@ -51,10 +54,13 @@ void Capture::Init() {
   //std::lock_guard<std::mutex> lock(_classMutex); // do i need this ? *
 
   _sink.SetSource(_cam);
-  _cam.SetExposureManual(-100);
 
   // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
   _cam.SetResolution(640, 480);
+
+  for (auto it : _cam.EnumerateProperties()) {
+    std::cout << "Property: " << it.GetName() << " -> " << it.Get() << std::endl;
+  }
 
   _videoMode = _cam.GetVideoMode();
   std::cout << "Width: " << _videoMode.width << " Height: " << _videoMode.height << std::endl;

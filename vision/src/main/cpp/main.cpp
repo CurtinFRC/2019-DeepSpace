@@ -31,7 +31,11 @@ int main(int argc, char **argv) {
   }
 
   VisionRunner vision;
+  #ifdef __DESKTOP__
   Capture capture{0};
+  #else
+  Capture capture{4};
+  #endif
   //TapeProcessing tapeProcess{capture};
   BallProcessing ballProcess{capture};
   Display display{ballProcess};

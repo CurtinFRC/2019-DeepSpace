@@ -30,6 +30,7 @@ void BallProcessing::Init() {
 }
 
 void BallProcessing::Periodic() {
+  std::lock_guard<std::mutex> lock(_classMutex);
   if (_capture.IsValidFrame()) {
     /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
     double bgrThreshBlue[] = {0.0, 127.0};
@@ -38,6 +39,7 @@ void BallProcessing::Periodic() {
     
     _capture.CopyCaptureMat(_imgOriginal);
     cv::cvtColor(_imgOriginal, _imgTrack, cv::COLOR_RGB2HSV);
+    cv::cvtColor(_imgOriginal, _imgThresh, cv::COLOR_RGB2HSV);
     std::cout << "Origin Image Found" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
 
@@ -54,8 +56,10 @@ void BallProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgTrack, cv::Scalar(7, 100, 100), cv::Scalar(20, 255, 255), _imgTrack); // get img via getter
+    cv::inRange(_imgTrack, cv::Scalar(5, 100, 100), cv::Scalar(25, 255, 255), _imgTrack);
+    cv::inRange(_imgTrack, cv::Scalar(5, 100, 100), cv::Scalar(25, 255, 255), _imgThresh);
     cv::findContours(_imgTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::findContours(_imgThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
