@@ -8,6 +8,10 @@ deploy {
   targets {
     roboRIO('roborio') {
       team = project.hasProperty("team") ? project.team.toInteger() : project.name.toInteger()
+      
+      // For VSCode Debugging - we won't be able to deploy to every target!
+      if (project.hasProperty("debugMode"))
+        failOnMissing = false
     }
   }
 

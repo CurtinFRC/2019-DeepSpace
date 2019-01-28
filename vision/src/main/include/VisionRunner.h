@@ -1,8 +1,10 @@
 #pragma once
-#include <thread>
-#include <vector>
 
 #include "Runnable.h"
+
+#include <thread>
+#include <vector>
+#include <mutex>
 
 class VisionRunner {
  public:
