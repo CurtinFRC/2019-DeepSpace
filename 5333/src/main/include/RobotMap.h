@@ -8,7 +8,7 @@
 #include "Drivetrain.h"
 #include "CurtinControllers.h"
 #include "Gearbox.h"
-#include "Sensors/Encoder.h"
+#include "sensors/Encoder.h"
 
 struct RobotMap {
 
