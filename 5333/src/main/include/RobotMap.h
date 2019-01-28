@@ -29,7 +29,7 @@ struct RobotMap {
   DriveTrain drivetrain; 
 
   struct Elevator {
-    Spark LiftMotors{5};
+    frc::Spark LiftMotors{5};
     curtinfrc::Gearbox ElevatorGearbox{&LiftMotors, nullptr, 20};
   };
 

@@ -1,4 +1,5 @@
 #include "Robot5333.h"
+#include "RobotMap.h"
 
 #include <math.h>
 #include <iostream>
@@ -35,8 +36,8 @@ void Robot::TeleopPeriodic() {
   lastTimestamp = Timer::GetFPGATimestamp();
   // Calc dt for update functions
   
-  double joyY = -robotmap.joy->GetCircularisedAxisAgainst(robotmap.joy->kYAxis, robotmap.joy->kZAxis) * 0.9;
-  double joyZ = robotmap.joy->GetCircularisedAxisAgainst(robotmap.joy->kZAxis, robotmap.joy->kYAxis) * 0.65;
+  double joyY = -robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kYAxis, robotmap.joy.kZAxis) * 0.9;
+  double joyZ = robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kZAxis, robotmap.joy.kYAxis) * 0.65;
 
   joyY *= abs(joyY);
   joyZ *= abs(joyZ);
@@ -47,7 +48,7 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(leftSpeed, rightSpeed);
 
 
-  double beElevatorSpeed = (robotmap.joy->GetRawButton(8) - robotmap.joy->GetRawButton(7)) * 0.8;
+  double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
 
