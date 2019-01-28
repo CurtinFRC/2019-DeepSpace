@@ -56,8 +56,8 @@ void BallProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgTrack, cv::Scalar(5, 100, 100), cv::Scalar(25, 255, 255), _imgTrack);
-    cv::inRange(_imgTrack, cv::Scalar(5, 100, 100), cv::Scalar(25, 255, 255), _imgThresh);
+    cv::inRange(_imgTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgTrack);
+    cv::inRange(_imgTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgThresh);
     cv::findContours(_imgTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     cv::findContours(_imgThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 

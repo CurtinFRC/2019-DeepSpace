@@ -10,6 +10,8 @@
 #include <iostream>
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
+#include <chrono>
+#include <thread>
 
 #include "devices/kinect.h"
 
@@ -33,17 +35,18 @@ void Display::Periodic() {
     imshow("OutputTrack", _imgTrack);
     imshow("OutputOrigin", _imgOriginal);
     imshow("OutputThresh", _imgThresh);
+    cv::waitKey(1000 / 30);
 #else
     // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
     _output.PutFrame(_imgOriginal);
-    _output.PutFrame(_imgTrack);
-    _output.PutFrame(_imgThresh);
+    //_output.PutFrame(_imgTrack);
+    //_output.PutFrame(_imgThresh);
 #endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
-    cv::waitKey(1000 / 30);
   } else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }
+  std::this_thread::sleep_for(std::chrono::duration<double>(1.0 / 90));
 }
 
