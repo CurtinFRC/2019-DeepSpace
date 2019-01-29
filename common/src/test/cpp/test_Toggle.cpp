@@ -2,6 +2,8 @@
 
 #include "Toggle.h"
 
+using namespace curtinfrc;
+
 TEST (Toggle, DefConstructor) {
   Toggle toggleDef;
 

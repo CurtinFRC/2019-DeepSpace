@@ -6,17 +6,13 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
 #include <networktables/NetworkTableInstance.h>
 
-#include "CurtinCtre.h"
-#include "Drivetrain.h"
-#include "CurtinControllers.h"
-#include "Gearbox.h"
+
+#include "RobotMap.h"
 
 #include "Lift.h"
-#include "RobotMap.h"
+#include "HarvesterIntake.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -34,9 +30,12 @@ class Robot : public frc::TimedRobot {
   std::shared_ptr<nt::NetworkTable> table;
   nt::NetworkTableEntry yOffset, xOffset, endAngle;
 
+
   RobotMap robotmap;
 
   curtinfrc::Drivetrain *drivetrain;
+
+  HarvesterIntake *harvester;
 
   Lift *beElevator;
 };
