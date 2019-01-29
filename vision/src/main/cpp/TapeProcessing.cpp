@@ -28,12 +28,17 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-	if (_capture.IsValidFrame()) {
+	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+    
     _capture.CopyCaptureMat(_imgProcessedTrack);
     {
       std::lock_guard<std::mutex> lock(_classMutex);
 		  cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
-		  cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
+    }
+
+    {
+      std::lock_guard<std::mutex> lock(_classMutex);
+      cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
       cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
       cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     }
@@ -134,12 +139,12 @@ void TapeProcessing::Periodic() {
       }
     }
 
-    // Scalar color = Scalar(255, 255, 255);
+    cv::Scalar color = cv::Scalar(255, 255, 255);
 
     for (int i = 0; i < targets.size(); i++) {
       std::stringstream dis;	dis << distances[i];
       std::stringstream ang;	ang << angles[i];
-      cv::rectangle(_imgProcessedTrack, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+      cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-3,-3), targets[i] + cv::Point2f(3,3), color, 2); //draw small rectangle on target locations
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
 

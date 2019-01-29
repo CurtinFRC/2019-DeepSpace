@@ -32,7 +32,7 @@ void BallProcessing::Init() {
 
 void BallProcessing::Periodic() {
   Process::Periodic();
-  if (_capture.IsValidFrame()) {
+  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
     /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
     double bgrThreshBlue[] = {0.0, 127.0};
     double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green

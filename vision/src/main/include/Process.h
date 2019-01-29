@@ -24,7 +24,8 @@ class Process : public Runnable {
   void CopyProcessedThresh(cv::Mat &imgProcessedThresh);
 
   std::string GetProcessType();
-  bool GetValid();
+  bool GetValidThresh();
+  bool GetValidTrack();
 
  protected:
   std::mutex _classMutex;

@@ -16,7 +16,8 @@ class Capture : public Runnable {
 
   cs::VideoMode GetVideoMode();
   void CopyCaptureMat(cv::Mat &captureMat);
-  bool IsValidFrame();
+  bool IsValidFrameThresh();
+  bool IsValidFrameTrack();
   
  private:
   cs::UsbCamera _cam;
@@ -25,5 +26,6 @@ class Capture : public Runnable {
   cs::CvSink _sink{"USBSink"};
   cv::Mat _captureMat;
   cs::VideoMode _videoMode;
-  bool _isValid = false;
+  bool _isValidThresh = false;
+  bool _isValidTrack = false;
 };

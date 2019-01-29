@@ -27,15 +27,15 @@ void Display::Init() {
 
 void Display::Periodic() {
   // Capture &capture = _process.GetCapture();
-  // _process.CopyProcessedTrack(_imgProcessedTrack);
-  _process.CopyProcessedThresh(_imgProcessedThresh);
+  _process.CopyProcessedTrack(_imgProcessedTrack);
+  // _process.CopyProcessedThresh(_imgProcessedThresh);
   // _capture.CopyCaptureMat(_imgOriginal);
-  if (_capture.IsValidFrame()) {
-    if (_process.GetValid()) {
+  // if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+  if (_process.GetValidThresh() && _process.GetValidTrack()) {
 #ifdef __DESKTOP__
       //imshow("OutputOrigin", _imgOriginal);
 
-      imshow(_process.GetProcessType(), _imgProcessedThresh);
+      imshow(_process.GetProcessType(), _imgProcessedTrack);
 
       // imshow("OutputBallThresh", _imgBallThresh);
       // imshow("OutputBallTrack", _imgBallTrack);
@@ -50,12 +50,13 @@ void Display::Periodic() {
       // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
       _output.PutFrame(_imgProcessedTrack);
 #endif
-    }
+    // }
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
-  } else {
+  }
+  else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }
-  std::this_thread::sleep_for(std::chrono::duration<double>(0.5 / 90));
+  std::this_thread::sleep_for(std::chrono::duration<double>(0.1 / 90));
 }
 

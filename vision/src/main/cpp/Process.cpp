@@ -29,8 +29,12 @@ void Process::CopyProcessedThresh(cv::Mat &imgProcessedThresh) {
 }
 
 // Getters
-bool Process::GetValid() {
-  return _imgProcessedThresh.rows > 0; // check this CJ, do we need a track ver ?
+bool Process::GetValidThresh() {
+  return _imgProcessedThresh.rows > 0;
+}
+
+bool Process::GetValidTrack() {
+  return _imgProcessedTrack.rows > 0;
 }
 
 std::string Process::GetProcessType() {
