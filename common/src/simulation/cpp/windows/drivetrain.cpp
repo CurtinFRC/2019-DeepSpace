@@ -11,7 +11,8 @@ void drivetrain_window::init() {
 }
 
 drivetrain_window::drivetrain_window(DrivetrainConfig *config) : ui::window("Drivetrain", 600, 600), _config(config), physics_aware() {
-  // TODO: Encoders
+  _enc_sim_left = components::create_encoder(config->leftDrive.encoder);
+  _enc_sim_right = components::create_encoder(config->rightDrive.encoder);
 
   register_button(resetPos);
   register_button(scalePlus);
@@ -41,7 +42,15 @@ double drivetrain_window::get_motor_val(bool left) {
 }
 
 void drivetrain_window::add_encoder_position(bool left, double pos) {
-  // TODO:
+  double C = 2 * 3.14159265 * _config->wheelRadius;
+  double rots = pos / C;
+  
+  auto sim_encoder = left ? _enc_sim_left : _enc_sim_right;
+  auto encoder = left ? _config->leftDrive.encoder : _config->rightDrive.encoder;
+
+  if (encoder != nullptr) {
+    sim_encoder->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+  }
 }
 
 void drivetrain_window::update_physics(double time_delta) {
@@ -59,6 +68,8 @@ void drivetrain_window::update_physics(double time_delta) {
 
     state.angular_vel += (accel * time_delta) / _config->wheelRadius;
     state.angular_position += state.angular_vel * time_delta;
+
+    add_encoder_position(left, state.angular_vel * time_delta);
   }
 
   double robot_angular_vel = (_wheel_right.angular_vel - _wheel_left.angular_vel) * _config->wheelRadius / _config->trackwidth;
@@ -76,7 +87,12 @@ void drivetrain_window::render(cv::Mat &img) {
   }
 
   ui::point{0.05, 0.10}.textl(img, ("X: " + ui::utils::fmt_precision(_x, 2) + "m").c_str(), 0.5, ui::colour::white());
-  ui::point{0.2, 0.10}.textl(img, ("Y: " + ui::utils::fmt_precision(_y, 2) + "m").c_str(), 0.5, ui::colour::white());
+  ui::point{0.35, 0.10}.textl(img, ("Y: " + ui::utils::fmt_precision(_y, 2) + "m").c_str(), 0.5, ui::colour::white());
+
+  if (_enc_sim_left != nullptr && _enc_sim_right != nullptr) {
+    ui::point{0.05, 0.15}.textl(img, ("Enc(L): " + std::to_string(_config->leftDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
+    ui::point{0.35, 0.15}.textl(img, ("Enc(R): " + std::to_string(_config->rightDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
+  }
 
   draw_robot(img);
 }

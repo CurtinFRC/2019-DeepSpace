@@ -25,7 +25,7 @@ void elevator_window::add_encoder_position(double pos) {
   double rots = pos / C;
   auto encoder = _config->spool.encoder;
   if (encoder != nullptr)
-    _enc_sim->set_counts(static_cast<uint32_t>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+    _enc_sim->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
 }
 
 void elevator_window::update_physics(double time_delta) {
