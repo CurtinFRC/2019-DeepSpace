@@ -3,15 +3,15 @@ CurtinFRC 2019 Codebase
 
 # Quick Commands
 ## Build
-`./gradlew :5333:build`, `./gradlew :5663:build`, or `./gradlew :vision:build`  
+`./gradlew :5333:build`, `./gradlew :5663:build`, `./gradlew :TestBot:build`, or `./gradlew :vision:build`,
 Build will compile and get the code ready without deploying it. It will also run all automated tests, which is great for testing your code before it ever gets run on a robot (which also means you can build whenever)
 
 ## Deploy
-`./gradlew :5333:deploy`, or `./gradlew :5663:build`  
+`./gradlew :5333:deploy`, `./gradlew :5663:build`, or `./gradlew :TestBot:deploy`  
 Deploying will build your code (as above), and deploy it to the robot. You have to be connected to the robot for this to work. Just keep in mind that deploying _does not run any automated tests_.
 
 ## Simulation
-`./gradlew sim5333`, or `./gradlew sim5663`  
+`./gradlew sim5333`, `./gradlew sim5663`, or `./gradlew simTestBot`
 Simulation will boot up a simulation of the robot code running on your own computer. This is used to see code running without a working robot, and includes a few simulation hooks for things like a tank drive and motor outputs.
 
 NOTE: If you're running on Linux or MacOS, you should run `killall frcUserProgram` between calls to this. On windows, just ensure the command window that pops up is closed between runs. You can only have one simulator running at once!
