@@ -26,7 +26,7 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-
+/*
 	if (_capture.IsValidFrame()) {
 		_capture.CopyCaptureMat(_captureMat);
 		cv::cvtColor(_captureMat, imgHSV, cv::COLOR_RGB2HSV);
@@ -141,5 +141,7 @@ void TapeProcessing::Periodic() {
     std::stringstream ang;	ang<<angles[i];
     cv::rectangle(_imgProcessed, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
     cv::putText(_imgProcessed, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
-  }
+  } */
+  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+
 }
