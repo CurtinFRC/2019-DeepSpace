@@ -1,25 +1,28 @@
 #pragma once
 
-#include "intakes/WheeledIntake.h"
+#include "intakes/DeployableIntake.h"
 #include "StateDevice.h"
 #include "Gearbox.h"
 
 #include <frc/DoubleSolenoid.h>
 
-enum HarvesterIntakeState { kDeployed, kDeploying, kStowing, kStowed };
+using HarvesterIntakeState = curtinfrc::intakes::DeployableIntakeState;
 
-struct HarvesterIntakeConfig : curtinfrc::intakes::WheeledIntakeConfig {
-  frc::DoubleSolenoid &solenoid;
+struct HarvesterIntakeConfig : public curtinfrc::intakes::DeployableIntakeConfig {
+  curtinfrc::Gearbox &motors;
 
-  HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, frc::DoubleSolenoid &solenoidiIn) : curtinfrc::intakes::WheeledIntakeConfig(motorsIn), solenoid(solenoidiIn) {};
+  HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::intakes::DeployableIntakeConfig(actuatorIn), motors(motorsIn) {};
 };
 
-class HarvesterIntake : public curtinfrc::StateDevice<HarvesterIntakeState> {
+class HarvesterIntake : public curtinfrc::intakes::DeployableIntake {
  public:
-  HarvesterIntake(HarvesterIntakeConfig config) : _config(config) {};
+  HarvesterIntake(HarvesterIntakeConfig config) : DeployableIntake(config), _config(config) {};
 
  protected:
-  virtual void OnStatePeriodic(HarvesterIntakeState state, double dt) override;
+  virtual void DeployedPeriodic(HarvesterIntakeState state) override;
+  virtual void DeployingPeriodic() override;
+  virtual void StowingPeriodic() override;
+  virtual void StowedPeriodic() override;
 
  private:
   HarvesterIntakeConfig _config;

@@ -3,6 +3,7 @@
 #include <frc/SpeedController.h>
 
 #include "sensors/Encoder.h"
+#include "physics/DcMotor.h"
 
 namespace curtinfrc {
 
@@ -29,5 +30,9 @@ struct Gearbox {
    */
   double reduction = 1;
 
+  /**
+   * The motor being used. By default, this is a dual CIM.
+   */
+  physics::DcMotor motor = physics::DcMotor::mCIM() * 2;
 };
 }  // namespace curtinfrc

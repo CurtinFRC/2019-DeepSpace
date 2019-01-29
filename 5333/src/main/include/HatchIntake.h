@@ -2,25 +2,28 @@
 
 #include <frc/Servo.h>
 
-#include "StateDevice.h"
-#include "Gearbox.h"
-#include "sensors/BinarySensor.h"
+#include "intakes/DeployableIntake.h"
 
-enum HatchIntakeState { kGrab, kAim, kHold, kEject, kStow  };
+using HatchIntakeState = curtinfrc::intakes::DeployableIntakeState;
 
-struct HatchIntakeConfig {
-  curtinfrc::Gearbox &pivot;
-  curtinfrc::sensors::BinarySensor &limitSensorUp;
-  curtinfrc::sensors::BinarySensor &limitSensorDown;
+struct HatchIntakeConfig : public curtinfrc::intakes::DeployableIntakeConfig {
   frc::Servo &servo;
+  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+
+  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::intakes::DeployableIntakeConfig(actuatorIn), servo(servoIn) {};
 };
 
-class HatchIntake : public curtinfrc::StateDevice<HatchIntakeState> {
+class HatchIntake : public curtinfrc::intakes::DeployableIntake {
  public:
-  HatchIntake(HatchIntakeConfig config) : _config(config) {};
+  HatchIntake(HatchIntakeConfig config) : DeployableIntake(config), _config(config) {};
 
  protected:
-  virtual void OnStatePeriodic(HatchIntakeState state, double dt) override;
+  virtual void DeployedPeriodic(HatchIntakeState state) final {
+    if (state == HatchIntakeState::kIntaking) IntakingPeriodic(); else OuttakingPeriodic();
+  };
+
+  virtual void IntakingPeriodic();  // Intake a hatch
+  virtual void OuttakingPeriodic(); // Eject a hatch
 
  private:
   HatchIntakeConfig _config;
