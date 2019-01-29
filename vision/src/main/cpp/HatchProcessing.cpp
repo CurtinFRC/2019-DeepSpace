@@ -38,11 +38,11 @@ void HatchProcessing::Periodic() {
     double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
     double bgrThreshRed[] = {0.0, 127.0}; */
     
-    _capture.CopyCaptureMat(_imgOriginal);
-    cv::cvtColor(_imgOriginal, _imgHatchThresh, cv::COLOR_BGR2HSV);
-    cv::cvtColor(_imgOriginal, _imgProcessed, cv::COLOR_BGR2HSV);
-    std::cout << "Origin Image Found For Hatch" << std::endl;
-    // Threshold the HSV image, keep only the green pixels (RetroBall)
+    _capture.CopyCaptureMat(_imgProcessedTrack);
+    {
+      std::lock_guard<std::mutex> lock(_classMutex);
+      cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
+    }
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
 
@@ -51,16 +51,17 @@ void HatchProcessing::Periodic() {
     std::vector<std::vector<cv::Point>> filteredHullsBall;
     std::vector<cv::Rect> ir_rects;
     int active_contour;
-    cv::Scalar hsl_low, hsl_high;
     bool show_window;
 
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgProcessed, cv::Scalar(10, 100, 100), cv::Scalar(25, 255, 255), _imgProcessed);
-    cv::inRange(_imgHatchThresh, cv::Scalar(10, 100, 100), cv::Scalar(25, 255, 255), _imgHatchThresh);
-    cv::findContours(_imgProcessed, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-    cv::findContours(_imgHatchThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    {
+      std::lock_guard<std::mutex> lock(_classMutex);
+      cv::inRange(_imgProcessedTrack, cv::Scalar(10, 100, 100), cv::Scalar(25, 255, 255), _imgProcessedTrack);
+      cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+      cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
+    }
 
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
@@ -85,7 +86,10 @@ void HatchProcessing::Periodic() {
     }
 
     /// Detect edges using Canny
-    cv::Canny(_imgProcessed, _imgProcessed, hatch_thresh, hatch_thresh * 2);
+    {
+      std::lock_guard<std::mutex> lock(_classMutex);
+      cv::Canny(_imgProcessedTrack, _imgProcessedTrack, hatch_thresh, hatch_thresh * 2);
+    }
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -97,19 +101,25 @@ void HatchProcessing::Periodic() {
     }
 
     /// Draw filteredContours + hull results
-    _imgProcessed = cv::Mat::zeros(_imgProcessed.size(), CV_8UC3);
+    _imgProcessedTrack = cv::Mat::zeros(_imgProcessedTrack.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectBall( filteredContoursBall.size() );
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
-      cv::drawContours(_imgProcessed, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgProcessed, hullBall, (int)i, color);
+      {
+        std::lock_guard<std::mutex> lock(_classMutex);
+        cv::drawContours(_imgProcessedTrack, filteredContoursBall, (int)i, color);
+        cv::drawContours(_imgProcessedTrack, hullBall, (int)i, color);
+      }
     }
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
-      cv::drawContours(_imgProcessed, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgProcessed, hullBall, (int)i, color);
+      {
+        std::lock_guard<std::mutex> lock(_classMutex);
+        cv::drawContours(_imgProcessedTrack, filteredContoursBall, (int)i, color);
+        cv::drawContours(_imgProcessedTrack, hullBall, (int)i, color);
+      }
     }
 
     /// Find contoursBox
@@ -128,10 +138,13 @@ void HatchProcessing::Periodic() {
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hullBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
-      cv::drawContours(_imgProcessed, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-      hatch_bounding_rect = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
-      cv::rectangle(_imgProcessed, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
-      cv::circle(_imgProcessed, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
+      {
+        std::lock_guard<std::mutex> lock(_classMutex);
+        cv::drawContours(_imgProcessedTrack, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+        hatch_bounding_rect = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
+        cv::rectangle(_imgProcessedTrack, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
+        cv::circle(_imgProcessedTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
+      }
     }
 
 
@@ -150,13 +163,16 @@ void HatchProcessing::Periodic() {
 
     for(int i = 0; i < hullBall_poly.size(); i++) {
       cv::Scalar color = cv::Scalar(167,151,0); // B G R values
-      cv::circle(_imgProcessed, mcBall[i], 4, color, -1, 8, 0);
+      {
+        std::lock_guard<std::mutex> lock(_classMutex);
+        cv::circle(_imgProcessedTrack, mcBall[i], 4, color, -1, 8, 0);
+      }
 
       // offsets from centerBall
       cv::Point centerHatch = cv::Point((mcBall[i].x), (mcBall[i].y));
       hatch_width_offset = hatch_width_goal - centerHatch.x;
       hatch_height_offset = hatch_height_goal - centerHatch.y;
-      std::cout << "Offset From CenterBall x,y =" << hatch_height_offset << "," << hatch_width_offset << std::endl;
+      std::cout << "Offset From CenterBall x,y =" << hatch_width_offset << "," << hatch_height_offset << std::endl;
     }
   }
 }

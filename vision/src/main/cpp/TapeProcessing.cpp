@@ -28,17 +28,15 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  Process::Periodic();
-  std::cout << "tape working start" << std::endl;
 	if (_capture.IsValidFrame()) {
-		_capture.CopyCaptureMat(_imgProcessed);
-    // {
-      // std::lock_guard<std::mutex> lock(_classMutex);
-		  cv::cvtColor(_imgProcessed, _imgProcessed, cv::COLOR_BGR2HSV);
-		  cv::inRange(_imgProcessed, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgTapeThresh);
-      cv::inRange(_imgProcessed, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgTapeTrack);
-    // }
-    cv::findContours(_imgTapeTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+		_capture.CopyCaptureMat(_imgProcessedTrack);
+    {
+      std::lock_guard<std::mutex> lock(_classMutex);
+		  cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
+		  cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
+      cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
+      cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    }
 
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
@@ -52,10 +50,7 @@ void TapeProcessing::Periodic() {
 	lefts.clear();
 	rights.clear();
 
-  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
-
 	for (int i = 0; i < filteredContours.size(); i++) {
-
 		cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
 
 		cv::Point2f centre = rotatedRect.center;
@@ -65,23 +60,22 @@ void TapeProcessing::Periodic() {
 
 		float angle;
 
-		//I got this code from StackOverFlow, so it's not my fault if it breaks
 		cv::Point2f edge1 = cv::Vec2f(rectPoints[1].x, rectPoints[1].y) - cv::Vec2f(rectPoints[0].x, rectPoints[0].y);
     cv::Point2f edge2 = cv::Vec2f(rectPoints[2].x, rectPoints[2].y) - cv::Vec2f(rectPoints[1].x, rectPoints[1].y);
 
     cv::Point2f usedEdge = edge1;
-    if(cv::norm(edge2) > cv::norm(edge1))
+    if(cv::norm(edge2) > cv::norm(edge1)) {
       usedEdge = edge2;
+    }
 
     cv::Point2f reference = cv::Vec2f(1,0); // horizontal edge
 
-    angle = 180.0f/CV_PI * acos((reference.x*usedEdge.x + reference.y*usedEdge.y) / (cv::norm(reference) *cv::norm(usedEdge)));
-		//end StackOverFlow code
+    angle = 180.0f/CV_PI * acos((reference.x * usedEdge.x + reference.y * usedEdge.y) / (cv::norm(reference) * cv::norm(usedEdge)));
 
-    float min = rectPoints[0].y;
+    /*float min = rectPoints[0].y;
     float max = rectPoints[0].y;
 
-    for (int j=1; j<4; j++) { //find the minimum and maximum y-values of each rectangle
+    for (int j = 1; j < 4; j++) { //find the minimum and maximum y-values of each rectangle
       if (rectPoints[j].y > max) {
         max = rectPoints[j].y;
       }
@@ -106,18 +100,18 @@ void TapeProcessing::Periodic() {
       lefts.push_back(false);
     }
 
-    std::stringstream ss;	ss<<angle; //magic shit, idk
-    std::stringstream hei;	hei<<height;
-    cv::putText(_imgProcessed, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+    std::stringstream ss;	ss << angle;
+    std::stringstream hei;	hei << height;*/
+    // cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
   }
 
-  int leftmost = -1;
+  /*int leftmost = -1;
   float leftPos = 640;
   targets.clear();
   angles.clear();
-  distances.clear();
+  distances.clear();*/
 
-  for (int i = 0; i < filteredContours.size(); i++) {
+  /* for (int i = 0; i < filteredContours.size(); i++) {
     if (lefts[i]) { //checks if current iteration is a left
       for (int j = 0; j < filteredContours.size(); j++) {
         if (rights[j] && centres[j].x < leftPos && centres[j].x > centres[i].x) { //checks if nested iteration is a right and left of the last checked one
@@ -139,15 +133,15 @@ void TapeProcessing::Periodic() {
         }
       }
     }
-  }
+  }*/
 
-  Scalar color = Scalar(255, 255, 255);
+  // Scalar color = Scalar(255, 255, 255);
 
-  for (int i = 0; i < targets.size(); i++) {
-    std::stringstream dis;	dis<<distances[i];
-    std::stringstream ang;	ang<<angles[i];
-    cv::rectangle(_imgProcessed, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
-    cv::putText(_imgProcessed, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
-  } 
+  /*for (int i = 0; i < targets.size(); i++) {
+    std::stringstream dis;	dis << distances[i];
+    std::stringstream ang;	ang << angles[i];
+    cv::rectangle(_imgProcessedTrack, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+    cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
+  } */
 
 }

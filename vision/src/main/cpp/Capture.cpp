@@ -24,8 +24,7 @@
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) : _cam("USBCam", port) {
-}
+Capture::Capture(int port) : _cam("USBCam", port) {}
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {

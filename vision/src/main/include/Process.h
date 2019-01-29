@@ -20,18 +20,8 @@ class Process : public Runnable {
 
   Process(Capture &capture);
   Capture &GetCapture();
-  void CopyImgOriginal(cv::Mat &imgOriginal);
-
-  void CopyProcessed(cv::Mat &imgProcessed);
-
-  void CopyImgBallThresh(cv::Mat &imgBallThresh);
-  void CopyImgBallTrack(cv::Mat &imgBalltrack);
-
-  void CopyImgHatchThresh(cv::Mat &imgHatchThresh);
-  void CopyImgHatchTrack(cv::Mat &imgHatchTrack);
-
-  void CopyImgTapeThresh(cv::Mat &imgTapeThresh);
-  void CopyImgTapeTrack(cv::Mat &imgTapeTrack);
+  void CopyProcessedTrack(cv::Mat &imgProcessedTrack);
+  void CopyProcessedThresh(cv::Mat &imgProcessedThresh);
 
   std::string GetProcessType();
   bool GetValid();
@@ -42,16 +32,6 @@ class Process : public Runnable {
   Capture &_capture;
   cs::VideoMode _videoMode;
 
-  cv::Mat _imgOriginal;
-
-  cv::Mat _imgProcessed;
-
-  cv::Mat _imgBallThresh;
-  cv::Mat _imgBallTrack;
-
-  cv::Mat _imgHatchThresh;
-  cv::Mat _imgHatchTrack;
-
-  cv::Mat _imgTapeThresh;
-  cv::Mat _imgTapeTrack;
+  cv::Mat _imgProcessedTrack;
+  cv::Mat _imgProcessedThresh;
 };

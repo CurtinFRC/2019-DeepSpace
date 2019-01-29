@@ -19,16 +19,8 @@ class Display : public Runnable {
   cs::VideoMode _videoMode;
   
   cv::Mat _imgOriginal;
-  cv::Mat _imgProcessed;
-
-  cv::Mat _imgBallThresh;
-  cv::Mat _imgBallTrack;
-
-  cv::Mat _imgHatchThresh;
-  cv::Mat _imgHatchTrack;
-
-  cv::Mat _imgTapeThresh;
-  cv::Mat _imgTapeTrack;
+  cv::Mat _imgProcessedTrack;
+  cv::Mat _imgProcessedThresh;
 
   Capture &_capture;
 };
