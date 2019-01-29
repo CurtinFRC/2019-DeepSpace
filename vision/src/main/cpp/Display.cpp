@@ -27,7 +27,7 @@ void Display::Init() {
 
 void Display::Periodic() {
   // Capture &capture = _process.GetCapture();
-  _process.CopyProcessedTrack(_imgProcessedTrack);
+  // _process.CopyProcessedTrack(_imgProcessedTrack);
   _process.CopyProcessedThresh(_imgProcessedThresh);
   // _capture.CopyCaptureMat(_imgOriginal);
   if (_capture.IsValidFrame()) {
@@ -35,7 +35,7 @@ void Display::Periodic() {
 #ifdef __DESKTOP__
       //imshow("OutputOrigin", _imgOriginal);
 
-      imshow(_process.GetProcessType(), _imgProcessedTrack);
+      imshow(_process.GetProcessType(), _imgProcessedThresh);
 
       // imshow("OutputBallThresh", _imgBallThresh);
       // imshow("OutputBallTrack", _imgBallTrack);
