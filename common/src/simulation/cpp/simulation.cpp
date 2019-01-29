@@ -3,6 +3,7 @@
 #include "simulation/windows/control.h"
 #include "simulation/windows/motors.h"
 #include "simulation/windows/elevators.h"
+#include "simulation/windows/drivetrain.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
@@ -29,6 +30,7 @@ void harness::run(std::function<int()> robot_thread) {
   (new control_window())->start();
   (new motor_window())->start();
   elevator_window::init();
+  drivetrain_window::init();
 
   std::cout << "[SIM] Starting Robot Thread" << std::endl;
   std::thread r_thread([&]() {
