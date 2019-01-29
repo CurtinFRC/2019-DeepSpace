@@ -3,7 +3,7 @@
 #include "simulation/windows/control.h"
 #include "simulation/windows/motors.h"
 #include "simulation/windows/elevators.h"
-#include "simulation/windows/drivetrain.h"
+#include "simulation/windows/drivetrains.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
