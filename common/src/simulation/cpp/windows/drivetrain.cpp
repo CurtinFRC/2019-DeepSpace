@@ -23,13 +23,13 @@ drivetrain_window::drivetrain_window(DrivetrainConfig *config) : ui::window("Dri
     _y = 0;
   });
 
-  scalePlus.set_can_activate(false);
-  scalePlus.on_click([&](bool, ui::button&) {
+  scaleMinus.set_can_activate(false);
+  scaleMinus.on_click([&](bool, ui::button&) {
     scale = 1 / (1 / scale + 1);
   });
 
-  scaleMinus.set_can_activate(false);
-  scaleMinus.on_click([&](bool, ui::button&) {
+  scalePlus.set_can_activate(false);
+  scalePlus.on_click([&](bool, ui::button&) {
     if (1 / scale > 1)
       scale = 1 / (1 / scale - 1);
   });
@@ -67,18 +67,16 @@ void drivetrain_window::update_physics(double time_delta) {
 
   _x += _linear_vel * time_delta * std::cos(_heading);
   _y += _linear_vel * time_delta * std::sin(_heading);
-
-  std::cout << _x << ", " << _y << " " << (_heading * 180 / 3.1415) << std::endl;
 }
 
 void drivetrain_window::render(cv::Mat &img) {
-  ui::line{ ui::point{0, 0.99}, ui::point{1, 0.99} }.draw(img, ui::colour::gray(), 2);
-  ui::line{ ui::point{0.99, 0}, ui::point{0.99, 1} }.draw(img, ui::colour::gray(), 2);
-
-  for (double m = 0; m < 1 / scale; m += 1) {
-    ui::point{m * scale, 0.95}.textl(img, (ui::utils::fmt_precision(m, 1) + "m").c_str(), 0.5, ui::colour::white());
-    ui::point{0.95, m * scale}.textl(img, (ui::utils::fmt_precision(m, 1) + "m").c_str(), 0.5, ui::colour::white());
+  for (double m = 0; m <= 1 / scale; m += 1) {
+    ui::line{ui::point{0, m * scale}, ui::point{1, m * scale}}.draw(img, ui::colour::gray() * 0.5, 1);
+    ui::line{ui::point{m * scale, 0}, ui::point{m * scale, 1}}.draw(img, ui::colour::gray() * 0.5, 1);
   }
+
+  ui::point{0.05, 0.10}.textl(img, ("X: " + ui::utils::fmt_precision(_x, 2) + "m").c_str(), 0.5, ui::colour::white());
+  ui::point{0.2, 0.10}.textl(img, ("Y: " + ui::utils::fmt_precision(_y, 2) + "m").c_str(), 0.5, ui::colour::white());
 
   draw_robot(img);
 }
