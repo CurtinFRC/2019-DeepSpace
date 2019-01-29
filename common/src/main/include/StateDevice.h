@@ -13,7 +13,7 @@ namespace curtinfrc {
       OnStatePeriodic(_state, dt);
     };
     
-    virtual void OnStateChange(StateType newState, StateType oldState) = 0;
+    virtual void OnStateChange(StateType newState, StateType oldState) {};
     virtual void OnStatePeriodic(StateType state, double dt) = 0;
 
    protected:
