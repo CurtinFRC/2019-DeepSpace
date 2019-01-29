@@ -36,7 +36,7 @@ void Display::Periodic() {
 #ifdef __DESKTOP__
       //imshow("OutputOrigin", _imgOriginal);
       imshow(_process.GetProcessType(), _imgProcessedTrack);
-
+      // imshow(_process.GetProcessType(), _imgProcessedThresh);
       // imshow("OutputBallThresh", _imgBallThresh);
       // imshow("OutputBallTrack", _imgBallTrack);
       // cv::waitKey(500 / 30);

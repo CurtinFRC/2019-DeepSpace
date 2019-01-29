@@ -27,18 +27,22 @@ void TapeProcessing::Periodic() {
   Process::Periodic();
 	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
 
+    //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessedTrack);
     {
       std::lock_guard<std::mutex> lock(_classMutex);
 		  cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
+      //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
     }
 
     {
       std::lock_guard<std::mutex> lock(_classMutex);
       cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
-      cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
+      //cv::inRange(_imgProcessedThresh, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
       //cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    
     }
+
     /*
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
