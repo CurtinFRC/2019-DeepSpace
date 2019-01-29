@@ -1,20 +1,9 @@
 #include "HatchIntake.h"
 
-void HatchIntake::OnStatePeriodic(HatchIntakeState state, double dt) {
-  switch (state) { // TODO
-   case kGrab:
-    break;
+void HatchIntake::IntakingPeriodic() { // Intake
+  _config.servo.SetAngle(_config.forward);
+}
 
-   case kAim:
-    break;
-
-   case kHold:
-    break;
-
-   case kEject:
-    break;
-
-   case kStow:
-    break;
-  }
+void HatchIntake::OuttakingPeriodic() { // Eject
+  _config.servo.SetAngle(_config.reverse);
 }

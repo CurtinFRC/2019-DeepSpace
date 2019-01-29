@@ -6,6 +6,7 @@
 #include "CurtinCtre.h"
 #include "CurtinControllers.h"
 #include "Gearbox.h"
+#include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
 
 #include "Drivetrain.h"
@@ -37,7 +38,7 @@ struct RobotMap {
 
   struct HarvesterIntake {
     frc::Spark harvesterMotor{ 6 };
-    frc::DoubleSolenoid harvesterSolenoid{ 0, 1 };
+    curtinfrc::actuators::DoubleSolenoid harvesterSolenoid{ 0, 1 };
     curtinfrc::Gearbox harvesterGearbox{ &harvesterMotor, nullptr, 4 };
   };
 
