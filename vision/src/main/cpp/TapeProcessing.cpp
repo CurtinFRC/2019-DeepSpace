@@ -19,8 +19,8 @@
 
 #include "devices/kinect.h"
 
-using namespace cv;
-using namespace std;
+//using namespace cv;
+//using namespace std;
 
 void TapeProcessing::Init() {
 	Process::Init();
@@ -28,8 +28,8 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
+  _capture.CopyCaptureMat(_imgProcessedTrack);
 	if (_capture.IsValidFrame()) {
-		_capture.CopyCaptureMat(_imgProcessedTrack);
     {
       std::lock_guard<std::mutex> lock(_classMutex);
 		  cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);

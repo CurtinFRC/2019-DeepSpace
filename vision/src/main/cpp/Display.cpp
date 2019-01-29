@@ -26,7 +26,7 @@ void Display::Init() {
 }
 
 void Display::Periodic() {
-  //Capture &capture = _process.GetCapture();
+  // Capture &capture = _process.GetCapture();
   _process.CopyProcessedTrack(_imgProcessedTrack);
   _process.CopyProcessedThresh(_imgProcessedThresh);
   // _capture.CopyCaptureMat(_imgOriginal);
@@ -44,7 +44,7 @@ void Display::Periodic() {
       // imshow("OutputHatchTrack", _imgHatchTrack);
       // imshow("OutputTapeThresh", _imgTapeThresh);
       // imshow("OutputTapeTrack", _imgTapeTrack);
-      cv::waitKey(500 / 30);
+      cv::waitKey(1000 / 30);
     
 #else
       // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
