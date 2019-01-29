@@ -16,8 +16,9 @@ namespace curtinfrc {
      public:
       BinaryEncoderMotor(BinaryEncoderMotorConfig config, BinaryActuatorState initialState = kReverse) : _config(config), BinaryActuator(initialState) {};
 
-      virtual bool Actuate() override;
-      virtual bool Done() override;
+      virtual void Update() override;
+      virtual void Stop() override;
+      virtual bool IsDone() override;
 
      private:
       BinaryEncoderMotorConfig _config;

@@ -7,15 +7,20 @@ namespace curtinfrc {
     class BinaryActuator { // might implement curtinfrc::StateDevice<BinaryActuatorState> in future?
      public:
       BinaryActuator(BinaryActuatorState initialState = kReverse) : _state(initialState) {};
-      
-      virtual bool Actuate() = 0;
-      virtual bool Done() = 0;
+      using ActuatorState = BinaryActuatorState;
 
-      void SetState(BinaryActuatorState state) { _state = state; };
+      void SetTarget(BinaryActuatorState state) { SetState(state); Init(); };
+      virtual void Update() = 0;
+      virtual void Stop() = 0;
+      virtual bool IsDone() = 0;
+
       BinaryActuatorState Get() { return _state; };
 
      protected:
+      void SetState(BinaryActuatorState state) { _state = state; };
       BinaryActuatorState _state;
+
+      virtual void Init() {};
     };
   } // ns actuators
 } // ns curtinfrc
