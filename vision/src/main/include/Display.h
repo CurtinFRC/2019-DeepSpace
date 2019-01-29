@@ -17,8 +17,15 @@ class Display : public Runnable {
   Process &_process;
   cs::CvSource _output;
   cs::VideoMode _videoMode;
-  cv::Mat _imgTrack;
   cv::Mat _imgOriginal;
-  cv::Mat _imgThresh;
+
+  cv::Mat _imgProcessed;
+
+  cv::Mat _imgBallThresh;
+  cv::Mat _imgBallTrack;
+
+  cv::Mat _imgHatchThresh;
+  cv::Mat _imgHatchTrack;
+
   Capture &_capture;
 };
