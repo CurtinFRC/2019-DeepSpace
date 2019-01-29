@@ -1,6 +1,6 @@
 #include "actuators/BinaryLimitMotor.h"
 
-void curtinfrc::actuators::BinaryLimitMotor::Update() {
+void curtinfrc::actuators::BinaryLimitMotor::Update(double dt) {
   if (_state == kForward) {
     _config.motor.transmission->Set(1);
   } else {

@@ -10,7 +10,7 @@ namespace curtinfrc {
       using ActuatorState = BinaryActuatorState;
 
       void SetTarget(BinaryActuatorState state) { SetState(state); Init(); };
-      virtual void Update() = 0;
+      virtual void Update(double dt) = 0;
       virtual void Stop() = 0;
       virtual bool IsDone() = 0;
 

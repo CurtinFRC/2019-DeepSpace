@@ -1,6 +1,6 @@
 #include "actuators/BinaryEncoderMotor.h"
 
-void curtinfrc::actuators::BinaryEncoderMotor::Update() {
+void curtinfrc::actuators::BinaryEncoderMotor::Update(double dt) {
   int comp = _config.forward - _config.reverse >= 0 ? 1 : -1; // account for situations where forward is less than reverse
 
   if (_state == kForward) {

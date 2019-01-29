@@ -11,7 +11,7 @@ namespace curtinfrc {
       public:
       DoubleSolenoid(int forwardChannel, int reverseChannel, BinaryActuatorState initialState = actuators::kReverse) : frc::DoubleSolenoid(forwardChannel, reverseChannel), BinaryActuator(initialState) {};
 
-      virtual void Update() override;
+      virtual void Update(double dt) override;
       virtual void Stop() final {};
       virtual bool IsDone() override;
     };
