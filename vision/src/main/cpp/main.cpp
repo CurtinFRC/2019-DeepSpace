@@ -37,19 +37,21 @@ int main(int argc, char **argv) {
   #else
   Capture capture{4};
   #endif
-  //TapeProcessing tapeProcess{capture};
-  HatchProcessing hatchProcess{capture};
-  BallProcessing ballProcess{capture};
-  Display displayBall{ballProcess};
-  Display displayHatch{hatchProcess};
+  // HatchProcessing hatchProcess{capture};
+  // BallProcessing ballProcess{capture};
+  TapeProcessing tapeProcess{capture};
+  // Display displayBall{ballProcess};
+  // Display displayHatch{hatchProcess};
+  Display displayTape{tapeProcess};
   
   vision.Run(capture);
-  //vision.Run(tapeProcess);
-  vision.Run(ballProcess);
-  vision.Run(hatchProcess);
+  //vision.Run(ballProcess);
+  //vision.Run(hatchProcess);
+  vision.Run(tapeProcess);
 
-  vision.Run(displayBall);
-  vision.Run(displayHatch);
+  //vision.Run(displayBall);
+  //vision.Run(displayHatch);
+  vision.Run(displayTape);
 
 
   for (int i = 0; i < vision.workers.size(); i++) {

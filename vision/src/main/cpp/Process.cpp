@@ -23,6 +23,11 @@ void Process::CopyImgOriginal(cv::Mat &imgOriginal) {
   _imgOriginal.copyTo(imgOriginal);
 }
 
+void Process::CopyProcessed(cv::Mat &imgProcessed) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgProcessed.copyTo(imgProcessed);
+}
+
 void Process::CopyImgBallThresh(cv::Mat &imgballThresh) {
   std::lock_guard<std::mutex> lock(_classMutex);
   _imgBallThresh.copyTo(imgballThresh);
@@ -43,9 +48,18 @@ void Process::CopyImgHatchTrack(cv::Mat &imghatchTrack) {
   _imgHatchTrack.copyTo(imghatchTrack);
 }
 
+bool Process::GetValid() {
+  return _imgProcessed.rows > 3;
+}
+
+std::string Process::GetProcessType() {
+  return processType;
+}
+
 void Process::Init() {
   _videoMode = _capture.GetVideoMode();
 	_imgOriginal = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 
   _imgBallThresh = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
   _imgBallTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};

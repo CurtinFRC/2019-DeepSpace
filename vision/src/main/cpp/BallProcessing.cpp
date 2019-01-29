@@ -27,6 +27,7 @@ float ball_height_goal = 240;
 
 void BallProcessing::Init() {
   Process::Init();
+  processType = "BallProcessing";
 }
 
 void BallProcessing::Periodic() {
@@ -38,7 +39,7 @@ void BallProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgOriginal);
-    cv::cvtColor(_imgOriginal, _imgBallTrack, cv::COLOR_RGB2HSV);
+    cv::cvtColor(_imgOriginal, _imgProcessed, cv::COLOR_RGB2HSV);
     cv::cvtColor(_imgOriginal, _imgBallThresh, cv::COLOR_RGB2HSV);
     std::cout << "Origin Image Found For Ball" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
@@ -56,9 +57,9 @@ void BallProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgBallTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgBallTrack);
-    cv::inRange(_imgBallTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgBallThresh);
-    cv::findContours(_imgBallTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::inRange(_imgProcessed, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessed);
+    cv::inRange(_imgProcessed, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgBallThresh);
+    cv::findContours(_imgProcessed, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     cv::findContours(_imgBallThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     for (int i = 0; i < contours.size(); i++) {
@@ -84,7 +85,7 @@ void BallProcessing::Periodic() {
     }
 
     /// Detect edges using Canny
-    cv::Canny(_imgBallTrack, _imgBallTrack, ball_thresh, ball_thresh * 2);
+    cv::Canny(_imgProcessed, _imgProcessed, ball_thresh, ball_thresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -96,19 +97,19 @@ void BallProcessing::Periodic() {
     }
 
     /// Draw filteredContours + hull results
-    _imgBallTrack = cv::Mat::zeros(_imgBallTrack.size(), CV_8UC3);
+    _imgProcessed = cv::Mat::zeros(_imgProcessed.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectBall( filteredContoursBall.size() );
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
-      cv::drawContours(_imgBallTrack, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgBallTrack, hullBall, (int)i, color);
+      cv::drawContours(_imgProcessed, filteredContoursBall, (int)i, color);
+      cv::drawContours(_imgProcessed, hullBall, (int)i, color);
     }
 
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
-      cv::drawContours(_imgBallTrack, filteredContoursBall, (int)i, color);
-      cv::drawContours(_imgBallTrack, hullBall, (int)i, color);
+      cv::drawContours(_imgProcessed, filteredContoursBall, (int)i, color);
+      cv::drawContours(_imgProcessed, hullBall, (int)i, color);
     }
 
     /// Find contoursBox
@@ -127,10 +128,10 @@ void BallProcessing::Periodic() {
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hullBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 255), rngBall.uniform(0,255), rngBall.uniform(0,255));
-      cv::drawContours(_imgBallTrack, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+      cv::drawContours(_imgProcessed, hullBall_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
       ball_bounding_rect = cv::boundingRect(filteredContoursBall[i]); // Find the bounding rectangle for biggest contour
-      cv::rectangle(_imgBallTrack, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
-      cv::circle(_imgBallTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
+      cv::rectangle(_imgProcessed, boundRectBall[i].tl(), boundRectBall[i].br(), color, 2, 8, 0);
+      cv::circle(_imgProcessed, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
     }
 
 
@@ -149,7 +150,7 @@ void BallProcessing::Periodic() {
 
     for(int i = 0; i < hullBall_poly.size(); i++) {
       cv::Scalar color = cv::Scalar(167,151,0); // B G R values
-      cv::circle(_imgBallTrack, mcBall[i], 4, color, -1, 8, 0);
+      cv::circle(_imgProcessed, mcBall[i], 4, color, -1, 8, 0);
 
       // offsets from centerBall
       cv::Point centerBall = cv::Point((mcBall[i].x), (mcBall[i].y));
