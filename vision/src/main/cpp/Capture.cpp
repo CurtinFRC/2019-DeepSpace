@@ -58,6 +58,8 @@ void Capture::Init() {
   // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
   _cam.SetResolution(640, 480);
 
+  _cam.SetExposureManual(50);
+
   for (auto it : _cam.EnumerateProperties()) {
     std::cout << "Property: " << it.GetName() << " -> " << it.Get() << std::endl;
   }

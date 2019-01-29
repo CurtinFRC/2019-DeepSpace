@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   HatchProcessing hatchProcess{capture};
   BallProcessing ballProcess{capture};
   // TapeProcessing tapeProcess{capture};
-  Display displayBall{ballProcess};
+  // Display displayBall{ballProcess};
   Display displayHatch{hatchProcess};
   // Display displayTape{tapeProcess};
   
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   vision.Run(hatchProcess);
   // vision.Run(tapeProcess);
 
-  vision.Run(displayBall);
+  // vision.Run(displayBall);
   vision.Run(displayHatch);
   // vision.Run(displayTape);
 

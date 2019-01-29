@@ -39,8 +39,8 @@ void HatchProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgOriginal);
-    cv::cvtColor(_imgOriginal, _imgHatchThresh, cv::COLOR_RGB2HSV);
-    cv::cvtColor(_imgOriginal, _imgProcessed, cv::COLOR_RGB2HSV);
+    cv::cvtColor(_imgOriginal, _imgHatchThresh, cv::COLOR_BGR2HSV);
+    cv::cvtColor(_imgOriginal, _imgProcessed, cv::COLOR_BGR2HSV);
     std::cout << "Origin Image Found For Hatch" << std::endl;
     // Threshold the HSV image, keep only the green pixels (RetroBall)
 
@@ -57,8 +57,8 @@ void HatchProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Ball
-    cv::inRange(_imgProcessed, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessed);
-    cv::inRange(_imgProcessed, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgHatchThresh);
+    cv::inRange(_imgProcessed, cv::Scalar(10, 100, 100), cv::Scalar(25, 255, 255), _imgProcessed);
+    cv::inRange(_imgHatchThresh, cv::Scalar(10, 100, 100), cv::Scalar(25, 255, 255), _imgHatchThresh);
     cv::findContours(_imgProcessed, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     cv::findContours(_imgHatchThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
