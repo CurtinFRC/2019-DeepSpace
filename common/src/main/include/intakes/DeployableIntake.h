@@ -1,7 +1,7 @@
 #pragma once
 
-#include "..\StateDevice.h"
-#include "..\actuators\BinaryActuator.h"
+#include "../StateDevice.h"
+#include "../actuators/BinaryActuator.h"
 
 
 namespace curtinfrc {
