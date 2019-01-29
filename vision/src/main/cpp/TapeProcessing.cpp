@@ -1,6 +1,8 @@
 #include "Display.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
+#include "Display.h"
+#include "Capture.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -26,12 +28,16 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-/*
+  Process::Periodic();
+  std::cout << "tape working start" << std::endl;
 	if (_capture.IsValidFrame()) {
-		_capture.CopyCaptureMat(_captureMat);
-		cv::cvtColor(_captureMat, imgHSV, cv::COLOR_RGB2HSV);
-		cv::inRange(imgHSV, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), imgBinary);
-		cv::findContours(imgBinary, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+		_capture.CopyCaptureMat(_imgProcessed);
+    // {
+      // std::lock_guard<std::mutex> lock(_classMutex);
+		  cv::cvtColor(_imgProcessed, _imgProcessed, cv::COLOR_BGR2HSV);
+		  cv::inRange(_imgProcessed, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgTapeThresh);
+    // }
+    cv::findContours(_imgTapeThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
@@ -110,17 +116,17 @@ void TapeProcessing::Periodic() {
   angles.clear();
   distances.clear();
 
-  for (int i=0; i<filteredContours.size(); i++) {
+  for (int i = 0; i < filteredContours.size(); i++) {
     if (lefts[i]) { //checks if current iteration is a left
-      for (int j=0; j<filteredContours.size(); j++) {
+      for (int j = 0; j < filteredContours.size(); j++) {
         if (rights[j] && centres[j].x < leftPos && centres[j].x > centres[i].x) { //checks if nested iteration is a right and left of the last checked one
           leftmost = j;
         }
       }
 
       if (leftmost > -1) {
-        targets.push_back((centres[i]+centres[leftmost])/2); //adds the Points2f position of each target to a vector
-        distances.push_back(200/(heights[i]+heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
+        targets.push_back((centres[i]+centres[leftmost]) / 2); //adds the Points2f position of each target to a vector
+        distances.push_back(200 / (heights[i] + heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
         float widthAdjust = 0.0015 * distances[distances.size() - 1] * abs(centres[i].x - centres[leftmost].x); //Calibrate distance, then adjust the first number until robot facing target gives 0 degrees.
         if (widthAdjust > 1.0) {
           widthAdjust = 1.0;
@@ -141,7 +147,7 @@ void TapeProcessing::Periodic() {
     std::stringstream ang;	ang<<angles[i];
     cv::rectangle(_imgProcessed, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
     cv::putText(_imgProcessed, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
-  } */
+  } 
   _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 
 }

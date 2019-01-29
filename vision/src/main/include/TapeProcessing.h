@@ -11,7 +11,6 @@ class TapeProcessing : public Process {
 
  private:
   cv::Mat imgHSV;
-  cv::Mat imgBinary;
   cv::Mat _captureMat;
   std::vector<std::vector<cv::Point>> contours;
   std::vector<std::vector<cv::Point>> filteredContours;

@@ -31,7 +31,7 @@ void BallProcessing::Init() {
 }
 
 void BallProcessing::Periodic() {
-  std::lock_guard<std::mutex> lock(_classMutex);
+  Process::Periodic();
   if (_capture.IsValidFrame()) {
     /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
     double bgrThreshBlue[] = {0.0, 127.0};

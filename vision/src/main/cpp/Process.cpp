@@ -14,7 +14,7 @@ using namespace std;
 Process::Process(Capture &capture) : _capture(capture) {}
 
 Capture &Process::GetCapture() {
-    return _capture;
+  return _capture;
 }
 
 // Copiers
@@ -28,28 +28,38 @@ void Process::CopyProcessed(cv::Mat &imgProcessed) {
   _imgProcessed.copyTo(imgProcessed);
 }
 
-void Process::CopyImgBallThresh(cv::Mat &imgballThresh) {
+void Process::CopyImgBallThresh(cv::Mat &imgBallThresh) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgBallThresh.copyTo(imgballThresh);
+  _imgBallThresh.copyTo(imgBallThresh);
 }
 
-void Process::CopyImgBallTrack(cv::Mat &imgballTrack) {
+void Process::CopyImgBallTrack(cv::Mat &imgBallTrack) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgBallTrack.copyTo(imgballTrack);
+  _imgBallTrack.copyTo(imgBallTrack);
 }
 
-void Process::CopyImgHatchThresh(cv::Mat &imghatchThresh) {
+void Process::CopyImgHatchThresh(cv::Mat &imgHatchThresh) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgHatchThresh.copyTo(imghatchThresh);
+  _imgHatchThresh.copyTo(imgHatchThresh);
 }
 
-void Process::CopyImgHatchTrack(cv::Mat &imghatchTrack) {
+void Process::CopyImgHatchTrack(cv::Mat &imgHatchTrack) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgHatchTrack.copyTo(imghatchTrack);
+  _imgHatchTrack.copyTo(imgHatchTrack);
+}
+
+void Process::CopyImgTapeThresh(cv::Mat &imgTapeThresh) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgTapeThresh.copyTo(imgTapeThresh);
+}
+
+void Process::CopyImgTapeTrack(cv::Mat &imgTapeTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgTapeTrack.copyTo(imgTapeTrack);
 }
 
 bool Process::GetValid() {
-  return _imgProcessed.rows > 3;
+  return _imgTapeThresh.rows > 0;
 }
 
 std::string Process::GetProcessType() {
