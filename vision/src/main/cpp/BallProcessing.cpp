@@ -51,7 +51,6 @@ void BallProcessing::Periodic() {
     std::vector<std::vector<cv::Point>> filteredHullsBall;
     std::vector<cv::Rect> ir_rects;
     int active_contour;
-    cv::Scalar hsl_low, hsl_high;
     bool show_window;
 
     double largestArea = 0.0;

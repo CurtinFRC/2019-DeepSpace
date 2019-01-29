@@ -36,8 +36,9 @@ void TapeProcessing::Periodic() {
       // std::lock_guard<std::mutex> lock(_classMutex);
 		  cv::cvtColor(_imgProcessed, _imgProcessed, cv::COLOR_BGR2HSV);
 		  cv::inRange(_imgProcessed, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgTapeThresh);
+      cv::inRange(_imgProcessed, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgTapeTrack);
     // }
-    cv::findContours(_imgTapeThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::findContours(_imgTapeTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
@@ -148,6 +149,5 @@ void TapeProcessing::Periodic() {
     cv::rectangle(_imgProcessed, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
     cv::putText(_imgProcessed, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
   } 
-  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 
 }
