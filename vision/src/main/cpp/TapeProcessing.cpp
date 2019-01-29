@@ -2,7 +2,6 @@
 #include "Capture.h"
 #include "TapeProcessing.h"
 #include "Display.h"
-#include "Capture.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -19,17 +18,15 @@
 
 #include "devices/kinect.h"
 
-//using namespace cv;
-//using namespace std;
-
 void TapeProcessing::Init() {
 	Process::Init();
   processType = "TapeProcessing";
 }
 
 void TapeProcessing::Periodic() {
+  Process::Periodic();
 	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-    
+
     _capture.CopyCaptureMat(_imgProcessedTrack);
     {
       std::lock_guard<std::mutex> lock(_classMutex);
@@ -40,9 +37,9 @@ void TapeProcessing::Periodic() {
       std::lock_guard<std::mutex> lock(_classMutex);
       cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
       cv::inRange(_imgProcessedTrack, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
-      cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+      //cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     }
-
+    /*
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
@@ -147,7 +144,7 @@ void TapeProcessing::Periodic() {
       cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-3,-3), targets[i] + cv::Point2f(3,3), color, 2); //draw small rectangle on target locations
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-
+  */
   }
 
 }

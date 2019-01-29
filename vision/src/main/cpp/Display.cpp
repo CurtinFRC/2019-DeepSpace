@@ -1,4 +1,5 @@
 #include "Display.h"
+#include "Process.h"
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
@@ -30,11 +31,10 @@ void Display::Periodic() {
   _process.CopyProcessedTrack(_imgProcessedTrack);
   // _process.CopyProcessedThresh(_imgProcessedThresh);
   // _capture.CopyCaptureMat(_imgOriginal);
-  // if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
   if (_process.GetValidThresh() && _process.GetValidTrack()) {
 #ifdef __DESKTOP__
       //imshow("OutputOrigin", _imgOriginal);
-
       imshow(_process.GetProcessType(), _imgProcessedTrack);
 
       // imshow("OutputBallThresh", _imgBallThresh);
@@ -50,13 +50,13 @@ void Display::Periodic() {
       // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
       _output.PutFrame(_imgProcessedTrack);
 #endif
-    // }
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
+  }
   }
   else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }
-  std::this_thread::sleep_for(std::chrono::duration<double>(0.1 / 90));
+  std::this_thread::sleep_for(std::chrono::duration<double>(5.0 / 90));
 }
 
