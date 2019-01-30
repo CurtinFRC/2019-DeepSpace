@@ -1,26 +1,27 @@
 #pragma once
 
-#include "intakes/DeployableIntake.h"
-#include "StateDevice.h"
+#include "devices/DeployableDevice.h"
+#include "devices/StateDevice.h"
 #include "Gearbox.h"
 #include "CurtinControllers.h"
 
 #include <frc/DoubleSolenoid.h>
 
-using HarvesterIntakeState = curtinfrc::intakes::DeployableIntakeState;
+using HarvesterIntakeState = curtinfrc::devices::DeployableDeviceState;
 
-struct HarvesterIntakeConfig : public curtinfrc::intakes::DeployableIntakeConfig {
+struct HarvesterIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::Gearbox &motors;
 
-  HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::intakes::DeployableIntakeConfig(actuatorIn), motors(motorsIn) {};
+  HarvesterIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), motors(motorsIn) {};
 };
 
-class HarvesterIntake : public curtinfrc::intakes::DeployableIntake {
+class HarvesterIntake : public curtinfrc::devices::DeployableDevice {
  public:
-  HarvesterIntake(HarvesterIntakeConfig config) : DeployableIntake(config), _config(config) {};
+  HarvesterIntake(HarvesterIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
  protected:
-  virtual void DeployedPeriodic(HarvesterIntakeState state) override;
+  virtual void IntakingPeriodic() override;
+  virtual void OuttakingPeriodic() override;
   virtual void DeployingPeriodic() override;
   virtual void StowingPeriodic() override;
   virtual void StowedPeriodic() override;

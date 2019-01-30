@@ -5,10 +5,10 @@
 
 class Lift : public curtinfrc::Elevator {
  public:
-  Lift(curtinfrc::ElevatorConfig elevatorConfig, HarvesterIntake &harvesterIntake) : curtinfrc::Elevator(elevatorConfig), _harvesterIntake(harvesterIntake) {};
+  Lift(curtinfrc::ElevatorConfig elevatorConfig) : curtinfrc::Elevator(elevatorConfig) {};
 
   void Set(double power);
 
  private:
-  HarvesterIntake &_harvesterIntake;
+  // Collision stuffs?
 };

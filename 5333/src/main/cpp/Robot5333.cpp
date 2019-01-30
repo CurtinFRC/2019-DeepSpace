@@ -29,7 +29,7 @@ void Robot::RobotInit() {
   harvesterController = new HarvesterIntakeController(*harvester, robotmap.joy);
 
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
-  beElevator = new Lift(elevatorConfig, *harvester);
+  beElevator = new Lift(elevatorConfig);
 }
 
 void Robot::AutonomousInit() {}
