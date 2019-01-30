@@ -25,7 +25,7 @@ void Robot::RobotInit() {
   DrivetrainConfig drivetrainConfig{*Left, *Right};
   drivetrain = new Drivetrain(drivetrainConfig);
   
-  xbox1 = new frc::XboxController(0);
+  xbox2 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
 
  // new PowerDistributionPanel(0);
@@ -94,7 +94,7 @@ void Robot::TeleopPeriodic() {
   }
 
   //hatch positioning
-  if (xbox1->GetAButton()){
+  if (xbox2->GetAButton()){
     hatch->downPosition();
   } else if(xbox1->GetXButton()){
       hatch->upPosition();
