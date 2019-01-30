@@ -1,12 +1,50 @@
 #include "devices/DeployableDevice.h"
 
+void curtinfrc::devices::DeployableDevice::SetIntaking() {
+  switch (_state) {
+   case kIntaking:
+   case kOuttaking:
+    SetState(kIntaking);
+    break;
+
+   default:
+    SetState(kDeploying);
+  }
+}
+
+void curtinfrc::devices::DeployableDevice::SetOuttaking() {
+  switch (_state) {
+   case kIntaking:
+   case kOuttaking:
+    SetState(kOuttaking);
+    break;
+
+   default:
+    SetState(kDeploying);
+  }
+}
+
+void curtinfrc::devices::DeployableDevice::SetStowed() {
+  switch (_state) {
+   case kStowed:
+    break;
+
+   default:
+    SetState(kStowing);
+    break;
+  }
+}
+
 void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::DeployableDeviceState state, double dt) {
   _config.actuator.Update(dt);
 
   switch (state) {
    case kIntaking:
+    IntakingPeriodic();
+    break;
+    
    case kOuttaking:
-    DeployedPeriodic(state);
+    OuttakingPeriodic();
     break;
 
    case kDeploying:

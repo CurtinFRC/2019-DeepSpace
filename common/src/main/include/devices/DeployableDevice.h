@@ -14,18 +14,23 @@ namespace curtinfrc {
     };
 
     class DeployableDevice : public StateDevice<DeployableDeviceState> {
-    public:
+     public:
       DeployableDevice(DeployableDeviceConfig config) : _config(config) {};
 
-    protected:
+      virtual void SetIntaking();
+      virtual void SetOuttaking();
+      virtual void SetStowed();
+
+     protected:
       virtual void OnStatePeriodic(DeployableDeviceState state, double dt) final;
 
-      virtual void DeployedPeriodic(DeployableDeviceState state) {}; // Caters for both kIntaking and kOuttaking
+      virtual void IntakingPeriodic() {};
+      virtual void OuttakingPeriodic() {};
       virtual void DeployingPeriodic() {};
       virtual void StowingPeriodic() {};
       virtual void StowedPeriodic() {};
 
-    private:
+     private:
       DeployableDeviceConfig _config;
     };
   } // ns intakes

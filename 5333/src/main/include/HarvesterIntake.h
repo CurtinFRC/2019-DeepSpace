@@ -19,7 +19,8 @@ class HarvesterIntake : public curtinfrc::devices::DeployableDevice {
   HarvesterIntake(HarvesterIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
  protected:
-  virtual void DeployedPeriodic(HarvesterIntakeState state) override;
+  virtual void IntakingPeriodic() override;
+  virtual void OuttakingPeriodic() override;
   virtual void DeployingPeriodic() override;
   virtual void StowingPeriodic() override;
   virtual void StowedPeriodic() override;

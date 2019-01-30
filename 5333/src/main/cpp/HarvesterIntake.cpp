@@ -1,7 +1,11 @@
 #include "HarvesterIntake.h"
 
-void HarvesterIntake::DeployedPeriodic(HarvesterIntakeState state) {
-  _config.motors.transmission->Set(state == HarvesterIntakeState::kIntaking ? 1 : -1);
+void HarvesterIntake::IntakingPeriodic() {
+  _config.motors.transmission->Set(1);
+}
+
+void HarvesterIntake::OuttakingPeriodic() {
+  _config.motors.transmission->Set(-1);
 }
 
 void HarvesterIntake::DeployingPeriodic() {
