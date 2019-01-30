@@ -44,7 +44,6 @@ namespace curtinfrc {
     ElevatorConfig &GetConfig();
     
    protected:
-    virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) override {};
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
 
    private:
