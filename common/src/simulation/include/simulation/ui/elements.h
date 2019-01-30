@@ -16,6 +16,10 @@ namespace ui {
     static colour white() { return colour{1, 1, 1}; }
   };
 
+  inline colour operator*(const colour &col, double bright) {
+    return colour{col.r * bright, col.g * bright, col.b * bright};
+  }
+
   struct point {
     double x, y;
 
@@ -44,7 +48,23 @@ namespace ui {
       cv::Point pt{in(m) + cv::Point{0, size.height / 2}};
       cv::putText(m, str, pt, font, font_scale, col.tocv(), thick);
     }
+
+    point rotate(double rad) {
+      return point{x * cos(rad) - y * sin(rad), x * sin(rad) + y * cos(rad)};
+    }
   };
+
+  inline point operator+(const point &p1, const point &p2) {
+    return point{p1.x + p2.x, p1.y + p2.y};
+  }
+
+  inline point operator-(const point &p1, const point &p2) {
+    return point{p1.x - p2.x, p1.y - p2.y};
+  }
+
+  inline point operator*(const point &p, double scale) {
+    return point{p.x * scale, p.y * scale};
+  }
 
   struct box {
     double x, y, w, h;
@@ -55,8 +75,20 @@ namespace ui {
 
     cv::Rect in(cv::Mat &m) { return cv::Rect{point{x, y}.in(m), point{x + w, y + h}.in(m)}; }
 
-    void fill(cv::Mat img, colour col) { cv::rectangle(img, in(img), col.tocv(), -1); }
+    void fill(cv::Mat &img, colour col) { cv::rectangle(img, in(img), col.tocv(), -1); }
   };
+
+  struct line {
+    point a, b;
+
+    void draw(cv::Mat &img, colour col, int thick) {
+      cv::line(img, a.in(img), b.in(img), col.tocv(), thick);
+    }
+  };
+
+  inline line operator+(const point &p, const line &l) {
+    return line{ l.a + p, l.b + p };
+  }
 
   struct button {
     box         b;
