@@ -7,8 +7,8 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
     motorSrx->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 1;
         config.slot1.kI = 0;
-        config.slot2.kD = 0.1;
-        config.slot3.kF = 1;
+        config.slot2.kD = 0.001;
+        config.slot3.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
@@ -22,13 +22,14 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
     motorSpx = new curtinfrc::VictorSpx(SpxID);
     intakeSpx = new curtinfrc::VictorSpx(intakeID);
 
-    motorSpx->Set(curtinfrc::VictorSpx::ControlMode::Follower, SrxID);
+    //motorSpx->Set(curtinfrc::VictorSpx::ControlMode::Follower, SrxID);
 }
 
 void Cargo::setRotationSpeed(double speed) { //Percent speed
     if(std::abs(speed) < deadzone) speed = 0;
     motorSrx->Set(speed);
-}
+    motorSpx->Set(speed);
+    }
 
 void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
     

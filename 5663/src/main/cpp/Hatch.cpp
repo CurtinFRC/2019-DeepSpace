@@ -1,19 +1,19 @@
 #include "Hatch.h"
 
 Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant) {
-    Flooper = new curtinfrc::TalonSrx(motorID, 1);
+    Flooper = new curtinfrc::TalonSrx(motorID, 1024);
     Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
-        config.slot0.kP = 5;
-        config.slot1.kI = 0;
-        config.slot2.kD = 0.00;
+        config.slot0.kP = 0.25;
+        config.slot1.kI = 0.002;
+        config.slot2.kD = 0.004;
         config.slot3.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 200;
-        config.motionAcceleration = 100;
+        config.motionCruiseVelocity = 5000;
+        config.motionAcceleration = 2000;
     });
 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
@@ -33,17 +33,17 @@ void Hatch::setAngle(double newAngle) {
 }
 
 void Hatch::downPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 22000);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 31000);
 }
 
 
 void Hatch::upPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 100);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -30000);
 }
 
 void Hatch::ejectHatch(bool eject) {
-    if(eject) ejection->Set(frc::DoubleSolenoid::kForward);
-    else ejection->Set(frc::DoubleSolenoid::kReverse);
+    if(eject) ejection->Set(frc::DoubleSolenoid::kReverse);
+    else ejection->Set(frc::DoubleSolenoid::kForward);
 }
 
 void Hatch::alignmentPiston(bool extended) {
