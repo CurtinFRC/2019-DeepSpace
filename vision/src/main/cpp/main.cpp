@@ -2,6 +2,7 @@
 #include "Capture.h"
 #include "TapeProcessing.h"
 #include "BallProcessing.h"
+#include "HatchProcessing.h"
 #include "Display.h"
 #include <iostream>
 #include <list>
@@ -31,15 +32,27 @@ int main(int argc, char **argv) {
   }
 
   VisionRunner vision;
+  #ifdef __DESKTOP__
   Capture capture{0};
-  //TapeProcessing tapeProcess{capture};
+  #else
+  Capture capture{4};
+  #endif
+  HatchProcessing hatchProcess{capture};
   BallProcessing ballProcess{capture};
-  Display display{ballProcess};
+  // TapeProcessing tapeProcess{capture};
+  Display displayBall{ballProcess};
+  Display displayHatch{hatchProcess};
+  // Display displayTape{tapeProcess};
   
   vision.Run(capture);
-  //vision.Run(tapeProcess);
   vision.Run(ballProcess);
-  vision.Run(display);
+  vision.Run(hatchProcess);
+  // vision.Run(tapeProcess);
+
+  vision.Run(displayBall);
+  vision.Run(displayHatch);
+  // vision.Run(displayTape);
+
 
   for (int i = 0; i < vision.workers.size(); i++) {
     vision.workers[i].join();

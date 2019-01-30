@@ -22,11 +22,12 @@ using namespace std;
 
 void TapeProcessing::Init() {
 	Process::Init();
+  processType = "TapeProcessing";
 }
 
 void TapeProcessing::Periodic() {
-	// I have a feeling this won't work. imgHSV is deprecated ?
-	/* if (_capture.IsValidFrame()) {
+/*
+	if (_capture.IsValidFrame()) {
 		_capture.CopyCaptureMat(_captureMat);
 		cv::cvtColor(_captureMat, imgHSV, cv::COLOR_RGB2HSV);
 		cv::inRange(imgHSV, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), imgBinary);
@@ -43,6 +44,8 @@ void TapeProcessing::Periodic() {
 	heights.clear();
 	lefts.clear();
 	rights.clear();
+
+  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 
 	for (int i = 0; i < filteredContours.size(); i++) {
 
@@ -98,7 +101,7 @@ void TapeProcessing::Periodic() {
 
     std::stringstream ss;	ss<<angle; //magic shit, idk
     std::stringstream hei;	hei<<height;
-    cv::putText(imgBinary, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+    cv::putText(_imgProcessed, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
   }
 
   int leftmost = -1;
@@ -136,7 +139,9 @@ void TapeProcessing::Periodic() {
   for (int i = 0; i < targets.size(); i++) {
     std::stringstream dis;	dis<<distances[i];
     std::stringstream ang;	ang<<angles[i];
-    cv::rectangle(imgBinary, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
-    cv::putText(imgBinary, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
+    cv::rectangle(_imgProcessed, targets[i] + Point2f(-3,-3), targets[i] + Point2f(3,3), color, 2); //draw small rectangle on target locations
+    cv::putText(_imgProcessed, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
   } */
+  _imgProcessed = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
+
 }

@@ -20,13 +20,13 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox };
+  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
 
   HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
   harvester = new HarvesterIntake(harvesterConfig);
 
-  ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 25 / 1000.0, 20 };
+  ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig, *harvester);
 }
 
