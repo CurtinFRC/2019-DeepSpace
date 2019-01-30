@@ -32,7 +32,13 @@ deploy {
 }
 
 dependencies {
-  simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
+  if (wpi.platforms.desktop == 'windowsx86-64') {
+    // The 2019.2.1 release of halsim_ds_socket is broken on windows, so we built a fixed version ourselves while
+    // we wait for 2019.3.1
+    simulation rootProject.files('libs/halsim_ds_socketd.dll')
+  } else {
+    simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
+  }
 }
 
 wpi.deps.vendor.loadFrom(project(':common'))
