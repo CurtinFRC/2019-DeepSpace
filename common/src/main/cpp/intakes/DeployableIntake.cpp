@@ -1,6 +1,6 @@
-#include "intakes/DeployableIntake.h"
+#include "devices/DeployableDevice.h"
 
-void curtinfrc::intakes::DeployableIntake::OnStatePeriodic(curtinfrc::intakes::DeployableIntakeState state, double dt) {
+void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::DeployableDeviceState state, double dt) {
   _config.actuator.Update(dt);
 
   switch (state) {
