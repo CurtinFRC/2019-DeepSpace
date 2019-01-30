@@ -33,18 +33,22 @@ int main(int argc, char **argv) {
 
   VisionRunner vision;
   #ifdef __DESKTOP__
-  Capture capture{0};
+  // Capture capture{0};
+  Capture captureGamePiece{1};
   #else
-  Capture capture{4};
+  Capture capture{4, -100};
+  // Capture captureGamePiece{5, 50};
   #endif
-  // HatchProcessing hatchProcess{capture};
+  // HatchProcessing hatchProcess{captureGamePiece};
   // BallProcessing ballProcess{capture};
   TapeProcessing tapeProcess{capture};
+  
   // Display displayBall{ballProcess};
   // Display displayHatch{hatchProcess};
   Display displayTape{tapeProcess};
   
   vision.Run(capture);
+  // vision.Run(captureGamePiece);
   // vision.Run(ballProcess);
   // vision.Run(hatchProcess);
   vision.Run(tapeProcess);

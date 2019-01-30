@@ -9,7 +9,7 @@
 
 class Capture : public Runnable {
  public:
-  Capture(int port);
+  Capture(int port, int exposure);
   int GetPort();
   void Init() override;
   void Periodic() override;

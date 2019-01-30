@@ -32,10 +32,11 @@ void Display::Periodic() {
   // _process.CopyProcessedThresh(_imgProcessedThresh);
   // _capture.CopyCaptureMat(_imgOriginal);
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-  if (_process.GetValidThresh() && _process.GetValidTrack()) {
+    if (_process.GetValidThresh() && _process.GetValidTrack()) {
 #ifdef __DESKTOP__
       //imshow("OutputOrigin", _imgOriginal);
-      imshow(_process.GetProcessType(), _imgProcessedTrack);
+      if (_imgProcessedTrack.rows > 0)
+        imshow(_process.GetProcessType(), _imgProcessedTrack);
       // imshow(_process.GetProcessType(), _imgProcessedThresh);
       // imshow("OutputBallThresh", _imgBallThresh);
       // imshow("OutputBallTrack", _imgBallTrack);
@@ -52,7 +53,7 @@ void Display::Periodic() {
 #endif
 		std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
-  }
+    }
   }
   else {
     std::cout << "Origin Image is Not Available" << std::endl;

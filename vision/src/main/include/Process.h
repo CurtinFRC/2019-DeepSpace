@@ -35,4 +35,5 @@ class Process : public Runnable {
 
   cv::Mat _imgProcessedTrack;
   cv::Mat _imgProcessedThresh;
+  cv::Mat _imgProcessing;
 };
