@@ -29,28 +29,21 @@ void TapeProcessing::Periodic() {
 
     //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
-    {
-      std::lock_guard<std::mutex> lock(_classMutex);
-		  cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
-      //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
-    }
+		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
+    //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
 
-    {
-      std::lock_guard<std::mutex> lock(_classMutex);
-      cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedTrack);
-      //cv::inRange(_imgProcessedThresh, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
-      //cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-    
-    }
+    cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessing);
+    //cv::inRange(_imgProcessedThresh, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
+    cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     
 
-    /*
+    
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
 		}
-
+  
     //Get RotatedRectangles 
     centres.clear(); //clear the vectors
     heights.clear();
@@ -109,9 +102,9 @@ void TapeProcessing::Periodic() {
 
       std::stringstream ss;	ss << angle;
       std::stringstream hei;	hei << height;
-      // cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+      cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
     }
-
+  
     int leftmost = -1;
     float leftPos = 640;
     targets.clear();
@@ -141,7 +134,7 @@ void TapeProcessing::Periodic() {
         }
       }
     }
-
+  
     cv::Scalar color = cv::Scalar(255, 255, 255);
 
     for (int i = 0; i < targets.size(); i++) {
@@ -150,8 +143,5 @@ void TapeProcessing::Periodic() {
       cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-3,-3), targets[i] + cv::Point2f(3,3), color, 2); //draw small rectangle on target locations
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-  */
-
   }
-
 }
