@@ -5,7 +5,7 @@ using namespace curtinfrc;
 Toggle::Toggle(ToggleEvent mode) {
   _mode = mode;
   _triggered = false;
-  _lstate = mode == 2 ? false : !mode;
+  _lstate = mode == ONCHANGE ? false : !mode; // requires ToggleEvent to have 0: ONFALL, 1: ONRISE
 }
 
 Toggle::Toggle(ToggleEvent mode, bool initState) {
