@@ -3,6 +3,7 @@
 #include "intakes/DeployableIntake.h"
 #include "StateDevice.h"
 #include "Gearbox.h"
+#include "CurtinControllers.h"
 
 #include <frc/DoubleSolenoid.h>
 
@@ -27,3 +28,15 @@ class HarvesterIntake : public curtinfrc::intakes::DeployableIntake {
  private:
   HarvesterIntakeConfig _config;
 };
+
+class HarvesterIntakeController {
+ public: 
+  HarvesterIntakeController(HarvesterIntake &harvesterIntake, curtinfrc::Joystick &joy) : _harvesterIntake(harvesterIntake), _joy(joy) {};
+  void Update(double dt);
+
+  private:
+  HarvesterIntake &_harvesterIntake;
+  curtinfrc::Joystick &_joy;
+};
+
+

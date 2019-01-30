@@ -15,3 +15,16 @@ void HarvesterIntake::StowingPeriodic() {
 void HarvesterIntake::StowedPeriodic() {
   _config.motors.transmission->StopMotor(); // probably doesn't need this, but ~
 }
+
+
+void HarvesterIntakeController::Update(double dt) {
+  if (_joy.GetRawButton(3)) {
+    _harvesterIntake.SetDeployed(HarvesterIntakeState::kIntaking);
+  } else if (_joy.GetRawButton(5)) {
+    _harvesterIntake.SetDeployed(HarvesterIntakeState::kOuttaking);
+  } else if (_joy.GetRawButton(11)) {
+    _harvesterIntake.SetStowed();
+  }
+
+  _harvesterIntake.Update(dt);
+}
