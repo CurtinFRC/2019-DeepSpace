@@ -39,6 +39,7 @@ void HatchProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgProcessing);
+    _capture.CopyCaptureMat(_imgProcessedTrack);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -53,7 +54,7 @@ void HatchProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Hatch
-    cv::inRange(_imgProcessing, cv::Scalar(15, 130, 100), cv::Scalar(34, 255, 255), _imgProcessedTrackHatch);
+    cv::inRange(_imgProcessing, cv::Scalar(15, 130, 100), cv::Scalar(34, 255, 255), _imgProcessedTrack);
     cv::inRange(_imgProcessing, cv::Scalar(15, 130, 100), cv::Scalar(34, 255, 255), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?

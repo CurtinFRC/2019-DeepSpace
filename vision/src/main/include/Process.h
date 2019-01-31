@@ -20,7 +20,7 @@ class Process : public Runnable {
 
   Process(Capture &capture);
   Capture &GetCapture();
-  void CopyProcessedTrackHatch(cv::Mat &imgProcessedTrackHatch);
+  //void CopyProcessedTrackHatch(cv::Mat &imgProcessedTrackHatch);
   void CopyProcessedTrack(cv::Mat &imgProcessedTrack);
   void CopyProcessedThresh(cv::Mat &imgProcessedThresh);
 
@@ -34,7 +34,7 @@ class Process : public Runnable {
   Capture &_capture;
   cs::VideoMode _videoMode;
 
-  cv::Mat _imgProcessedTrackHatch;
+  //cv::Mat _imgProcessedTrackHatch;
   cv::Mat _imgProcessedTrack;
   cv::Mat _imgProcessedThresh;
   cv::Mat _imgProcessing;

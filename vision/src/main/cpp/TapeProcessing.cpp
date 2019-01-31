@@ -29,6 +29,7 @@ void TapeProcessing::Periodic() {
 
     //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
     //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
 
@@ -38,7 +39,7 @@ void TapeProcessing::Periodic() {
 
     
 
-    
+    filteredContours.clear();
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
@@ -89,10 +90,10 @@ void TapeProcessing::Periodic() {
       centres.push_back(centre);
       heights.push_back(height);
 
-      if (angle > 110 && angle < 119) { //angle range for right classification
+      if (angle > 100 && angle < 120) { //angle range for right classification
         rights.push_back(true);
         lefts.push_back(false);
-      } else if (angle < 80 && angle > 71) { //angle range for left classification
+      } else if (angle < 80 && angle > 60) { //angle range for left classification
         rights.push_back(false);
         lefts.push_back(true);
       } else {
@@ -102,7 +103,7 @@ void TapeProcessing::Periodic() {
 
       std::stringstream ss;	ss << angle;
       std::stringstream hei;	hei << height;
-      cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
+      cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-50,50), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
     }
   
     int leftmost = -1;

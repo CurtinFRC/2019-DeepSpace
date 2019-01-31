@@ -51,6 +51,7 @@ void Display::Periodic() {
         // imshow("OutputHatchTrack", _imgHatchTrack);
         // imshow("OutputTapeThresh", _imgTapeThresh);
         // imshow("OutputTapeTrack", _imgTapeTrack);
+        
         cv::waitKey(1000 / 30);
     
 #else
