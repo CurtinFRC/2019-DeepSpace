@@ -10,11 +10,12 @@
 
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
-#include "SensoredTransmission.h"
 #include "Gearbox.h"
 
 #include "Cargo.h"
 #include "Hatch.h"
+
+#include "Toggle.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -39,7 +40,10 @@ class Robot : public frc::TimedRobot {
   curtinfrc::Drivetrain *drivetrain;
   curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2;
   curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
-  curtinfrc::SensoredTransmission *Left, *Right;
+  curtinfrc::Gearbox *Left, *Right;
 
   frc::Compressor *compressor;
+
+  curtinfrc::Toggle lockToggle{};
+  bool lockState = false;
 };

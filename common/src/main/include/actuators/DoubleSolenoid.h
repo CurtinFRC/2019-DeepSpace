@@ -13,7 +13,6 @@ namespace curtinfrc {
 
       virtual void Update(double dt) override;
       virtual void Stop() final {};
-      virtual bool IsDone() override;
     };
   } // ns actuators
 } // ns curtinfrc

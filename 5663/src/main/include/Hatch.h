@@ -5,20 +5,24 @@
 #include <cmath>
 #include <frc/SmartDashboard/SmartDashboard.h>
 
+#include "actuators/BinaryServo.h"
+
 class Hatch {
     public:
-        Hatch(int motorID, int eject, int retract, int align, int faceplant);
+        Hatch(int motorID, int eject, int retract, int align, int faceplant, int servoID);
         void setRotationSpeed(double speed);
         void setAngle(double newAngle);
         void downPosition();
         void upPosition();
         void ejectHatch(bool eject);
+        void lockHatch(bool state);
         void alignmentPiston(bool extended);     
         void zeroEncoder();
         void update();
     private:
         curtinfrc::TalonSrx *Flooper;
         frc::DoubleSolenoid *ejection, *alignment;
+        curtinfrc::actuators::BinaryServo *lock;
 
         double angle = 0;
 

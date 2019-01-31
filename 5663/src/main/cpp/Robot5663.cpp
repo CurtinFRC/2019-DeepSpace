@@ -11,21 +11,21 @@ void Robot::RobotInit() {
 
   //Mechanisms
   cargo = new Cargo(6,7,8);
-  hatch = new Hatch(1,0,1,2,3);
+  hatch = new Hatch(1,0,1,2,3,0);
 
   // Motor_Controllers
   leftTalon = new TalonSrx(2, 2048);
   leftVictor = new VictorSpx(3);
-  Left = new SensoredTransmission{ new SpeedControllerGroup(*leftTalon, *leftVictor), nullptr };
+  Left = new Gearbox{ new SpeedControllerGroup(*leftTalon, *leftVictor), nullptr };
 
   rightTalon = new TalonSrx(5, 2048);
   rightVictor = new VictorSpx(4);
-  Right = new SensoredTransmission{ new SpeedControllerGroup(*rightTalon, *rightVictor), nullptr };
+  Right = new Gearbox{ new SpeedControllerGroup(*rightTalon, *rightVictor), nullptr };
 
   DrivetrainConfig drivetrainConfig{*Left, *Right};
   drivetrain = new Drivetrain(drivetrainConfig);
   
-  xbox2 = new frc::XboxController(0);
+  xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
 
  // new PowerDistributionPanel(0);
@@ -94,7 +94,7 @@ void Robot::TeleopPeriodic() {
   }
 
   //hatch positioning
-  if (xbox2->GetAButton()){
+  if (xbox1->GetAButton()){
     hatch->downPosition();
   } else if(xbox1->GetXButton()){
       hatch->upPosition();
@@ -102,8 +102,11 @@ void Robot::TeleopPeriodic() {
     hatch->setRotationSpeed(0);
   }
 
+  if (lockToggle.tick(xbox1->GetYButton())) lockState = !lockState;
+
   //Hatch Ejection
   hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
+  hatch->lockHatch(lockState);
   hatch->alignmentPiston(xbox1->GetBumper(hand::kRightHand));
 
   hatch->update();
