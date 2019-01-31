@@ -22,9 +22,11 @@ void Robot::RobotInit() {
 
   DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
+  drivetrainController = new DrivetrainController(*drivetrain, robotmap.joy);
 
   HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
   harvester = new HarvesterIntake(harvesterConfig);
+  harvesterController = new HarvesterIntakeController(*harvester, robotmap.joy);
 
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
@@ -38,18 +40,9 @@ void Robot::TeleopPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
   // Calc dt for update functions
-  
-  double joyY = -robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kYAxis, robotmap.joy.kZAxis) * 0.9;
-  double joyZ = robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kZAxis, robotmap.joy.kYAxis) * 0.65;
 
-  joyY *= abs(joyY);
-  joyZ *= abs(joyZ);
-
-  double leftSpeed = joyY + joyZ;
-  double rightSpeed = joyY - joyZ;
-
-  drivetrain->Set(leftSpeed, rightSpeed);
-
+  drivetrainController->Update(dt);
+  harvesterController->Update(dt);
 
   double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
 

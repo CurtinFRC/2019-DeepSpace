@@ -3,6 +3,8 @@
 #include <frc/Servo.h>
 
 #include "devices/DeployableDevice.h"
+#include "CurtinControllers.h"
+#include "Toggle.h"
 
 using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
@@ -23,4 +25,16 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
 
  private:
   HatchIntakeConfig _config;
+};
+
+class HatchIntakeController {
+ public:
+  HatchIntakeController(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {};
+  void Update(double dt);
+
+ private:
+  HatchIntake &_hatchIntake;
+  curtinfrc::Joystick &_joy;
+  curtinfrc::Toggle _enabledToggle;
+  bool _enabled;
 };

@@ -5,6 +5,7 @@
 #include "Gearbox.h"
 
 #include "Usage.h"
+#include "CurtinControllers.h"
 
 namespace curtinfrc {
   struct DrivetrainConfig {
@@ -44,5 +45,15 @@ namespace curtinfrc {
     DrivetrainConfig _config;
 
     Usage<DrivetrainConfig>::Scoped _usage{&_config};
+  };
+
+  class DrivetrainController {
+   public:
+    DrivetrainController(Drivetrain &drivetrain, curtinfrc::Joystick &joy) : _drivetrain(drivetrain), _joy(joy) {};
+    void Update(double dt);
+
+   private:
+    Drivetrain &_drivetrain;
+    curtinfrc::Joystick &_joy;
   };
 } // ns curtinfrc
