@@ -18,6 +18,8 @@
 
 #include "devices/kinect.h"
 
+cv::RNG rngTape(12345);
+
 void TapeProcessing::Init() {
 	Process::Init();
   processType = "TapeProcessing";
@@ -32,9 +34,8 @@ void TapeProcessing::Periodic() {
     _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
     //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
-
-    cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessing);
-    //cv::inRange(_imgProcessedThresh, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 255), _imgProcessedThresh);
+    //cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
+    cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     
@@ -50,8 +51,11 @@ void TapeProcessing::Periodic() {
     heights.clear();
     lefts.clear();
     rights.clear();
+    cv::Scalar color = cv::Scalar(255, 255, 255);
 
     for (int i = 0; i < filteredContours.size(); i++) {
+      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, color);
+      
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
 
       cv::Point2f centre = rotatedRect.center;
@@ -90,20 +94,16 @@ void TapeProcessing::Periodic() {
       centres.push_back(centre);
       heights.push_back(height);
 
-      if (angle > 100 && angle < 120) { //angle range for right classification
+      if (angle > 95 && angle < 125) { //angle range for right classification
         rights.push_back(true);
         lefts.push_back(false);
-      } else if (angle < 80 && angle > 60) { //angle range for left classification
+      } else if (angle < 75 && angle > 55) { //angle range for left classification
         rights.push_back(false);
         lefts.push_back(true);
       } else {
         rights.push_back(false);
         lefts.push_back(false);
       }
-
-      std::stringstream ss;	ss << angle;
-      std::stringstream hei;	hei << height;
-      cv::putText(_imgProcessedTrack, ss.str() + " height:" + hei.str(), centre + cv::Point2f(-50,50), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //label the angle on each rectangle
     }
   
     int leftmost = -1;
@@ -122,8 +122,8 @@ void TapeProcessing::Periodic() {
 
         if (leftmost > -1) {
           targets.push_back((centres[i]+centres[leftmost]) / 2); //adds the Points2f position of each target to a vector
-          distances.push_back(200 / (heights[i] + heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
-          float widthAdjust = 0.0015 * distances[distances.size() - 1] * abs(centres[i].x - centres[leftmost].x); //Calibrate distance, then adjust the first number until robot facing target gives 0 degrees.
+          distances.push_back(184 / (heights[i] + heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
+          float widthAdjust = 0.05 * distances[distances.size() - 1] * abs(centres[i].x - centres[leftmost].x); //Calibrate distance, then adjust the first number until robot facing target gives 0 degrees.
           if (widthAdjust > 1.0) {
             widthAdjust = 1.0;
           }
@@ -136,8 +136,6 @@ void TapeProcessing::Periodic() {
       }
     }
   
-    cv::Scalar color = cv::Scalar(255, 255, 255);
-
     for (int i = 0; i < targets.size(); i++) {
       std::stringstream dis;	dis << distances[i];
       std::stringstream ang;	ang << angles[i];
