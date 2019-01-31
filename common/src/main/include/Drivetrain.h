@@ -5,7 +5,7 @@
 #include "Gearbox.h"
 
 #include "Usage.h"
-#include "curtinControllers.h"
+#include "CurtinControllers.h"
 
 namespace curtinfrc {
   struct DrivetrainConfig {
