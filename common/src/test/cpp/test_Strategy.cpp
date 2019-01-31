@@ -45,7 +45,7 @@ class StrategyTest : public testing::Test {
 TEST_F(StrategyTest, ThrowIfSystemNotRegistered) {
   strat->Requires(&sysA);
 
-  ASSERT_THROW(controller.Run(strat), std::invalid_argument); // Sys not registered
+  ASSERT_THROW(controller.Schedule(strat), std::invalid_argument); // Sys not registered
 }
 
 TEST_F(StrategyTest, DefaultStrategyThrowsIfNotInterruptable) {
@@ -64,7 +64,7 @@ TEST_F(StrategyTest, DefaultStrategy) {
 
   ASSERT_EQ(sysA.GetDefaultStrategy(), strat);
 
-  sysA.StrategyUpdate(0);
+  controller.Update();
 
   ASSERT_EQ(sysA.GetActiveStrategy(), sysA.GetDefaultStrategy());
   ASSERT_EQ(strat->GetStrategyState(), StrategyState::RUNNING);
@@ -74,7 +74,7 @@ TEST_F(StrategyTest, DefaultStrategy) {
   std::shared_ptr<MockStrategy> strat2 = makeStrat();
   strat2->Requires(&sysA);
   
-  ASSERT_TRUE(controller.Run(strat2));
+  ASSERT_TRUE(controller.Schedule(strat2));
   ASSERT_EQ(strat->GetStrategyState(), StrategyState::INTERRUPTED);
   ASSERT_EQ(sysA.GetActiveStrategy(), strat2);
 
@@ -83,7 +83,7 @@ TEST_F(StrategyTest, DefaultStrategy) {
   // New Strategy Done
 
   strat2->SetDone();
-  sysA.StrategyUpdate(0);
+  controller.Update();
 
   ASSERT_EQ(strat2->GetStrategyState(), StrategyState::DONE);
   ASSERT_EQ(strat->GetStrategyState(), StrategyState::RUNNING);
@@ -103,11 +103,11 @@ TEST_F(StrategyTest, RejectReplacement) {
   std::shared_ptr<MockStrategy> strat2 = makeStrat();
   strat2->Requires(&sysA);
 
-  ASSERT_TRUE(controller.Run(strat));
-  ASSERT_FALSE(controller.Run(strat2));
+  ASSERT_TRUE(controller.Schedule(strat));
+  ASSERT_FALSE(controller.Schedule(strat2));
   ASSERT_EQ(strat2->GetStrategyState(), StrategyState::CANCELLED);
 
-  ASSERT_TRUE(controller.Run(strat2, true));
+  ASSERT_TRUE(controller.Schedule(strat2, true));
 }
 
 TEST_F(StrategyTest, AcceptReplacementInterrupt) {
@@ -118,8 +118,8 @@ TEST_F(StrategyTest, AcceptReplacementInterrupt) {
   std::shared_ptr<MockStrategy> strat2 = makeStrat();
   strat2->Requires(&sysA);
 
-  ASSERT_TRUE(controller.Run(strat));
-  ASSERT_TRUE(controller.Run(strat2));
+  ASSERT_TRUE(controller.Schedule(strat));
+  ASSERT_TRUE(controller.Schedule(strat2));
   
   ASSERT_EQ(strat->GetStrategyState(), StrategyState::INTERRUPTED);
 }
@@ -137,12 +137,11 @@ TEST_F(StrategyTest, ScheduleFull) {
   controller.Register(&sysA);
   strat->Requires(&sysA);
 
-  ASSERT_TRUE(controller.Run(strat));
-  sysA.StrategyUpdate(0);
+  ASSERT_TRUE(controller.Schedule(strat));
+  // sysA.StrategyUpdate(0);
 
   ASSERT_EQ(strat->GetStrategyState(), StrategyState::RUNNING);
   ASSERT_EQ(strat->started, 1);
-  ASSERT_EQ(strat->periodic, 1);
   ASSERT_EQ(strat->stopped, 0);
 
   strat->SetDone();
@@ -159,7 +158,7 @@ TEST_F(StrategyTest, MultiRequirements) {
   strat->Requires(&sysA);
   strat->Requires(&sysB);
 
-  ASSERT_TRUE(controller.Run(strat));
+  ASSERT_TRUE(controller.Schedule(strat));
 
   ASSERT_EQ(sysA.GetActiveStrategy(), strat);
   ASSERT_EQ(sysB.GetActiveStrategy(), strat);
@@ -177,12 +176,12 @@ TEST_F(StrategyTest, RejectMultiRequirements) {
   strat2->Requires(&sysA);
   strat2->Requires(&sysB);
 
-  ASSERT_TRUE(controller.Run(strat));
+  ASSERT_TRUE(controller.Schedule(strat));
 
   ASSERT_EQ(sysA.GetActiveStrategy(), strat);
   ASSERT_EQ(sysB.GetActiveStrategy(), nullptr);
 
-  ASSERT_FALSE(controller.Run(strat2));
+  ASSERT_FALSE(controller.Schedule(strat2));
 }
 
 TEST_F(StrategyTest, AcceptMultiRequirementsInterrupt) {
@@ -197,13 +196,50 @@ TEST_F(StrategyTest, AcceptMultiRequirementsInterrupt) {
   strat2->Requires(&sysA);
   strat2->Requires(&sysB);
 
-  ASSERT_TRUE(controller.Run(strat));
+  ASSERT_TRUE(controller.Schedule(strat));
 
   ASSERT_EQ(sysA.GetActiveStrategy(), strat);
   ASSERT_EQ(sysB.GetActiveStrategy(), nullptr);
 
-  ASSERT_TRUE(controller.Run(strat2));
+  ASSERT_TRUE(controller.Schedule(strat2));
 
   ASSERT_EQ(sysA.GetActiveStrategy(), strat2);
   ASSERT_EQ(sysB.GetActiveStrategy(), strat2);
+}
+
+class MockRecStrategy : public Strategy {
+ public: 
+  MockRecStrategy(std::shared_ptr<MockStrategy> strat, StrategyController *controller) : cont(controller), ms(strat) {}
+
+  std::string GetStrategyName() override {
+    return "MockRecStrategy";
+  }
+
+  void OnUpdate(double dt) override {
+    SetDone();
+  }
+
+  void OnStop() {
+    cont->Schedule(ms);
+  }
+
+  StrategyController *cont;
+  std::shared_ptr<MockStrategy> ms;
+};
+
+TEST_F(StrategyTest, ScheduleInStrategy) {
+  std::shared_ptr<MockRecStrategy> mrs = std::make_shared<MockRecStrategy>(strat, &controller);
+  controller.Register(&sysA);
+  mrs->Requires(&sysA);
+  strat->Requires(&sysA);
+
+  mrs->SetCanBeInterrupted(true);
+
+  ASSERT_TRUE(controller.Schedule(mrs));
+  ASSERT_EQ(sysA.GetActiveStrategy(), mrs);
+
+  controller.Update();
+
+  ASSERT_TRUE(mrs->IsFinished());
+  ASSERT_EQ(sysA.GetActiveStrategy(), strat);
 }

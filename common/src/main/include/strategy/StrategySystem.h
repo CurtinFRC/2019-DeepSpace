@@ -1,34 +1,50 @@
 #pragma once
 
 #include <memory>
-#include <wpi/spinlock.h>
 
 namespace curtinfrc {
 
 class Strategy;
 class StrategyController;
 
+/**
+ * A StrategySystem is any system, plant, or device that is capable of running
+ * a Strategy.
+ * 
+ * A StrategySystem may only run one Strategy at once, but it may have a default
+ * Strategy that is run whenever the system is not taken by another.
+ * 
+ * A StrategySystem is run at its own loop frequency. 
+ */
 class StrategySystem {
  public:
+
+  /**
+   * Set the default Strategy to run. This strategy will run whenever the system
+   * is left at idle.
+   */
   void SetDefault(std::shared_ptr<Strategy> newStrategy);
 
-  template<typename T, typename ...Args>
-  void EmplaceDefault(const Args & ... args) {
-    SetDefault(std::make_shared<T>(args...));
-  }
-
+  /**
+   * Get the currently active strategy.
+   */
   std::shared_ptr<Strategy> GetActiveStrategy() {
     return _active;
   }
 
+  /**
+   * Get the default strategy.
+   */
   std::shared_ptr<Strategy> GetDefaultStrategy() {
     return _default;
   }
 
+ protected:
   void StrategyUpdate(double dt);
+  void StrategyStatusUpdate();
+  void StrategyReplace(std::shared_ptr<Strategy> newStrat);
 
  private:
-  wpi::spinlock _active_mtx;
   std::shared_ptr<Strategy> _active = nullptr;
   std::shared_ptr<Strategy> _default = nullptr;
 

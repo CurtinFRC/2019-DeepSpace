@@ -11,7 +11,18 @@
 namespace curtinfrc {
 
 enum class StrategyState {
-  INITIALIZED, RUNNING, CANCELLED, DONE, TIMED_OUT, INTERRUPTED
+  //! Initialized, but never run. The default state.
+  INITIALIZED, 
+  //! Currently running or active
+  RUNNING, 
+  //! Strategy was rejected from starting as the current strategy may not be interrupted
+  CANCELLED, 
+  //! Strategy was voluntarily marked as complete, using SetDone
+  DONE, 
+  //! Strategy has timed out
+  TIMED_OUT, 
+  //! Strategy was interrupted by another strategy
+  INTERRUPTED
 };
 
 /**
@@ -19,6 +30,10 @@ enum class StrategyState {
  * 
  * This is similar to commands in WPILib's Command-Based Programming infrastructure,
  * but with a few key changes for our own use.
+ * 
+ * Strategies are run on a slow loop. It is recommended that the Strategy is only used
+ * to orchestrate the system, the system itself should do its control logic on its own,
+ * fast loop.
  */
 class Strategy {
  public:
@@ -33,7 +48,9 @@ class Strategy {
   virtual void OnStart() {}
 
   /**
-   * Called at the same rate as the robot base class
+   * Called at the same rate as the robot base class. This method is intended to orchestrate
+   * the system, while the system itself runs on a faster loop.
+   * 
    * @param dt The delta time (in seconds) from the last iteration
    */
   virtual void OnUpdate(double dt) = 0;
@@ -106,22 +123,29 @@ class Strategy {
     return _strategy_state != StrategyState::INITIALIZED && _strategy_state != StrategyState::RUNNING;
   }
 
+  /**
+   * Make this strategy dependent on one, or many, systems, giving them
+   * exclusive access over this system. A Strategy must be bound to at 
+   * least one system in order to function.
+   */
   void Requires(StrategySystem *s) {
     if (s != nullptr) {
       _requirements.insert(s);
     }
   }
 
+  /**
+   * Check if this strategy requires a given system.
+   */
   bool IsRequiring(StrategySystem *s) {
     if (s == nullptr)
       return false;
     return _requirements.find(s) != _requirements.end();
   }
 
-  int NumRequirements() {
-    return _requirements.size();
-  }
-
+  /**
+   * Get a reference to all system requirements.
+   */
   wpi::SmallPtrSetImpl<StrategySystem *> &GetRequirements() {
     return _requirements;
   }
@@ -151,8 +175,11 @@ class Strategy {
   }
 
   void Stop(StrategyState newState) {
+    StrategyState oldState = _strategy_state;
     _strategy_state = newState;
-    OnStop();
+    
+    if (oldState == StrategyState::RUNNING)
+      OnStop();
   }
 
   friend class StrategySystem;
