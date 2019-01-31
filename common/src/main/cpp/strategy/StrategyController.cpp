@@ -61,6 +61,10 @@ void StrategyController::Update(double dt) {
 }
 
 bool StrategyController::DoSchedule(std::shared_ptr<Strategy> strategy, bool force) {
+  if (strategy->GetStrategyState() != StrategyState::INITIALIZED && strategy->GetStrategyState() != StrategyState::CANCELLED && !strategy->_can_reuse) {
+    throw std::invalid_argument("Cannot reuse a Strategy that has SetCanBeReused(false)");
+  }
+
   // Assert that systems exist, and that they may have an interrupted strategy
   for (StrategySystem *sys : strategy->GetRequirements()) {
     if (std::find(_impl->systems.begin(), _impl->systems.end(), sys) == _impl->systems.end()) {

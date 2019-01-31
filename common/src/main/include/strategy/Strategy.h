@@ -25,6 +25,8 @@ enum class StrategyState {
   INTERRUPTED
 };
 
+class StrategyQueue;
+
 /**
  * A 'Strategy' is a single component in a sequential chain of events or actions.
  * 
@@ -37,10 +39,13 @@ enum class StrategyState {
  */
 class Strategy {
  public:
+  Strategy(std::string name = "<no name>") : _strategy_name(name) {}
   /**
    * Get the name of this Strategy
    */
-  virtual std::string GetStrategyName() = 0;
+  virtual std::string GetStrategyName() {
+    return _strategy_name;
+  }
 
   /**
    * Called upon the Strategy being started
@@ -61,10 +66,24 @@ class Strategy {
   virtual void OnStop() {}
 
   /**
-   * Set whether this Strategy can be interrupted by other Strategies
+   * Set whether this Strategy can be interrupted by other Strategies. Default is false.
    */
   void SetCanBeInterrupted(bool canBeInterrupted) {
     _can_interrupt = canBeInterrupted;
+  }
+
+  /**
+   * Set whether this Strategy can be reused multiple times. Default is false.
+   */
+  void SetCanBeReused(bool canBeReused) {
+    _can_reuse = canBeReused;
+  }
+
+  /**
+   * Get whether this Strategy can be interrupted by other Strategies.
+   */
+  bool CanBeInterrupted() {
+    return _can_interrupt;
   }
 
   /**
@@ -92,7 +111,7 @@ class Strategy {
    * 
    * @param seconds The timeout, in seconds.
    */
-  void SetTimeout(double seconds) { _timeout = seconds * 1000; }
+  void SetTimeout(double seconds) { _timeout = seconds; }
 
   /**
    * Get the Timeout of the Strategy, in seconds, or 0 if it does not
@@ -167,10 +186,10 @@ class Strategy {
     if (_strategy_state == StrategyState::RUNNING) {
       OnUpdate(dt);
       _time += dt;
-    }
 
-    if (_timeout > 0 && _time > _timeout) {
-      Stop(StrategyState::TIMED_OUT);
+      if (_timeout > 0 && _time > _timeout) {
+        Stop(StrategyState::TIMED_OUT);
+      }
     }
   }
 
@@ -184,10 +203,13 @@ class Strategy {
 
   friend class StrategySystem;
   friend class StrategyController;
+  friend class StrategyQueue;
 
  private:
+  std::string _strategy_name;
   double _time = 0;
   double _timeout = 0;
+  bool _can_reuse = false;
   bool _can_interrupt = false;
   StrategyState _strategy_state = StrategyState::INITIALIZED;
 

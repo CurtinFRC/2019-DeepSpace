@@ -243,3 +243,37 @@ TEST_F(StrategyTest, ScheduleInStrategy) {
   ASSERT_TRUE(mrs->IsFinished());
   ASSERT_EQ(sysA.GetActiveStrategy(), strat);
 }
+
+TEST_F(StrategyTest, TimedOut) {
+  auto strat = makeStrat();
+  strat->SetTimeout(0.5);
+
+  controller.Register(&sysA);
+  strat->Requires(&sysA);
+
+  controller.Schedule(strat);
+  controller.Update(1.0);
+
+  ASSERT_EQ(strat->GetStrategyState(), StrategyState::TIMED_OUT);
+}
+
+TEST_F(StrategyTest, ThrowsIfReuseFalse) {
+  auto strat = makeStrat();
+
+  controller.Register(&sysA);
+  strat->Requires(&sysA);
+
+  ASSERT_TRUE(controller.Schedule(strat));
+  ASSERT_THROW(controller.Schedule(strat), std::invalid_argument);
+}
+
+TEST_F(StrategyTest, AllowReuseIfTrue) {
+  auto strat = makeStrat();
+  strat->SetCanBeReused(true);
+
+  controller.Register(&sysA);
+  strat->Requires(&sysA);
+
+  ASSERT_TRUE(controller.Schedule(strat));
+  ASSERT_NO_THROW(controller.Schedule(strat));
+}
