@@ -24,8 +24,7 @@
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) : _cam("USBCam", port) {
-}
+Capture::Capture(int port, int exposure) : _cam("USBCam", port) {_cam.SetExposureManual(exposure);}
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {
@@ -44,8 +43,12 @@ void Capture::CopyCaptureMat(cv::Mat &captureMat) {
   _captureMat.copyTo(captureMat);
 }
 
-bool Capture::IsValidFrame() {
-  return _isValid;
+bool Capture::IsValidFrameThresh() {
+  return _isValidThresh;
+}
+
+bool Capture::IsValidFrameTrack() {
+  return _isValidTrack;
 }
 
 
@@ -69,6 +72,7 @@ void Capture::Init() {
 }
 
 void Capture::Periodic() {
-  _isValid = _sink.GrabFrame(_captureMat) != 0;
+  _isValidThresh = _isValidTrack = _sink.GrabFrame(_captureMat) != 0;
+  // _isValidTrack = _sink.GrabFrame(_captureMat) != 0;
   // std::cout << _sink.GrabFrame(_captureMat) << std::endl;
 }
