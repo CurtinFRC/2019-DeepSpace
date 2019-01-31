@@ -23,9 +23,9 @@ void HarvesterIntake::StowedPeriodic() {
 
 void HarvesterIntakeController::Update(double dt) {
   if (_joy.GetRawButton(3)) {
-    _harvesterIntake.SetDeployed(HarvesterIntakeState::kIntaking);
+    _harvesterIntake.SetIntaking();
   } else if (_joy.GetRawButton(5)) {
-    _harvesterIntake.SetDeployed(HarvesterIntakeState::kOuttaking);
+    _harvesterIntake.SetOuttaking();
   } else if (_joy.GetRawButton(11)) {
     _harvesterIntake.SetStowed();
   }

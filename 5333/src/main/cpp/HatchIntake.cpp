@@ -14,9 +14,9 @@ void HatchIntakeController::Update(double dt) {
 
   if (_enabled) {
     if (_joy.GetRawButton(4)) {
-      _hatchIntake.SetDeployed(HatchIntakeState::kOuttaking);
+      _hatchIntake.SetIntaking();
     } else if (_joy.GetRawButton(6)) {
-      _hatchIntake.SetDeployed(HatchIntakeState::kIntaking);
+      _hatchIntake.SetOuttaking();
     } else if (_joy.GetRawButton(10)) {
       _hatchIntake.SetStowed();
     }
