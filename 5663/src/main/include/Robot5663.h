@@ -5,8 +5,16 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 #include <frc/Encoder.h>
+#include <frc/SpeedControllerGroup.h>
+#include <frc/Compressor.h>
 
 #include "CurtinCtre.h"
+#include "Drivetrain.h"
+#include "SensoredTransmission.h"
+#include "Gearbox.h"
+
+#include "Cargo.h"
+#include "Hatch.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -21,9 +29,17 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
+  Cargo *cargo;
+  Hatch *hatch;
+
   frc::XboxController *xbox1, *xbox2;
-  frc::Spark *Cargo, *Rotation;
+
   frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
 
-  curtinfrc::TalonSrx *left_motor1, *right_motor1, *left_motor2, *right_motor2;
+  curtinfrc::Drivetrain *drivetrain;
+  curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2;
+  curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
+  curtinfrc::SensoredTransmission *Left, *Right;
+
+  frc::Compressor *compressor;
 };
