@@ -31,7 +31,8 @@ struct RobotMap {
 
   struct Elevator {
     frc::Spark liftMotors{5};
-    curtinfrc::Gearbox elevatorGearbox{&liftMotors, nullptr, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4};
+    curtinfrc::sensors::DigitalEncoder liftEncoder{0, 1, 1024};
+    curtinfrc::Gearbox elevatorGearbox{&liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4};
   };
 
   Elevator lift;

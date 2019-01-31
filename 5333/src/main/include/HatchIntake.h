@@ -2,28 +2,24 @@
 
 #include <frc/Servo.h>
 
-#include "intakes/DeployableIntake.h"
+#include "devices/DeployableDevice.h"
 
-using HatchIntakeState = curtinfrc::intakes::DeployableIntakeState;
+using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
-struct HatchIntakeConfig : public curtinfrc::intakes::DeployableIntakeConfig {
+struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   frc::Servo &servo;
   int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
 
-  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::intakes::DeployableIntakeConfig(actuatorIn), servo(servoIn) {};
+  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn) {};
 };
 
-class HatchIntake : public curtinfrc::intakes::DeployableIntake {
+class HatchIntake : public curtinfrc::devices::DeployableDevice {
  public:
-  HatchIntake(HatchIntakeConfig config) : DeployableIntake(config), _config(config) {};
+  HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
  protected:
-  virtual void DeployedPeriodic(HatchIntakeState state) final {
-    if (state == HatchIntakeState::kIntaking) IntakingPeriodic(); else OuttakingPeriodic();
-  };
-
-  virtual void IntakingPeriodic();  // Intake a hatch
-  virtual void OuttakingPeriodic(); // Eject a hatch
+  virtual void IntakingPeriodic() override;  // Intake a hatch
+  virtual void OuttakingPeriodic() override; // Eject a hatch
 
  private:
   HatchIntakeConfig _config;
