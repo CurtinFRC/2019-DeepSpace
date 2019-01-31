@@ -97,7 +97,7 @@ void TapeProcessing::Periodic() {
       if (angle > 95 && angle < 125) { //angle range for right classification
         rights.push_back(true);
         lefts.push_back(false);
-      } else if (angle < 75 && angle > 55) { //angle range for left classification
+      } else if (angle < 85 && angle > 55) { //angle range for left classification
         rights.push_back(false);
         lefts.push_back(true);
       } else {
@@ -123,7 +123,7 @@ void TapeProcessing::Periodic() {
         if (leftmost > -1) {
           targets.push_back((centres[i]+centres[leftmost]) / 2); //adds the Points2f position of each target to a vector
           distances.push_back(184 / (heights[i] + heights[leftmost])); //adds the estimated distance to each target. Calibrate by changing the number.
-          float widthAdjust = 0.05 * distances[distances.size() - 1] * abs(centres[i].x - centres[leftmost].x); //Calibrate distance, then adjust the first number until robot facing target gives 0 degrees.
+          float widthAdjust = 0.0058 * distances[distances.size() - 1] * abs(centres[i].x - centres[leftmost].x); //Calibrate distance, then adjust the first number until robot facing target gives 0 degrees.
           if (widthAdjust > 1.0) {
             widthAdjust = 1.0;
           }
