@@ -79,13 +79,11 @@ namespace sensors {
      */
     NavXGyro Angular(AngularAxis axis);
 
-   private:
-    NavXPort _port;
-
     struct Impl;
     std::unique_ptr<Impl> _impl;
 
-    friend class NavXGyro;
+   private:
+    NavXPort _port;
   };
 
   /**

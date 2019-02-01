@@ -13,6 +13,7 @@ void drivetrain_window::init() {
 drivetrain_window::drivetrain_window(DrivetrainConfig *config) : ui::window("Drivetrain", 600, 600), _config(config), physics_aware() {
   _enc_sim_left = components::create_encoder(config->leftDrive.encoder);
   _enc_sim_right = components::create_encoder(config->rightDrive.encoder);
+  _gyro_sim = components::create_gyro(config->gyro);
 
   register_button(resetPos);
   register_button(scalePlus);
@@ -78,6 +79,12 @@ void drivetrain_window::update_physics(double time_delta) {
 
   _x += _linear_vel * time_delta * std::cos(_heading);
   _y += _linear_vel * time_delta * std::sin(_heading);
+
+  if (_gyro_sim != nullptr) {
+    // Unfortunately WPILib convention is backwards - clockwise is +ve according to frc::Gyro.
+    _gyro_sim->add_angle(-robot_angular_vel * time_delta * 180 / 3.1415);
+    _gyro_sim->set_rate(-robot_angular_vel * 180 / 3.1415);
+  }
 }
 
 void drivetrain_window::render(cv::Mat &img) {
@@ -86,12 +93,21 @@ void drivetrain_window::render(cv::Mat &img) {
     ui::line{ui::point{m * scale, 0}, ui::point{m * scale, 1}}.draw(img, ui::colour::gray() * 0.5, 1);
   }
 
-  ui::point{0.05, 0.10}.textl(img, ("X: " + ui::utils::fmt_precision(_x, 2) + "m").c_str(), 0.5, ui::colour::white());
-  ui::point{0.35, 0.10}.textl(img, ("Y: " + ui::utils::fmt_precision(_y, 2) + "m").c_str(), 0.5, ui::colour::white());
+  double yval = 0.10;
+
+  ui::point{0.05, yval}.textl(img, ("X: " + ui::utils::fmt_precision(_x, 2) + "m").c_str(), 0.5, ui::colour::white());
+  ui::point{0.35, yval}.textl(img, ("Y: " + ui::utils::fmt_precision(_y, 2) + "m").c_str(), 0.5, ui::colour::white());
 
   if (_enc_sim_left != nullptr && _enc_sim_right != nullptr) {
-    ui::point{0.05, 0.15}.textl(img, ("Enc(L): " + std::to_string(_config->leftDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
-    ui::point{0.35, 0.15}.textl(img, ("Enc(R): " + std::to_string(_config->rightDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
+    yval += 0.05;
+    ui::point{0.05, yval}.textl(img, ("Enc(L): " + std::to_string(_config->leftDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
+    ui::point{0.35, yval}.textl(img, ("Enc(R): " + std::to_string(_config->rightDrive.encoder->GetEncoderTicks())).c_str(), 0.5, ui::colour::white());
+  }
+
+  if (_gyro_sim != nullptr) {
+    yval += 0.05;
+    ui::point{0.05, yval}.textl(img, ("Gyro: " + ui::utils::fmt_precision(_config->gyro->GetAngle(), 2) + " deg").c_str(), 0.5, ui::colour::white());
+    ui::point{0.35, yval}.textl(img, (ui::utils::fmt_precision(_config->gyro->GetRate(), 2) + " deg/s").c_str(), 0.5, ui::colour::white());
   }
 
   draw_robot(img);

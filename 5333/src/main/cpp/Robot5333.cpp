@@ -20,7 +20,7 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, 0.71, 0.71, 0.0762, 50 };
+  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, nullptr, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
   drivetrainController = new DrivetrainController(*drivetrain, robotmap.joy);
 
