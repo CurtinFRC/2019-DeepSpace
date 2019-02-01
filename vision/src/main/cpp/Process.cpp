@@ -20,7 +20,9 @@ Capture &Process::GetCapture() {
 // Copiers
 void Process::CopyProcessedTrack(cv::Mat &imgProcessedTrack) {
   std::lock_guard<std::mutex> lock(_classMutex);
-  _imgProcessedTrack.copyTo(imgProcessedTrack);
+  try {
+    _imgProcessedTrack.copyTo(imgProcessedTrack);
+  } catch (...) {}
 }
 
 void Process::CopyProcessedThresh(cv::Mat &imgProcessedThresh) {

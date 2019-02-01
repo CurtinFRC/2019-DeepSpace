@@ -24,7 +24,7 @@
 using namespace cv;
 using namespace std;
 
-Capture::Capture(int port) : _cam("USBCam", port) {}
+Capture::Capture(int port, int exposure) : _cam("USBCam", port) {_cam.SetExposureManual(exposure);}
 
 // Getters
 cs::VideoMode Capture::GetVideoMode() {
@@ -61,9 +61,6 @@ void Capture::Init() {
   // The camera defaults to a lower resolution, but you can choose any compatible resolution here.
   _cam.SetResolution(640, 480);
 
-  //_cam.SetExposureManual(50);
-  _cam.SetExposureManual(-100);
-
   for (auto it : _cam.EnumerateProperties()) {
     std::cout << "Property: " << it.GetName() << " -> " << it.Get() << std::endl;
   }
@@ -75,7 +72,7 @@ void Capture::Init() {
 }
 
 void Capture::Periodic() {
-  _isValidThresh = _sink.GrabFrame(_captureMat) != 0;
-  _isValidTrack = _sink.GrabFrame(_captureMat) != 0;
+  _isValidThresh = _isValidTrack = _sink.GrabFrame(_captureMat) != 0;
+  // _isValidTrack = _sink.GrabFrame(_captureMat) != 0;
   // std::cout << _sink.GrabFrame(_captureMat) << std::endl;
 }
