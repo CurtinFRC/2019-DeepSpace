@@ -2,26 +2,39 @@
 
 #include <frc/Servo.h>
 
-#include "StateDevice.h"
-#include "Gearbox.h"
-#include "sensors/BinarySensor.h"
+#include "devices/DeployableDevice.h"
+#include "CurtinControllers.h"
+#include "Toggle.h"
 
-enum HatchIntakeState { kGrab, kAim, kHold, kEject, kStow  };
+using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
-struct HatchIntakeConfig {
-  curtinfrc::Gearbox &pivot;
-  curtinfrc::sensors::BinarySensor &limitSensorUp;
-  curtinfrc::sensors::BinarySensor &limitSensorDown;
+struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   frc::Servo &servo;
+  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+
+  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn) {};
 };
 
-class HatchIntake : public curtinfrc::StateDevice<HatchIntakeState> {
+class HatchIntake : public curtinfrc::devices::DeployableDevice {
  public:
-  HatchIntake(HatchIntakeConfig config) : _config(config) {};
+  HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
  protected:
-  virtual void OnStatePeriodic(HatchIntakeState state, double dt) override;
+  virtual void IntakingPeriodic() override;  // Intake a hatch
+  virtual void OuttakingPeriodic() override; // Eject a hatch
 
  private:
   HatchIntakeConfig _config;
+};
+
+class HatchIntakeController {
+ public:
+  HatchIntakeController(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {};
+  void Update(double dt);
+
+ private:
+  HatchIntake &_hatchIntake;
+  curtinfrc::Joystick &_joy;
+  curtinfrc::Toggle _enabledToggle;
+  bool _enabled;
 };

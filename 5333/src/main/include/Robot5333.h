@@ -34,8 +34,10 @@ class Robot : public frc::TimedRobot {
   RobotMap robotmap;
 
   curtinfrc::Drivetrain *drivetrain;
+  curtinfrc::DrivetrainController *drivetrainController;
 
   HarvesterIntake *harvester;
+  HarvesterIntakeController *harvesterController;
 
   Lift *beElevator;
 };

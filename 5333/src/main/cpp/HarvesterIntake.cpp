@@ -1,33 +1,34 @@
 #include "HarvesterIntake.h"
 
-void HarvesterIntake::OnStatePeriodic(HarvesterIntakeState state, double dt) {
-  switch (state) {
-   case kDeployed:
-    _config.motors.transmission->Set(1); // set to some value based on forwards/backwards
-    break;
+void HarvesterIntake::IntakingPeriodic() {
+  _config.motors.transmission->Set(1);
+}
 
-   case kDeploying:
-    _config.motors.transmission->StopMotor();
-    _config.solenoid.Set(frc::DoubleSolenoid::kForward);
+void HarvesterIntake::OuttakingPeriodic() {
+  _config.motors.transmission->Set(-1);
+}
 
-    if (true) { // on actuation complete; would run a check on curtinfrc::binaryActuator once made
-      SetState(kDeployed);
-    }
+void HarvesterIntake::DeployingPeriodic() {
+  _config.motors.transmission->StopMotor();
+}
 
-    break;
+void HarvesterIntake::StowingPeriodic() {
+  _config.motors.transmission->StopMotor();
+}
 
-   case kStowing:
-    _config.motors.transmission->StopMotor();
-    _config.solenoid.Set(frc::DoubleSolenoid::kReverse);
+void HarvesterIntake::StowedPeriodic() {
+  _config.motors.transmission->StopMotor(); // probably doesn't need this, but ~
+}
 
-    if (true) { // on actuation complete; would run a check on curtinfrc::binaryActuator once made
-      SetState(kStowed);
-    }
 
-    break;
-
-   case kStowed:
-    _config.motors.transmission->StopMotor(); // probably doesn't need this, but ~
-    break;
+void HarvesterIntakeController::Update(double dt) {
+  if (_joy.GetRawButton(3)) {
+    _harvesterIntake.SetIntaking();
+  } else if (_joy.GetRawButton(5)) {
+    _harvesterIntake.SetOuttaking();
+  } else if (_joy.GetRawButton(11)) {
+    _harvesterIntake.SetStowed();
   }
+
+  _harvesterIntake.Update(dt);
 }

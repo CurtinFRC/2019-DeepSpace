@@ -1,9 +1,5 @@
 #include "simulation/windows/elevators.h"
 
-#include "sensors/Encoder.h"
-#include "simulation/ctre_sim.h"
-
-#include <mockdata/EncoderData.h>
 #include <frc/RobotController.h>
 #include <algorithm>
 #include <iostream>
@@ -12,30 +8,21 @@
 using namespace simulation;
 using namespace curtinfrc;
 
-template<typename T, typename U>
-T *try_cast(U *src) {
-  return dynamic_cast<T *>(src);
-}
-
 void elevator_window::init() {
   static Usage<ElevatorConfig>::Registry<elevator_window> registry(&ui::init_window<elevator_window, ElevatorConfig *>);
 }
 
 elevator_window::elevator_window(ElevatorConfig *config) : ui::window("Elevator", 200, 600), _config(config), physics_aware() {
-  if (auto *srx = try_cast<curtinfrc::TalonSrx>(_config->spool.encoder)) {
-    // Talon SRX Encoder
-    _set_enc_func = [srx](uint32_t count) {
-      ctre::all_talons()[srx->GetPort()].sensor_pos = count;
-    };
-  } else if (auto *digital = try_cast<curtinfrc::sensors::DigitalEncoder>(_config->spool.encoder)) {
-    // Digital RoboRIO Encoder
-    _set_enc_func = [digital](uint32_t count) {
-      HALSIM_SetEncoderCount(digital->GetChannelA(), count);
-    };
-  } else {
-    // TODO: Fail condition
-    std::cout << "Unknown Evelator Encoder Type" << std::endl;
-  }
+  _enc_sim = components::create_encoder(config->spool.encoder);
+
+  register_button(resetPos);
+
+  resetPos.set_can_activate(false);
+  resetPos.on_click([&](bool, ui::button&) {
+    _position = 0;
+    if (_enc_sim != nullptr)
+      _enc_sim->set_counts(0);
+  });
 }
 
 double elevator_window::get_motor_val() {
@@ -46,11 +33,37 @@ void elevator_window::add_encoder_position(double pos) {
   double C = 2 * 3.14159265 * _config->spoolRadius;
   double rots = pos / C;
   auto encoder = _config->spool.encoder;
-  _set_enc_func(static_cast<int16_t>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+  if (encoder != nullptr)
+    _enc_sim->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
 }
 
 void elevator_window::update_physics(double time_delta) {
-  
+  double speed = get_motor_val();
+  _voltage = speed * frc::RobotController::GetInputVoltage();
+
+  physics::DcMotor motor = _config->spool.motor;
+  motor = motor.reduce(_config->spool.reduction);
+
+  double angular_vel = _velocity / _config->spoolRadius;
+
+  _current = motor.current(_voltage, angular_vel);
+  double torque = motor.torque(_current);
+  double accel = torque / (_config->mass * _config->spoolRadius) - 9.81;
+
+  _velocity += accel * time_delta;
+
+  if (accel <= 0.001 && _limit_bottom)
+    _velocity = 0;
+  else if (accel >= -0.001 && _limit_top)
+    _velocity = 0;
+
+  _position += _velocity * time_delta;
+  add_encoder_position(_velocity * time_delta);
+
+  _limit_bottom = _position < 0.01;
+  _limit_top = _position > _config->height - 0.01;
+
+  // TODO: Limit Switch Sim
 }
 
 void elevator_window::render(cv::Mat &img) {

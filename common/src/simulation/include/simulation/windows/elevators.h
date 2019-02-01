@@ -3,6 +3,7 @@
 #include "Elevator.h"
 #include "simulation/ui/window.h"
 #include "simulation/physics_updater.h"
+#include "simulation/components/encodersim.h"
 
 namespace simulation {
 
@@ -21,7 +22,9 @@ class elevator_window : public ui::window, physics_aware {
 
  private:
   curtinfrc::ElevatorConfig *_config;
-  std::function<void(uint32_t)> _set_enc_func;
+  std::shared_ptr<components::encoder_sim> _enc_sim;
+
+  ui::button resetPos{ui::box{ 0, 0, 0.25, 0.05 }, "Reset", ui::colour{1, 0.75, 0.75}, ui::colour{1, 0.5, 0.5}};
 
   double _position = 0;
   double _velocity = 0;
