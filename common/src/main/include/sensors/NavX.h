@@ -98,7 +98,7 @@ namespace sensors {
 
     void   Calibrate() override {}  // NavX has auto-cal
     void   Reset() override;
-    double GetAngle() const override;
+    double GetAngle() const override; // Note that for the NavX: Yaw is continuous, Pitch / Roll are bounded -180:180
     double GetRate() const override;
 
     NavX &      GetNavX() const;

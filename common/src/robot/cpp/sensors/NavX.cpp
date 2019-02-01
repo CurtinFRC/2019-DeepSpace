@@ -24,7 +24,7 @@ double NavXGyro::GetActualAngle() const {
     case AngularAxis::ROLL:
       return _navx._impl->GetRoll();
     case AngularAxis::YAW:
-      return _navx._impl->GetYaw();
+      return _navx._impl->GetAngle();
   }
 }
 

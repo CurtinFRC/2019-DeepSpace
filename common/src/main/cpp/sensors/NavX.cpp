@@ -15,7 +15,14 @@ void NavXGyro::Reset() {
 }
 
 double NavXGyro::GetAngle() const {
-  return GetActualAngle() - _offset;
+  double angle = GetActualAngle() - _offset;
+  if (_axis != AngularAxis::YAW) {
+    angle = std::fmod(angle, 360);
+    angle = std::fmod(angle + 360, 360);
+    if (angle > 180)
+      angle -= 360;
+  }
+  return angle;
 }
 
 NavX &NavXGyro::GetNavX() const {
