@@ -60,7 +60,7 @@ void Display::Periodic() {
         _outputCam1.PutFrame(_imgProcessedTrackHatch);
         //_ouput.PutFrame(_capture);
 #endif
-		std::cout << "Origin Image Processed" << std::endl;
+		//std::cout << "Origin Image Processed" << std::endl;
     // other output if needed
     }
   }

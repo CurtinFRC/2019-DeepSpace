@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
 #include <cameraserver/CameraServer.h>
@@ -29,7 +27,8 @@ void TapeProcessing::Init() {
   processType = "TapeProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
-  auto table = inst.GetTable("TapeTable");
+  auto visionTable = inst.GetTable("VisionTracking");
+  auto table = visionTable->GetSubTable("TapeTracking");
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
@@ -62,11 +61,11 @@ void TapeProcessing::Periodic() {
     rights.clear();
     cv::Scalar blue = cv::Scalar(255, 0, 0);
     cv::Scalar green = cv::Scalar(0, 255, 0);
+    cv::Scalar red = cv::Scalar(0, 0, 255);
 
     _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
-      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue);
-      
+      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue, -1);
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
 
       cv::Point2f centre = rotatedRect.center;

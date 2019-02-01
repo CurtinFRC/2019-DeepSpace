@@ -15,8 +15,6 @@
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
 #include "devices/kinect.h"
@@ -36,7 +34,8 @@ void BallProcessing::Init() {
   processType = "BallProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
-  auto table = inst.GetTable("BallTable");
+  auto visionTable = inst.GetTable("VisionTable");
+  auto table = visionTable->GetSubTable("TapeTable");
   BallDistanceEntry = table->GetEntry("Hatch Distance");
   BallXoffsetEntry = table->GetEntry("Hatch X Offset");
   BallYoffsetEntry = table->GetEntry("Hatch Y Offset");
