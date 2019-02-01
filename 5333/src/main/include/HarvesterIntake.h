@@ -3,6 +3,8 @@
 #include "devices/DeployableDevice.h"
 #include "devices/StateDevice.h"
 #include "Gearbox.h"
+
+#include "strategy/Strategy.h"
 #include "CurtinControllers.h"
 
 #include <frc/DoubleSolenoid.h>
@@ -30,12 +32,17 @@ class HarvesterIntake : public curtinfrc::devices::DeployableDevice {
   HarvesterIntakeConfig _config;
 };
 
-class HarvesterIntakeController {
+class HarvesterIntakeManualStrategy : public curtinfrc::Strategy {
  public: 
-  HarvesterIntakeController(HarvesterIntake &harvesterIntake, curtinfrc::Joystick &joy) : _harvesterIntake(harvesterIntake), _joy(joy) {};
-  void Update(double dt);
+  HarvesterIntakeManualStrategy(HarvesterIntake &harvesterIntake, curtinfrc::Joystick &joy) : Strategy("Harvester Manual"), _harvesterIntake(harvesterIntake), _joy(joy) {
+    Requires(&harvesterIntake);
+    SetCanBeInterrupted(true);
+    SetCanBeReused(true);
+  };
 
-  private:
+  void OnUpdate(double dt) override;
+
+ private:
   HarvesterIntake &_harvesterIntake;
   curtinfrc::Joystick &_joy;
 };

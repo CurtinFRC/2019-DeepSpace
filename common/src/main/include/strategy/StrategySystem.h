@@ -18,6 +18,8 @@ class StrategyController;
  */
 class StrategySystem {
  public:
+  StrategySystem() {};
+  StrategySystem(std::shared_ptr<Strategy> defaultStrategy) { SetDefault(defaultStrategy); };
 
   /**
    * Set the default Strategy to run. This strategy will run whenever the system
