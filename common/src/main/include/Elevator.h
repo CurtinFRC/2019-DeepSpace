@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StateDevice.h"
+#include "devices/StateDevice.h"
 #include "Gearbox.h"
 #include "sensors/BinarySensor.h"
 
@@ -30,7 +30,7 @@ namespace curtinfrc {
   };
 
   enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
-  class Elevator : public StateDevice<ElevatorState> {
+  class Elevator : public devices::StateDevice<ElevatorState> {
    public:
     Elevator(ElevatorConfig config) : _config(config) {};
 
@@ -44,7 +44,6 @@ namespace curtinfrc {
     ElevatorConfig &GetConfig();
     
    protected:
-    virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) override {};
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
 
    private:
