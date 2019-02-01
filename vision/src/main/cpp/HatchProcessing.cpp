@@ -14,6 +14,10 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
+
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
@@ -26,10 +30,17 @@ float hatch_height_offset;
 float hatch_width_offset;
 float hatch_width_goal = 320;
 float hatch_height_goal = 240;
+std::string Hatch_Distance = "Sumthin";
 
 void HatchProcessing::Init() {
   Process::Init();
   processType = "HatchProcessing";
+
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto table = inst.GetTable("HatchTable");
+  HatchDistanceEntry = table->GetEntry("Hatch Distance");
+  HatchXoffsetEntry = table->GetEntry("Hatch X Offset");
+  HatchYoffsetEntry = table->GetEntry("Hatch Y Offset");
 }
 
 void HatchProcessing::Periodic() {
@@ -60,7 +71,7 @@ void HatchProcessing::Periodic() {
     cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
-    /*
+    
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -82,7 +93,7 @@ void HatchProcessing::Periodic() {
         }
       }
     }
-    */
+    
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT, 1,
       _imgProcessing.rows/16,  // change this value to detect circles with different distances to each other
@@ -100,7 +111,7 @@ void HatchProcessing::Periodic() {
       // circle outline
       cv::circle( _imgProcessedTrack, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
     }
-    /*
+    
     /// Detect edges using Canny
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
 
@@ -174,7 +185,10 @@ void HatchProcessing::Periodic() {
       hatch_width_offset = hatch_width_goal - centerHatch.x;
       hatch_height_offset = hatch_height_goal - centerHatch.y;
       std::cout << "Offset From CenterHatch x,y = " << hatch_width_offset << "," << hatch_height_offset << std::endl;
+      HatchDistanceEntry.SetString(Hatch_Distance);
+      HatchXoffsetEntry.SetDouble(hatch_width_offset);
+      HatchYoffsetEntry.SetDouble(hatch_height_offset);
     }
-   */
+   
   }
 }
