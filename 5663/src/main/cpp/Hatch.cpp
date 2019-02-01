@@ -12,8 +12,8 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 5000;
-        config.motionAcceleration = 2000;
+        config.motionCruiseVelocity =100000;
+        config.motionAcceleration = 7500;
     });
 
     ejection = new frc::DoubleSolenoid(9,eject, retract);

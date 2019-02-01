@@ -8,7 +8,7 @@ using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
 void Robot::RobotInit() {
-
+  
   //Mechanisms
   cargo = new Cargo(6,7,8);
   hatch = new Hatch(1,0,1,2,3,0);
@@ -61,8 +61,8 @@ void Robot::TeleopPeriodic() {
 //    dirc = -1;
 //  }
   
-  double left_speed = -xbox1->GetY(hand::kLeftHand) / 2;
-  double right_speed = xbox1->GetY(hand::kRightHand) / 2;
+  double left_speed = -xbox1->GetY(hand::kLeftHand) / 1.5;
+  double right_speed = xbox1->GetY(hand::kRightHand) / 1.5;
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //cargo speed
@@ -94,18 +94,18 @@ void Robot::TeleopPeriodic() {
   }
 
   //hatch positioning
-  if (xbox1->GetAButton()){
+  if (xbox2->GetAButton()){
     hatch->downPosition();
-  } else if(xbox1->GetXButton()){
+  } else if(xbox2->GetXButton()){
       hatch->upPosition();
   } else {
     hatch->setRotationSpeed(0);
   }
 
-  if (lockToggle.tick(xbox1->GetYButton())) lockState = !lockState;
+  if (lockToggle.tick(xbox2->GetYButton())) lockState = !lockState;
 
   //Hatch Ejection
-  hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
+  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
   hatch->lockHatch(lockState);
   hatch->alignmentPiston(xbox1->GetBumper(hand::kRightHand));
 

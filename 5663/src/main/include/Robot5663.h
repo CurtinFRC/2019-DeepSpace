@@ -45,5 +45,5 @@ class Robot : public frc::TimedRobot {
   frc::Compressor *compressor;
 
   curtinfrc::Toggle lockToggle{};
-  bool lockState = false;
+  bool lockState = true;
 };
