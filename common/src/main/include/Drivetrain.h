@@ -2,12 +2,34 @@
 
 #include <frc/SpeedController.h>
 
-#include "SensoredTransmission.h"
+#include "Gearbox.h"
+
+#include "Usage.h"
 
 namespace curtinfrc {
   struct DrivetrainConfig {
-    SensoredTransmission &leftDrive;
-    SensoredTransmission &rightDrive;
+    Gearbox &leftDrive;
+    Gearbox &rightDrive;
+
+    /**
+     * The emprical trackwidth between the left and right wheels, in metres
+     */
+    double trackwidth;
+
+    /**
+     * The trackdepth, from front of robot to back of robot, in metres.
+     */
+    double trackdepth;
+
+    /**
+     * The wheel radius, in metres
+     */
+    double wheelRadius;
+
+    /**
+     * The mass of the robot chassis, in kg
+     */
+    double mass;
   };
   
   class Drivetrain {
@@ -20,5 +42,7 @@ namespace curtinfrc {
 
    private:
     DrivetrainConfig _config;
+
+    Usage<DrivetrainConfig>::Scoped _usage{&_config};
   };
 } // ns curtinfrc

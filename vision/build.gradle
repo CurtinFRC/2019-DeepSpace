@@ -17,6 +17,10 @@ deploy {
           password = 'curtinfrc'
         }
       }
+
+      // For VSCode Debugging - we won't be able to deploy to every target!
+      if (project.hasProperty("debugMode"))
+        failOnMissing = false
     }
   }
 
@@ -96,6 +100,8 @@ model {
           if (targetPlatform.operatingSystem.isLinux()) {
             linker.args << '-lusb-1.0'
           }
+        } else if (targetPlatform.name == TinkerboardPlugin.tinkerboardPlatform) {
+          linker.args << '-pthread'
         }
       }
 

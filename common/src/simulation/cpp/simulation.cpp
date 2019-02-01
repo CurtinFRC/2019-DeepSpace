@@ -1,9 +1,13 @@
 #include "simulation/simulation.h"
+#include "simulation/physics_updater.h"
 #include "simulation/windows/control.h"
 #include "simulation/windows/motors.h"
+#include "simulation/windows/elevators.h"
+#include "simulation/windows/drivetrains.h"
 
 #include "hal/HAL.h"
 #include "mockdata/DriverStationData.h"
+#include "mockdata/RoboRioData.h"
 
 #include <iostream>
 #include <thread>
@@ -17,30 +21,33 @@ auto bind(func_type func_ref) {
   return std::bind(func_ref, std::placeholders::_1);
 }
 
-harness::harness() {
-  _windows.push_back(std::make_unique<control_window>(_windows));
-  _windows.push_back(std::make_unique<motor_window>());
-}
-
 void harness::run(std::function<int()> robot_thread) {
   std::cout << "[SIM] Simulation Starting!" << std::endl;
   HAL_Initialize(500, 0);
   HALSIM_SetDriverStationDsAttached(true);
+  HALSIM_SetRoboRioVInVoltage(0, 12.9);
 
-  auto bound = &ui::window::start;
-
-  std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::start));
+  (new control_window())->start();
+  (new motor_window())->start();
+  elevator_window::init();
+  drivetrain_window::init();
 
   std::cout << "[SIM] Starting Robot Thread" << std::endl;
-  std::thread thread([&]() {
+  std::thread r_thread([&]() {
     robot_thread();
   });
-  thread.detach();
+  r_thread.detach();
+
+  std::cout << "[SIM] Starting Physics Thread" << std::endl;
+  std::thread p_thread([&]() {
+    physics_thread::INSTANCE()->threadfunc();
+  });
+  p_thread.detach();
 
   std::cout << "[SIM] Simulation Initialization Complete" << std::endl;
 
   while (true) {
-    std::for_each(_windows.begin(), _windows.end(), bind(&ui::window::update));
+    ui::window_manager::INSTANCE()->update();
     cv::waitKey(static_cast<int>(1000.0 / 45.0));
   }
 }

@@ -6,13 +6,13 @@
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
 
-#include "CurtinCtre.h"
-#include "SensoredTransmission.h"
-#include "Drivetrain.h"
-#include "CurtinControllers.h"
-#include "Gearbox.h"
+#include <networktables/NetworkTableInstance.h>
+
+
+#include "RobotMap.h"
 
 #include "Lift.h"
+#include "HarvesterIntake.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -27,14 +27,15 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  curtinfrc::Joystick *joy;
-  
-  curtinfrc::TalonSrx *leftSRX, *rightSRX;
-  curtinfrc::VictorSpx *leftSPX, *rightSPX;
-  curtinfrc::SensoredTransmission *left, *right;
+  std::shared_ptr<nt::NetworkTable> table;
+  nt::NetworkTableEntry yOffset, xOffset, endAngle;
+
+
+  RobotMap robotmap;
+
   curtinfrc::Drivetrain *drivetrain;
 
-  frc::Spark *liftMotors[1];
-  curtinfrc::Gearbox *liftGearbox;
+  HarvesterIntake *harvester;
+
   Lift *beElevator;
 };

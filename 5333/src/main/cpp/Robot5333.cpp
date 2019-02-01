@@ -1,9 +1,10 @@
 #include "Robot5333.h"
+#include "RobotMap.h"
 
 #include <math.h>
 #include <iostream>
 
-#include "cameraserver/CameraServer.h"
+#include <cameraserver/CameraServer.h>
 
 using namespace frc;
 using namespace curtinfrc;
@@ -11,32 +12,22 @@ using namespace curtinfrc;
 double lastTimestamp;
 
 void Robot::RobotInit() {
+  table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
+  yOffset = table->GetEntry("yOffset");
+  xOffset = table->GetEntry("xOffset");
+  endAngle = table->GetEntry("endAngle");
+
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  joy = new curtinfrc::Joystick(0);
-
-  leftSRX = new TalonSrx(1, 2048);
-  leftSRX->SetInverted(false);
-  leftSPX = new VictorSpx(2);
-  leftSPX->SetInverted(false);
-  left = new SensoredTransmission{ new SpeedControllerGroup(*leftSRX, *leftSPX), nullptr };
-
-  rightSRX = new TalonSrx(3, 2048);
-  rightSRX->SetInverted(true);
-  rightSPX = new VictorSpx(4);
-  rightSPX->SetInverted(true);
-  right = new SensoredTransmission{ new SpeedControllerGroup(*rightSRX, *rightSPX), nullptr };
-
-  DrivetrainConfig drivetrainConfig{*left, *right};
+  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
 
+  HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
+  harvester = new HarvesterIntake(harvesterConfig);
 
-  liftMotors[0] = new Spark(5);
-  liftGearbox = new Gearbox{ new SpeedControllerGroup(*liftMotors[0]), nullptr };
-
-  ElevatorConfig elevatorConfig{ *liftGearbox, 1, nullptr, nullptr };
-  beElevator = new Lift(elevatorConfig);
+  ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
+  beElevator = new Lift(elevatorConfig, *harvester);
 }
 
 void Robot::AutonomousInit() {}
@@ -44,10 +35,12 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
 void Robot::TeleopPeriodic() {
-  double dt = -lastTimestamp + (lastTimestamp = Timer::GetFPGATimestamp());
+  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
+  lastTimestamp = Timer::GetFPGATimestamp();
   // Calc dt for update functions
-  double joyY = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
-  double joyZ = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.65;
+  
+  double joyY = -robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kYAxis, robotmap.joy.kZAxis) * 0.9;
+  double joyZ = robotmap.joy.GetCircularisedAxisAgainst(robotmap.joy.kZAxis, robotmap.joy.kYAxis) * 0.65;
 
   joyY *= abs(joyY);
   joyZ *= abs(joyZ);
@@ -58,7 +51,7 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(leftSpeed, rightSpeed);
 
 
-  double beElevatorSpeed = (joy->GetRawButton(8) - joy->GetRawButton(7)) * 0.8;
+  double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
 

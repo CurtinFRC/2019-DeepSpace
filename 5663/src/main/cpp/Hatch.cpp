@@ -1,6 +1,6 @@
 #include "Hatch.h"
 
-Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant) {
+Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int servoID) {
     Flooper = new curtinfrc::TalonSrx(motorID, 1024);
     Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.25;
@@ -17,7 +17,10 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant) {
     });
 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
-    alignment = new frc::DoubleSolenoid(9,align, faceplant);    
+    alignment = new frc::DoubleSolenoid(9,align, faceplant);
+
+    curtinfrc::actuators::BinaryServoConfig lockConfig{ servoID, 180, 180 - 30 };
+    lock = new curtinfrc::actuators::BinaryServo(lockConfig);
 }
 
 void Hatch::setRotationSpeed(double speed) {
@@ -33,7 +36,11 @@ void Hatch::setAngle(double newAngle) {
 }
 
 void Hatch::downPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 31000);
+    lock->SetTarget(curtinfrc::actuators::kForward);
+    if (lock->IsDone()) {
+        lock->Stop();
+        Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 31000);
+    } else Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -30000);
 }
 
 
@@ -44,6 +51,12 @@ void Hatch::upPosition() {
 void Hatch::ejectHatch(bool eject) {
     if(eject) ejection->Set(frc::DoubleSolenoid::kReverse);
     else ejection->Set(frc::DoubleSolenoid::kForward);
+}
+
+void Hatch::lockHatch(bool state) {
+    lock->SetTarget(state ? curtinfrc::actuators::kReverse : curtinfrc::actuators::kForward);
+
+    if (lock->IsDone()) lock->Stop();
 }
 
 void Hatch::alignmentPiston(bool extended) {
@@ -59,4 +72,6 @@ void Hatch::update() {
     frc::SmartDashboard::PutNumber("Hatch encoder", Flooper->GetSensorPosition());
     frc::SmartDashboard::PutBoolean("Ejector?", ejection->Get());
     frc::SmartDashboard::PutBoolean("Aligner?", alignment->Get());
+
+    lock->Update(0); // NOTE NEEDS TO BE CHANGED IF PID IS USED
 }

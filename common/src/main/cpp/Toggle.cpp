@@ -1,5 +1,7 @@
 #include "Toggle.h"
 
+using namespace curtinfrc;
+
 Toggle::Toggle(ToggleEvent mode) {
   _mode = mode;
   _triggered = false;
