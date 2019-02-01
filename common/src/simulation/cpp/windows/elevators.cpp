@@ -14,6 +14,15 @@ void elevator_window::init() {
 
 elevator_window::elevator_window(ElevatorConfig *config) : ui::window("Elevator", 200, 600), _config(config), physics_aware() {
   _enc_sim = components::create_encoder(config->spool.encoder);
+
+  register_button(resetPos);
+
+  resetPos.set_can_activate(false);
+  resetPos.on_click([&](bool, ui::button&) {
+    _position = 0;
+    if (_enc_sim != nullptr)
+      _enc_sim->set_counts(0);
+  });
 }
 
 double elevator_window::get_motor_val() {

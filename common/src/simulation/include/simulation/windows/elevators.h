@@ -24,6 +24,8 @@ class elevator_window : public ui::window, physics_aware {
   curtinfrc::ElevatorConfig *_config;
   std::shared_ptr<components::encoder_sim> _enc_sim;
 
+  ui::button resetPos{ui::box{ 0, 0, 0.25, 0.05 }, "Reset", ui::colour{1, 0.75, 0.75}, ui::colour{1, 0.5, 0.5}};
+
   double _position = 0;
   double _velocity = 0;
   double _voltage = 0;
