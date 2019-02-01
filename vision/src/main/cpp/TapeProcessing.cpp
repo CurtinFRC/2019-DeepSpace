@@ -31,7 +31,6 @@ void TapeProcessing::Periodic() {
 
     //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
     //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
     //cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
@@ -51,10 +50,12 @@ void TapeProcessing::Periodic() {
     heights.clear();
     lefts.clear();
     rights.clear();
-    cv::Scalar color = cv::Scalar(255, 255, 255);
+    cv::Scalar blue = cv::Scalar(255, 0, 0);
+    cv::Scalar green = cv::Scalar(0, 255, 0);
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 
     for (int i = 0; i < filteredContours.size(); i++) {
-      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, color);
+      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue);
       
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
 
@@ -106,17 +107,18 @@ void TapeProcessing::Periodic() {
       }
     }
   
-    int leftmost = -1;
-    float leftPos = 640;
     targets.clear();
     angles.clear();
     distances.clear();
 
     for (int i = 0; i < filteredContours.size(); i++) {
+      int leftmost = -1;
+      float leftPos = 640;
       if (lefts[i]) { //checks if current iteration is a left
         for (int j = 0; j < filteredContours.size(); j++) {
           if (rights[j] && centres[j].x < leftPos && centres[j].x > centres[i].x) { //checks if nested iteration is a right and left of the last checked one
             leftmost = j;
+            leftPos = centres[j].x;
           }
         }
 
@@ -135,11 +137,24 @@ void TapeProcessing::Periodic() {
         }
       }
     }
+
+    int centred = -1;
+    int closeX = _videoMode.width;
+    for (int i = 0; i < targets.size(); i++) { 
+      if (abs(targets[i].x - _videoMode.width / 2) < closeX) {
+        closeX = abs(targets[i].x - _videoMode.width / 2);
+        centred = i;
+      }
+    }
   
     for (int i = 0; i < targets.size(); i++) {
       std::stringstream dis;	dis << distances[i];
       std::stringstream ang;	ang << angles[i];
-      cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-3,-3), targets[i] + cv::Point2f(3,3), color, 2); //draw small rectangle on target locations
+      if (i == centred) {
+        cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), green, 2); //draw small rectangle on target locations
+      } else {
+        cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), blue, 2); //draw small rectangle on target locations
+      }
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
   }
