@@ -42,8 +42,8 @@ void TapeProcessing::Periodic() {
     //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
-    //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
-    //cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
+    // cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
+    // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
     cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
@@ -62,8 +62,8 @@ void TapeProcessing::Periodic() {
     rights.clear();
     cv::Scalar blue = cv::Scalar(255, 0, 0);
     cv::Scalar green = cv::Scalar(0, 255, 0);
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
       cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue);
       
@@ -156,7 +156,7 @@ void TapeProcessing::Periodic() {
         centred = i;
       }
     }
-  
+
     for (int i = 0; i < targets.size(); i++) {
       std::stringstream dis;	dis << distances[i];
       std::stringstream ang;	ang << angles[i];

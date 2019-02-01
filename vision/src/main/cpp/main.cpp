@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
   // vision.Run(displayBall);
   vision.Run(displayHatch);
-  vision.Run(displayTape);
+  // vision.Run(displayTape);
 
 
   for (int i = 0; i < vision.workers.size(); i++) {

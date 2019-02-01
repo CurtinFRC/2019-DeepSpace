@@ -52,7 +52,6 @@ void HatchProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgProcessing);
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -71,7 +70,7 @@ void HatchProcessing::Periodic() {
     cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
-    
+
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -123,7 +122,7 @@ void HatchProcessing::Periodic() {
     for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
       cv::convexHull(filteredContoursHatch[i], hullHatch[i]);
     }
-
+  
     /// Draw filteredContours + hull results
     _imgProcessing = cv::Mat::zeros(_imgProcessing.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectHatch( filteredContoursHatch.size() );
@@ -152,7 +151,7 @@ void HatchProcessing::Periodic() {
       cv::minEnclosingCircle((cv::Mat)hullHatch_poly[i], centerHatch[i], radiusHatch[i]);
     }
     
-    
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hullHatch.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
@@ -188,6 +187,9 @@ void HatchProcessing::Periodic() {
       HatchDistanceEntry.SetString(Hatch_Distance);
       HatchXoffsetEntry.SetDouble(hatch_width_offset);
       HatchYoffsetEntry.SetDouble(hatch_height_offset);
+      std::stringstream offsetY;	offsetY << hatch_height_offset;
+      std::stringstream offsetX;	offsetX << hatch_width_offset;
+      cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
    
   }
