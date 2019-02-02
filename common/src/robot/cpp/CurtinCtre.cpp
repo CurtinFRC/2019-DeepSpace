@@ -58,10 +58,6 @@ int TalonSrx::GetSensorVelocity() {
   return NativeSrx(this)->GetSelectedSensorVelocity();
 }
 
-void TalonSrx::ResetEncoder() {
-  NativeSrx(this)->SetSelectedSensorPosition(0, 0, 0);
-}
-
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {
   NativeSrx(this)->ConfigAllSettings(config);
 }

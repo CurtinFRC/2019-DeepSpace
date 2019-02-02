@@ -56,7 +56,7 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
     if (_config.limitSensorBottom != nullptr) {
       if (_config.limitSensorBottom->Get()) {
         SetState(kStationary);
-        GetConfig().spool.encoder->ResetEncoder();
+        GetConfig().spool.encoder->ZeroEncoder();
       }
     }
 

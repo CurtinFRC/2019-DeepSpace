@@ -51,7 +51,7 @@ void Robot::TeleopPeriodic() {
 
   double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
 
-  beElevator->Set(beElevatorSpeed);
+  beElevator->Set(0.5);
 
   // Class update events
   beElevator->Update(0);
