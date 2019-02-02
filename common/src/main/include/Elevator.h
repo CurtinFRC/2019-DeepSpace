@@ -40,11 +40,18 @@ namespace curtinfrc {
     void SetHold();
 
     double GetSetpoint();
+    double GetHeight();
 
     ElevatorConfig &GetConfig();
     
    protected:
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
+    double power = 0;
+    double goal;
+    double height;
+    double kP;
+    double error;
+    double voltage;
 
    private:
     ElevatorConfig _config;

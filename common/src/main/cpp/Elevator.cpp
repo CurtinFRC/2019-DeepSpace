@@ -29,6 +29,13 @@ double curtinfrc::Elevator::GetSetpoint() {
   return _setpoint;
 }
 
+double curtinfrc::Elevator::GetHeight() {
+  double radius = _config.spoolRadius;
+  double rotations = _config.spool.encoder->GetEncoderRotations();
+  double height = 6.283 * radius * rotations;
+  return height;
+}
+
 curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
   return _config;
 }
@@ -36,15 +43,20 @@ curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
 // virtual
 
 void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) { // Good enough default
-  double power = 0;
-
   switch (state) {
    case kManual:
     power = GetSetpoint();
     break;
 
    case kMoving:
-    power = 0; // Motion profiling/PID stuff
+    goal = GetSetpoint();
+    height = GetHeight();
+    kP = 6;
+
+    error = height - goal;
+    voltage = kP * error;
+
+    power = voltage / 12;
     break;
 
    case kStationary:
