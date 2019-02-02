@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frc/SpeedController.h>
+#include <frc/interfaces/Gyro.h>
 
 #include "Gearbox.h"
 
@@ -11,6 +12,12 @@ namespace curtinfrc {
   struct DrivetrainConfig {
     Gearbox &leftDrive;
     Gearbox &rightDrive;
+
+    /**
+     * The gyroscope for the drivetrain, for closed-loop driving. May be
+     * null.
+     */
+    frc::Gyro *gyro;
 
     /**
      * The emprical trackwidth between the left and right wheels, in metres
