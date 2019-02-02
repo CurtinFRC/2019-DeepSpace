@@ -45,8 +45,8 @@ void BallProcessing::Periodic() {
   Process::Periodic();
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
 
-    _capture.CopyCaptureMat(_imgProcessedTrack);
-    cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
+    _capture.CopyCaptureMat(_imgProcessing);
+    cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<std::vector<cv::Point>> filteredContoursBall;
@@ -58,8 +58,8 @@ void BallProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters Colour for Reflective Ball
-    cv::inRange(_imgProcessedTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessedTrack);
-    cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::inRange(_imgProcessing, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessing);
+    cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     // Filters Size For Ball
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
@@ -83,7 +83,7 @@ void BallProcessing::Periodic() {
       }
     }
     /// Detect edges using Canny
-    cv::Canny(_imgProcessedTrack, _imgProcessedThresh, ball_thresh, ball_thresh * 2);
+    cv::Canny(_imgProcessing, _imgProcessing, ball_thresh, ball_thresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -95,9 +95,10 @@ void BallProcessing::Periodic() {
     }
 
     /// Draw filteredContours + hull results
-    _imgProcessedTrack = cv::Mat::zeros(_imgProcessedTrack.size(), CV_8UC3);
+    _imgProcessing = cv::Mat::zeros(_imgProcessing.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectBall( filteredContoursBall.size() );
 
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
       cv::drawContours(_imgProcessedTrack, filteredContoursBall, (int)i, color);

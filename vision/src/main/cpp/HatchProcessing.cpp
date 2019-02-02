@@ -70,7 +70,7 @@ void HatchProcessing::Periodic() {
     
     //cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
-    /*
+    
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -93,10 +93,9 @@ void HatchProcessing::Periodic() {
       }
     }
 
-    // New Code for detecting Hatch, Will get rid of 60% of the code if done 
-    */
+    // New Code for detecting Hatch, Will get rid of 60-70% of the code if done 
+    /*
     std::vector<cv::Vec3f> circles;
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT,
           2,   // accumulator resolution (size of the image / 2)
           5,  // minimum distance between two circles
@@ -111,6 +110,7 @@ void HatchProcessing::Periodic() {
     const_iterator itc= circles.begin();
 
        while (itc!=circles.end()) {
+         _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
          cv::circle(_imgProcessedTrack,
             cv::Point((*itc)[0], (*itc)[1]), // circle centre
             (*itc)[2],       // circle radius
@@ -118,7 +118,7 @@ void HatchProcessing::Periodic() {
             2);              // thickness
          ++itc;
        }
-    /*
+    */
     /// Detect edges using Canny
     _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
@@ -194,6 +194,5 @@ void HatchProcessing::Periodic() {
       std::stringstream offsetX;	offsetX << hatch_width_offset;
       cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-    */
   }
 }
