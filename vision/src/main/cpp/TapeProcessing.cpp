@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
 #include <cameraserver/CameraServer.h>
@@ -29,7 +27,8 @@ void TapeProcessing::Init() {
   processType = "TapeProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
-  auto table = inst.GetTable("TapeTable");
+  auto visionTable = inst.GetTable("VisionTracking");
+  auto table = visionTable->GetSubTable("TapeTracking");
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
@@ -39,41 +38,33 @@ void TapeProcessing::Periodic() {
   Process::Periodic();
 	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
 
-    //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
-    // cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
-    // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
+    // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack); <-Debug Code
     cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-
-    
 
     filteredContours.clear();
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
 		}
-  
     //Get RotatedRectangles 
     centres.clear(); //clear the vectors
-    heights.clear();
+    heights.clear(); 
     lefts.clear();
     rights.clear();
-    cv::Scalar blue = cv::Scalar(255, 0, 0);
+    cv::Scalar blue = cv::Scalar(255, 0, 0); 
     cv::Scalar green = cv::Scalar(0, 255, 0);
+    cv::Scalar red = cv::Scalar(0, 0, 255);
 
     _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
-      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue);
-      
+      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue, -1);
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
-
       cv::Point2f centre = rotatedRect.center;
-
       cv::Point2f rectPoints[4];
       rotatedRect.points(rectPoints);
-
       float angle;
 
       cv::Point2f edge1 = cv::Vec2f(rectPoints[1].x, rectPoints[1].y) - cv::Vec2f(rectPoints[0].x, rectPoints[0].y);
@@ -85,9 +76,7 @@ void TapeProcessing::Periodic() {
       }
 
       cv::Point2f reference = cv::Vec2f(1,0); // horizontal edge
-
       angle = 180.0f/CV_PI * acos((reference.x * usedEdge.x + reference.y * usedEdge.y) / (cv::norm(reference) * cv::norm(usedEdge)));
-
       float min = rectPoints[0].y;
       float max = rectPoints[0].y;
 
