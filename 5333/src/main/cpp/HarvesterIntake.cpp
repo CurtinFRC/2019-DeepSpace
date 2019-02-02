@@ -21,7 +21,7 @@ void HarvesterIntake::StowedPeriodic() {
 }
 
 
-void HarvesterIntakeController::Update(double dt) {
+void HarvesterIntakeManualStrategy::OnUpdate(double dt) {
   if (_joy.GetRawButton(3)) {
     _harvesterIntake.SetIntaking();
   } else if (_joy.GetRawButton(5)) {

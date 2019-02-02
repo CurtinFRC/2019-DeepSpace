@@ -15,6 +15,10 @@
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
+
 #include "devices/kinect.h"
 
 cv::RNG rngBall(12345);
@@ -24,10 +28,18 @@ float ball_height_offset;
 float ball_width_offset;
 float ball_width_goal = 320;
 float ball_height_goal = 240;
+std::string Ball_Distance = "Sumthin";
+
 
 void BallProcessing::Init() {
   Process::Init();
   processType = "BallProcessing";
+
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto table = inst.GetTable("BallTable");
+  BallDistanceEntry = table->GetEntry("Hatch Distance");
+  BallXoffsetEntry = table->GetEntry("Hatch X Offset");
+  BallYoffsetEntry = table->GetEntry("Hatch Y Offset");
 }
 
 void BallProcessing::Periodic() {
@@ -153,6 +165,9 @@ void BallProcessing::Periodic() {
       ball_width_offset = ball_width_goal - centerBall.x;
       ball_height_offset = ball_height_goal - centerBall.y;
       std::cout << "Offset From CenterBall x,y =" << ball_width_offset << "," << ball_height_offset << std::endl; // height is x ?
+      BallDistanceEntry.SetString(Ball_Distance);
+      BallXoffsetEntry.SetDouble(ball_width_offset);
+      BallYoffsetEntry.SetDouble(ball_height_offset);
     }
   }
 }

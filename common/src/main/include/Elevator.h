@@ -34,7 +34,7 @@ namespace curtinfrc {
    public:
     Elevator(ElevatorConfig config) : _config(config) {};
 
-    void SetManual(double setpoint);
+    void SetManual(double power);
     void SetSetpoint(double setpoint);
     void SetZeroing();
     void SetHold();

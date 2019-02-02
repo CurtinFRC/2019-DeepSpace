@@ -14,6 +14,10 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
+
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
@@ -26,10 +30,17 @@ float hatch_height_offset;
 float hatch_width_offset;
 float hatch_width_goal = 320;
 float hatch_height_goal = 240;
+std::string Hatch_Distance = "Sumthin";
 
 void HatchProcessing::Init() {
   Process::Init();
   processType = "HatchProcessing";
+
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto table = inst.GetTable("HatchTable");
+  HatchDistanceEntry = table->GetEntry("Hatch Distance");
+  HatchXoffsetEntry = table->GetEntry("Hatch X Offset");
+  HatchYoffsetEntry = table->GetEntry("Hatch Y Offset");
 }
 
 void HatchProcessing::Periodic() {
@@ -41,7 +52,6 @@ void HatchProcessing::Periodic() {
     double bgrThreshRed[] = {0.0, 127.0}; */
     
     _capture.CopyCaptureMat(_imgProcessing);
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -60,7 +70,7 @@ void HatchProcessing::Periodic() {
     cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
-    /*
+
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -82,7 +92,7 @@ void HatchProcessing::Periodic() {
         }
       }
     }
-    */
+    
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT, 1,
       _imgProcessing.rows/16,  // change this value to detect circles with different distances to each other
@@ -100,7 +110,7 @@ void HatchProcessing::Periodic() {
       // circle outline
       cv::circle( _imgProcessedTrack, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
     }
-    /*
+    
     /// Detect edges using Canny
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
 
@@ -112,7 +122,7 @@ void HatchProcessing::Periodic() {
     for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
       cv::convexHull(filteredContoursHatch[i], hullHatch[i]);
     }
-
+  
     /// Draw filteredContours + hull results
     _imgProcessing = cv::Mat::zeros(_imgProcessing.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectHatch( filteredContoursHatch.size() );
@@ -141,7 +151,7 @@ void HatchProcessing::Periodic() {
       cv::minEnclosingCircle((cv::Mat)hullHatch_poly[i], centerHatch[i], radiusHatch[i]);
     }
     
-    
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hullHatch.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
@@ -174,7 +184,13 @@ void HatchProcessing::Periodic() {
       hatch_width_offset = hatch_width_goal - centerHatch.x;
       hatch_height_offset = hatch_height_goal - centerHatch.y;
       std::cout << "Offset From CenterHatch x,y = " << hatch_width_offset << "," << hatch_height_offset << std::endl;
+      HatchDistanceEntry.SetString(Hatch_Distance);
+      HatchXoffsetEntry.SetDouble(hatch_width_offset);
+      HatchYoffsetEntry.SetDouble(hatch_height_offset);
+      std::stringstream offsetY;	offsetY << hatch_height_offset;
+      std::stringstream offsetX;	offsetX << hatch_width_offset;
+      cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-   */
+   
   }
 }

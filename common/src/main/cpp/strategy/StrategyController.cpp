@@ -2,7 +2,6 @@
 
 #include <mutex>
 #include <exception>
-#include <future>
 
 #include <frc/Timer.h>
 #include <wpi/spinlock.h>
@@ -12,7 +11,7 @@ using namespace curtinfrc;
 struct StrategyController::Impl {
   using SystemsColl = std::set<StrategySystem *>;
 
-  std::mutex systemsMtx;
+  std::recursive_mutex systemsMtx;
   SystemsColl systems;
 };
 
@@ -23,21 +22,14 @@ StrategyController::~StrategyController() {
 
 void StrategyController::Register(StrategySystem *sys) {
   {
-    std::lock_guard<std::mutex> lk(_impl->systemsMtx);
+    std::lock_guard<std::recursive_mutex> lk(_impl->systemsMtx);
     _impl->systems.insert(sys);
   }
 }
 
 bool StrategyController::Schedule(std::shared_ptr<Strategy> strategy, bool force) {
-  std::unique_lock<std::mutex> lock(_impl->systemsMtx, std::try_to_lock);
-
-  if (lock.owns_lock()) {
-    return DoSchedule(strategy, force);
-  } else {
-    // We're being called when we're already locked - like inside of an active strategy.
-    // Make this call asynchronous and wait for the result.
-    return std::async(&StrategyController::DoSchedule, this, strategy, force).get();
-  }
+  std::lock_guard<std::recursive_mutex> lock(_impl->systemsMtx);
+  return DoSchedule(strategy, force);
 }
 
 void StrategyController::Update(double dt) {
@@ -53,7 +45,7 @@ void StrategyController::Update(double dt) {
   }
 
   {
-    std::lock_guard<std::mutex> lk(_impl->systemsMtx);
+    std::lock_guard<std::recursive_mutex> lk(_impl->systemsMtx);
     for (StrategySystem *sys : _impl->systems) {
       sys->StrategyUpdate(dt);
     }

@@ -12,6 +12,8 @@ using namespace curtinfrc;
 double lastTimestamp;
 
 void Robot::RobotInit() {
+  lastTimestamp = Timer::GetFPGATimestamp();
+
   table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
   yOffset = table->GetEntry("yOffset");
   xOffset = table->GetEntry("xOffset");
@@ -20,36 +22,39 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, 0.71, 0.71, 0.0762, 50 };
+  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, nullptr, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
   drivetrainController = new DrivetrainController(*drivetrain, robotmap.joy);
 
   HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
   harvester = new HarvesterIntake(harvesterConfig);
-  harvesterController = new HarvesterIntakeController(*harvester, robotmap.joy);
+  harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
 
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
+  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
+}
+void Robot::RobotPeriodic() {
+  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
+  lastTimestamp = Timer::GetFPGATimestamp();
+  // Calc dt for update functions
+
+  Update(dt);
 }
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() { lastTimestamp = Timer::GetFPGATimestamp(); }
+void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double dt = Timer::GetFPGATimestamp() - lastTimestamp;
-  lastTimestamp = Timer::GetFPGATimestamp();
-  // Calc dt for update functions
-
-  drivetrainController->Update(dt);
-  harvesterController->Update(dt);
+  drivetrainController->Update(0);
 
   double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
 
   beElevator->Set(beElevatorSpeed);
 
   // Class update events
-  beElevator->Update(dt);
+  beElevator->Update(0);
 }
 
 void Robot::TestInit() {}
