@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   vision.Run(hatchProcess);
   vision.Run(tapeProcess);
 
-  // vision.Run(displayBall);
+  // vision.Run(displayBall);  //Displays Can't work togethor for tinkerboard
   vision.Run(displayHatch);
   // vision.Run(displayTape);
 

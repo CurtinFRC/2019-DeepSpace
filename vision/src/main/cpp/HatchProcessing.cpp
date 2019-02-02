@@ -25,9 +25,6 @@
 
 #include "devices/kinect.h"
 
-using namespace cv;
-using namespace std;
-
 cv::RNG rngHatch(12345);
 cv::Rect hatch_bounding_rect;
 int hatch_thresh = 100;
@@ -52,10 +49,6 @@ void HatchProcessing::Init() {
 void HatchProcessing::Periodic() {
   Process::Periodic();
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-    /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
-    double bgrThreshBlue[] = {0.0, 127.0};
-    double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
-    double bgrThreshRed[] = {0.0, 127.0}; */
     _capture.CopyCaptureMat(_imgProcessing);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
@@ -71,13 +64,13 @@ void HatchProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Hatch
-    cv::inRange(_imgProcessing, cv::Scalar(15, 110, 110), cv::Scalar(40, 255, 255), _imgProcessedTrack);
-    // cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
+    // cv::inRange(_imgProcessing, cv::Scalar(15, 110, 110), cv::Scalar(40, 255, 255), _imgProcessedTrack); <- Debug Code
+    cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
 
     
     //cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
-    
+    /*
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -99,11 +92,12 @@ void HatchProcessing::Periodic() {
         }
       }
     }
-    /*
-   _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
-    vector<Vec3f> circles;
 
-    HoughCircles(_imgProcessedTrack, circles, CV_HOUGH_GRADIENT,
+    // New Code for detecting Hatch, Will get rid of 60% of the code if done 
+    */
+    std::vector<cv::Vec3f> circles;
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+    HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT,
           2,   // accumulator resolution (size of the image / 2)
           5,  // minimum distance between two circles
           100, // Canny high threshold
@@ -113,21 +107,20 @@ void HatchProcessing::Periodic() {
     std::cout << circles.size() <<std::endl;
     std::cout << "end of test" << std::endl;
 
-       std::vector<cv::Vec3f>::
-              const_iterator itc= circles.begin();
+    std::vector<cv::Vec3f>::
+    const_iterator itc= circles.begin();
 
        while (itc!=circles.end()) {
-
          cv::circle(_imgProcessedTrack,
             cv::Point((*itc)[0], (*itc)[1]), // circle centre
             (*itc)[2],       // circle radius
             cv::Scalar(255), // color
             2);              // thickness
-
          ++itc;
        }
-    */
+    /*
     /// Detect edges using Canny
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
 
     /// Find contours
@@ -201,7 +194,6 @@ void HatchProcessing::Periodic() {
       std::stringstream offsetX;	offsetX << hatch_width_offset;
       cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-    
-   
+    */
   }
 }
