@@ -1,9 +1,11 @@
 #pragma once
 
+#include "strategy/StrategySystem.h"
+
 namespace curtinfrc {
   namespace devices {
     template <typename StateType>
-    class StateDevice {
+    class StateDevice : public StrategySystem {
     public:
       void Update(double dt) {
         if (_state != _lastState) {

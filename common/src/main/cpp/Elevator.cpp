@@ -2,9 +2,9 @@
 
 // public
 
-void curtinfrc::Elevator::SetManual(double setpoint) {
+void curtinfrc::Elevator::SetManual(double power) {
   SetState(kManual);
-  _setpoint = setpoint;
+  _setpoint = power;
 }
 
 void curtinfrc::Elevator::SetSetpoint(double setpoint) {
