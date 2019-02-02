@@ -29,12 +29,12 @@ double elevator_window::get_motor_val() {
   return _config->spool.transmission->Get();
 }
 
-void elevator_window::add_encoder_position(double pos) {
+void elevator_window::set_abs_encoder_pos(double pos) {
   double C = 2 * 3.14159265 * _config->spoolRadius;
   double rots = pos / C;
   auto encoder = _config->spool.encoder;
   if (encoder != nullptr)
-    _enc_sim->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+    _enc_sim->set_counts(static_cast<int>(rots * encoder->GetEncoderTicksPerRotation()));
 }
 
 void elevator_window::update_physics(double time_delta) {
@@ -58,7 +58,7 @@ void elevator_window::update_physics(double time_delta) {
     _velocity = 0;
 
   _position += _velocity * time_delta;
-  add_encoder_position(_velocity * time_delta);
+  set_abs_encoder_pos(_position);
 
   _limit_bottom = _position < 0.01;
   _limit_top = _position > _config->height - 0.01;
