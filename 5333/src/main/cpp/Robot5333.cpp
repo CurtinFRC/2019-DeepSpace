@@ -22,9 +22,11 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
+  robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
+
   DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, nullptr, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
-  drivetrainController = new DrivetrainController(*drivetrain, robotmap.joy);
+  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
 
   HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
   harvester = new HarvesterIntake(harvesterConfig);
@@ -33,11 +35,14 @@ void Robot::RobotInit() {
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
   beElevator = new Lift(elevatorConfig);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
+
+  Register(drivetrain);
+  Register(harvester);
+  Register(beElevator);
 }
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
-  // Calc dt for update functions
 
   Update(dt);
 }
@@ -46,16 +51,7 @@ void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {
-  drivetrainController->Update(0);
-
-  double beElevatorSpeed = (robotmap.joy.GetRawButton(8) - robotmap.joy.GetRawButton(7)) * 0.8;
-
-  beElevator->Set(beElevatorSpeed);
-
-  // Class update events
-  beElevator->Update(0);
-}
+void Robot::TeleopPeriodic() {}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

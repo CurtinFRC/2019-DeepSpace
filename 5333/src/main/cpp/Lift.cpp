@@ -6,13 +6,8 @@ void Lift::Set(double power) {
 
 
 void LiftManualStrategy::OnUpdate(double dt) {
-  if (_joy.GetRawButton(8)) {
-    _lift.SetManual(1);
-  } else if (_joy.GetRawButton(7)) {
-    _lift.SetManual(-1);
-  } else {
-    _lift.SetManual(0);
-  }
+  double speed = (_joy.GetRawButton(8) - _joy.GetRawButton(7)) * 0.8;
+  _lift.Set(speed);
 
   _lift.Update(dt);
 }
