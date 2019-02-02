@@ -23,6 +23,4 @@ void HatchIntakeManualStrategy::OnUpdate(double dt) {
   } else {
     _hatchIntake.SetStowed();
   }
-
-  _hatchIntake.Update(dt);
 }

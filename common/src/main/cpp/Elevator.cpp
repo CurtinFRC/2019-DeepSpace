@@ -1,5 +1,7 @@
 #include "Elevator.h"
 
+#include <iostream>
+
 // public
 
 void curtinfrc::Elevator::SetManual(double power) {
@@ -30,7 +32,6 @@ double curtinfrc::Elevator::GetSetpoint() {
 curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
   return _config;
 }
-
 
 // virtual
 
