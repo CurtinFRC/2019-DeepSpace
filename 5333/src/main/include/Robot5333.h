@@ -36,7 +36,6 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   RobotMap robotmap;
 
   curtinfrc::Drivetrain *drivetrain;
-  curtinfrc::DrivetrainController *drivetrainController;
 
   HarvesterIntake *harvester;
 
