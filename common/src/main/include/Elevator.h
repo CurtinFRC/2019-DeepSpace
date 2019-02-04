@@ -46,16 +46,11 @@ namespace curtinfrc {
     
    protected:
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
-    double power = 0;
-    double goal;
-    double height;
-    double kP;
-    double error;
-    double voltage;
 
    private:
     ElevatorConfig _config;
     double _setpoint;
+    double lastError;
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };

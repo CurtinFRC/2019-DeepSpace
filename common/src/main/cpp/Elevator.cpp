@@ -43,6 +43,18 @@ curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
 // virtual
 
 void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) { // Good enough default
+  double power = 0;
+  double goal;
+  double height;
+  double kP = 30;
+  double kI = 0;
+  double kD = 0;
+  double integral;
+  double derivative;
+  double error;
+  double lastError;
+  double voltage;
+  
   switch (state) {
    case kManual:
     power = GetSetpoint();
@@ -51,12 +63,18 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
    case kMoving:
     goal = GetSetpoint();
     height = GetHeight();
-    kP = 6;
 
-    error = height - goal;
-    voltage = kP * error;
-
+    error = goal - height;
+    integral += error * dt;
+    if(dt != 0) {
+      derivative = (error - 1) / dt;
+    } else {
+      derivative = 0;
+    }
+    voltage = kP * error + kI * integral + kD * derivative;
     power = voltage / 12;
+    
+    // lastError = error;
     break;
 
    case kStationary:
@@ -72,7 +90,6 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
         GetConfig().spool.encoder->ZeroEncoder();
       }
     }
-
     break;
   }
 
