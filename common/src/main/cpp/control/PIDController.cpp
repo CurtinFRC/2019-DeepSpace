@@ -52,7 +52,7 @@ double PIDController::GetSetpoint() {
 double PIDController::Calculate(double processVariable, double dt) {
   double error = PIDController::GetSetpoint() - processVariable;
   _integral += error * dt;
-  if(dt != 0) {
+  if(dt > 0) {
     _derivative = (error - _lastError) / dt;
   } else {
     _derivative = 0;
