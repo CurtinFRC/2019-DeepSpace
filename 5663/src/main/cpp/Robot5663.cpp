@@ -12,6 +12,7 @@ void Robot::RobotInit() {
   //Mechanisms
   cargo = new Cargo(6,7,8);
   hatch = new Hatch(1,0,1,2,3,0);
+  driveFunct = new DriveFunc(2,5,3,4);
 
   // Motor_Controllers
   leftTalon = new TalonSrx(2, 2048);
@@ -52,19 +53,21 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-
+  // DRIVER ----------------------------------------------------------------------------------------
  // Tank drive 
-//  double dirc;
-//  if (xbox1->GetBumper(hand::kRightHand)){
-//    dirc = 1;
-//  } else {
-//    dirc = -1;
-//  }
-  
-  double left_speed = -xbox1->GetY(hand::kLeftHand) / 1.5;
-  double right_speed = xbox1->GetY(hand::kRightHand) / 1.5;
+  double left_speed = -xbox1->GetY(hand::kLeftHand);
+  double right_speed = xbox1->GetY(hand::kRightHand);
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
+  //Drive Functions
+  if (xbox2->GetAButton()){
+    driveFunct->Forward(10000);
+  }
+  if (xbox1->GetBButton()){
+    driveFunct->TurnNinety(true);
+  }
+
+  // CO-DRIVER -------------------------------------------------------------------------------------
   //cargo speed
   if (xbox2->GetBButton()){
     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
@@ -94,7 +97,7 @@ void Robot::TeleopPeriodic() {
   }
 
   //hatch positioning
-  if (xbox2->GetAButton()){
+  if (xbox2->GetYButton()){
     hatch->downPosition();
   } else if(xbox2->GetXButton()){
       hatch->upPosition();
@@ -102,10 +105,10 @@ void Robot::TeleopPeriodic() {
     hatch->setRotationSpeed(0);
   }
 
-  if (lockToggle.tick(xbox2->GetYButton())) lockState = !lockState;
+  if (lockToggle.tick(xbox2->GetAButton())) lockState = !lockState;
 
   //Hatch Ejection
-  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
+  hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
   hatch->lockHatch(lockState);
   hatch->alignmentPiston(xbox1->GetBumper(hand::kRightHand));
 

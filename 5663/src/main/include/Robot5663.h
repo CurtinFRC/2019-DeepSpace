@@ -14,6 +14,7 @@
 
 #include "Cargo.h"
 #include "Hatch.h"
+#include "DriveFunc.h"
 
 #include "Toggle.h"
 
@@ -32,6 +33,7 @@ class Robot : public frc::TimedRobot {
 
   Cargo *cargo;
   Hatch *hatch;
+  DriveFunc *driveFunct;
 
   frc::XboxController *xbox1, *xbox2;
 
