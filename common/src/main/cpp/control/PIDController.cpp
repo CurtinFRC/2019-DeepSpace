@@ -36,3 +36,29 @@ double PIDGains::kD() const {
 double PIDGains::kF() const {
   return _kF;
 }
+
+// PIDController
+
+PIDController::PIDController(PIDGains gains) : _gains(gains), _lastError(0) {}
+
+void PIDController::SetSetpoint(double setpoint) {
+  _setpoint = setpoint;
+}
+
+double PIDController::GetSetpoint() {
+  return _setpoint;
+}
+
+double PIDController::Calculate(double processVariable, double dt) {
+  double error = PIDController::GetSetpoint() - processVariable;
+  _integral += error * dt;
+  if(dt != 0) {
+    _derivative = (error - _lastError) / dt;
+  } else {
+    _derivative = 0;
+  }
+  double output = _gains.kP() * error + _gains.kI() * _integral + _gains.kD() * _derivative;
+  _lastError = error;
+
+  return output;
+}
