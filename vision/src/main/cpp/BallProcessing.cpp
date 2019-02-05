@@ -15,6 +15,8 @@
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
+#include "networktables/NetworkTableInstance.h"
+
 #include "devices/kinect.h"
 
 cv::RNG rngBall(12345);
@@ -24,26 +26,27 @@ float ball_height_offset;
 float ball_width_offset;
 float ball_width_goal = 320;
 float ball_height_goal = 240;
+std::string Ball_Distance = "Sumthin";
+
 
 void BallProcessing::Init() {
   Process::Init();
   processType = "BallProcessing";
+
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTable");
+  auto table = visionTable->GetSubTable("TapeTable");
+  BallDistanceEntry = table->GetEntry("Hatch Distance");
+  BallXoffsetEntry = table->GetEntry("Hatch X Offset");
+  BallYoffsetEntry = table->GetEntry("Hatch Y Offset");
 }
 
 void BallProcessing::Periodic() {
   Process::Periodic();
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-    /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
-    double bgrThreshBlue[] = {0.0, 127.0};
-    double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
-    double bgrThreshRed[] = {0.0, 127.0}; */
-    
-    _capture.CopyCaptureMat(_imgProcessedTrack);
-    cv::cvtColor(_imgProcessedTrack, _imgProcessedTrack, cv::COLOR_BGR2HSV);
-    std::cout << "Origin Image Found For Ball" << std::endl;
-    // Threshold the HSV image, keep only the green pixels (RetroBall)
 
-    // Contours Blocks (Draws a convex shell over the thresholded image.)
+    _capture.CopyCaptureMat(_imgProcessing);
+    cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<std::vector<cv::Point>> filteredContoursBall;
@@ -54,10 +57,10 @@ void BallProcessing::Periodic() {
 
     double largestArea = 0.0;
     active_contour = -1;
-    // Filters size for Reflective Ball
-    cv::inRange(_imgProcessedTrack, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessedTrack);
-    cv::findContours(_imgProcessedTrack, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-
+    // Filters Colour for Reflective Ball
+    cv::inRange(_imgProcessing, cv::Scalar(0, 100, 100), cv::Scalar(100, 255, 255), _imgProcessing);
+    cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    // Filters Size For Ball
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
@@ -79,9 +82,8 @@ void BallProcessing::Periodic() {
         }
       }
     }
-
     /// Detect edges using Canny
-    cv::Canny(_imgProcessedTrack, _imgProcessedThresh, ball_thresh, ball_thresh * 2);
+    cv::Canny(_imgProcessing, _imgProcessing, ball_thresh, ball_thresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -93,9 +95,10 @@ void BallProcessing::Periodic() {
     }
 
     /// Draw filteredContours + hull results
-    _imgProcessedTrack = cv::Mat::zeros(_imgProcessedTrack.size(), CV_8UC3);
+    _imgProcessing = cv::Mat::zeros(_imgProcessing.size(), CV_8UC3);
     std::vector<cv::Rect> boundRectBall( filteredContoursBall.size() );
 
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (size_t i = 0; i < filteredContoursBall.size(); i++) {
       cv::Scalar color = cv::Scalar(rngBall.uniform(0, 256), rngBall.uniform(0, 256), rngBall.uniform(0, 256));
       cv::drawContours(_imgProcessedTrack, filteredContoursBall, (int)i, color);
@@ -130,8 +133,7 @@ void BallProcessing::Periodic() {
       cv::circle(_imgProcessedTrack, centerBall[i], (int)radiusBall[i], color, 2, 8, 0);
     }
 
-
-    //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
+    //_____________________Center Calculations__________________
 
     std::vector<cv::Moments> muBall(hullBall_poly.size()); // do we need this if we have mutex ? *
     for(int i = 0; i < hullBall_poly.size(); i++) {
@@ -153,6 +155,9 @@ void BallProcessing::Periodic() {
       ball_width_offset = ball_width_goal - centerBall.x;
       ball_height_offset = ball_height_goal - centerBall.y;
       std::cout << "Offset From CenterBall x,y =" << ball_width_offset << "," << ball_height_offset << std::endl; // height is x ?
+      BallDistanceEntry.SetString(Ball_Distance);
+      BallXoffsetEntry.SetDouble(ball_width_offset);
+      BallYoffsetEntry.SetDouble(ball_height_offset);
     }
   }
 }

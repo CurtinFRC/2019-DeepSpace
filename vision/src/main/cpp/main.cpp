@@ -33,29 +33,29 @@ int main(int argc, char **argv) {
 
   VisionRunner vision;
   #ifdef __DESKTOP__
-  Capture capture{0, -100};
-  // Capture captureGamePiece{0, 50};
+  Capture capture{1, -100};
+  Capture captureGamePiece{0, 50};
   #else
-  Capture capture{4, -100};
-  Capture captureGamePiece{5, 40};
+  Capture capture{5, -100};
+  Capture captureGamePiece{4, 50};
   #endif
   // HatchProcessing hatchProcess{captureGamePiece};
-  // BallProcessing ballProcess{capture};
-  TapeProcessing tapeProcess{capture};
+  BallProcessing ballProcess{capture};
+  // TapeProcessing tapeProcess{capture};
   
-  // Display displayBall{ballProcess};
+  Display displayBall{ballProcess};
   // Display displayHatch{hatchProcess};
-  Display displayTape{tapeProcess};
+  // Display displayTape{tapeProcess};
   
-  vision.Run(capture);
-  // vision.Run(captureGamePiece);
-  // vision.Run(ballProcess);
+  // vision.Run(capture);
+  vision.Run(captureGamePiece);
+  vision.Run(ballProcess);
   // vision.Run(hatchProcess);
-  vision.Run(tapeProcess);
+  // vision.Run(tapeProcess);
 
-  // vision.Run(displayBall);
+  vision.Run(displayBall);  //Displays Can't work togethor for shuffleboard
   // vision.Run(displayHatch);
-  vision.Run(displayTape);
+  // vision.Run(displayTape);
 
 
   for (int i = 0; i < vision.workers.size(); i++) {

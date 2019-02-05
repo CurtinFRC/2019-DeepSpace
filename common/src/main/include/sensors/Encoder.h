@@ -8,13 +8,14 @@ namespace sensors {
    public:
     Encoder(int encoderTicksPerRotation) : _encoderTicksPerRotation(encoderTicksPerRotation){};
     virtual int  GetEncoderTicks() = 0;
-    virtual void ResetEncoder()    = 0;
 
     double GetEncoderRotations();
     int    GetEncoderTicksPerRotation();
+    void   ZeroEncoder();
 
    private:
     int _encoderTicksPerRotation;
+    int _offset = 0;
   };
 
   class DigitalEncoder : public Encoder {
@@ -26,7 +27,6 @@ namespace sensors {
           Encoder(ticksPerRotation){};
 
     int GetEncoderTicks() override;
-    void ResetEncoder() override;
 
     int GetChannelA();
     int GetChannelB();

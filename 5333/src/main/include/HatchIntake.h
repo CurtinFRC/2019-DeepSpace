@@ -2,6 +2,7 @@
 
 #include <frc/Servo.h>
 
+#include "strategy/Strategy.h"
 #include "devices/DeployableDevice.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
@@ -27,10 +28,15 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
   HatchIntakeConfig _config;
 };
 
-class HatchIntakeController {
+class HatchIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  HatchIntakeController(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {};
-  void Update(double dt);
+  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : Strategy("Hatch Manuaul"),  _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+    Requires(&hatchIntake);
+    SetCanBeInterrupted(true);
+    SetCanBeReused(true);
+  }
+
+  void OnUpdate(double dt) override;
 
  private:
   HatchIntake &_hatchIntake;

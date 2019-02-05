@@ -10,13 +10,15 @@
 
 
 #include "RobotMap.h"
+#include "strategy/StrategyController.h"
 
 #include "Lift.h"
 #include "HarvesterIntake.h"
 
-class Robot : public frc::TimedRobot {
+class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
  public:
   void RobotInit() override;
+  void RobotPeriodic() override;
 
   void AutonomousInit() override;
   void AutonomousPeriodic() override;
@@ -34,10 +36,8 @@ class Robot : public frc::TimedRobot {
   RobotMap robotmap;
 
   curtinfrc::Drivetrain *drivetrain;
-  curtinfrc::DrivetrainController *drivetrainController;
 
   HarvesterIntake *harvester;
-  HarvesterIntakeController *harvesterController;
 
   Lift *beElevator;
 };

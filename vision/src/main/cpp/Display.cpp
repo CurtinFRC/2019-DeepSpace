@@ -30,40 +30,23 @@ void Display::Init() {
 
 
 void Display::Periodic() {
-  // Capture &capture = _process.GetCapture();
   _process.CopyProcessedTrack(_imgProcessedTrack);
   _process.CopyProcessedTrack(_imgProcessedTrackHatch);
-  // _capture.CopyCaptureMat(_imgProcessedTrack);
-  // _process.CopyProcessedThresh(_imgProcessedThresh);
-  // _capture.CopyCaptureMat(_imgOriginal);
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
     if (_process.GetValidThresh() && _process.GetValidTrack()) {
-#ifdef __DESKTOP__
-      //imshow("OutputOrigin", _imgOriginal);
+      #ifdef __DESKTOP__
       if (_imgProcessedTrack.rows > 0) {
         imshow(_process.GetProcessType(), _imgProcessedTrack);
       }
-        // imshow(_process.GetProcessType(), _imgProcessedThresh);
-        // imshow("OutputBallThresh", _imgBallThresh);
-        // imshow("OutputBallTrack", _imgBallTrack);
-        // cv::waitKey(500 / 30);
-        // imshow("OutputHatchThresh", _imgHatchThresh);
-        // imshow("OutputHatchTrack", _imgHatchTrack);
-        // imshow("OutputTapeThresh", _imgTapeThresh);
-        // imshow("OutputTapeTrack", _imgTapeTrack);
-        
-        cv::waitKey(1000 / 30);
+      cv::waitKey(1000 / 30);
     
-#else
-        // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
-        _outputCam0.PutFrame(_imgProcessedTrack);
-        _outputCam1.PutFrame(_imgProcessedTrackHatch);
-        //_ouput.PutFrame(_capture);
-#endif
-		std::cout << "Origin Image Processed" << std::endl;
-    // other output if needed
+      #else
+      _outputCam0.PutFrame(_imgProcessedTrack);
+      _outputCam1.PutFrame(_imgProcessedTrackHatch);
+      #endif
     }
   }
+
   else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }

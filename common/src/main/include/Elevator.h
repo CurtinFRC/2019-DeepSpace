@@ -34,12 +34,13 @@ namespace curtinfrc {
    public:
     Elevator(ElevatorConfig config) : _config(config) {};
 
-    void SetManual(double setpoint);
+    void SetManual(double power);
     void SetSetpoint(double setpoint);
     void SetZeroing();
     void SetHold();
 
     double GetSetpoint();
+    double GetHeight();
 
     ElevatorConfig &GetConfig();
     
@@ -49,6 +50,7 @@ namespace curtinfrc {
    private:
     ElevatorConfig _config;
     double _setpoint;
+    double lastError;
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };

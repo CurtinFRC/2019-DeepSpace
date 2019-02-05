@@ -12,9 +12,9 @@ namespace curtinfrc {
     Toggle(ToggleEvent mode = ToggleEvent::ONRISE);
     Toggle(ToggleEvent mode, bool initState);
 
-    bool tick(bool val);
+    bool Update(bool val);
 
-    bool getTriggered();
+    bool GetTriggered();
 
   private:
     ToggleEvent _mode;

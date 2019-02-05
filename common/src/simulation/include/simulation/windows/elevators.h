@@ -15,7 +15,7 @@ class elevator_window : public ui::window, physics_aware {
 
   double get_motor_val();
   // Add to current encoder position, pos in metres
-  void add_encoder_position(double pos);
+  void set_abs_encoder_pos(double pos);
 
   void update_physics(double dt) override;
   void render(cv::Mat &img) override;

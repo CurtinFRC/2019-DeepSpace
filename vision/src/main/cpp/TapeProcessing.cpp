@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "networktables/NetworkTableInstance.h"
+
 #include <cameraserver/CameraServer.h>
 #include <cscore.h>
 
@@ -23,46 +25,46 @@ cv::RNG rngTape(12345);
 void TapeProcessing::Init() {
 	Process::Init();
   processType = "TapeProcessing";
+
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTracking");
+  auto table = visionTable->GetSubTable("TapeTracking");
+  TapeDistanceEntry = table->GetEntry("Distance");
+  TapeAngleEntry = table->GetEntry("Angle");
+  TapeTargetEntry = table->GetEntry("Target");
 }
 
 void TapeProcessing::Periodic() {
   Process::Periodic();
 	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
 
-    //_capture.CopyCaptureMat(_imgProcessedThresh);
     _capture.CopyCaptureMat(_imgProcessing);
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
-    //cv::cvtColor(_imgProcessedThresh, _imgProcessedThresh, cv::COLOR_BGR2HSV);
-    //cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack);
+    // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack); <-Debug Code
     cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
     cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-
-    
 
     filteredContours.clear();
 		for (int i = 0; i < contours.size(); i++) {
 			if (cv::contourArea(contours[i]) > 20)
 				filteredContours.push_back(contours[i]);
 		}
-  
     //Get RotatedRectangles 
     centres.clear(); //clear the vectors
-    heights.clear();
+    heights.clear(); 
     lefts.clear();
     rights.clear();
-    cv::Scalar color = cv::Scalar(255, 255, 255);
+    cv::Scalar blue = cv::Scalar(255, 0, 0); 
+    cv::Scalar green = cv::Scalar(0, 255, 0);
+    cv::Scalar red = cv::Scalar(0, 0, 255);
 
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
-      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, color);
-      
+      cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue, -1);
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
-
       cv::Point2f centre = rotatedRect.center;
-
       cv::Point2f rectPoints[4];
       rotatedRect.points(rectPoints);
-
       float angle;
 
       cv::Point2f edge1 = cv::Vec2f(rectPoints[1].x, rectPoints[1].y) - cv::Vec2f(rectPoints[0].x, rectPoints[0].y);
@@ -74,9 +76,7 @@ void TapeProcessing::Periodic() {
       }
 
       cv::Point2f reference = cv::Vec2f(1,0); // horizontal edge
-
       angle = 180.0f/CV_PI * acos((reference.x * usedEdge.x + reference.y * usedEdge.y) / (cv::norm(reference) * cv::norm(usedEdge)));
-
       float min = rectPoints[0].y;
       float max = rectPoints[0].y;
 
@@ -106,17 +106,18 @@ void TapeProcessing::Periodic() {
       }
     }
   
-    int leftmost = -1;
-    float leftPos = 640;
     targets.clear();
     angles.clear();
     distances.clear();
 
     for (int i = 0; i < filteredContours.size(); i++) {
+      int leftmost = -1;
+      float leftPos = 640;
       if (lefts[i]) { //checks if current iteration is a left
         for (int j = 0; j < filteredContours.size(); j++) {
           if (rights[j] && centres[j].x < leftPos && centres[j].x > centres[i].x) { //checks if nested iteration is a right and left of the last checked one
             leftmost = j;
+            leftPos = centres[j].x;
           }
         }
 
@@ -135,11 +136,27 @@ void TapeProcessing::Periodic() {
         }
       }
     }
-  
+
+    int centred = -1;
+    int closeX = _videoMode.width;
+    for (int i = 0; i < targets.size(); i++) { 
+      if (abs(targets[i].x - _videoMode.width / 2) < closeX) {
+        closeX = abs(targets[i].x - _videoMode.width / 2);
+        centred = i;
+      }
+    }
+
     for (int i = 0; i < targets.size(); i++) {
       std::stringstream dis;	dis << distances[i];
       std::stringstream ang;	ang << angles[i];
-      cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-3,-3), targets[i] + cv::Point2f(3,3), color, 2); //draw small rectangle on target locations
+      if (i == centred) {
+        cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), green, 2); //draw small rectangle on target locations
+        TapeDistanceEntry.SetDouble(distances[i]);
+        TapeAngleEntry.SetDouble(angles[i]);
+        TapeTargetEntry.SetDouble(targets[i].x);
+      } else {
+        cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), blue, 2); //draw small rectangle on target locations
+      }
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
   }

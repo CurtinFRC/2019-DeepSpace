@@ -9,8 +9,8 @@ void HatchIntake::OuttakingPeriodic() { // Eject
 }
 
 
-void HatchIntakeController::Update(double dt) {
-  if (_enabledToggle.tick(_joy.GetRawButton(9))) _enabled = !_enabled;
+void HatchIntakeManualStrategy::OnUpdate(double dt) {
+  if (_enabledToggle.Update(_joy.GetRawButton(9))) _enabled = !_enabled;
 
   if (_enabled) {
     if (_joy.GetRawButton(4)) {
@@ -23,6 +23,4 @@ void HatchIntakeController::Update(double dt) {
   } else {
     _hatchIntake.SetStowed();
   }
-
-  _hatchIntake.Update(dt);
 }
