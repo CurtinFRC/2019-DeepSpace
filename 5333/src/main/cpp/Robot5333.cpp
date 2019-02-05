@@ -34,7 +34,7 @@ void Robot::RobotInit() {
   harvester->StartLoop(50);
 
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
-  beElevator = new Lift(elevatorConfig);
+  beElevator = new Lift(elevatorConfig, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
   beElevator->StartLoop(100);
 
