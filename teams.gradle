@@ -32,10 +32,14 @@ deploy {
 }
 
 dependencies {
+  // The 2019.2.1 release of halsim_ds_socket is broken on windows, so we built a fixed version ourselves while
+  // we wait for 2019.3.1
   if (wpi.platforms.desktop == 'windowsx86-64') {
-    // The 2019.2.1 release of halsim_ds_socket is broken on windows, so we built a fixed version ourselves while
-    // we wait for 2019.3.1
     simulation rootProject.files('libs/halsim_ds_socketd.dll')
+  } else if (wpi.platforms.desktop == 'osx86-64') {
+    simulation rootProject.files('libs/libhalsim_ds_socketd.dylib')
+  } else if (wpi.platforms.desktop == 'linuxx86-64') {
+    simulation rootProject.files('libs/libhalsim_ds_socketd.so')
   } else {
     simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
   }

@@ -14,8 +14,10 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+
 #include "networktables/NetworkTableInstance.h"
 
 #include <cameraserver/CameraServer.h>
@@ -37,7 +39,8 @@ void HatchProcessing::Init() {
   processType = "HatchProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
-  auto table = inst.GetTable("HatchTable");
+  auto visionTable = inst.GetTable("VisionTracking");
+  auto table = visionTable->GetSubTable("HatchTracking");
   HatchDistanceEntry = table->GetEntry("Hatch Distance");
   HatchXoffsetEntry = table->GetEntry("Hatch X Offset");
   HatchYoffsetEntry = table->GetEntry("Hatch Y Offset");
@@ -46,11 +49,6 @@ void HatchProcessing::Init() {
 void HatchProcessing::Periodic() {
   Process::Periodic();
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-    /* cv::Mat bgrThreshInput = _capture.CopyCaptureMat();
-    double bgrThreshBlue[] = {0.0, 127.0};
-    double bgrThreshGreen[] = {200.0, 255.0};		//thresholding values for finding green
-    double bgrThreshRed[] = {0.0, 127.0}; */
-    
     _capture.CopyCaptureMat(_imgProcessing);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
@@ -66,22 +64,24 @@ void HatchProcessing::Periodic() {
     double largestArea = 0.0;
     active_contour = -1;
     // Filters size for Reflective Hatch
-    //cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessedTrack);
+    // cv::inRange(_imgProcessing, cv::Scalar(15, 110, 110), cv::Scalar(40, 255, 255), _imgProcessedTrack); <- Debug Code
     cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
-    cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-    //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
 
+    
+    //cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
+    
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
       
       double area = cv::contourArea(contour);
-      if (area > 50.0) {
+      if (area > 300.0) {
         std::vector<cv::Point> hull;
         cv::convexHull(contour, hull);
         double solidity = 10 * area / contourArea(hull);
 
-        if (solidity > 2) {
+        if (solidity > 4) {
           if (area > largestArea) {
             largestArea = area;
             active_contour = filteredContoursHatch.size();
@@ -92,26 +92,35 @@ void HatchProcessing::Periodic() {
         }
       }
     }
-    
-    std::vector<cv::Vec3f> circles;
-    cv::HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT, 1,
-      _imgProcessing.rows/16,  // change this value to detect circles with different distances to each other
-      100, 30, 1, 30 // change the last two parameters
-      // (min_radius & max_radius) to detect larger circles
-    );
 
-    /// Draw the circles detected
-    for( size_t i = 0; i < circles.size(); i++ )
-    {
-      cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-      int radius = cvRound(circles[i][2]);
-      // circle center
-      cv::circle( _imgProcessedTrack, center, 3, cv::Scalar(0,0,255), -1, 8, 0 );
-      // circle outline
-      cv::circle( _imgProcessedTrack, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
-    }
-    
+    // New Code for detecting Hatch, Will get rid of 60-70% of the code if done 
+    /*
+    std::vector<cv::Vec3f> circles;
+    HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT,
+          2,   // accumulator resolution (size of the image / 2)
+          5,  // minimum distance between two circles
+          100, // Canny high threshold
+          100, // minimum number of votes
+          0, 100); // min and max radius
+
+    std::cout << circles.size() <<std::endl;
+    std::cout << "end of test" << std::endl;
+
+    std::vector<cv::Vec3f>::
+    const_iterator itc= circles.begin();
+
+       while (itc!=circles.end()) {
+         _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+         cv::circle(_imgProcessedTrack,
+            cv::Point((*itc)[0], (*itc)[1]), // circle centre
+            (*itc)[2],       // circle radius
+            cv::Scalar(255), // color
+            2);              // thickness
+         ++itc;
+       }
+    */
     /// Detect edges using Canny
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
 
     /// Find contours
@@ -129,14 +138,8 @@ void HatchProcessing::Periodic() {
 
     for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
-      cv::drawContours(_imgProcessing, filteredContoursHatch, (int)i, color);
-      cv::drawContours(_imgProcessing, hullHatch, (int)i, color);
-    }
-
-    for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
-      cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
-      cv::drawContours(_imgProcessing, filteredContoursHatch, (int)i, color);
-      cv::drawContours(_imgProcessedTrack, hullHatch, (int)i, color);
+      cv::drawContours(_imgProcessing, filteredContoursHatch, (int)i, color, -1);
+      cv::drawContours(_imgProcessing, hullHatch, (int)i, color, -1);
     }
     
     /// Find contoursBox
@@ -161,7 +164,7 @@ void HatchProcessing::Periodic() {
       cv::circle(_imgProcessedTrack, centerHatch[i], (int)radiusHatch[i], color, 2, 8, 0);
     }
     
-
+    
     //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
     
     std::vector<cv::Moments> muHatch(hullHatch_poly.size()); // do we need this if we have mutex ? *
@@ -191,6 +194,5 @@ void HatchProcessing::Periodic() {
       std::stringstream offsetX;	offsetX << hatch_width_offset;
       cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
-   
   }
 }

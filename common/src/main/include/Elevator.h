@@ -40,6 +40,7 @@ namespace curtinfrc {
     void SetHold();
 
     double GetSetpoint();
+    double GetHeight();
 
     ElevatorConfig &GetConfig();
     
@@ -49,6 +50,7 @@ namespace curtinfrc {
    private:
     ElevatorConfig _config;
     double _setpoint;
+    double lastError;
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };

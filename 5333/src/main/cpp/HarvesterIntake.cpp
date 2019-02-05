@@ -20,7 +20,6 @@ void HarvesterIntake::StowedPeriodic() {
   _config.motors.transmission->StopMotor(); // probably doesn't need this, but ~
 }
 
-
 void HarvesterIntakeManualStrategy::OnUpdate(double dt) {
   if (_joy.GetRawButton(3)) {
     _harvesterIntake.SetIntaking();
@@ -29,6 +28,4 @@ void HarvesterIntakeManualStrategy::OnUpdate(double dt) {
   } else if (_joy.GetRawButton(11)) {
     _harvesterIntake.SetStowed();
   }
-
-  _harvesterIntake.Update(dt);
 }

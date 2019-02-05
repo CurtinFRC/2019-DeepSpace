@@ -14,11 +14,11 @@ Toggle::Toggle(ToggleEvent mode, bool initState) {
   _lstate = initState;
 }
 
-bool Toggle::tick(bool val) {
+bool Toggle::Update(bool val) {
   _triggered = _lstate != val && !val != _mode;
   _lstate = val;
 
   return _triggered;
 }
 
-bool Toggle::getTriggered() { return _triggered; }
+bool Toggle::GetTriggered() { return _triggered; }
