@@ -39,16 +39,12 @@ void Robot::RobotInit() {
 }
 
 void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {
-  if (xbox2->GetAButton()){
-    hatch->downPosition();
-  }
-}
+void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
   hatch->zeroEncoder();
   cargo->zeroEncoder();
-
+  driveFunct->zeroEncoder();
   
 }
 
@@ -60,11 +56,11 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //Drive Functions
-  if (xbox2->GetAButton()){
+  if (xbox1->GetAButton()){
     driveFunct->Forward(10000);
   }
   if (xbox1->GetBButton()){
-    driveFunct->TurnNinety(true);
+    driveFunct->TurnNinety();
   }
 
   // CO-DRIVER -------------------------------------------------------------------------------------
@@ -114,6 +110,7 @@ void Robot::TeleopPeriodic() {
 
   hatch->update();
   cargo->update();
+  driveFunct->update();
 }
 
 void Robot::TestInit() {}
