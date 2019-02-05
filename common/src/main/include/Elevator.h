@@ -3,6 +3,7 @@
 #include "devices/StateDevice.h"
 #include "Gearbox.h"
 #include "sensors/BinarySensor.h"
+#include "control/PIDController.h"
 
 #include "Usage.h"
 
@@ -32,14 +33,14 @@ namespace curtinfrc {
   enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
   class Elevator : public devices::StateDevice<ElevatorState> {
    public:
-    Elevator(ElevatorConfig config) : _config(config) {};
+    Elevator(ElevatorConfig config, control::PIDGains gain) : _config(config), _gain(gain), _controller(gain) {};
 
     void SetManual(double power);
     void SetSetpoint(double setpoint);
     void SetZeroing();
     void SetHold();
 
-    double GetSetpoint();
+    double GetSetpoint(); // Do we need that?
     double GetHeight();
 
     ElevatorConfig &GetConfig();
@@ -49,8 +50,9 @@ namespace curtinfrc {
 
    private:
     ElevatorConfig _config;
-    double _setpoint;
-    double lastError;
+
+    control::PIDGains _gain;
+    control::PIDController _controller;
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };

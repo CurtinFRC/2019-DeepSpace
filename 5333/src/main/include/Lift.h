@@ -7,7 +7,7 @@
 
 class Lift : public curtinfrc::Elevator {
  public:
-  Lift(curtinfrc::ElevatorConfig elevatorConfig) : curtinfrc::Elevator(elevatorConfig) {};
+  Lift(curtinfrc::ElevatorConfig elevatorConfig, curtinfrc::control::PIDGains gain) : curtinfrc::Elevator(elevatorConfig, gain) {};
 
   void Set(double power);
 
