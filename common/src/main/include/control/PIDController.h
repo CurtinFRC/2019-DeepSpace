@@ -28,5 +28,19 @@ namespace control {
     wpi::SmallVector<NTBoundDouble, 4> _ntbounds;
   };
 
+  class PIDController {
+   public:
+    PIDController(PIDGains gains);
+    void SetSetpoint(double setpoint);
+    double GetSetpoint();
+    double Calculate(double processVariable, double dt);
+   private:
+    PIDGains _gains;
+    double _derivative;
+    double _integral;
+    double _lastError;
+    double _setpoint;
+  };
+
 }  // namespace control
 }  // namespace curtinfrc
