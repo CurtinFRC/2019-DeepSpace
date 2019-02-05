@@ -30,7 +30,7 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
 
 class HatchIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : Strategy("Hatch Manuaul"),  _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
     Requires(&hatchIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
