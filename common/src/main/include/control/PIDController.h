@@ -10,7 +10,7 @@ namespace control {
 
   class PIDGains {
    public:
-    PIDGains(std::string name, double kP, double kI, double kD, double kF);
+    PIDGains(std::string name, double kP = 0, double kI = 0, double kD = 0, double kF = 0);
 
     // Needed since we need to reinit NT Bound Doubles with new address
     PIDGains(const PIDGains &other) : PIDGains(other._name, other._kP, other._kI, other._kD, other._kF) {}
@@ -30,7 +30,7 @@ namespace control {
 
   class PIDController {
    public:
-    PIDController(PIDGains gains);
+    PIDController(PIDGains gains, double setpoint = 0);
     void SetSetpoint(double setpoint);
     double GetSetpoint();
     double Calculate(double processVariable, double dt);

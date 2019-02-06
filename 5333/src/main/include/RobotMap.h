@@ -8,12 +8,19 @@
 #include "Gearbox.h"
 #include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
+#include "sensors/NavX.h"
 
 #include "Drivetrain.h"
 #include "HarvesterIntake.h"
 
 struct RobotMap {
+  struct JoyMap {
+    int holdMovement = 9; // Makes the robot 'line up' (0 magnitude but still rotating)
+    int activateFOC = 10; // Toggles the drivetrain between Manual and FOC control
+  };
+
   curtinfrc::Joystick joy{ 0 };
+  JoyMap joyMap;
 
   struct DriveTrain {
     curtinfrc::TalonSrx leftSrx{ 1, 2048 };
@@ -25,6 +32,11 @@ struct RobotMap {
     curtinfrc::VictorSpx rightSpx{ 4 };
     frc::SpeedControllerGroup rightMotors{ rightSrx, rightSpx }; 
     curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightSrx, 10.71 };
+
+    curtinfrc::sensors::NavX navx{};
+    curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
+
+    curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
   };
 
   DriveTrain drivetrain;

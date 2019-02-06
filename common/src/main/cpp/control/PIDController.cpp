@@ -39,7 +39,7 @@ double PIDGains::kF() const {
 
 // PIDController
 
-PIDController::PIDController(PIDGains gains) : _gains(gains), _lastError(0) {}
+PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0) {}
 
 void PIDController::SetSetpoint(double setpoint) {
   _setpoint = setpoint;
@@ -52,7 +52,7 @@ double PIDController::GetSetpoint() {
 double PIDController::Calculate(double processVariable, double dt) {
   double error = PIDController::GetSetpoint() - processVariable;
   _integral += error * dt;
-  if(dt > 0) {
+  if (dt > 0) {
     _derivative = (error - _lastError) / dt;
   } else {
     _derivative = 0;
