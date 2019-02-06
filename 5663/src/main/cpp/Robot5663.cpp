@@ -75,9 +75,7 @@ void Robot::TeleopPeriodic() {
   //cargo positioning
    if (xbox2->GetYButton()){
      cargo->setAngle(0.3, 90);
-   } else {
-     cargo->setAngle(0.3, 0);
-   }
+   } 
 
   //cargo intake/outtake
   if (xbox2->GetTriggerAxis(hand::kLeftHand)){
@@ -102,7 +100,7 @@ void Robot::TeleopPeriodic() {
     hatch->setRotationSpeed(0);
   }
 
-  if (lockToggle.tick(xbox2->GetAButton())) lockState = !lockState;
+  if (lockToggle.Update(xbox2->GetAButton())) lockState = !lockState;
 
   //Hatch Ejection
   hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));

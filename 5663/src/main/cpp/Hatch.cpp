@@ -4,9 +4,9 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
     Flooper = new curtinfrc::TalonSrx(motorID, 1024);
     Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.25;
-        config.slot1.kI = 0.002;
-        config.slot2.kD = 0.004;
-        config.slot3.kF = 0;
+        config.slot0.kI = 0.002;
+        config.slot0.kD = 0.004;
+        config.slot0.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
@@ -65,7 +65,7 @@ void Hatch::alignmentPiston(bool extended) {
 }
 
 void Hatch::zeroEncoder() {
-    Flooper->ResetEncoder();
+    Flooper->ZeroEncoder();
 }
 
 void Hatch::update() {

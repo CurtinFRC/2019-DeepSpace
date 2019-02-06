@@ -5,16 +5,16 @@
 Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
     motorSrx = new curtinfrc::TalonSrx(SrxID, 1024);
     motorSrx->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
-        config.slot0.kP = 1;
-        config.slot1.kI = 0;
-        config.slot2.kD = 0.001;
-        config.slot3.kF = 0;
+        config.slot0.kP = 0.1;
+        config.slot0.kI = 0;
+        config.slot0.kD = 0.0;
+        config.slot0.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 200;
+        config.motionCruiseVelocity = 1000;
         config.motionAcceleration = 100;
 
         
@@ -38,8 +38,8 @@ void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
 void Cargo::setAngle(double speed, double newAngle) { //Set intake to a specific angle
     double encoderTicks = ((ninetyDegrees - zeroDegrees)/90) * (angle - newAngle);
     double finalEncoderCount = motorSrx->GetSensorPosition() + encoderTicks;
-
-    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, finalEncoderCount);
+    motorSrx->SetInverted(false);
+    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 21000);
 }
 
 
@@ -49,7 +49,7 @@ void Cargo::setIntakeSpeed(double speed) {
 }
 
 void Cargo::zeroEncoder() {
-    motorSrx->ResetEncoder();
+    motorSrx->ZeroEncoder();
     angle = 330;
 }
 

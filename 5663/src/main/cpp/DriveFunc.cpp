@@ -66,8 +66,8 @@ void DriveFunc::update(){
 }
 
 void DriveFunc::zeroEncoder(){
-    TalonL->ResetEncoder();
-    TalonR->ResetEncoder();
+    TalonL->ZeroEncoder();
+    TalonR->ZeroEncoder();
 }
 
 void DriveFunc::left(){
