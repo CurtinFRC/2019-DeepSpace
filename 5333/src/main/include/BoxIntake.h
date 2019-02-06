@@ -1,19 +1,17 @@
 #pragma once
 
-#include <frc/Servo.h>
-
 #include "strategy/Strategy.h"
 #include "devices/DeployableDevice.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
+#include "Gearbox.h"
 
 using BoxIntakeState = curtinfrc::devices::DeployableDeviceState;
 
 struct BoxIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  frc::Servo &servo;
-  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+  curtinfrc::Gearbox &motors;
 
-  BoxIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn) {};
+  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), motors(motorsIn) {};
 };
 
 class BoxIntake : public curtinfrc::devices::DeployableDevice {
@@ -23,6 +21,9 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice {
  protected:
   virtual void IntakingPeriodic() override;  // Intake a box
   virtual void OuttakingPeriodic() override; // Eject a box
+  virtual void DeployingPeriodic() override;
+  virtual void StowingPeriodic() override;
+  virtual void StowedPeriodic() override;
 
  private:
   BoxIntakeConfig _config;
