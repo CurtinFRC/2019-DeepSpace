@@ -1,6 +1,7 @@
 apply plugin: 'cpp'
 apply plugin: 'google-test-test-suite'
 apply plugin: 'edu.wpi.first.GradleRIO'
+apply plugin: "org.ysb33r.doxygen"
 
 model {
   components {
@@ -44,4 +45,14 @@ model {
       wpi.deps.vendor.cpp(it)
     }
   }
+}
+
+doxygen {
+  executables {
+      doxygen version : '1.8.13'
+  }
+
+  generate_html true
+  javadoc_autobrief true
+  source project.file('src/main/include')
 }

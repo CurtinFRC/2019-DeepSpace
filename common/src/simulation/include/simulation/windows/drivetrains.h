@@ -2,6 +2,7 @@
 
 #include "Drivetrain.h"
 #include "simulation/components/encodersim.h"
+#include "simulation/components/gyrosim.h"
 #include "simulation/physics_updater.h"
 #include "simulation/ui/window.h"
 
@@ -30,6 +31,7 @@ class drivetrain_window : public ui::window, physics_aware {
   curtinfrc::DrivetrainConfig *            _config;
   std::shared_ptr<components::encoder_sim> _enc_sim_left;
   std::shared_ptr<components::encoder_sim> _enc_sim_right;
+  std::shared_ptr<components::gyro_sim>    _gyro_sim;
 
   double _x = 0, _y = 0, _heading = 0;
   double _linear_vel = 0;

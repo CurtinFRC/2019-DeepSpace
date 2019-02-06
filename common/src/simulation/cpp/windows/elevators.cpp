@@ -14,18 +14,27 @@ void elevator_window::init() {
 
 elevator_window::elevator_window(ElevatorConfig *config) : ui::window("Elevator", 200, 600), _config(config), physics_aware() {
   _enc_sim = components::create_encoder(config->spool.encoder);
+
+  register_button(resetPos);
+
+  resetPos.set_can_activate(false);
+  resetPos.on_click([&](bool, ui::button&) {
+    _position = 0;
+    if (_enc_sim != nullptr)
+      _enc_sim->set_counts(0);
+  });
 }
 
 double elevator_window::get_motor_val() {
   return _config->spool.transmission->Get();
 }
 
-void elevator_window::add_encoder_position(double pos) {
+void elevator_window::set_abs_encoder_pos(double pos) {
   double C = 2 * 3.14159265 * _config->spoolRadius;
   double rots = pos / C;
   auto encoder = _config->spool.encoder;
   if (encoder != nullptr)
-    _enc_sim->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+    _enc_sim->set_counts(static_cast<int>(rots * encoder->GetEncoderTicksPerRotation()));
 }
 
 void elevator_window::update_physics(double time_delta) {
@@ -49,7 +58,7 @@ void elevator_window::update_physics(double time_delta) {
     _velocity = 0;
 
   _position += _velocity * time_delta;
-  add_encoder_position(_velocity * time_delta);
+  set_abs_encoder_pos(_position);
 
   _limit_bottom = _position < 0.01;
   _limit_top = _position > _config->height - 0.01;

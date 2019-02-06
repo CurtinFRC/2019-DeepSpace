@@ -15,7 +15,7 @@ class elevator_window : public ui::window, physics_aware {
 
   double get_motor_val();
   // Add to current encoder position, pos in metres
-  void add_encoder_position(double pos);
+  void set_abs_encoder_pos(double pos);
 
   void update_physics(double dt) override;
   void render(cv::Mat &img) override;
@@ -23,6 +23,8 @@ class elevator_window : public ui::window, physics_aware {
  private:
   curtinfrc::ElevatorConfig *_config;
   std::shared_ptr<components::encoder_sim> _enc_sim;
+
+  ui::button resetPos{ui::box{ 0, 0, 0.25, 0.05 }, "Reset", ui::colour{1, 0.75, 0.75}, ui::colour{1, 0.5, 0.5}};
 
   double _position = 0;
   double _velocity = 0;

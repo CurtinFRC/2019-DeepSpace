@@ -1,53 +1,59 @@
 #include "Elevator.h"
 
+#include <iostream>
+
 // public
 
-void curtinfrc::Elevator::SetManual(double setpoint) {
+void curtinfrc::Elevator::SetManual(double power) {
   SetState(kManual);
-  _setpoint = setpoint;
+  _controller.SetSetpoint(power);
 }
 
 void curtinfrc::Elevator::SetSetpoint(double setpoint) {
   SetState(kMoving);
-  _setpoint = setpoint;
+  _controller.SetSetpoint(setpoint);
 }
 
-void curtinfrc::Elevator::SetZeroing() {
+void curtinfrc::Elevator::SetZeroing() { // Reset encoder to zero
   SetState(kZeroing);
-  _setpoint = 0;
+  _controller.SetSetpoint(0);
 }
 
 void curtinfrc::Elevator::SetHold() {
-  SetState(kManual);
-  _setpoint = 0;
+  SetState(kStationary);
+  _controller.SetSetpoint(GetHeight());
 }
 
 
 double curtinfrc::Elevator::GetSetpoint() {
-  return _setpoint;
+  return _controller.GetSetpoint();
+}
+
+double curtinfrc::Elevator::GetHeight() {
+  double radius = _config.spoolRadius;
+  double rotations = _config.spool.encoder->GetEncoderRotations();
+  double height = 6.283 * radius * rotations;
+  return height;
 }
 
 curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
   return _config;
 }
 
-
 // virtual
 
-void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) { // Good enough default
+void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) {
   double power = 0;
-
+  
   switch (state) {
    case kManual:
-    power = GetSetpoint();
+    power = _controller.GetSetpoint();
     break;
 
    case kMoving:
-    power = 0; // Motion profiling/PID stuff
-    break;
-
+    if (fabs(_controller.GetSetpoint() - GetHeight()) < 0.1) SetHold(); // Good enough EPS for now
    case kStationary:
-    power = 0; // PID to hold position
+    power = _controller.Calculate(GetHeight(), dt);
     break;
 
    case kZeroing:
@@ -55,14 +61,14 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
     
     if (_config.limitSensorBottom != nullptr) {
       if (_config.limitSensorBottom->Get()) {
-        SetState(kStationary);
-        GetConfig().spool.encoder->ResetEncoder();
+        SetHold();
+        GetConfig().spool.encoder->ZeroEncoder();
       }
-    }
-
+    } else power = -0.25;
     break;
   }
 
+  // Limiters
   if (_config.limitSensorTop != nullptr)
     if (power > 0)
       if (_config.limitSensorTop->Get())

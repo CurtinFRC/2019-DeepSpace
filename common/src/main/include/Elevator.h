@@ -1,8 +1,9 @@
 #pragma once
 
-#include "StateDevice.h"
+#include "devices/StateDevice.h"
 #include "Gearbox.h"
 #include "sensors/BinarySensor.h"
+#include "control/PIDController.h"
 
 #include "Usage.h"
 
@@ -30,26 +31,28 @@ namespace curtinfrc {
   };
 
   enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
-  class Elevator : public StateDevice<ElevatorState> {
+  class Elevator : public devices::StateDevice<ElevatorState> {
    public:
-    Elevator(ElevatorConfig config) : _config(config) {};
+    Elevator(ElevatorConfig config, control::PIDGains gain) : _config(config), _gain(gain), _controller(gain) {};
 
-    void SetManual(double setpoint);
+    void SetManual(double power);
     void SetSetpoint(double setpoint);
     void SetZeroing();
     void SetHold();
 
-    double GetSetpoint();
+    double GetSetpoint(); // Do we need that?
+    double GetHeight();
 
     ElevatorConfig &GetConfig();
     
    protected:
-    virtual void OnStateChange(ElevatorState newState, ElevatorState oldState) override {};
     virtual void OnStatePeriodic(ElevatorState state, double dt) override;
 
    private:
     ElevatorConfig _config;
-    double _setpoint;
+
+    control::PIDGains _gain;
+    control::PIDController _controller;
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };

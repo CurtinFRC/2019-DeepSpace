@@ -1,4 +1,6 @@
 #include "Display.h"
+#include "Process.h"
+#include "Capture.h"
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
@@ -22,46 +24,32 @@ void Display::Init() {
   _videoMode = _capture.GetVideoMode();
 
   // Set up output
-  cs::CvSource _output = frc::CameraServer::GetInstance()->PutVideo("USB Camera", _videoMode.width, _videoMode.height);
+  _outputCam0 = frc::CameraServer::GetInstance()->PutVideo("USB CameraTape", _videoMode.width, _videoMode.height);
+  _outputCam1 = frc::CameraServer::GetInstance()->PutVideo("USB CameraGamePeice", _videoMode.width, _videoMode.height);
 }
 
+
 void Display::Periodic() {
-  //Capture &capture = _process.GetCapture();
-  _process.CopyProcessed(_imgProcessed);
-  // _process.CopyImgOriginal(_imgOriginal);
+  _process.CopyProcessedTrack(_imgProcessedTrack);
+  _process.CopyProcessedTrack(_imgProcessedTrackHatch);
+  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+    if (_process.GetValidThresh() && _process.GetValidTrack()) {
+      #ifdef __DESKTOP__
+      if (_imgProcessedTrack.rows > 0) {
+        imshow(_process.GetProcessType(), _imgProcessedTrack);
+      }
+      cv::waitKey(1000 / 30);
+    
+      #else
+      _outputCam0.PutFrame(_imgProcessedTrack);
+      _outputCam1.PutFrame(_imgProcessedTrackHatch);
+      #endif
+    }
+  }
 
-  // _process.CopyImgBallThresh(_imgBallThresh);
-  // _process.CopyImgBallTrack(_imgBallTrack);
-
-  // _process.CopyImgHatchThresh(_imgHatchThresh);
-  // _process.CopyImgHatchTrack(_imgHatchTrack);
-  if (_capture.IsValidFrame()) {
-#ifdef __DESKTOP__
-    //imshow("OutputOrigin", _imgOriginal);
-
-    if (_process.GetValid())
-      imshow(_process.GetProcessType(), _imgProcessed);
-
-    // imshow("OutputBallThresh", _imgBallThresh);
-    // imshow("OutputBallTrack", _imgBallTrack);
-    // cv::waitKey(500 / 30);
-    // imshow("OutputHatchThresh", _imgHatchThresh);
-    // imshow("OutputHatchTrack", _imgHatchTrack);
-    cv::waitKey(500 / 30);
-#else
-    // Grab a frame. If it's not an error (!= 0), convert it to grayscale and send it to the dashboard.
-    _output.PutFrame(_imgOriginal);
-    //_output.PutFrame(_imgBallThresh);
-    //_output.PutFrame(_imgBallTrack);
-
-    //_output.PutFrame(_imgHatchThresh);
-    //_output.PutFrame(_imgHatchTrack);
-#endif
-		std::cout << "Origin Image Processed" << std::endl;
-    // other output if needed
-  } else {
+  else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }
-  std::this_thread::sleep_for(std::chrono::duration<double>(1.0 / 90));
+  std::this_thread::sleep_for(std::chrono::duration<double>(5.0 / 90));
 }
 
