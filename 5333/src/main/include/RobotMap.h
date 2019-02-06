@@ -10,6 +10,8 @@
 #include "sensors/Encoder.h"
 #include "sensors/NavX.h"
 
+#include "control/PIDController.h"
+
 #include "Drivetrain.h"
 #include "HarvesterIntake.h"
 
@@ -44,7 +46,9 @@ struct RobotMap {
   struct Elevator {
     frc::Spark liftMotors{5};
     curtinfrc::sensors::DigitalEncoder liftEncoder{0, 1, 1024};
-    curtinfrc::Gearbox elevatorGearbox{&liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4};
+    curtinfrc::Gearbox elevatorGearbox{ &liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
+
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
   };
 
   Elevator lift;

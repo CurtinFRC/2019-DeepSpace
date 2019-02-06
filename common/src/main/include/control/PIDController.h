@@ -15,10 +15,10 @@ namespace control {
     // Needed since we need to reinit NT Bound Doubles with new address
     PIDGains(const PIDGains &other) : PIDGains(other._name, other._kP, other._kI, other._kD, other._kF) {}
 
-    double kP() const;
-    double kI() const;
-    double kD() const;
-    double kF() const;
+    double GetkP() const;
+    double GetkI() const;
+    double GetkD() const;
+    double GetkF() const;
 
    private:
     std::shared_ptr<nt::NetworkTable> _table;
@@ -33,13 +33,20 @@ namespace control {
     PIDController(PIDGains gains, double setpoint = 0);
     void SetSetpoint(double setpoint);
     double GetSetpoint();
+
     double Calculate(double processVariable, double dt);
+
+   protected:
+    void Reset();
+
    private:
     PIDGains _gains;
+
+    double _setpoint;
+
     double _derivative;
     double _integral;
     double _lastError;
-    double _setpoint;
   };
 
 }  // namespace control
