@@ -14,7 +14,7 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 1000;
+        config.motionCruiseVelocity = 200;
         config.motionAcceleration = 100;
 
         
@@ -38,8 +38,8 @@ void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
 void Cargo::setAngle(double speed, double newAngle) { //Set intake to a specific angle
     double encoderTicks = ((ninetyDegrees - zeroDegrees)/90) * (angle - newAngle);
     double finalEncoderCount = motorSrx->GetSensorPosition() + encoderTicks;
-    motorSrx->SetInverted(false);
-    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 21000);
+  
+    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, finalEncoderCount);
 }
 
 
