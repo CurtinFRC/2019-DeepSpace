@@ -40,7 +40,7 @@ class Robot : public frc::TimedRobot {
   frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
 
   curtinfrc::Drivetrain *drivetrain;
-  curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2;
+  curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2, *TalonL;
   curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
   curtinfrc::Gearbox *Left, *Right;
 

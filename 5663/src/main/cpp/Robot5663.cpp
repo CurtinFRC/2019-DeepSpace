@@ -56,12 +56,13 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //Drive Functions
-  if (xbox1->GetAButton()){
-    driveFunct->Forward(10000);
-  }
-  if (xbox1->GetBButton()){
-    driveFunct->TurnNinety();
-  }
+  // if (xbox1->GetAButton()){
+  //   driveFunct->Forward(10000);
+  // }
+  // if (xbox1->GetBButton()){
+  //   driveFunct->TurnNinety();
+  // }
+  // REEEEEEEE
 
   // CO-DRIVER -------------------------------------------------------------------------------------
   //cargo speed

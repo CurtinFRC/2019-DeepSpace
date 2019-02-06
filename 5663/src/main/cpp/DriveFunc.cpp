@@ -46,9 +46,8 @@ void DriveFunc::Forward(double distance){
 
 void DriveFunc::TurnNinety(){
     //if (){
-        // TalonL->SetInverted(true);
-        TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
         TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
+        TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
     //} //else {
     //     TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -10000);
     //     TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
