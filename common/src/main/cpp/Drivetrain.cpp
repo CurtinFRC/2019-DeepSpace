@@ -37,6 +37,7 @@ std::pair<double, double> curtinfrc::DrivetrainFieldOrientedControlStrategy::FOC
   bearing = fmod(bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
 
   _controller.SetSetpoint(bearing);
+  _controller.SetWrap(360.0);
 
   double offset = _controller.Calculate(fmod(_drivetrain.GetConfig().gyro->GetAngle(), 360), dt);
 
