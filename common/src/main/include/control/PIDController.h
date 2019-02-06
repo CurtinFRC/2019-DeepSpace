@@ -30,8 +30,7 @@ namespace control {
 
   class PIDController {
    public:
-    PIDController(PIDGains gains);
-
+    PIDController(PIDGains gains, double setpoint = 0);
     void SetSetpoint(double setpoint);
     double GetSetpoint();
 

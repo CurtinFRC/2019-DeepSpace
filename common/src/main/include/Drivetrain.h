@@ -1,11 +1,15 @@
 #pragma once
 
+#include <utility>
+#include <cmath>
+
 #include <frc/SpeedController.h>
 #include <frc/interfaces/Gyro.h>
 
 #include "Gearbox.h"
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
+#include "control/PIDController.h"
 
 #include "Usage.h"
 #include "CurtinControllers.h"
@@ -56,6 +60,8 @@ namespace curtinfrc {
     void SetInverted(bool inverted = false);
     bool GetInverted() { return _config.reversed; };
 
+    DrivetrainConfig &GetConfig() { return _config; };
+
    protected:
     Gearbox &GetLeft();
     Gearbox &GetRight();
@@ -74,12 +80,31 @@ namespace curtinfrc {
       SetCanBeReused(true);
     };
     
-    void OnUpdate(double dt) override; // Should be defined in a team specific file
+    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file
 
-   private:
+   protected:
     Drivetrain &_drivetrain;
     curtinfrc::Joystick &_joy;
 
-    Toggle invertedToggle;
+    Toggle _invertedToggle;
+  };
+
+  class DrivetrainFieldOrientedControlStrategy : public Strategy {
+   public:
+    DrivetrainFieldOrientedControlStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joy(joy), _controller(gains) {
+      Requires(&drivetrain);
+      SetCanBeInterrupted(true);
+      SetCanBeReused(true);
+    };
+
+    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file (calc with FOCCalc())
+    std::pair<double, double> FOCCalc(double mag, double bearing, double dt, bool hold = false); // bearing in degrees
+
+   protected:
+    Drivetrain &_drivetrain;
+    curtinfrc::Joystick &_joy;
+
+    control::PIDController _controller;
+    Toggle _invertedToggle;
   };
 } // ns curtinfrc
