@@ -22,10 +22,37 @@ void Robot::RobotInit() {
   
   xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
+
+  table = nt::NetworkTableInstance::GetDefault().GetTable("TapeTable");
+  targetAngle = table->GetEntry("Angle");
+  targetDistance = table->GetEntry("Distance");
+  targetOffset = table->GetEntry("Target");
 }
 
-void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousInit() {
+  stage = 0; //0 = searching, 1 = straight at target, 2 = correct angle then charge
+  avgDistance = 0;
+  avgAngle = 0; 
+}
+void Robot::AutonomousPeriodic() {
+  if (targetDistance.GetDouble > 0 && stage == 0) {
+    for (int i = 0; i < 3; i++) {
+      avgDistance += targetDistance.GetDouble;
+      avgAngle += targetAngle.GetDouble;
+    }
+    avgDistance /= 3;
+    avgAngle /= 3;
+    stage = 1;
+  }
+
+  if (stage == 1) {
+    if abs(avgAngle < 20) {
+      //charge straight at the target lol
+    } else {
+      //need to correct boi, set to stage 2
+    }
+  }
+}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
