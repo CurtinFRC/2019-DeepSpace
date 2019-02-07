@@ -19,8 +19,8 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice {
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
  protected:
-  virtual void IntakingPeriodic() override;  // Intake a box
-  virtual void OuttakingPeriodic() override; // Eject a box
+  virtual void IntakingPeriodic() override;  // Intake a cargo
+  virtual void OuttakingPeriodic() override; // Eject a cargo
   virtual void DeployingPeriodic() override;
   virtual void StowingPeriodic() override;
   virtual void StowedPeriodic() override;
@@ -31,7 +31,7 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice {
 
 class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::Joystick &joy, bool startEnabled) : Strategy("Box Manual"),  _boxIntake(boxIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::Joystick &joy) : Strategy("Box Manual"),  _boxIntake(boxIntake), _joy(joy) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -42,6 +42,4 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  private:
   BoxIntake &_boxIntake;
   curtinfrc::Joystick &_joy;
-  curtinfrc::Toggle _enabledToggle;
-  bool _enabled;
 };
