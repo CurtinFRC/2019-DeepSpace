@@ -24,9 +24,10 @@ void Robot::RobotInit() {
 
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
 
-  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, nullptr, 0.71, 0.71, 0.0762, 50 };
+  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, &robotmap.drivetrain.gyro, 0.71, 0.71, 0.0762, 50 };
   drivetrain = new Drivetrain(drivetrainConfig);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
+  stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsFOC);
 
   HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
   harvester = new HarvesterIntake(harvesterConfig);
@@ -34,7 +35,7 @@ void Robot::RobotInit() {
   harvester->StartLoop(50);
 
   ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
-  beElevator = new Lift(elevatorConfig);
+  beElevator = new Lift(elevatorConfig, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
   beElevator->StartLoop(100);
 
@@ -46,6 +47,12 @@ void Robot::RobotInit() {
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
+
+  if (toggleFOC.Update(robotmap.joy.GetRawButton(robotmap.joyMap.activateFOC))) {
+    enableFOC = !enableFOC;
+    if (enableFOC) Schedule(stratFOC);
+    else Schedule(drivetrain->GetDefaultStrategy());
+  }
 
   Update(dt);
 }

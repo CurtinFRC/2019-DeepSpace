@@ -11,6 +11,7 @@
 
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
+#include "Toggle.h"
 
 #include "Lift.h"
 #include "HarvesterIntake.h"
@@ -37,7 +38,13 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
 
   curtinfrc::Drivetrain *drivetrain;
 
+  curtinfrc::Toggle toggleFOC;
+  bool enableFOC = false;
+  std::shared_ptr<curtinfrc::DrivetrainFieldOrientedControlStrategy> stratFOC;
+
+
   HarvesterIntake *harvester;
+
 
   Lift *beElevator;
 };
