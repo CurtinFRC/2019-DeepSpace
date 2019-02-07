@@ -41,7 +41,7 @@ void DriveFunc::Forward(double distance){
     double encoderL = TalonL->GetSensorPosition();
     double encoderR = TalonR->GetSensorPosition();
     TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, encoderL + distance);
-    TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, distance);
+    TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, encoderR + distance);
 }
 
 void DriveFunc::TurnNinety(){
@@ -57,7 +57,7 @@ void DriveFunc::TurnNinety(){
 void DriveFunc::TurnAround(double Angle){
     double AngleA = 1024*Angle;
     TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, AngleA);
-    TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -AngleA);
+    TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, AngleA);
 }
 
 void DriveFunc::update(){

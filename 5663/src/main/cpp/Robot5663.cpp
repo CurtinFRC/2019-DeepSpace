@@ -51,17 +51,17 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   // DRIVER ----------------------------------------------------------------------------------------
  // Tank drive 
-  double left_speed = -xbox1->GetY(hand::kLeftHand);
+  double left_speed = xbox1->GetY(hand::kLeftHand);
   double right_speed = xbox1->GetY(hand::kRightHand);
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //Drive Functions
-  // if (xbox1->GetAButton()){
-  //   driveFunct->Forward(10000);
-  // }
-  // if (xbox1->GetBButton()){
-  //   driveFunct->TurnNinety();
-  // }
+   if (xbox1->GetAButton()){
+     driveFunct->Forward(10000); // input distance in ticks
+  }
+   if (xbox1->GetBButton()){
+     driveFunct->TurnNinety();
+   }
   // REEEEEEEE
 
   // CO-DRIVER -------------------------------------------------------------------------------------
