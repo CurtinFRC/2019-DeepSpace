@@ -3,9 +3,9 @@
 DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID){
     TalonL = new curtinfrc::TalonSrx(LSRXID, 1024);
     TalonL->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
-        config.slot0.kP = 0.25;
-        config.slot0.kI = 0.00;
-        config.slot0.kD = 0.004;
+        config.slot0.kP = 0.4;
+        config.slot0.kI = 0.001;
+        config.slot0.kD = 0.06;
         config.slot0.kF = 0.0;
 
         config.nominalOutputForward = 0;
@@ -17,9 +17,9 @@ DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID)
     });
     TalonR = new curtinfrc::TalonSrx(RSRXID, 1024);
     TalonR->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
-        config.slot0.kP = 0.25;
-        config.slot0.kI = 0.00;
-        config.slot0.kD = 0.004;
+        config.slot0.kP = 0.4;
+        config.slot0.kI = 0.001;
+        config.slot0.kD = 0.06;
         config.slot0.kF = 0.0;
 
         config.nominalOutputForward = 0;
@@ -46,8 +46,8 @@ void DriveFunc::Forward(double distance){
 
 void DriveFunc::TurnNinety(){
     //if (){
-        TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
-        TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
+        TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -911);
+        TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 911);
     //} //else {
     //     TalonL->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -10000);
     //     TalonR->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 10000);
