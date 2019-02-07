@@ -99,7 +99,9 @@
     "xtr1common": "cpp",
     "xtree": "cpp",
     "xutility": "cpp",
-    "future": "cpp"
+    "future": "cpp",
+    "bitset": "cpp",
+    "stack": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "C_Cpp.intelliSenseEngineFallback": "Enabled"
