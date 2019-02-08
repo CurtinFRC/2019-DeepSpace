@@ -13,7 +13,7 @@ struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   frc::Servo &servo;
   int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
 
-  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn) {};
+  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn, int forwardIn, int reverseIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn), forward(forwardIn), reverse(reverseIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
