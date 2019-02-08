@@ -36,7 +36,7 @@ dependencies {
   // we wait for 2019.3.1
   if (wpi.platforms.desktop == 'windowsx86-64') {
     simulation rootProject.files('libs/halsim_ds_socketd.dll')
-  } else if (wpi.platforms.desktop == 'osx86-64') {
+  } else if (wpi.platforms.desktop == 'osxx86-64') {
     simulation rootProject.files('libs/libhalsim_ds_socketd.dylib')
   } else if (wpi.platforms.desktop == 'linuxx86-64') {
     simulation rootProject.files('libs/libhalsim_ds_socketd.so')
