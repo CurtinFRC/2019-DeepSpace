@@ -23,6 +23,7 @@ namespace curtinfrc {
 
     using frc::Joystick::GetPort;
     using frc::Joystick::GetRawButton;
+    using frc::Joystick::GetPOV;
 
     virtual double GetAxis(AxisType axis);
 
