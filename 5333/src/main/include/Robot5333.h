@@ -5,6 +5,7 @@
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
 #include <frc/DoubleSolenoid.h>
+#include <frc/GenericHID.h>
 
 #include <networktables/NetworkTableInstance.h>
 
@@ -13,8 +14,11 @@
 #include "strategy/StrategyController.h"
 #include "Toggle.h"
 
+#include "Drivetrain.h"
 #include "Lift.h"
 #include "HarvesterIntake.h"
+#include "HatchIntake.h"
+#include "BoxIntake.h"
 
 class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
  public:
@@ -41,9 +45,13 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   curtinfrc::Toggle toggleFOC;
   bool enableFOC = false;
   std::shared_ptr<curtinfrc::DrivetrainFieldOrientedControlStrategy> stratFOC;
+  std::shared_ptr<curtinfrc::DrivetrainPOVSnapStrategy> stratPOV;
 
 
-  HarvesterIntake *harvester;
+  HatchIntake *leftHatchIntake, *rightHatchIntake;
+
+
+  BoxIntake *boxIntake;
 
 
   Lift *beElevator;

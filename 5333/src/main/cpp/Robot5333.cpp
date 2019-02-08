@@ -24,31 +24,44 @@ void Robot::RobotInit() {
 
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
 
-  DrivetrainConfig drivetrainConfig{ robotmap.drivetrain.leftGearbox, robotmap.drivetrain.rightGearbox, &robotmap.drivetrain.gyro, 0.71, 0.71, 0.0762, 50 };
-  drivetrain = new Drivetrain(drivetrainConfig);
+  drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
   stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsFOC);
+  stratPOV = std::make_shared<DrivetrainPOVSnapStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsPOV);
 
-  HarvesterIntakeConfig harvesterConfig{ robotmap.harvesterIntake.harvesterGearbox, robotmap.harvesterIntake.harvesterSolenoid };
-  harvester = new HarvesterIntake(harvesterConfig);
-  harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
-  harvester->StartLoop(50);
-
-  ElevatorConfig elevatorConfig{ robotmap.lift.elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
-  beElevator = new Lift(elevatorConfig, robotmap.lift.lower);
+  beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
   beElevator->StartLoop(100);
 
+  // harvester = new HarvesterIntake(harvesterConfig);
+  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
+  // harvester->StartLoop(50);
+
+  leftHatchIntake = new HatchIntake(robotmap.leftHatchIntake.config);
+  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*leftHatchIntake, robotmap.joy, false));
+  leftHatchIntake->StartLoop(50);
+
+  rightHatchIntake = new HatchIntake(robotmap.rightHatchIntake.config);
+  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*rightHatchIntake, robotmap.joy, true));
+  rightHatchIntake->StartLoop(50);
+
+  boxIntake = new BoxIntake(robotmap.boxIntake.config);
+  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joy));
+  boxIntake->StartLoop(50);
+
   Register(drivetrain);
-  Register(harvester);
   Register(beElevator);
+  // Register(harvester);
+  Register(leftHatchIntake);
+  Register(rightHatchIntake);
+  Register(boxIntake);
 }
 
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
 
-  if (toggleFOC.Update(robotmap.joy.GetRawButton(robotmap.joyMap.activateFOC))) {
+  if (toggleFOC.Update(robotmap.joy.GetRawButton(ControlMap::activateFOC))) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else Schedule(drivetrain->GetDefaultStrategy());
