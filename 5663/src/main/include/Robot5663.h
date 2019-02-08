@@ -36,4 +36,5 @@ class Robot : public frc::TimedRobot {
   int snapshots;
   float avgDistance;
   float avgAngle;
+  float avgOffset;
 };

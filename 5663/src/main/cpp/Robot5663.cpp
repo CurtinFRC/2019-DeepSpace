@@ -30,26 +30,43 @@ void Robot::RobotInit() {
 }
 
 void Robot::AutonomousInit() {
-  stage = 0; //0 = searching, 1 = straight at target, 2 = correct angle then charge
+  stage = 0; //0 = searching, 1 = straight at target, 2 = correct angle
   avgDistance = 0;
-  avgAngle = 0; 
+  avgAngle = 0;
+  avgOffset = 0;
 }
 void Robot::AutonomousPeriodic() {
   if (targetDistance.GetDouble > 0 && stage == 0) {
     for (int i = 0; i < 3; i++) {
-      avgDistance += targetDistance.GetDouble;
-      avgAngle += targetAngle.GetDouble;
+      avgDistance += (i + 1) * targetDistance.GetDouble; //getting weighted averages; the later values are likely more accurate
+      avgAngle += (i + 1) * targetAngle.GetDouble; //since the robot has probably stopped moving
+      avgOffset += (i + 1) * targetOffset.GetDouble;
     }
-    avgDistance /= 3;
-    avgAngle /= 3;
+    avgDistance /= 6;
+    avgAngle /= 6;
+    avgOffset /= 6;
     stage = 1;
   }
 
   if (stage == 1) {
-    if abs(avgAngle < 20) {
-      //charge straight at the target lol
+    if (abs(avgAngle < 20)) {
+      //centre target then charge straight at it lol
     } else {
-      //need to correct boi, set to stage 2
+      stage = 2;
+    }
+  }
+
+  if (stage == 2) {
+    if (avgAngle > 0) { //(if robot is positioned to the left of the target)
+      //turn right (90-abs(avgAngle)+avgOffset*(32/640)) (assumes horizontal FOV of 32 degrees)
+      //move forward avgDistance*sin(abs(avgAngle))
+      //turn left 90 degrees
+      stage = 0;
+    } else {
+      //turn left 90-avgOffset*(32/640) (assumes horizontal FOV of 32 degrees)
+      //move forward avgDistance*sin(abs(avgAngle))
+      //turn right 90 degrees
+      stage = 0;
     }
   }
 }
