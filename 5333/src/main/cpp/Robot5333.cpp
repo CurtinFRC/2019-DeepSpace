@@ -68,10 +68,6 @@ void Robot::RobotPeriodic() {
     else Schedule(drivetrain->GetDefaultStrategy());
   }
 
-  if (true) { // fix *
-    if (true) Schedule(stratLiftPreset);
-    else Schedule(beElevator->GetDefaultStrategy());
-  }
   // Need to schedule stratLiftPreset and stratPOV *
 
   Update(dt);
