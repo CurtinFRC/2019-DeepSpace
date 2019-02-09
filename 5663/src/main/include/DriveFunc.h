@@ -1,6 +1,6 @@
 #pragma once
 
-#include <frc/SmartDashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include "CurtinCtre.h"
 
 class DriveFunc {

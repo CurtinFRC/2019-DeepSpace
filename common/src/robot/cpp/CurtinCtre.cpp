@@ -27,6 +27,7 @@ int TalonSrx::GetPort() {
 
 void TalonSrx::SetInverted(bool invert) {
   NativeSrx(this)->SetInverted(invert);
+  NativeSrx(this)->SetSensorPhase(invert);
 }
 
 bool TalonSrx::GetInverted() const {
@@ -56,6 +57,10 @@ int TalonSrx::GetSensorPosition() {
 
 int TalonSrx::GetSensorVelocity() {
   return NativeSrx(this)->GetSelectedSensorVelocity();
+}
+
+void TalonSrx::ZeroEncoder() {
+  NativeSrx(this)->SetSelectedSensorPosition(0);
 }
 
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {

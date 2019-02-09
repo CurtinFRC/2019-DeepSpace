@@ -1,4 +1,5 @@
 #include "DriveFunc.h"
+//#include "NavX.h"
 
 DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID){
     TalonL = new curtinfrc::TalonSrx(LSRXID, 1024);

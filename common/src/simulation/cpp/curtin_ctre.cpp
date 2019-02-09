@@ -67,6 +67,10 @@ int TalonSrx::GetSensorVelocity() {
   return _talons[_port].sensor_vel;
 }
 
+void TalonSrx::ZeroEncoder() {
+  Encoder::ZeroEncoder();
+}
+
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {
   _talons[_port].config = config;
 }

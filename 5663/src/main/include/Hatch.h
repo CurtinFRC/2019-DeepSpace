@@ -3,7 +3,7 @@
 #include "CurtinCtre.h"
 #include <frc/DoubleSolenoid.h>
 #include <cmath>
-#include <frc/SmartDashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include "actuators/BinaryServo.h"
 
@@ -23,7 +23,7 @@ class Hatch {
         curtinfrc::TalonSrx *Flooper;
         frc::DoubleSolenoid *ejection, *alignment;
         curtinfrc::actuators::BinaryServo *lock;
-
+        bool targetpos;
         double angle = 0;
 
         double F = 1, P = 1, I = 0, D = 0.1;

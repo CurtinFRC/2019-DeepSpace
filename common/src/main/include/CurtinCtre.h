@@ -99,6 +99,8 @@ namespace curtinfrc {
      */
     int GetSensorVelocity();
 
+    void ZeroEncoder() override;
+
     int GetEncoderTicks() override;
 
     /**

@@ -8,7 +8,11 @@ using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
 void Robot::RobotInit() {
-  
+  //climber
+  ClimbLeft = new Spark(0);
+  ClimbRight = new Spark(1);
+  BIGBOYS = new DoubleSolenoid(4, 5);
+
   //Mechanisms
   cargo = new Cargo(6,7,8);
   hatch = new Hatch(1,0,1,2,3,0);
@@ -51,18 +55,23 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   // DRIVER ----------------------------------------------------------------------------------------
  // Tank drive 
-  double left_speed = xbox1->GetY(hand::kLeftHand);
+  double left_speed = -xbox1->GetY(hand::kLeftHand);
   double right_speed = xbox1->GetY(hand::kRightHand);
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //Drive Functions
-   if (xbox1->GetAButton()){
+  if (xbox1->GetAButton()){
      driveFunct->Forward(10000); // input distance in ticks
   }
-   if (xbox1->GetBButton()){
+  if (xbox1->GetBButton()){
      driveFunct->TurnNinety();
    }
-  // REEEEEEEE
+  // Climb
+  if (xbox1->GetBumper(hand::kRightHand)){
+    BIGBOYS->Set(frc::DoubleSolenoid::kForward);
+    ClimbLeft->Set(xbox1->GetY(hand::kLeftHand));
+    ClimbRight->Set(xbox1->GetY(hand::kRightHand));
+  }
 
   // CO-DRIVER -------------------------------------------------------------------------------------
   //cargo speed
@@ -103,9 +112,9 @@ void Robot::TeleopPeriodic() {
   if (lockToggle.Update(xbox2->GetAButton())) lockState = !lockState;
 
   //Hatch Ejection
-  hatch->ejectHatch(xbox1->GetBumper(hand::kLeftHand));
+  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
   hatch->lockHatch(lockState);
-  hatch->alignmentPiston(xbox1->GetBumper(hand::kRightHand));
+  hatch->alignmentPiston(xbox2->GetBumper(hand::kRightHand));
 
   hatch->update();
   cargo->update();

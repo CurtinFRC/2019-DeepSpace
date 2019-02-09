@@ -11,6 +11,7 @@
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
 #include "Gearbox.h"
+#include "Spark.h"
 
 #include "Cargo.h"
 #include "Hatch.h"
@@ -37,11 +38,12 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController *xbox1, *xbox2;
 
-  frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3;
+  frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3, *BIGBOYS;
 
   curtinfrc::Drivetrain *drivetrain;
   curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2, *TalonL;
   curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
+  frc::Spark *ClimbLeft, *ClimbRight;
   curtinfrc::Gearbox *Left, *Right;
 
   frc::Compressor *compressor;

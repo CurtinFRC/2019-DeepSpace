@@ -11,7 +11,7 @@ namespace sensors {
 
     double GetEncoderRotations();
     int    GetEncoderTicksPerRotation();
-    void   ZeroEncoder();
+    virtual void   ZeroEncoder();
 
    private:
     int _encoderTicksPerRotation;

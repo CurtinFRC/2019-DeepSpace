@@ -18,7 +18,7 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
     alignment = new frc::DoubleSolenoid(9,align, faceplant);
-
+    Flooper->SetInverted(true);
     curtinfrc::actuators::BinaryServoConfig lockConfig{ servoID, 180, 180 - 30 };
     lock = new curtinfrc::actuators::BinaryServo(lockConfig);
 }
@@ -36,16 +36,14 @@ void Hatch::setAngle(double newAngle) {
 }
 
 void Hatch::downPosition() {
-    lock->SetTarget(curtinfrc::actuators::kForward);
-    if (lock->IsDone()) {
-        lock->Stop();
-        Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 31000);
-    } else Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -30000);
+        Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 30000);
+        targetpos = false;
 }
 
 
 void Hatch::upPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -30000);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -10000);
+    targetpos = true;
 }
 
 void Hatch::ejectHatch(bool eject) {
@@ -72,6 +70,7 @@ void Hatch::update() {
     frc::SmartDashboard::PutNumber("Hatch encoder", Flooper->GetSensorPosition());
     frc::SmartDashboard::PutBoolean("Ejector?", ejection->Get());
     frc::SmartDashboard::PutBoolean("Aligner?", alignment->Get());
+    frc::SmartDashboard::PutBoolean("target pos", targetpos);
 
     lock->Update(0); // NOTE NEEDS TO BE CHANGED IF PID IS USED
 }
