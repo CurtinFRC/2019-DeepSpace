@@ -38,7 +38,7 @@ namespace control {
     void SetIZone(double threshold);
     void SetWrap(double range);
 
-    double Calculate(double processVariable, double dt, double feedForward = 0.0);
+    double Calculate(double processVariable, double dt, double feedforward = 0.0);
 
    protected:
     void Reset();

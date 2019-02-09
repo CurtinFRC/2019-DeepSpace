@@ -58,7 +58,7 @@ void PIDController::SetWrap(double range) {
   _wrapRange = range;
 }
 
-double PIDController::Calculate(double processVariable, double dt, double feedforward = 0.0) {
+double PIDController::Calculate(double processVariable, double dt, double feedforward) {
   double error = Wrap(_setpoint - processVariable);
   if (std::abs(error) > _threshold) _integral = 0; // I zone
   else _integral += error * dt; // Calc I
