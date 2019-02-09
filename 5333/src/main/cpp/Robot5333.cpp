@@ -1,5 +1,5 @@
 #include "Robot5333.h"
-#include "RobotMap.h"
+#include "ControlMap.h"
 
 #include <math.h>
 #include <iostream>
@@ -68,6 +68,26 @@ void Robot::RobotPeriodic() {
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
+  
+  if (robotmap.joy.GetRawButton(ControlMap::goalGround)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0)); // Constants are here for now, due to undefined symbols issue in ControlMap *
+
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.46));
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.68));
+
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.18));
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.39));
+
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.89));
+  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 2.10));
+  }
+  // Need to schedule stratPOV *
 
   Update(dt);
 }
