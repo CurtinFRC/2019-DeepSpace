@@ -9,3 +9,5 @@ void LiftManualStrategy::OnUpdate(double dt) {
 void LiftGotoStrategy::OnStart() {
   _lift.SetSetpoint(_setpoint);
 }
+
+void LiftGotoStrategy::OnUpdate(double dt) {}

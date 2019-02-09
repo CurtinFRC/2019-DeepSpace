@@ -33,7 +33,7 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
   LiftGotoStrategy(Lift &lift, curtinfrc::Joystick &joy, double setpoint) : Strategy("Lift Goto"), _lift(lift), _joy(joy), _setpoint(setpoint) {
     Requires(&lift);
     SetCanBeInterrupted(true);
-    SetCanBeReused(true);
+    SetCanBeReused(false);
   };
 
   void OnStart() override;
