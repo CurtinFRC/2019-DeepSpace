@@ -20,6 +20,10 @@ int TalonSrx::GetEncoderTicks() {
   return GetSensorPosition();
 }
 
+double TalonSrx::GetEncoderTickVelocity() {
+  return (double)GetSensorVelocity() * 10;
+}
+
 void TalonSrx::ModifyConfig(std::function<void(TalonSrx::Configuration &)> func) {
   TalonSrx::Configuration config = SaveConfig();
   func(config);
