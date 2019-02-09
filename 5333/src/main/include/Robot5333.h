@@ -55,6 +55,4 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
 
 
   Lift *beElevator;
-
-  std::shared_ptr<LiftPresetStrategy> stratLiftPreset;
 };
