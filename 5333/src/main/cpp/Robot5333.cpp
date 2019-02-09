@@ -31,6 +31,7 @@ void Robot::RobotInit() {
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
+  stratLiftPreset = std::make_shared<LiftPresetStrategy>(*beElevator, robotmap.joy);
   beElevator->StartLoop(100);
 
   // harvester = new HarvesterIntake(harvesterConfig);
@@ -66,6 +67,8 @@ void Robot::RobotPeriodic() {
     if (enableFOC) Schedule(stratFOC);
     else Schedule(drivetrain->GetDefaultStrategy());
   }
+
+  // Need to schedule stratLiftPreset and stratPOV *
 
   Update(dt);
 }
