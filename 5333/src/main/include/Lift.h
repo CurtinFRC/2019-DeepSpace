@@ -28,17 +28,19 @@ class LiftManualStrategy : public curtinfrc::Strategy {
   curtinfrc::Joystick &_joy;
 };
 
-class LiftPresetStrategy : public curtinfrc::Strategy {
+class LiftGotoStrategy : public curtinfrc::Strategy {
  public: 
-  LiftPresetStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Lift Presets"), _lift(lift), _joy(joy) {
+  LiftGotoStrategy(Lift &lift, curtinfrc::Joystick &joy, double setpoint) : Strategy("Lift Goto"), _lift(lift), _joy(joy), _setpoint(setpoint) {
     Requires(&lift);
     SetCanBeInterrupted(true);
-    SetCanBeReused(true);
+    SetCanBeReused(false);
   };
 
+  void OnStart() override;
   void OnUpdate(double dt) override;
 
  private:
   Lift &_lift;
   curtinfrc::Joystick &_joy;
+  double _setpoint;
 };
