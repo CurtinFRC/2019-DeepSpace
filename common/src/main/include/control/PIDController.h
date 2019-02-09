@@ -30,10 +30,12 @@ namespace control {
 
   class PIDController {
    public:
-    PIDController(PIDGains gains);
+    PIDController(PIDGains gains, double setpoint = 0);
 
     void SetSetpoint(double setpoint);
     double GetSetpoint();
+
+    void SetWrap(double range);
 
     double Calculate(double processVariable, double dt);
 
@@ -43,11 +45,15 @@ namespace control {
    private:
     PIDGains _gains;
 
+    double Wrap(double val);
+
     double _setpoint;
 
     double _derivative;
     double _integral;
     double _lastError;
+
+    double _wrap_range = -1;
   };
 
 }  // namespace control
