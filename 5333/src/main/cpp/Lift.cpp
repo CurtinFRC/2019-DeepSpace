@@ -6,6 +6,6 @@ void LiftManualStrategy::OnUpdate(double dt) {
   _lift.SetManual(speed);
 }
 
-void LiftGotoStrategy::OnUpdate(double dt) {
+void LiftGotoStrategy::OnStart() {
   _lift.SetSetpoint(_setpoint);
 }

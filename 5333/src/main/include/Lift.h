@@ -36,6 +36,7 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
     SetCanBeReused(true);
   };
 
+  void OnStart() override;
   void OnUpdate(double dt) override;
 
  private:
