@@ -35,9 +35,10 @@ namespace control {
     void SetSetpoint(double setpoint);
     double GetSetpoint();
 
+    void SetIZone(double threshold);
     void SetWrap(double range);
 
-    double Calculate(double processVariable, double dt);
+    double Calculate(double processVariable, double dt, double feedForward = 0.0);
 
    protected:
     void Reset();
@@ -49,11 +50,12 @@ namespace control {
 
     double _setpoint;
 
-    double _derivative;
     double _integral;
+    double _derivative;
     double _lastError;
+    double _threshold;
 
-    double _wrap_range = -1;
+    double _wrapRange = -1;
   };
 
 }  // namespace control
