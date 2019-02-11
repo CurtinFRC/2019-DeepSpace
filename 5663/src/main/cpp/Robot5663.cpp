@@ -2,12 +2,17 @@
 #include "Drivetrain.h"
 #include <frc/PowerDistributionPanel.h>
 #include <cmath>
+#include "frc/AnalogInput.h"
 
 using namespace curtinfrc;
 using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
+double lastTimestamp;
+
 void Robot::RobotInit() {
+  lastTimestamp = Timer::GetFPGATimestamp();
+  AI = new frc::AnalogInput(3);
   //climber
   ClimbLeft = new Spark(0);
   ClimbRight = new Spark(1);
@@ -41,18 +46,20 @@ void Robot::RobotInit() {
 //  AntiFlooperFlooper->Set(.5);
   //AntiFlooperFlooper->SetAngle(75);
 }
-
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
   hatch->zeroEncoder();
   cargo->zeroEncoder();
-  driveFunct->zeroEncoder();
+  driveFunct->zero();
   
 }
 
 void Robot::TeleopPeriodic() {
+   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
+  lastTimestamp = Timer::GetFPGATimestamp();
+  
   // DRIVER ----------------------------------------------------------------------------------------
  // Tank drive 
   double left_speed = -xbox1->GetY(hand::kLeftHand);
@@ -60,12 +67,12 @@ void Robot::TeleopPeriodic() {
   drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   
   //Drive Functions
-  if (xbox1->GetAButton()){
-     driveFunct->Forward(10000); // input distance in ticks
-  }
-  if (xbox1->GetBButton()){
-     driveFunct->TurnNinety();
-   }
+  // if (xbox1->GetAButton()){
+  //    driveFunct->Forward(10000); // input distance in ticks
+  // }
+  // if (xbox1->GetBButton()){
+  //    driveFunct->TurnNinety();
+  //  }
   // Climb
   if (xbox1->GetBumper(hand::kRightHand)){
     BIGBOYS->Set(frc::DoubleSolenoid::kForward);
@@ -119,6 +126,8 @@ void Robot::TeleopPeriodic() {
   hatch->update();
   cargo->update();
   driveFunct->update();
+  frc::SmartDashboard::PutNumber("pressure", (AI->GetValue()*250/4096-25));
+  //Update(dt);
 }
 
 void Robot::TestInit() {}

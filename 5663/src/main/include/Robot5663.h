@@ -7,11 +7,13 @@
 #include <frc/Encoder.h>
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Compressor.h>
+#include "frc/AnalogInput.h"
+
 
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
 #include "Gearbox.h"
-#include "Spark.h"
+
 
 #include "Cargo.h"
 #include "Hatch.h"
@@ -47,6 +49,7 @@ class Robot : public frc::TimedRobot {
   curtinfrc::Gearbox *Left, *Right;
 
   frc::Compressor *compressor;
+  frc::AnalogInput *AI;
 
   curtinfrc::Toggle lockToggle{};
   bool lockState = true;

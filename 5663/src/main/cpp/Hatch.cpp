@@ -38,12 +38,14 @@ void Hatch::setAngle(double newAngle) {
 void Hatch::downPosition() {
         Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 30000);
         targetpos = false;
+        Flooper->SetInverted(true);
 }
 
 
 void Hatch::upPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -10000);
+    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -7000);
     targetpos = true;
+    Flooper->SetInverted(false);
 }
 
 void Hatch::ejectHatch(bool eject) {
