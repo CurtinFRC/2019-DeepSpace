@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NTUtil.h"
+#include "Filter.h"
 
 #include <string>
 #include <memory>
@@ -37,6 +38,7 @@ namespace control {
 
     void SetIZone(double threshIZone);
     void SetWrap(double range);
+    bool IsDone();
 
     double Calculate(double processVariable, double dt, double feedforward = 0.0);
 
@@ -45,6 +47,7 @@ namespace control {
 
    private:
     PIDGains _gains;
+    LinearFilter _movingAverage;
 
     double Wrap(double val);
 
@@ -53,8 +56,11 @@ namespace control {
     double _integral;
     double _derivative;
     double _lastError;
-    double _threshIZone = -1;
+    double _avgError;
+    int _iterations = 0;    // Used to check if we have sufficient size in avgError.
 
+    double _threshIZone = -1;
+    double _threshAvg = 10; // Constant for now, might need to pass it in later
     double _wrapRange = -1;
   };
 
