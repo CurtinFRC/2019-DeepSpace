@@ -35,7 +35,7 @@ namespace control {
     void SetSetpoint(double setpoint);
     double GetSetpoint();
 
-    void SetIZone(double threshold);
+    void SetIZone(double threshIZone);
     void SetWrap(double range);
 
     double Calculate(double processVariable, double dt, double feedforward = 0.0);
@@ -53,7 +53,7 @@ namespace control {
     double _integral;
     double _derivative;
     double _lastError;
-    double _threshold;
+    double _threshIZone = -1;
 
     double _wrapRange = -1;
   };

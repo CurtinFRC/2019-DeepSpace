@@ -46,8 +46,8 @@ void PIDController::SetSetpoint(double setpoint) {
   _setpoint = setpoint;
 }
 
-void PIDController::SetIZone(double threshold) {
-  _threshold = threshold;
+void PIDController::SetIZone(double threshIZone) {
+  _threshIZone = threshIZone;
 }
 
 double PIDController::GetSetpoint() {
@@ -60,7 +60,7 @@ void PIDController::SetWrap(double range) {
 
 double PIDController::Calculate(double processVariable, double dt, double feedforward) {
   double error = Wrap(_setpoint - processVariable);
-  if (std::abs(error) > _threshold) _integral = 0; // I zone
+  if (_threshIZone > 0 && std::abs(error) > _threshIZone) _integral = 0; // I zone
   else _integral += error * dt; // Calc I
   _derivative = dt > 0 ? (error - _lastError) / dt : 0; // Calc D
 
