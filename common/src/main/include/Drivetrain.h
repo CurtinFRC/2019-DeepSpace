@@ -74,7 +74,7 @@ namespace curtinfrc {
 
   class DrivetrainManualStrategy : public Strategy {
    public:
-    DrivetrainManualStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy) : Strategy("Drivetrain Manual"), _drivetrain(drivetrain), _joy(joy) {
+    DrivetrainManualStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup) : Strategy("Drivetrain Manual"), _drivetrain(drivetrain), _joyGroup(joyGroup) {
       Requires(&drivetrain);
       SetCanBeInterrupted(true);
       SetCanBeReused(true);
@@ -84,14 +84,14 @@ namespace curtinfrc {
 
    protected:
     Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
+    curtinfrc::JoystickGroup &_joyGroup;
 
     Toggle _invertedToggle;
   };
 
   class DrivetrainFieldOrientedControlStrategy : public Strategy {
    public:
-    DrivetrainFieldOrientedControlStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joy(joy), _controller(gains) {
+    DrivetrainFieldOrientedControlStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joyGroup(joyGroup), _controller(gains) {
       Requires(&drivetrain);
       SetCanBeInterrupted(true);
       SetCanBeReused(true);
@@ -102,7 +102,7 @@ namespace curtinfrc {
 
    protected:
     Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
+    curtinfrc::JoystickGroup &_joyGroup;
 
     control::PIDController _controller;
     Toggle _invertedToggle;

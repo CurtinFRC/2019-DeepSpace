@@ -17,7 +17,7 @@ class Lift : public curtinfrc::Elevator {
 
 class LiftManualStrategy : public curtinfrc::Strategy {
  public: 
-  LiftManualStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Harvester Manual"), _lift(lift), _joy(joy) {
+  LiftManualStrategy(Lift &lift, curtinfrc::JoystickGroup &joyGroup) : Strategy("Harvester Manual"), _lift(lift), _joyGroup(joyGroup) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -27,5 +27,5 @@ class LiftManualStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::Joystick &_joy;
+  curtinfrc::JoystickGroup &_joyGroup;
 };

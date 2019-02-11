@@ -25,27 +25,27 @@ void Robot::RobotInit() {
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
-  stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsFOC);
+  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
+  stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsFOC);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
-  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
+  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joyGroup));
   beElevator->StartLoop(100);
 
   // harvester = new HarvesterIntake(harvesterConfig);
-  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
+  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joyGroup));
   // harvester->StartLoop(50);
 
   leftHatchIntake = new HatchIntake(robotmap.leftHatchIntake.config);
-  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*leftHatchIntake, robotmap.joy, false));
+  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*leftHatchIntake, robotmap.joyGroup, false));
   leftHatchIntake->StartLoop(50);
 
   rightHatchIntake = new HatchIntake(robotmap.rightHatchIntake.config);
-  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*rightHatchIntake, robotmap.joy, true));
+  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*rightHatchIntake, robotmap.joyGroup, true));
   rightHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
-  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joy));
+  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joyGroup));
   boxIntake->StartLoop(50);
 
   Register(drivetrain);
@@ -60,7 +60,7 @@ void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
 
-  if (toggleFOC.Update(robotmap.joy.GetRawButton(ControlMap::activateFOC))) {
+  if (toggleFOC.Update(robotmap.joyGroup.GetButton(ControlMap::activateFOC))) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else Schedule(drivetrain->GetDefaultStrategy());

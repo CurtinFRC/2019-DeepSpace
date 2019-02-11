@@ -23,11 +23,11 @@ void BoxIntake::StowedPeriodic() {
 
 
 void BoxIntakeManualStrategy::OnUpdate(double dt) {
-  if (_joy.GetRawButton(ControlMap::boxIn)) {
+  if (_joyGroup.GetButton(ControlMap::boxIn)) {
     _boxIntake.SetIntaking();
-  } else if (_joy.GetRawButton(ControlMap::boxOut)) {
+  } else if (_joyGroup.GetButton(ControlMap::boxOut)) {
     _boxIntake.SetOuttaking();
-  } else if (_joy.GetRawButton(ControlMap::boxStow)) {
+  } else if (_joyGroup.GetButton(ControlMap::boxStow)) {
     _boxIntake.SetStowed();
   }
 }

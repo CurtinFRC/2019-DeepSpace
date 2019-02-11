@@ -101,7 +101,16 @@
     "xutility": "cpp",
     "future": "cpp",
     "bitset": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "hash_map": "cpp",
+    "hash_set": "cpp",
+    "unordered_set": "cpp",
+    "locale": "cpp",
+    "numeric": "cpp",
+    "random": "cpp",
+    "shared_mutex": "cpp",
+    "xlocbuf": "cpp",
+    "xlocmes": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "C_Cpp.intelliSenseEngineFallback": "Enabled"
