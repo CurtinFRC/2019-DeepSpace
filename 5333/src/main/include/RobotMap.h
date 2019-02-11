@@ -41,6 +41,7 @@ struct RobotMap {
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
     curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
+    curtinfrc::control::PIDGains gainsPOV{ "POV", 0.032 }; // temp value
 
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };

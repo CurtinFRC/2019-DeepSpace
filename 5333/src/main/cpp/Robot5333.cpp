@@ -27,6 +27,7 @@ void Robot::RobotInit() {
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
   stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsFOC);
+  stratPOV = std::make_shared<DrivetrainPOVSnapStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsPOV);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joyGroup));
