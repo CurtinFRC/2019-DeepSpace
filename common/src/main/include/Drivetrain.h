@@ -111,7 +111,7 @@ namespace curtinfrc {
 
   class DrivetrainPOVSnapStrategy : public Strategy {
    public:
-    DrivetrainPOVSnapStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joy(joy), _controller(gains) {
+    DrivetrainPOVSnapStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joyGroup(joyGroup), _controller(gains) {
       Requires(&drivetrain);
       SetCanBeInterrupted(true);
       SetCanBeReused(true);
@@ -122,7 +122,7 @@ namespace curtinfrc {
 
    protected:
     Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
+    curtinfrc::JoystickGroup &_joyGroup;
 
     control::PIDController _controller;
     Toggle _invertedToggle;

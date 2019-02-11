@@ -44,10 +44,10 @@ void curtinfrc::DrivetrainFieldOrientedControlStrategy::OnUpdate(double dt) {
 }
 
 void curtinfrc::DrivetrainPOVSnapStrategy::OnUpdate(double dt) {
-  int joyPOV = -_joy.GetPOV();
+  int joyPOV = -_joyGroup.GetJoystick((JoystickGroup::JoyNum)1).GetPOV();
 
   if(joyPOV != -1) {
-    std::pair<double, double> speed = POVCalc(0.2, joyPOV, dt, _joy.GetRawButton(9));
+    std::pair<double, double> speed = POVCalc(0.2, joyPOV, dt, _joyGroup.GetRawButton((JoystickGroup::JoyNum)1, 9));
     _drivetrain.Set(speed.first, speed.second);
   }
 
