@@ -78,6 +78,8 @@ void Robot::TeleopPeriodic() {
     BIGBOYS->Set(frc::DoubleSolenoid::kForward);
     ClimbLeft->Set(xbox1->GetY(hand::kLeftHand));
     ClimbRight->Set(xbox1->GetY(hand::kRightHand));
+  } else {
+    BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
   }
 
   // CO-DRIVER -------------------------------------------------------------------------------------
