@@ -60,12 +60,8 @@ void Robot::TeleopPeriodic() {
    double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
   
-  // DRIVER ----------------------------------------------------------------------------------------
+ //*-*-*-*-*-{ DRIVER }-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
  // Tank drive 
-  double left_speed = -xbox1->GetY(hand::kLeftHand);
-  double right_speed = xbox1->GetY(hand::kRightHand);
-  drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
-  
   //Drive Functions
   // if (xbox1->GetAButton()){
   //    driveFunct->Forward(10000); // input distance in ticks
@@ -73,6 +69,15 @@ void Robot::TeleopPeriodic() {
   // if (xbox1->GetBButton()){
   //    driveFunct->TurnNinety();
   //  }
+  if (false) {
+    driveFunct->TurnNinety();
+    
+
+  } else {
+    double left_speed = -xbox1->GetY(hand::kLeftHand);
+    double right_speed = xbox1->GetY(hand::kRightHand);
+    drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
+  }
   // Climb
   if (xbox1->GetBumper(hand::kRightHand)){
     BIGBOYS->Set(frc::DoubleSolenoid::kForward);
@@ -82,7 +87,7 @@ void Robot::TeleopPeriodic() {
     BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
   }
 
-  // CO-DRIVER -------------------------------------------------------------------------------------
+  //*-*-*-*-*-{ CO-DRIVER }-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
   //cargo speed
   if (xbox2->GetBButton()){
     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
