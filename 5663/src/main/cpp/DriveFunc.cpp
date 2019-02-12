@@ -20,15 +20,18 @@ void DriveFunc::Forward(double distance){
 }
 
 
-void DriveFunc::TurnAngle(double Angle, double dt){
+void DriveFunc::TurnAngle(double TargetAngle, double dt){
     Nav->Angular(curtinfrc::sensors::AngularAxis::YAW);
-    double YAW = NavG->GetAngle();
+    double CurrentAngle = NavG->GetAngle();
+    double LeftAngle = LeftEn / 2.84;
+    double LeftTarget = TargetAngle + CurrentAngle;
+    double LeftInput = 
 }
 
 void DriveFunc::update(){
     frc::SmartDashboard::PutNumber("Right encoder", TalonR->GetSensorPosition());
     frc::SmartDashboard::PutNumber("Left encoder", TalonL->GetSensorPosition());
-   // frc::SmartDashboard::PutNumber("YAW", Nav->Angular(curtinfrc::sensors::AngularAxis::YAW));
+    frc::SmartDashboard::PutNumber("YAW", NavG->GetAngle();
 }
 
 void DriveFunc::zero(){

@@ -11,7 +11,7 @@ class DriveFunc {
     DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID);
     void Forward(double Distance);
     void TurnNinety();
-    void TurnAngle(double angle, double dt);
+    void TurnAngle(double TargetAngle, double dt);
     void update();
     void zero();
     void left();
