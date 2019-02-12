@@ -35,6 +35,7 @@ void Robot::AutonomousInit() {
   avgAngle = 0;
   avgOffset = 0;
 }
+
 void Robot::AutonomousPeriodic() {
   if (targetDistance.GetDouble > 0 && stage == 0) {
     for (int i = 0; i < 3; i++) {
@@ -49,8 +50,9 @@ void Robot::AutonomousPeriodic() {
   }
 
   if (stage == 1) {
-    if (abs(avgAngle < 20)) {
-      //centre target then charge straight at it lol
+    if (abs(avgAngle < 25)) {
+      //turn right avgOffset*(32/640)
+      //move forward (avgDistance-0.1) metres
     } else {
       stage = 2;
     }
@@ -59,12 +61,12 @@ void Robot::AutonomousPeriodic() {
   if (stage == 2) {
     if (avgAngle > 0) { //(if robot is positioned to the left of the target)
       //turn right (90-abs(avgAngle)+avgOffset*(32/640)) (assumes horizontal FOV of 32 degrees)
-      //move forward avgDistance*sin(abs(avgAngle))
+      //move forward avgDistance*sin(abs(avgAngle)) metres
       //turn left 90 degrees
       stage = 0;
-    } else {
+    } else { //(if robot is positioned to the right of the target)
       //turn left 90-avgOffset*(32/640) (assumes horizontal FOV of 32 degrees)
-      //move forward avgDistance*sin(abs(avgAngle))
+      //move forward avgDistance*sin(abs(avgAngle)) metres
       //turn right 90 degrees
       stage = 0;
     }
