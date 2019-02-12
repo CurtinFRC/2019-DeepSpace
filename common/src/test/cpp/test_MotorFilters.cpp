@@ -31,7 +31,7 @@ TEST(AccelerationFilter, DoesLimit) {
 
   // m = 1, r = 1, therefore torque = acceleration
   // Limits: -1 Nm (@ 3090 RPM), 1.5 Nm (@ 2025 RPM)
-  control::AccelerationFilter filter{-1.0, 1.5, gb, 1, 1};
+  control::AccelerationFFFilter filter{-1.0, 1.5, gb, 1, 1};
 
   double speed_min = -3090 / 60.0 * 2 * 3.1415;
   double speed_max = 2025 / 60.0 * 2 * 3.1415;
