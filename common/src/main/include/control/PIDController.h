@@ -39,6 +39,7 @@ namespace control {
     void SetIZone(double threshIZone);
     void SetWrap(double range);
     bool IsDone();
+    void SetIsDoneThreshold(double threshAvg);
 
     double Calculate(double processVariable, double dt, double feedforward = 0.0);
 
@@ -60,8 +61,9 @@ namespace control {
     int _iterations = 0;    // Used to check if we have sufficient size in avgError.
 
     double _threshIZone = -1;
-    double _threshAvg = 10; // Constant for now, might need to pass it in later
+    double _threshAvg = -1;
     double _wrapRange = -1;
+    bool _threshAvgSet = false; // Used to check if _threshAvg has already been manually set.
   };
 
 }  // namespace control

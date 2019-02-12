@@ -44,6 +44,7 @@ PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _
 void PIDController::SetSetpoint(double setpoint) {
   Reset();
   _setpoint = setpoint;
+  if (_threshAvgSet == false) _threshAvg = setpoint * 0.05;
 }
 
 double PIDController::GetSetpoint() {
@@ -56,6 +57,11 @@ void PIDController::SetIZone(double threshIZone) {
 
 bool PIDController::IsDone() {
   return _iterations > 20 && _avgError < _threshAvg;
+}
+
+void PIDController::SetIsDoneThreshold(double threshAvg) {
+  _threshAvg = threshAvg;
+  _threshAvgSet = true;
 }
 
 void PIDController::SetWrap(double range) {
@@ -83,7 +89,7 @@ void PIDController::Reset() {
   _lastError = 0;
   _iterations = 0;
   _movingAverage.Reset();
-  // Does not reset _threshold, use SetIZone instead
+  // Does not reset _threshAvg, use SetIZone instead
 }
 
 double PIDController::Wrap(double val) {
