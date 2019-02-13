@@ -8,12 +8,11 @@
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Compressor.h>
 #include "frc/AnalogInput.h"
-
+#include "frc/I2C.h"
 
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
 #include "Gearbox.h"
-
 
 #include "Cargo.h"
 #include "Hatch.h"
@@ -37,6 +36,8 @@ class Robot : public frc::TimedRobot {
   Cargo *cargo;
   Hatch *hatch;
   DriveFunc *driveFunct;
+  
+  frc::I2C *arduino;
 
   frc::XboxController *xbox1, *xbox2;
 
@@ -53,4 +54,6 @@ class Robot : public frc::TimedRobot {
 
   curtinfrc::Toggle lockToggle{};
   bool lockState = true;
+
+  uint8_t message = 72;
 };

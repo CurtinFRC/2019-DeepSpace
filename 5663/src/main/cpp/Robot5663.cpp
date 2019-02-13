@@ -4,6 +4,8 @@
 #include <cmath>
 #include "frc/AnalogInput.h"
 
+#include <iostream>
+
 using namespace curtinfrc;
 using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
@@ -13,10 +15,13 @@ double lastTimestamp;
 void Robot::RobotInit() {
   lastTimestamp = Timer::GetFPGATimestamp();
   AI = new frc::AnalogInput(3);
+  arduino = new I2C(frc::I2C::kOnboard, 100);
+  arduino->WriteBulk(&message, 1);
+
   //climber
   ClimbLeft = new Spark(0);
   ClimbRight = new Spark(1);
-  BIGBOYS = new DoubleSolenoid(4, 5);
+  BIGBOYS = new DoubleSolenoid(9, 6, 7);
 
   //Mechanisms
   cargo = new Cargo(6,7,8);
@@ -47,7 +52,9 @@ void Robot::RobotInit() {
   //AntiFlooperFlooper->SetAngle(75);
 }
 void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousPeriodic() {
+  message = 78;
+}
 
 void Robot::TeleopInit() {
   hatch->zeroEncoder();
@@ -69,36 +76,39 @@ void Robot::TeleopPeriodic() {
   // if (xbox1->GetBButton()){
   //    driveFunct->TurnNinety();
   //  }
-  if (false) {
+  if (xbox1->GetBumper(hand::kRightHand)) {
     //driveFunct->TurnNinety();
-    
+    message = 76;
 
   } else {
+    message = 78;
     double left_speed = -xbox1->GetY(hand::kLeftHand);
     double right_speed = xbox1->GetY(hand::kRightHand);
     drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
   }
   // Climb
-  if (xbox1->GetBumper(hand::kRightHand)){
-    BIGBOYS->Set(frc::DoubleSolenoid::kForward);
+  if (xbox1->GetBumper(hand::kLeftHand)){
+    BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
     ClimbLeft->Set(xbox1->GetY(hand::kLeftHand));
     ClimbRight->Set(xbox1->GetY(hand::kRightHand));
   } else {
-    BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
+    BIGBOYS->Set(frc::DoubleSolenoid::kForward);
   }
 
   //cargo movement
   if (xbox2->GetY(hand::kLeftHand)){
     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
-  } else if (xbox2->GetAButton()){
+  } 
+  if (xbox2->GetAButton()){
     cargo->setAngle(0);
-  } else if (xbox2->GetBButton()) {
-    cargo->setAngle(30000);
-  } else if (xbox2->GetYButton()){
-    cargo->setAngle(40000);
-  } else {
-    cargo->setRotationSpeed(0);
-  }
+  } 
+  if (xbox2->GetBButton()) {
+    //cargo->setAngle(175000);
+  }// else if (xbox2->GetYButton()){
+  //   cargo->setAngle(40000);
+  // } else {
+  //   cargo->setRotationSpeed(0);
+  // }
 
   //cargo intake/outtake
   if (xbox2->GetTriggerAxis(hand::kLeftHand)){
@@ -136,3 +146,6 @@ void Robot::TeleopPeriodic() {
   frc::SmartDashboard::PutNumber("PSI", (AI->GetValue()*250/4096-25));
   //Update(dt);
 }
+
+void Robot::TestInit(){}
+void Robot::TestPeriodic(){}

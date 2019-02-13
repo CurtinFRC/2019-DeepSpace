@@ -14,12 +14,13 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 2000;
-        config.motionAcceleration = 500;
+        config.motionCruiseVelocity = 20000;
+        config.motionAcceleration = 5000;
 
         
     });
     motorSpx = new curtinfrc::VictorSpx(SpxID);
+    motorSrx->SetInverted(true);
     intakeSpx = new curtinfrc::VictorSpx(intakeID);
 
     motorSpx->Set(curtinfrc::VictorSpx::ControlMode::Follower, SrxID);
