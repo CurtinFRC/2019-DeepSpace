@@ -44,3 +44,20 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
   curtinfrc::Joystick &_joy;
   double _setpoint;
 };
+
+class LiftZeroStrategy : public curtinfrc::Strategy {
+ public: 
+  LiftZeroStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Lift Zero"), _lift(lift), _joy(joy) {
+    Requires(&lift);
+    SetCanBeInterrupted(true);
+    SetCanBeReused(false);
+  };
+
+  void OnStart() override;
+  void OnUpdate(double dt) override;
+
+ private:
+  Lift &_lift;
+  curtinfrc::Joystick &_joy;
+};
+
