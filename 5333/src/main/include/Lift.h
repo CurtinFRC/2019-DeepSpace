@@ -30,7 +30,7 @@ class LiftManualStrategy : public curtinfrc::Strategy {
 
 class LiftGotoStrategy : public curtinfrc::Strategy {
  public: 
-  LiftGotoStrategy(Lift &lift, curtinfrc::Joystick &joy, double setpoint) : Strategy("Lift Goto"), _lift(lift), _joy(joy), _setpoint(setpoint) {
+  LiftGotoStrategy(Lift &lift, double setpoint) : Strategy("Lift Goto"), _lift(lift), _setpoint(setpoint) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(false);
@@ -41,6 +41,5 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::Joystick &_joy;
   double _setpoint;
 };
