@@ -10,4 +10,10 @@ void LiftGotoStrategy::OnStart() {
   _lift.SetSetpoint(_setpoint);
 }
 
+void LiftZeroStrategy::OnStart() {
+  _lift.SetZeroing();
+}
+
 void LiftGotoStrategy::OnUpdate(double dt) {}
+void LiftZeroStrategy::OnUpdate(double dt) {}
+
