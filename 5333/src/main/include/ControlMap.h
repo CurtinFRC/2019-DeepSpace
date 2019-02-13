@@ -24,21 +24,21 @@ class ControlMap {
   static const curtinfrc::tJoymap raiseLift;
   static const curtinfrc::tJoymap lowerLift;
 
-  static const int goalGround = 1; // Gonna have conflicting buttons for now, but oh well *
-  static const int goalLower1 = 7;
-  static const int goalLower2 = 8;
-  static const int goalMiddle1 = 9;
-  static const int goalMiddle2 = 10;
-  static const int goalUpper1 = 11;
-  static const int goalUpper2 = 12;
+  static const curtinfrc::tJoymap liftGoalGround;
+  static const curtinfrc::tJoymap liftGoalLower1;
+  static const curtinfrc::tJoymap liftGoalLower2;
+  static const curtinfrc::tJoymap liftGoalMiddle1;
+  static const curtinfrc::tJoymap liftGoalMiddle2;
+  static const curtinfrc::tJoymap liftGoalUpper1;
+  static const curtinfrc::tJoymap liftGoalUpper2;
 
-  static constexpr double setpointGround = 0; // Exact values need to be tested *
-  static constexpr double setpointLower1 = 0.46;
-  static constexpr double setpointLower2 = 0.68;
-  static constexpr double setpointMiddle1 = 1.18;
-  static constexpr double setpointMiddle2 = 1.39;
-  static constexpr double setpointUpper1 = 1.89;
-  static constexpr double setpointUpper2 = 2.10;
+  static const double liftSetpointGround; // Exact values need to be tested *
+  static const double liftSetpointLower1;
+  static const double liftSetpointLower2;
+  static const double liftSetpointMiddle1;
+  static const double liftSetpointMiddle2;
+  static const double liftSetpointUpper1;
+  static const double liftSetpointUpper2;
 
 
   // HARVESTER JOYMAP
