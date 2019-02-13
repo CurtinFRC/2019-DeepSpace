@@ -51,7 +51,7 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
     break;
 
    case kMoving:
-    if (fabs(_controller.GetSetpoint() - GetHeight()) < 0.1) SetHold(); // Good enough EPS for now
+    if (_controller.IsDone()) SetHold(); // Good enough EPS for now
    case kStationary:
     power = _controller.Calculate(GetHeight(), dt);
     break;
