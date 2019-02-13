@@ -39,28 +39,46 @@ double PIDGains::GetkF() const {
 
 // PIDController
 
-PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0) {}
+PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0), _movingAverage(LinearFilter::MovingAverage(20)) {}
 
 void PIDController::SetSetpoint(double setpoint) {
   Reset();
   _setpoint = setpoint;
+  if (_threshAvgSet == false) _threshAvg = setpoint * 0.05;
 }
 
 double PIDController::GetSetpoint() {
   return _setpoint;
 }
 
-void PIDController::SetWrap(double range) {
-  _wrap_range = range;
+void PIDController::SetIZone(double threshIZone) {
+  _threshIZone = threshIZone;
 }
 
-double PIDController::Calculate(double processVariable, double dt) {
-  double error = Wrap(_setpoint - processVariable);
-  _integral += error * dt;
-  _derivative = dt > 0 ? (error - _lastError) / dt : 0;
+bool PIDController::IsDone() {
+  return _iterations > 20 && _avgError < _threshAvg;
+}
 
-  double output = _gains.GetkP() * error + _gains.GetkI() * _integral + _gains.GetkD() * _derivative;
+void PIDController::SetIsDoneThreshold(double threshAvg) {
+  _threshAvg = threshAvg;
+  _threshAvgSet = true;
+}
+
+void PIDController::SetWrap(double range) {
+  _wrapRange = range;
+}
+
+double PIDController::Calculate(double processVariable, double dt, double feedforward) {
+  double error = Wrap(_setpoint - processVariable);
+  _avgError = _movingAverage.Get(error);
+
+  if (_threshIZone > 0 && std::abs(error) > _threshIZone) _integral = 0; // I zone
+  else _integral += error * dt; // Calc I
+  _derivative = dt > 0 ? (error - _lastError) / dt : 0; // Calc D
+
+  double output = _gains.GetkP() * error + _gains.GetkI() * _integral + _gains.GetkD() * _derivative + _gains.GetkF() * feedforward;
   _lastError = error;
+  _iterations++;
 
   return output;
 }
@@ -69,13 +87,16 @@ void PIDController::Reset() {
   _integral = 0;
   _derivative = 0;
   _lastError = 0;
+  _iterations = 0;
+  _movingAverage.Reset();
+  // Does not reset _threshAvg, use SetIZone instead
 }
 
 double PIDController::Wrap(double val) {
-  if (_wrap_range > 0) {
-    val = std::fmod(val, _wrap_range);
-    if (std::abs(val) > (_wrap_range / 2.0)) {
-      return (val > 0) ? val - _wrap_range : val + _wrap_range;
+  if (_wrapRange > 0) {
+    val = std::fmod(val, _wrapRange);
+    if (std::abs(val) > (_wrapRange / 2.0)) {
+      return (val > 0) ? val - _wrapRange : val + _wrapRange;
     }
   }
 

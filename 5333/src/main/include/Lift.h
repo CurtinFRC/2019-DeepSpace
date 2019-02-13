@@ -9,15 +9,13 @@ class Lift : public curtinfrc::Elevator {
  public:
   Lift(curtinfrc::ElevatorConfig elevatorConfig, curtinfrc::control::PIDGains gain) : curtinfrc::Elevator(elevatorConfig, gain) {};
 
-  void Set(double power);
-
  private:
   // Collision stuffs?
 };
 
 class LiftManualStrategy : public curtinfrc::Strategy {
  public: 
-  LiftManualStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Harvester Manual"), _lift(lift), _joy(joy) {
+  LiftManualStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Lift Manual"), _lift(lift), _joy(joy) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -28,4 +26,21 @@ class LiftManualStrategy : public curtinfrc::Strategy {
  private:
   Lift &_lift;
   curtinfrc::Joystick &_joy;
+};
+
+class LiftGotoStrategy : public curtinfrc::Strategy {
+ public: 
+  LiftGotoStrategy(Lift &lift, curtinfrc::Joystick &joy, double setpoint) : Strategy("Lift Goto"), _lift(lift), _joy(joy), _setpoint(setpoint) {
+    Requires(&lift);
+    SetCanBeInterrupted(true);
+    SetCanBeReused(false);
+  };
+
+  void OnStart() override;
+  void OnUpdate(double dt) override;
+
+ private:
+  Lift &_lift;
+  curtinfrc::Joystick &_joy;
+  double _setpoint;
 };

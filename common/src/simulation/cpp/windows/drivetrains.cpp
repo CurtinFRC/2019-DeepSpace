@@ -42,15 +42,18 @@ double drivetrain_window::get_motor_val(bool left) {
   return trans->Get() * (trans->GetInverted() ? -1 : 1);
 }
 
-void drivetrain_window::add_encoder_position(bool left, double pos) {
-  double C = 2 * 3.14159265 * _config->wheelRadius;
-  double rots = pos / C;
+void drivetrain_window::update_encoder(bool left, double pos, double vel) {
+  // double C = 2 * 3.14159265 * _config->wheelRadius;
+  double twopi = 2 * 3.14159265;
+  double rots = pos / twopi;
+  double rotspersec = vel / twopi;
   
   auto sim_encoder = left ? _enc_sim_left : _enc_sim_right;
   auto encoder = left ? _config->leftDrive.encoder : _config->rightDrive.encoder;
 
   if (encoder != nullptr) {
     sim_encoder->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+    sim_encoder->set_counts_per_sec(static_cast<int>(rotspersec * encoder->GetEncoderTicksPerRotation()));
   }
 }
 
@@ -70,7 +73,7 @@ void drivetrain_window::update_physics(double time_delta) {
     state.angular_vel += (accel * time_delta) / _config->wheelRadius;
     state.angular_position += state.angular_vel * time_delta;
 
-    add_encoder_position(left, state.angular_vel * time_delta);
+    update_encoder(left, state.angular_vel * time_delta, state.angular_vel);
   }
 
   double robot_angular_vel = (_wheel_right.angular_vel - _wheel_left.angular_vel) * _config->wheelRadius / _config->trackwidth;
