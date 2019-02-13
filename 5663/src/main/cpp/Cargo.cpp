@@ -37,6 +37,7 @@ void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
 
 void Cargo::setAngle(double newAngle) { //Set intake to a specific angle
     motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
+    double sped = motorSrx->GetSensorVelocity();
 }
 
 
@@ -51,4 +52,5 @@ void Cargo::zeroEncoder() {
 
 void Cargo::update() {
     frc::SmartDashboard::PutNumber("Cargo encoder", motorSrx->GetEncoderTicks());
+    frc::SmartDashboard::PutNumber("Cargo spedr", (motorSrx->GetSensorVelocity() / 1024));
 }

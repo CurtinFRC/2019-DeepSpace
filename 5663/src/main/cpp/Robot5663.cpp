@@ -96,19 +96,17 @@ void Robot::TeleopPeriodic() {
   }
 
   //cargo movement
-  if (xbox2->GetY(hand::kLeftHand)){
+  if (xbox2->GetXButton()){
     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
-  } 
-  if (xbox2->GetAButton()){
-    cargo->setAngle(0);
-  } 
-  if (xbox2->GetBButton()) {
-    //cargo->setAngle(175000);
-  }// else if (xbox2->GetYButton()){
-  //   cargo->setAngle(40000);
-  // } else {
-  //   cargo->setRotationSpeed(0);
-  // }
+  } else if (xbox2->GetAButton()){
+     cargo->setAngle(0);
+  } else if (xbox2->GetBButton()) {
+    cargo->setAngle(175000);
+  } else if (xbox2->GetYButton()){
+     cargo->setAngle(40000);
+  } else {
+     cargo->setRotationSpeed(0);
+   }
 
   //cargo intake/outtake
   if (xbox2->GetTriggerAxis(hand::kLeftHand)){
