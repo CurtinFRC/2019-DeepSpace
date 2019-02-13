@@ -15,6 +15,7 @@ namespace components {
   class encoder_sim {
    public:
     virtual void set_counts(int count) = 0;
+    virtual void set_counts_per_sec(int cps) = 0;
   };
 
   class talonsrx_encoder : public encoder_sim {
@@ -26,6 +27,10 @@ namespace components {
     void set_counts(int count) override {
       ctre::all_talons()[talon->GetPort()].sensor_pos = count;
     }
+
+    void set_counts_per_sec(int cps) override {
+      ctre::all_talons()[talon->GetPort()].sensor_vel = cps / 10;
+    }
   };
 
   class digital_encoder : public encoder_sim {
@@ -36,6 +41,10 @@ namespace components {
 
     void set_counts(int count) override {
       HALSIM_SetEncoderCount(digital->GetChannelA(), count);
+    }
+
+    void set_counts_per_sec(int cps) override {
+      HALSIM_SetEncoderPeriod(digital->GetChannelA(), 1.0 / (double)cps);
     }
   };
 

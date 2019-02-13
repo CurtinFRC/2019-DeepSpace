@@ -20,7 +20,7 @@ class drivetrain_window : public ui::window, physics_aware {
   drivetrain_window(curtinfrc::DrivetrainConfig *config);
 
   double get_motor_val(bool left);
-  void   add_encoder_position(bool left, double pos);
+  void   update_encoder(bool left, double pos, double vel);
 
   void update_physics(double dt) override;
   void render(cv::Mat &img) override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NTUtil.h"
+#include "Filter.h"
 
 #include <string>
 #include <memory>
@@ -35,25 +36,34 @@ namespace control {
     void SetSetpoint(double setpoint);
     double GetSetpoint();
 
+    void SetIZone(double threshIZone);
     void SetWrap(double range);
+    bool IsDone();
+    void SetIsDoneThreshold(double threshAvg);
 
-    double Calculate(double processVariable, double dt);
+    double Calculate(double processVariable, double dt, double feedforward = 0.0);
 
    protected:
     void Reset();
 
    private:
     PIDGains _gains;
+    LinearFilter _movingAverage;
 
     double Wrap(double val);
 
     double _setpoint;
 
-    double _derivative;
     double _integral;
+    double _derivative;
     double _lastError;
+    double _avgError;
+    int _iterations = 0;    // Used to check if we have sufficient size in avgError.
 
-    double _wrap_range = -1;
+    double _threshIZone = -1;
+    double _threshAvg = -1;
+    double _wrapRange = -1;
+    bool _threshAvgSet = false; // Used to check if _threshAvg has already been manually set.
   };
 
 }  // namespace control
