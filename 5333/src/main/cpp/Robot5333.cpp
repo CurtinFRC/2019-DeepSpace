@@ -67,23 +67,23 @@ void Robot::RobotPeriodic() {
     else Schedule(drivetrain->GetDefaultStrategy());
   }
   
-  if (robotmap.joy.GetRawButton(ControlMap::goalGround)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0)); // Constants are here for now, due to undefined symbols issue in ControlMap *
+  if (robotmap.joyGroup.GetButton(ControlMap::liftGoalGround)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointGround));
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.46));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.68));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointLower1));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointLower2));
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.18));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.39));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointMiddle1));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointMiddle2));
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.89));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 2.10));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper1)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointUpper1));
+  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper2)) {
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
 
