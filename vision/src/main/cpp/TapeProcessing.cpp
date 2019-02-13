@@ -153,11 +153,15 @@ void TapeProcessing::Periodic() {
         cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), green, 2); //draw small rectangle on target locations
         TapeDistanceEntry.SetDouble(distances[i]);
         TapeAngleEntry.SetDouble(angles[i]);
-        TapeTargetEntry.SetDouble(targets[i].x);
+        TapeTargetEntry.SetDouble(targets[i].x - 320);
       } else {
         cv::rectangle(_imgProcessedTrack, targets[i] + cv::Point2f(-6,-6), targets[i] + cv::Point2f(6,6), blue, 2); //draw small rectangle on target locations
       }
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
+    }
+
+    if (targets.size() == 0) {
+      TapeDistanceEntry.SetDouble(-1.0); //Identify if no targets found by outputting nonsensical distance
     }
   }
 }
