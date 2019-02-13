@@ -68,7 +68,7 @@ void Robot::RobotPeriodic() {
   }
   
   if (robotmap.joyGroup.GetButton(ControlMap::liftGoalGround)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joyGroup, ControlMap::liftSetpointGround));
+    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
   } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
