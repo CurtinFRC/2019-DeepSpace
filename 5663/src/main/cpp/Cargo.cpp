@@ -14,32 +14,28 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 200;
-        config.motionAcceleration = 100;
+        config.motionCruiseVelocity = 2000;
+        config.motionAcceleration = 500;
 
         
     });
     motorSpx = new curtinfrc::VictorSpx(SpxID);
     intakeSpx = new curtinfrc::VictorSpx(intakeID);
 
-    //motorSpx->Set(curtinfrc::VictorSpx::ControlMode::Follower, SrxID);
+    motorSpx->Set(curtinfrc::VictorSpx::ControlMode::Follower, SrxID);
 }
 
 void Cargo::setRotationSpeed(double speed) { //Percent speed
     if(std::abs(speed) < deadzone) speed = 0;
     motorSrx->Set(speed);
-    motorSpx->Set(speed);
     }
 
 void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
     
 }
 
-void Cargo::setAngle(double speed, double newAngle) { //Set intake to a specific angle
-    double encoderTicks = ((ninetyDegrees - zeroDegrees)/90) * (angle - newAngle);
-    double finalEncoderCount = motorSrx->GetSensorPosition() + encoderTicks;
-  
-    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, finalEncoderCount);
+void Cargo::setAngle(double newAngle) { //Set intake to a specific angle
+    motorSrx->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
 }
 
 
@@ -50,7 +46,6 @@ void Cargo::setIntakeSpeed(double speed) {
 
 void Cargo::zeroEncoder() {
     motorSrx->ZeroEncoder();
-    angle = 330;
 }
 
 void Cargo::update() {

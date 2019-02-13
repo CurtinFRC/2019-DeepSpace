@@ -8,7 +8,7 @@ class Cargo{
         Cargo(int SrxID, int SpxID, int intakeID);
         void setRotationSpeed(double speed);
         void setAngularSpeed(double speed);
-        void setAngle(double speed, double newAngle);
+        void setAngle(double newAngle);
         void setIntakeSpeed(double speed);
 
         void zeroEncoder();
