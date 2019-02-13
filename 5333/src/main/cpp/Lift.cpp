@@ -10,7 +10,10 @@ void LiftGotoStrategy::OnStart() {
   _lift.SetSetpoint(_setpoint);
 }
 
-void LiftGotoStrategy::OnUpdate(double dt) {}
+void LiftGotoStrategy::OnUpdate(double dt) {
+  if (_lift.GetState() != curtinfrc::ElevatorState::kMoving) 
+    SetDone();
+}
 
 void LiftZeroStrategy::OnStart() {
   _lift.SetZeroing();
