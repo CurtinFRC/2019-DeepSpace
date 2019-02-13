@@ -16,6 +16,7 @@ DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID)
 }
 
 void DriveFunc::Forward(double distance){
+    encoderTicks = distance * 22165; //tune this number, but it should be close
     
 }
 
@@ -23,15 +24,14 @@ void DriveFunc::Forward(double distance){
 void DriveFunc::TurnAngle(double TargetAngle, double dt){
     Nav->Angular(curtinfrc::sensors::AngularAxis::YAW);
     double CurrentAngle = NavG->GetAngle();
-    double LeftAngle = LeftEn / 2.84;
+    double LeftAngle =2.84;
     double LeftTarget = TargetAngle + CurrentAngle;
-    double LeftInput = 
 }
 
 void DriveFunc::update(){
     frc::SmartDashboard::PutNumber("Right encoder", TalonR->GetSensorPosition());
     frc::SmartDashboard::PutNumber("Left encoder", TalonL->GetSensorPosition());
-    frc::SmartDashboard::PutNumber("YAW", NavG->GetAngle();
+    frc::SmartDashboard::PutNumber("YAW", NavG->GetAngle());
 }
 
 void DriveFunc::zero(){

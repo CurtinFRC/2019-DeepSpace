@@ -12,8 +12,8 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity =100000;
-        config.motionAcceleration = 7500;
+        config.motionCruiseVelocity =10000;
+        config.motionAcceleration = 5000;
     });
 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
@@ -38,14 +38,14 @@ void Hatch::setAngle(double newAngle) {
 void Hatch::downPosition() {
         Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 30000);
         targetpos = false;
-        Flooper->SetInverted(true);
+        Flooper->SetInverted(false);
 }
 
 
 void Hatch::upPosition() {
     Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -7000);
     targetpos = true;
-    Flooper->SetInverted(false);
+    Flooper->SetInverted(true);
 }
 
 void Hatch::ejectHatch(bool eject) {

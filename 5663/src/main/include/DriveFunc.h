@@ -24,4 +24,5 @@ class DriveFunc {
     curtinfrc::sensors::NavX *Nav;
     curtinfrc::sensors::NavXGyro *NavG;
     const int kToleranceDegrees = 3;
+    int encoderTicks;
 };
