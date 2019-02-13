@@ -22,56 +22,10 @@ void Robot::RobotInit() {
   
   xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
-
-  table = nt::NetworkTableInstance::GetDefault().GetTable("TapeTable");
-  targetAngle = table->GetEntry("Angle");
-  targetDistance = table->GetEntry("Distance");
-  targetOffset = table->GetEntry("Target");
 }
 
-void Robot::AutonomousInit() {
-  stage = 0; //0 = searching, 1 = straight at target, 2 = correct angle
-  avgDistance = 0;
-  avgAngle = 0;
-  avgOffset = 0;
-}
-
-void Robot::AutonomousPeriodic() {
-  if (targetDistance.GetDouble > 0 && stage == 0) {
-    for (int i = 0; i < 3; i++) {
-      avgDistance += (i + 1) * targetDistance.GetDouble; //getting weighted averages; the later values are likely more accurate
-      avgAngle += (i + 1) * targetAngle.GetDouble; //since the robot has probably stopped moving
-      avgOffset += (i + 1) * targetOffset.GetDouble;
-    }
-    avgDistance /= 6;
-    avgAngle /= 6;
-    avgOffset /= 6;
-    stage = 1;
-  }
-
-  if (stage == 1) {
-    if (abs(avgAngle < 25)) {
-      //turn right avgOffset*(32/640)
-      //move forward (avgDistance-0.1) metres
-    } else {
-      stage = 2;
-    }
-  }
-
-  if (stage == 2) {
-    if (avgAngle > 0) { //(if robot is positioned to the left of the target)
-      //turn right (90-abs(avgAngle)+avgOffset*(32/640)) (assumes horizontal FOV of 32 degrees)
-      //move forward avgDistance*sin(abs(avgAngle)) metres
-      //turn left 90 degrees
-      stage = 0;
-    } else { //(if robot is positioned to the right of the target)
-      //turn left 90-avgOffset*(32/640) (assumes horizontal FOV of 32 degrees)
-      //move forward avgDistance*sin(abs(avgAngle)) metres
-      //turn right 90 degrees
-      stage = 0;
-    }
-  }
-}
+void Robot::AutonomousInit() {}
+void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
