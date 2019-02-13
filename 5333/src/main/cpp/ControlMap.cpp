@@ -18,6 +18,22 @@ const tJoymap ControlMap::activateFOC{ { 1, 10 }, nopair };        // Toggles th
 const tJoymap ControlMap::raiseLift{ { 1, 8 }, nopair };
 const tJoymap ControlMap::lowerLift{ { 1, 7 }, nopair };
 
+const tJoymap ControlMap::liftGoalGround{ nopair, { 2, 1 } };
+const tJoymap ControlMap::liftGoalLower1{ nopair, { 2, 7 } };
+const tJoymap ControlMap::liftGoalLower2{ nopair, { 2, 8 } };
+const tJoymap ControlMap::liftGoalMiddle1{ nopair, { 2, 9 } };
+const tJoymap ControlMap::liftGoalMiddle2{ nopair, { 2, 10 } };
+const tJoymap ControlMap::liftGoalUpper1{ nopair, { 2, 11 } };
+const tJoymap ControlMap::liftGoalUpper2{ nopair, { 2, 12 } };
+
+const double ControlMap::liftSetpointGround = 0;                                     // Exact values need to be tested
+const double ControlMap::liftSetpointLower1 = 0.46;
+const double ControlMap::liftSetpointLower2 = 0.68;
+const double ControlMap::liftSetpointMiddle1 = 1.18;
+const double ControlMap::liftSetpointMiddle2 = 1.39;
+const double ControlMap::liftSetpointUpper1 = 1.89;
+const double ControlMap::liftSetpointUpper2 = 2.10;
+
 
 // HARVESTER JOYMAP
 const tJoymap ControlMap::harveserIn{ { 1, 3 }, nopair };
