@@ -87,18 +87,18 @@ void Robot::TeleopPeriodic() {
     BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
   }
 
-  //*-*-*-*-*-{ CO-DRIVER }-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-  //cargo speed
-  if (xbox2->GetBButton()){
+  //cargo movement
+  if (xbox2->GetY(hand::kLeftHand)){
     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
-  }else{
+  } else if (xbox2->GetAButton()){
+    cargo->setAngle(0);
+  } else if (xbox2->GetBButton()) {
+    cargo->setAngle(30000);
+  } else if (xbox2->GetYButton()){
+    cargo->setAngle(40000);
+  } else {
     cargo->setRotationSpeed(0);
   }
-  
-  //cargo positioning
-   if (xbox2->GetYButton()){
-     cargo->setAngle(0.3, 90);
-   } 
 
   //cargo intake/outtake
   if (xbox2->GetTriggerAxis(hand::kLeftHand)){
@@ -133,9 +133,6 @@ void Robot::TeleopPeriodic() {
   hatch->update();
   cargo->update();
   driveFunct->update();
-  frc::SmartDashboard::PutNumber("pressure", (AI->GetValue()*250/4096-25));
+  frc::SmartDashboard::PutNumber("PSI", (AI->GetValue()*250/4096-25));
   //Update(dt);
 }
-
-void Robot::TestInit() {}
-void Robot::TestPeriodic() {}
