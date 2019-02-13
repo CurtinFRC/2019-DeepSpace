@@ -1,19 +1,17 @@
 #pragma once
 
-#include <frc/Servo.h>
-
 #include "strategy/Strategy.h"
 #include "devices/DeployableDevice.h"
+#include "actuators/BinaryActuator.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
 
 using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
 struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  frc::Servo &servo;
-  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+  curtinfrc::BinaryActuator &manipulator;
 
-  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn, int forwardIn, int reverseIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn), forward(forwardIn), reverse(reverseIn) {};
+  HatchIntakeConfig(curtinfrc::BinaryAcuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
