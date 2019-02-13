@@ -17,7 +17,8 @@
 #include "Drivetrain.h"
 #include "Lift.h"
 #include "HarvesterIntake.h"
-#include "HatchIntake.h"
+#include "FrontHatchIntake.h"
+#include "SideHatchIntake.h"
 #include "BoxIntake.h"
 
 class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
@@ -48,7 +49,8 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   std::shared_ptr<curtinfrc::DrivetrainPOVSnapStrategy> stratPOV;
 
 
-  HatchIntake *leftHatchIntake, *rightHatchIntake;
+  FrontHatchIntake *frontHatchIntake;
+  SideHatchIntake *sideHatchIntake;
 
 
   BoxIntake *boxIntake;

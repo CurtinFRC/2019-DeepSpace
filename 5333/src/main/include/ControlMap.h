@@ -50,10 +50,14 @@ class ControlMap {
 
 
   // HATCH JOYMAP
-  static const int hatchGrab = 4;
-  static const int hatchRelease = 6;
-  static const int hatchStow = 12;
-  static const int hatchToggleEnabled = 13; // Changes the currently enabled hatch intake
+  static const int frontHatchGrab = 4;
+  static const int frontHatchRelease = 6;
+  static const int frontHatchStow = 12;
+  static const int frontHatchToggleEnabled = 13; // Changes the currently enabled hatch intake
+  static const int sideHatchGrab = 4; // need to fix these conflicts *
+  static const int sideHatchRelease = 6;
+  static const int sideHatchStow = 12;
+  static const int sideHatchToggleEnabled = 13;
 
 
   // BOX INTAKE JOYMAP

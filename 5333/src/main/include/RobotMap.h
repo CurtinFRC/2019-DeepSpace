@@ -17,7 +17,8 @@
 #include "Drivetrain.h"
 #include "Elevator.h"
 #include "HarvesterIntake.h"
-#include "HatchIntake.h"
+#include "FrontHatchIntake.h"
+#include "SideHatchIntake.h"
 #include "BoxIntake.h"
 
 struct RobotMap {
@@ -74,19 +75,29 @@ struct RobotMap {
   HarvesterIntake harvesterIntake;
 
 
-  struct HatchIntake {
+  struct FrontHatchIntake {
+    curtinfrc::actuators::DoubleSolenoid ejector;
+    curtinfrc::actuators::DoubleSolenoid solenoid;
+    bool ejectState = 0; // Extended = 1
+
+
+    FrontHatchIntakeConfig config;
+    FrontHatchIntake(int ejectorPortA, int ejectorPortB, int solenoidPortA, int solenoidPortB) : ejector(ejectorPortA, ejectorPortB), solenoid(solenoidPortA, solenoidPortB), config(ejector, solenoid, ejectState) {};
+  };
+
+  struct SideHatchIntake {
     frc::Servo servo;
     curtinfrc::actuators::DoubleSolenoid solenoid;
     int forward = 60;
     int reverse = 0;
 
 
-    HatchIntakeConfig config;
-    HatchIntake(int servoPort, int solenoidPortA, int solenoidPortB) : servo(servoPort), solenoid(solenoidPortA, solenoidPortB), config(servo, solenoid, forward, reverse) {};
+    SideHatchIntakeConfig config;
+    SideHatchIntake(int servoPort, int solenoidPortA, int solenoidPortB) : servo(servoPort), solenoid(solenoidPortA, solenoidPortB), config(servo, solenoid, forward, reverse) {};
   };
 
-  HatchIntake leftHatchIntake{ 7, 2, 3 };
-  HatchIntake rightHatchIntake{ 8, 4, 5 };
+  FrontHatchIntake frontHatchIntake{ 1, 7, 2, 3 };
+  SideHatchIntake sideHatchIntake{ 8, 4, 5 };
 
 
   struct BoxIntake {
