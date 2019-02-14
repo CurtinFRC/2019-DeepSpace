@@ -9,6 +9,7 @@
 #include <frc/Compressor.h>
 #include "frc/AnalogInput.h"
 #include "frc/I2C.h"
+#include <frc/Timer.h>
 
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
@@ -36,7 +37,7 @@ class Robot : public frc::TimedRobot {
   Cargo *cargo;
   Hatch *hatch;
   DriveFunc *driveFunct;
-  
+  frc::Timer *timer;
   frc::I2C *arduino;
 
   frc::XboxController *xbox1, *xbox2;
@@ -56,4 +57,8 @@ class Robot : public frc::TimedRobot {
   bool lockState = true;
 
   uint8_t message = 72;
+ private:
+  double lastTimer;
+  double power;
+  bool pressRBumper;
 };

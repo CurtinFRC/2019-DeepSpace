@@ -13,6 +13,7 @@ using hand = frc::XboxController::JoystickHand; // Type alias for hand
 double lastTimestamp;
 
 void Robot::RobotInit() {
+  timer = new frc::Timer();
   lastTimestamp = Timer::GetFPGATimestamp();
   AI = new frc::AnalogInput(3);
   arduino = new I2C(frc::I2C::kOnboard, 100);
@@ -46,6 +47,7 @@ void Robot::RobotInit() {
  // new PowerDistributionPanel(0);
   compressor = new Compressor(9);           //initiate compressor with PCM can ID
   compressor->SetClosedLoopControl(true);   //enable compressor
+  timer->Start();
   //Servo *AntiFlooperFlooper = new Servo(1);
 
 //  AntiFlooperFlooper->Set(.5);
@@ -64,8 +66,8 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
-  lastTimestamp = Timer::GetFPGATimestamp();
+  double dt = timer->Get() - lastTimer;
+  lastTimer = timer->Get();
   
  //*-*-*-*-*-{ DRIVER }-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
  // Tank drive 
@@ -76,10 +78,14 @@ void Robot::TeleopPeriodic() {
   // if (xbox1->GetBButton()){
   //    driveFunct->TurnNinety();
   //  }
-  if (xbox1->GetBumper(hand::kRightHand)) {
-    //driveFunct->TurnNinety();
-    message = 76;
+  frc::SmartDashboard::PutNumber("timer", timer->Get());
 
+
+  if (xbox1->GetBumper(hand::kRightHand)) {
+    pressRBumper = xbox1->GetBumperPressed(hand::kRightHand);
+    power = driveFunct->TurnAngle(180, dt, pressRBumper);
+    drivetrain->Set(power, power);
+    message = 76;
   } else {
     message = 78;
     double left_speed = -xbox1->GetY(hand::kLeftHand);
@@ -90,10 +96,13 @@ void Robot::TeleopPeriodic() {
   if (xbox1->GetBumper(hand::kLeftHand)){
     BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
     ClimbLeft->Set(xbox1->GetY(hand::kLeftHand));
-    ClimbRight->Set(xbox1->GetY(hand::kRightHand));
+    ClimbRight->Set(- xbox1->GetY(hand::kRightHand));
   } else {
     BIGBOYS->Set(frc::DoubleSolenoid::kForward);
+     ClimbLeft->Set(0);
+    ClimbRight->Set(0);
   }
+  //CoDriver-------------------------------------------------------------------------------
 
   //cargo movement
   if (xbox2->GetXButton()){
@@ -103,7 +112,7 @@ void Robot::TeleopPeriodic() {
   } else if (xbox2->GetBButton()) {
     cargo->setAngle(175000);
   } else if (xbox2->GetYButton()){
-     cargo->setAngle(40000);
+    // cargo->setAngle(40000);
   } else {
      cargo->setRotationSpeed(0);
    }

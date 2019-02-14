@@ -29,6 +29,7 @@ Cargo::Cargo(int SrxID, int SpxID, int intakeID) {
 void Cargo::setRotationSpeed(double speed) { //Percent speed
     if(std::abs(speed) < deadzone) speed = 0;
     motorSrx->Set(speed);
+    motorSpx->Set(speed);
     }
 
 void Cargo::setAngularSpeed(double speed) { //Speed in degrees per second
