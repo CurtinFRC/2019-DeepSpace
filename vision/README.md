@@ -13,7 +13,7 @@ Imaging a new Vision Coprocessor
   - On Mac/Linux, use `ssh username@hostname`
   - On Windows, download [puTTY](https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.70-installer.msi) and use that.
   - Tinkerboard:
-    - Hostname: `linaro-alip`, Username: `linaro`, Password: `linaro`
+    - Hostname: `tinkerboard`, Username: `linaro`, Password: `linaro`
   - Raspberry Pi:
     - Hostname: `raspberrypi`, Username: `pi`, Password: `raspberry`
 ### 4. Run the following command:
