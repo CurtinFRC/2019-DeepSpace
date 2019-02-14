@@ -8,21 +8,18 @@
 
 class Display : public Runnable {
  public:
-  Display(Process &process);
+  Display(std::string name, Process &process);
 
   void Init() override;
   void Periodic() override;
 
  private:
   Process &_process;
-  cs::CvSource _outputCam0;
-  cs::CvSource _outputCam1;
+  std::string _name;
+  cs::CvSource _output;
   cs::VideoMode _videoMode;
   
-  cv::Mat _imgOriginal;
-  cv::Mat _imgProcessedTrack;
-  cv::Mat _imgProcessedTrackHatch;
-  cv::Mat _imgProcessedThresh;
+  cv::Mat _displayMat;
 
   Capture &_capture;
 };
