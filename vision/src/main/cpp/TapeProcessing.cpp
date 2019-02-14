@@ -36,7 +36,7 @@ void TapeProcessing::Init() {
 
 void TapeProcessing::Periodic() {
   Process::Periodic();
-	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+	if (_capture.IsValidFrame()) {
 
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);

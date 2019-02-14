@@ -17,36 +17,25 @@
 
 #include "devices/kinect.h"
 
-Display::Display(std::string name, Process &process) : _name(name), _process(process), _capture(process.GetCapture()) {}
+Display::Display(std::string name, Displayable &target) : _name(name), _target(target) {}
 
 void Display::Init() {
-  
-  _videoMode = _capture.GetVideoMode();
+  cv::Size size = _target.GetDisplaySize();
+  _output = frc::CameraServer::GetInstance()->PutVideo(_name, size.width, size.height);
 
-  // Set up output
-  _output = frc::CameraServer::GetInstance()->PutVideo(_name, _videoMode.width, _videoMode.height);
+#ifdef __DESKTOP__
+  cv::namedWindow(_name);
+  SetUseCVWait(true);
+#endif
 }
 
-
 void Display::Periodic() {
-  _process.CopyProcessedTrack(_displayMat);
-  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
-    if (_process.GetValidThresh() && _process.GetValidTrack()) {
-      #ifdef __DESKTOP__
-      if (_displayMat.rows > 0) {
-        imshow(_process.GetProcessType(), _displayMat);
-      }
-      cv::waitKey(1000 / 30);
-    
-      #else
-      _output.PutFrame(_displayMat);
-      #endif
-    }
+  _target.GetDisplayMat(_displayMat);
+  if (_displayMat.rows > 0 && _displayMat.cols > 0) {
+#ifdef __DESKTOP__
+    cv::imshow(_name, _displayMat);
+#endif
+    _output.PutFrame(_displayMat);
   }
-
-  else {
-    std::cout << "Origin Image is Not Available" << std::endl;
-  }
-  std::this_thread::sleep_for(std::chrono::duration<double>(1.0 / 30));
 }
 
