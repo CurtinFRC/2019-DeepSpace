@@ -17,32 +17,29 @@
 
 #include "devices/kinect.h"
 
-Display::Display(Process &process) : _process(process), _capture(process.GetCapture()) {}
+Display::Display(std::string name, Process &process) : _name(name), _process(process), _capture(process.GetCapture()) {}
 
 void Display::Init() {
   
   _videoMode = _capture.GetVideoMode();
 
   // Set up output
-  _outputCam0 = frc::CameraServer::GetInstance()->PutVideo("USB CameraTape", _videoMode.width, _videoMode.height);
-  _outputCam1 = frc::CameraServer::GetInstance()->PutVideo("USB CameraGamePeice", _videoMode.width, _videoMode.height);
+  _output = frc::CameraServer::GetInstance()->PutVideo(_name, _videoMode.width, _videoMode.height);
 }
 
 
 void Display::Periodic() {
-  _process.CopyProcessedTrack(_imgProcessedTrack);
-  _process.CopyProcessedTrack(_imgProcessedTrackHatch);
+  _process.CopyProcessedTrack(_displayMat);
   if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
     if (_process.GetValidThresh() && _process.GetValidTrack()) {
       #ifdef __DESKTOP__
-      if (_imgProcessedTrack.rows > 0) {
-        imshow(_process.GetProcessType(), _imgProcessedTrack);
+      if (_displayMat.rows > 0) {
+        imshow(_process.GetProcessType(), _displayMat);
       }
       cv::waitKey(1000 / 30);
     
       #else
-      _outputCam0.PutFrame(_imgProcessedTrack);
-      _outputCam1.PutFrame(_imgProcessedTrackHatch);
+      _output.PutFrame(_displayMat);
       #endif
     }
   }
@@ -50,6 +47,6 @@ void Display::Periodic() {
   else {
     std::cout << "Origin Image is Not Available" << std::endl;
   }
-  std::this_thread::sleep_for(std::chrono::duration<double>(5.0 / 90));
+  std::this_thread::sleep_for(std::chrono::duration<double>(1.0 / 30));
 }
 
