@@ -26,7 +26,7 @@ namespace curtinfrc {
      * 
      * @param port The device ID of the Talon SRX on the CAN Bus.
      */
-    TalonSrx(int port, int encoderTicksPerRotation);
+    TalonSrx(int port, int encoderTicksPerRotation = 2048);
     ~TalonSrx();
 
     /**

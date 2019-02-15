@@ -15,8 +15,8 @@ const tJoymap ControlMap::activateFOC{ { 1, 10 }, nopair };        // Toggles th
 
 
 // BEELEVATOR JOYMAP
-const tJoymap ControlMap::raiseLift{ { 1, 8 }, nopair };
-const tJoymap ControlMap::lowerLift{ { 1, 7 }, nopair };
+const tJoymap ControlMap::raiseLift{ nopair, { 2, 5 } };
+const tJoymap ControlMap::lowerLift{ nopair, { 2, 3 } };
 
 const tJoymap ControlMap::liftGoalGround{ nopair, { 2, 1 } };
 const tJoymap ControlMap::liftGoalLower1{ nopair, { 2, 7 } };
@@ -47,7 +47,7 @@ const double ControlMap::harvesterThrottle = 1;
 const tJoymap ControlMap::hatchGrab{ { 1, 4 }, nopair };
 const tJoymap ControlMap::hatchRelease{ { 1, 6 }, nopair };
 const tJoymap ControlMap::hatchStow{ { 1, 12 }, nopair };
-const tJoymap ControlMap::hatchToggleEnabled{ { 1, 13 }, nopair }; // Changes the currently enabled hatch intake
+const tJoymap ControlMap::hatchToggleEnabled{ { 1, 8 }, nopair }; // Changes the currently enabled hatch intake
 
 
 // BOX INTAKE JOYMAP

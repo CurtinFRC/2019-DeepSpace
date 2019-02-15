@@ -23,6 +23,7 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true); 
+  robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
@@ -96,7 +97,9 @@ void Robot::AutonomousInit() { }
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  std::cout << robotmap.lift.liftEncoder.GetEncoderTicks() << std::endl;
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
