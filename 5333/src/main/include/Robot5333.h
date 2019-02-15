@@ -12,6 +12,8 @@
 
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
+
+#include "strategy/MPStrategy.h"
 #include "Toggle.h"
 
 #include "Drivetrain.h"
@@ -46,6 +48,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   bool enableFOC = false;
   std::shared_ptr<curtinfrc::DrivetrainFieldOrientedControlStrategy> stratFOC;
   std::shared_ptr<curtinfrc::DrivetrainPOVSnapStrategy> stratPOV;
+  std::shared_ptr<curtinfrc::DrivetrainMotionProfileStrategy> stratMP;
 
 
   HatchIntake *leftHatchIntake, *rightHatchIntake;
