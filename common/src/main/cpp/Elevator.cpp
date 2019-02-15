@@ -1,6 +1,7 @@
 #include "Elevator.h"
 
 #include <iostream>
+#include <cmath>
 
 // public
 
@@ -79,5 +80,6 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
       if (_config.limitSensorBottom->Get())
         power = 0;
 
+  power = std::min(1.0, std::max(-1.0, power)) * 0.6;
   GetConfig().spool.transmission->Set(power);
 }
