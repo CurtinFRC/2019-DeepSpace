@@ -22,13 +22,11 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
+  robotmap.drivetrain.leftGearbox.transmission->SetInverted(true); 
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
-  stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsFOC);
-  stratPOV = std::make_shared<DrivetrainPOVSnapStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsPOV);
-  stratMP = std::make_shared<DrivetrainMotionProfileStrategy>(robotmap.drivetrain.modeLeft, robotmap.drivetrain.modeRight, *drivetrain, robotmap.drivetrain.gyro_kp);
+  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
+  stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsFOC);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joyGroup));
@@ -65,7 +63,7 @@ void Robot::RobotPeriodic() {
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC)
     enableFOC = false;
   
-  if (toggleFOC.Update(robotmap.joy.GetRawButton(ControlMap::activateFOC))) {
+  if (toggleFOC.Update(robotmap.joyGroup.GetButton(ControlMap::activateFOC))) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
@@ -94,7 +92,7 @@ void Robot::RobotPeriodic() {
   Update(dt);
 }
 
-void Robot::AutonomousInit() { Schedule(stratMP); }
+void Robot::AutonomousInit() { }
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
