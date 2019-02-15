@@ -1,31 +1,41 @@
 #pragma once
 
-#include "Runnable.h"
+#include "threading/Runnable.h"
+#include "Display.h"
 
-#include <opencv2/core/core.hpp>
 #include <cscore.h>
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
+#include <opencv2/core/core.hpp>
 
-class Capture : public Runnable {
+class Capture : public Runnable, public Displayable {
  public:
-  Capture(int port, int exposure);
+  Capture(std::string name, int port);
   int GetPort();
+
+  void SetExposure(int exposure);
+
   void Init() override;
   void Periodic() override;
 
   cs::VideoMode GetVideoMode();
+
   void CopyCaptureMat(cv::Mat &captureMat);
-  bool IsValidFrameThresh();
-  bool IsValidFrameTrack();
   
+  void GetDisplayMat(cv::Mat &displayMat) override;
+  cv::Size GetDisplaySize() override;
+
+  bool IsValidFrame();
+
  private:
+  std::string   _name;
   cs::UsbCamera _cam;
-  std::mutex _classMutex;
+  cs::CvSink    _sink;
+
+  std::mutex              _classMutex;
   std::condition_variable _initCondVar;
-  cs::CvSink _sink{"USBSink"};
-  cv::Mat _captureMat;
+
+  cv::Mat       _captureMat;
   cs::VideoMode _videoMode;
-  bool _isValidThresh = false;
-  bool _isValidTrack = false;
+  bool          _validFrame = false;
 };

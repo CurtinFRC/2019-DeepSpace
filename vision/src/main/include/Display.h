@@ -1,28 +1,30 @@
 #pragma once
 
-#include "Process.h"
-#include "Capture.h"
-#include "Runnable.h"
+#include <opencv2/core/core.hpp>
+#include <cscore.h>
+
+#include "threading/Runnable.h"
 
 #include <mutex>
 
+class Displayable {
+ public:
+  virtual void GetDisplayMat(cv::Mat &displayMat) = 0;
+  virtual cv::Size GetDisplaySize() = 0;
+};
+
 class Display : public Runnable {
  public:
-  Display(Process &process);
+  Display(std::string name, Displayable &target);
 
   void Init() override;
   void Periodic() override;
 
  private:
-  Process &_process;
-  cs::CvSource _outputCam0;
-  cs::CvSource _outputCam1;
-  cs::VideoMode _videoMode;
+  std::string _name;
+  Displayable &_target;
   
-  cv::Mat _imgOriginal;
-  cv::Mat _imgProcessedTrack;
-  cv::Mat _imgProcessedTrackHatch;
-  cv::Mat _imgProcessedThresh;
-
-  Capture &_capture;
+  cs::CvSource _output;
+  
+  cv::Mat _displayMat;
 };

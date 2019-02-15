@@ -48,8 +48,9 @@ void HatchProcessing::Init() {
 
 void HatchProcessing::Periodic() {
   Process::Periodic();
-  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+  if (_capture.IsValidFrame()) {
     _capture.CopyCaptureMat(_imgProcessing);
+    _imgProcessing.copyTo(_imgProcessedTrack);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
@@ -63,25 +64,22 @@ void HatchProcessing::Periodic() {
 
     double largestArea = 0.0;
     active_contour = -1;
-    // Filters size for Reflective Hatch
-    // cv::inRange(_imgProcessing, cv::Scalar(15, 110, 110), cv::Scalar(40, 255, 255), _imgProcessedTrack); <- Debug Code
-    cv::inRange(_imgProcessing, cv::Scalar(15, 110, 100), cv::Scalar(34, 255, 255), _imgProcessing);
-
+    // cv::inRange(_imgProcessing, cv::Scalar(15, 100, 100), cv::Scalar(34, 255, 255), _imgProcessedTrack); // <- Debug Code
+    cv::inRange(_imgProcessing, cv::Scalar(15, 100, 100), cv::Scalar(34, 255, 255), _imgProcessing);
     
-    //cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-    //cv::findContours(_imgProcessedThresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS); // Is this redundant ?
+    cv::findContours(_imgProcessing, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
     
     for (int i = 0; i < contours.size(); i++) {
       std::vector<cv::Point> contour = contours[i];
       cv::Rect r = cv::boundingRect(contour);
       
       double area = cv::contourArea(contour);
-      if (area > 300.0) {
+      if (area > 450.0) {
         std::vector<cv::Point> hull;
         cv::convexHull(contour, hull);
         double solidity = 10 * area / contourArea(hull);
 
-        if (solidity > 4) {
+        if (solidity > 2) {
           if (area > largestArea) {
             largestArea = area;
             active_contour = filteredContoursHatch.size();
@@ -93,43 +91,16 @@ void HatchProcessing::Periodic() {
       }
     }
 
-    // New Code for detecting Hatch, Will get rid of 60-70% of the code if done 
-    /*
-    std::vector<cv::Vec3f> circles;
-    HoughCircles(_imgProcessing, circles, CV_HOUGH_GRADIENT,
-          2,   // accumulator resolution (size of the image / 2)
-          5,  // minimum distance between two circles
-          100, // Canny high threshold
-          100, // minimum number of votes
-          0, 100); // min and max radius
-
-    std::cout << circles.size() <<std::endl;
-    std::cout << "end of test" << std::endl;
-
-    std::vector<cv::Vec3f>::
-    const_iterator itc= circles.begin();
-
-       while (itc!=circles.end()) {
-         _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
-         cv::circle(_imgProcessedTrack,
-            cv::Point((*itc)[0], (*itc)[1]), // circle centre
-            (*itc)[2],       // circle radius
-            cv::Scalar(255), // color
-            2);              // thickness
-         ++itc;
-       }
-    */
     /// Detect edges using Canny
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
 
     /// Find the convex hull object for each contour
-    std::vector<std::vector<cv::Point>> hullHatch(filteredContoursHatch.size());
+    std::vector<std::vector<cv::Point>> hull(filteredContoursHatch.size());
     for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
-      cv::convexHull(filteredContoursHatch[i], hullHatch[i]);
+      cv::convexHull(filteredContoursHatch[i], hull[i]);
     }
   
     /// Draw filteredContours + hull results
@@ -139,27 +110,27 @@ void HatchProcessing::Periodic() {
     for (size_t i = 0; i < filteredContoursHatch.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 256), rngHatch.uniform(0, 256), rngHatch.uniform(0, 256));
       cv::drawContours(_imgProcessing, filteredContoursHatch, (int)i, color, -1);
-      cv::drawContours(_imgProcessing, hullHatch, (int)i, color, -1);
+      cv::drawContours(_imgProcessing, hull, (int)i, color, -1);
     }
     
     /// Find contoursBox
     /// Approximate contoursBox to polygons + get bounding rects and circles
-    std::vector<std::vector<cv::Point>> hullHatch_poly(hullHatch.size());
-    std::vector<cv::Point2f> centerHatch(hullHatch.size());
-    std::vector<float> radiusHatch(hullHatch.size());
+    std::vector<std::vector<cv::Point>> hullHatch_poly(hull.size());
+    std::vector<cv::Point2f> centerHatch(hull.size());
+    std::vector<float> radiusHatch(hull.size());
 
-    for(int i = 0; i < hullHatch.size(); i++) {
-      approxPolyDP(cv::Mat(hullHatch[i]), hullHatch_poly[i], 3, true);
+    for(int i = 0; i < hull.size(); i++) {
+      approxPolyDP(cv::Mat(hull[i]), hullHatch_poly[i], 3, true);
       boundRectHatch[i] = cv::boundingRect(cv::Mat(hullHatch_poly[i]));
       cv::minEnclosingCircle((cv::Mat)hullHatch_poly[i], centerHatch[i], radiusHatch[i]);
     }
-    
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+  
     /// Draw polygonal contour + bonding rects + circles
-    for(int i = 0; i < hullHatch.size(); i++) {
+    for(int i = 0; i < hull.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
       cv::drawContours(_imgProcessing, hullHatch_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
       hatch_bounding_rect = cv::boundingRect(filteredContoursHatch[i]); // Find the bounding rectangle for biggest contour
+      // _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
       cv::rectangle(_imgProcessedTrack, boundRectHatch[i].tl(), boundRectHatch[i].br(), color, 2, 8, 0);
       cv::circle(_imgProcessedTrack, centerHatch[i], (int)radiusHatch[i], color, 2, 8, 0);
     }
@@ -194,5 +165,7 @@ void HatchProcessing::Periodic() {
       std::stringstream offsetX;	offsetX << hatch_width_offset;
       cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
+    
   }
+  
 }

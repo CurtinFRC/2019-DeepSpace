@@ -43,6 +43,14 @@ std::string Process::GetProcessType() {
   return processType;
 }
 
+void Process::GetDisplayMat(cv::Mat &displayMat) {
+  CopyProcessedTrack(displayMat);
+}
+
+cv::Size Process::GetDisplaySize() {
+  return _capture.GetDisplaySize();
+}
+
 void Process::Init() {
   _videoMode = _capture.GetVideoMode();
   _imgProcessedTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
