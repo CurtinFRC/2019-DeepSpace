@@ -1,11 +1,9 @@
-#include "VisionRunner.h"
 #include "Capture.h"
-#include "TapeProcessing.h"
-#include "BallProcessing.h"
-#include "HatchProcessing.h"
+// #include "TapeProcessing.h"
+// #include "BallProcessing.h"
+// #include "HatchProcessing.h"
 #include "Display.h"
 #include <iostream>
-#include <list>
 #include <networktables/NetworkTableInstance.h>
 
 #ifndef RUNNING_FRC_TESTS
@@ -15,10 +13,13 @@ int main(int argc, char **argv) {
     team = std::stoi(argv[1]);
   }
 
+
 #ifdef __DESKTOP__
   std::cout << "Running on Desktop - imshow enabled" << std::endl;
+  bool isDesktop = true;
 #else
-  std::cout << "Running embedded  -imshow disabled" << std::endl;
+  std::cout << "Running embedded - imshow disabled" << std::endl;
+  bool isDesktop = false;
 #endif
 
   auto ntinst = nt::NetworkTableInstance::GetDefault();
@@ -31,36 +32,44 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  VisionRunner vision;
-  #ifdef __DESKTOP__
-  Capture capture{0, -100};
-  Capture captureGamePiece{0, 50};
-  #else
-  Capture capture{4, -100};
-  Capture captureGamePiece{5, 60};
-  #endif
-  HatchProcessing hatchProcess{captureGamePiece};
-  // BallProcessing ballProcess{capture};
-  TapeProcessing tapeProcess{capture};
+  Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
+  Display display{"Side Hatch", sideHatchCapture};
+
+  sideHatchCapture.StartThread(30.0);
+  display.StartThread(30.0);
+
+  display.JoinThread();
+
+  // VisionRunner vision;
+  // #ifdef __DESKTOP__
+  // Capture capture{0, -100};
+  // // Capture captureGamePiece{1, 50};
+  // #else
+  // Capture capture{4, -100};
+  // Capture captureGamePiece{5, 60};
+  // #endif
+  // // HatchProcessing hatchProcess{captureGamePiece};
+  // // BallProcessing ballProcess{capture};
+  // TapeProcessing tapeProcess{capture};
   
-  // Display displayBall{ballProcess};
-  Display displayHatch{"Hatch Tracking", hatchProcess};
-  Display displayTape{"Tape Tracking", tapeProcess};
+  // // Display displayBall{ballProcess};
+  // // Display displayHatch{"Hatch Tracking", hatchProcess};
+  // Display displayTape{"Tape Tracking", tapeProcess};
   
-  vision.Run(capture);
-  vision.Run(captureGamePiece);
-  // vision.Run(ballProcess);
-  vision.Run(hatchProcess);
-  vision.Run(tapeProcess);
+  // vision.Run(capture);
+  // // vision.Run(captureGamePiece);
+  // // vision.Run(ballProcess);
+  // // vision.Run(hatchProcess);
+  // vision.Run(tapeProcess);
 
-  // vision.Run(displayBall);  //Displays Can't work togethor for shuffleboard
-  vision.Run(displayHatch);
-  vision.Run(displayTape);
+  // // vision.Run(displayBall); 
+  // vision.Run(displayHatch);
+  // vision.Run(displayTape);
 
 
-  for (int i = 0; i < vision.workers.size(); i++) {
-    vision.workers[i].join();
-  }
+  // for (int i = 0; i < vision.workers.size(); i++) {
+  //   vision.workers[i].join();
+  // }
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;

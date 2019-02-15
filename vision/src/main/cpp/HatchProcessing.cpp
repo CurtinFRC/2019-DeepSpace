@@ -48,7 +48,7 @@ void HatchProcessing::Init() {
 
 void HatchProcessing::Periodic() {
   Process::Periodic();
-  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+  if (_capture.IsValidFrame()) {
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
