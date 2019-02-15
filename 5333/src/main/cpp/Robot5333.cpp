@@ -36,13 +36,13 @@ void Robot::RobotInit() {
   // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joyGroup));
   // harvester->StartLoop(50);
 
-  leftHatchIntake = new HatchIntake(robotmap.leftHatchIntake.config);
-  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
-  leftHatchIntake->StartLoop(50);
+  sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
+  sideHatchIntake->StartLoop(50);
 
-  rightHatchIntake = new HatchIntake(robotmap.rightHatchIntake.config);
-  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.joyGroup, true));
-  rightHatchIntake->StartLoop(50);
+  frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
+  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.joyGroup, true));
+  frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
   boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joyGroup));
