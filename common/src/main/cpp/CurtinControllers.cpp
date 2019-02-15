@@ -60,3 +60,41 @@ double curtinfrc::Joystick::GetCircularisedAxis(AxisType axis) {
 
   return GetAxis(axis);
 }
+
+
+bool curtinfrc::JoystickGroup::GetRawButton(JoyNum joy, int button) {
+  bool val = false;
+
+  switch (joy) {
+   case first:
+    val = _joy1.GetRawButton(button);
+    break;
+
+   case second:
+    val = _joy2.GetRawButton(button);
+    break;
+  }
+
+  return val;
+}
+
+bool curtinfrc::JoystickGroup::GetRawButton(tJoypair joyPair) {
+  if (joyPair == nopair) return false;
+  return GetRawButton((JoyNum)joyPair.first, joyPair.second);
+}
+
+bool curtinfrc::JoystickGroup::GetButton(tJoymap joyMap) {
+  return GetRawButton(joyMap.first) || GetRawButton(joyMap.second);
+}
+
+curtinfrc::Joystick &curtinfrc::JoystickGroup::GetJoystick(curtinfrc::JoystickGroup::JoyNum joy) {
+  switch (joy) {
+   case first:
+    return _joy1;
+
+   case second:
+    return _joy2;
+  }
+  
+  return _joy1;
+}
