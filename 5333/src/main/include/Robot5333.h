@@ -9,7 +9,6 @@
 
 #include <networktables/NetworkTableInstance.h>
 
-
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
 
@@ -21,6 +20,8 @@
 #include "HarvesterIntake.h"
 #include "HatchIntake.h"
 #include "BoxIntake.h"
+
+#include "strategies/DriveStrategies.h"
 
 class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
  public:
@@ -46,9 +47,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
 
   curtinfrc::Toggle toggleFOC;
   bool enableFOC = false;
-  std::shared_ptr<curtinfrc::DrivetrainFieldOrientedControlStrategy> stratFOC;
-  std::shared_ptr<curtinfrc::DrivetrainPOVSnapStrategy> stratPOV;
-  std::shared_ptr<curtinfrc::DrivetrainMotionProfileStrategy> stratMP;
+  std::shared_ptr<DrivetrainFOCStrategy> stratFOC;
 
 
   HatchIntake *leftHatchIntake, *rightHatchIntake;

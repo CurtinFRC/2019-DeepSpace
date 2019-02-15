@@ -32,22 +32,28 @@ curtinfrc::Gearbox &curtinfrc::Drivetrain::GetRight() {
   return !_config.reversed ? _config.rightDrive : _config.leftDrive;
 }
 
+// DrivetrainFOCController
+curtinfrc::DrivetrainFOCController::DrivetrainFOCController(curtinfrc::control::PIDGains gains) : _pid(gains) { }
 
-std::pair<double, double> curtinfrc::DrivetrainFieldOrientedControlStrategy::FOCCalc(double mag, double bearing, double dt, bool hold) {
-  bearing = fmod(bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
+void curtinfrc::DrivetrainFOCController::SetSetpoint(double magnitude, double bearing, bool hold) {
+  _magnitude = magnitude;
+  _bearing = bearing;
+  _hold = hold;
+}
 
-  _controller.SetSetpoint(bearing);
-  _controller.SetWrap(360.0);
+std::pair<double, double> curtinfrc::DrivetrainFOCController::Calculate(double angle, double dt) {
+  _pid.SetSetpoint(_bearing);
+  _pid.SetWrap(360.0);
 
-  double offset = _controller.Calculate(fmod(_drivetrain.GetConfig().gyro->GetAngle(), 360), dt);
+  double offset = _pid.Calculate(fmod(angle, 360), dt);
 
   std::pair<double, double> power{ 0, 0 };
-  if (!hold) {
-    power.first = mag * (1 + offset);
-    power.second = mag * (1 - offset);
+  if (!_hold) {
+    power.first = _magnitude * (1 + offset);
+    power.second = _magnitude * (1 - offset);
   } else {
-    power.first = mag * offset;
-    power.second = mag * -offset;
+    power.first = _magnitude * offset;
+    power.second = _magnitude * -offset;
   }
 
   // Prevent the robot from losing control by going >1 (or <-1) on left and right gearboxes
@@ -67,32 +73,32 @@ std::pair<double, double> curtinfrc::DrivetrainFieldOrientedControlStrategy::FOC
   return power;
 }
 
-std::pair<double, double> curtinfrc::DrivetrainPOVSnapStrategy::POVCalc(double mag, double bearing, double dt, bool hold) {
-  // Snap to angle relative to field via PID
-  bearing = -fmod(bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
+// std::pair<double, double> curtinfrc::DrivetrainPOVSnapStrategy::POVCalc(double mag, double bearing, double dt, bool hold) {
+//   // Snap to angle relative to field via PID
+//   bearing = -fmod(bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
 
-  _controller.SetSetpoint(bearing);
-  _controller.SetWrap(360.0);
+//   _controller.SetSetpoint(bearing);
+//   _controller.SetWrap(360.0);
 
-  double offset = _controller.Calculate(fmod(_drivetrain.GetConfig().gyro->GetAngle(), 360), dt);
+//   double offset = _controller.Calculate(fmod(_drivetrain.GetConfig().gyro->GetAngle(), 360), dt);
 
-  std::pair<double, double> power{ 0, 0 };
-  power.first = mag * offset;
-  power.second = mag * -offset;
+//   std::pair<double, double> power{ 0, 0 };
+//   power.first = mag * offset;
+//   power.second = mag * -offset;
 
-  // Prevent the robot from losing control by going >1 (or <-1) on left and right gearboxes
-  double aFirst = std::abs(power.first);
-  double aSecond = std::abs(power.second);
+//   // Prevent the robot from losing control by going >1 (or <-1) on left and right gearboxes
+//   double aFirst = std::abs(power.first);
+//   double aSecond = std::abs(power.second);
 
-  if (aFirst > aSecond) {
-    if (aFirst > 1) { // MAXIMUM EFFICIENCY... (I mean I probably need to speed it up wherever I can given my general coding practices...)
-      power.second /= aFirst;
-      power.first /= aFirst;
-    }
-  } else if (aSecond > 1) {
-    power.first /= aSecond;
-    power.second /= aSecond;
-  }
+//   if (aFirst > aSecond) {
+//     if (aFirst > 1) { // MAXIMUM EFFICIENCY... (I mean I probably need to speed it up wherever I can given my general coding practices...)
+//       power.second /= aFirst;
+//       power.first /= aFirst;
+//     }
+//   } else if (aSecond > 1) {
+//     power.first /= aSecond;
+//     power.second /= aSecond;
+//   }
 
-  return power;
-}
+//   return power;
+// }
