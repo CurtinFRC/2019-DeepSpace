@@ -21,7 +21,9 @@
 #include "BoxIntake.h"
 
 struct RobotMap {
-  curtinfrc::Joystick joy{ 0 };
+  curtinfrc::Joystick joy1{ 0 }; // Driver
+  curtinfrc::Joystick joy2{ 1 }; // Co-Driver
+  curtinfrc::JoystickGroup joyGroup{ joy1, joy2 };
 
 
   struct DriveTrain {
