@@ -11,7 +11,7 @@ void HatchIntake::OuttakingPeriodic() { // Eject
 
 
 void HatchIntakeManualStrategy::OnUpdate(double dt) {
-  _config.manipulator.Update(dt);
+  _hatchIntake.GetConfig().manipulator.Update(dt);
   if (_enabledToggle.Update(_joy.GetRawButton(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
 
   if (_enabled) {

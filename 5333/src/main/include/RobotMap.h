@@ -6,6 +6,7 @@
 #include "CurtinCtre.h"
 #include "CurtinControllers.h"
 #include "Gearbox.h"
+#include "actuators/BinaryServo.h"
 #include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
 #include "sensors/NavX.h"
@@ -74,19 +75,25 @@ struct RobotMap {
   HarvesterIntake harvesterIntake;
 
 
-  struct HatchIntake {
-    frc::Servo servo;
-    curtinfrc::actuators::DoubleSolenoid solenoid;
-    int forward = 60;
-    int reverse = 0;
+  struct SideHatchIntake {
+    curtinfrc::actuators::BinaryServo servo{ 7, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 3 };
+    const int forward = 60;
+    const int reverse = 0;
 
-
-    HatchIntakeConfig config;
-    HatchIntake(int servoPort, int solenoidPortA, int solenoidPortB) : servo(servoPort), solenoid(solenoidPortA, solenoidPortB), config(servo, solenoid, forward, reverse) {};
+    HatchIntakeConfig config{ servo, solenoid };
   };
 
-  HatchIntake leftHatchIntake{ 7, 2, 3 };
-  HatchIntake rightHatchIntake{ 8, 4, 5 };
+  SideHatchIntake sideHatchIntake;
+
+  struct FrontHatchIntake {
+    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 6, 7 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 4, 5 };
+
+    HatchIntakeConfig config{ manipulatorSolenoid, solenoid };
+  };
+
+  FrontHatchIntake frontHatchIntake;
 
 
   struct BoxIntake {

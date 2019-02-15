@@ -48,7 +48,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   std::shared_ptr<curtinfrc::DrivetrainPOVSnapStrategy> stratPOV;
 
 
-  HatchIntake *leftHatchIntake, *rightHatchIntake;
+  HatchIntake *sideHatchIntake, *frontHatchIntake;
 
 
   BoxIntake *boxIntake;

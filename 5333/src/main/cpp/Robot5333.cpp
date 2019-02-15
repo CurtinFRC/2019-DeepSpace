@@ -37,13 +37,13 @@ void Robot::RobotInit() {
   // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
   // harvester->StartLoop(50);
 
-  leftHatchIntake = new HatchIntake(robotmap.leftHatchIntake.config);
-  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*leftHatchIntake, robotmap.joy, false));
-  leftHatchIntake->StartLoop(50);
+  sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joy, false));
+  sideHatchIntake->StartLoop(50);
 
-  rightHatchIntake = new HatchIntake(robotmap.rightHatchIntake.config);
-  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*rightHatchIntake, robotmap.joy, true));
-  rightHatchIntake->StartLoop(50);
+  frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
+  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.joy, true));
+  frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
   boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joy));
@@ -52,8 +52,8 @@ void Robot::RobotInit() {
   Register(drivetrain);
   Register(beElevator);
   // Register(harvester);
-  Register(leftHatchIntake);
-  Register(rightHatchIntake);
+  Register(sideHatchIntake);
+  Register(frontHatchIntake);
   Register(boxIntake);
 }
 
