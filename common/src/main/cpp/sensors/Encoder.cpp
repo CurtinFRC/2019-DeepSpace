@@ -37,3 +37,7 @@ int DigitalEncoder::GetChannelA() {
 int DigitalEncoder::GetChannelB() {
   return _channelB;
 }
+
+int DigitalEncoder::GetSimulationHandle() {
+  return _nativeEncoder.GetFPGAIndex();
+}

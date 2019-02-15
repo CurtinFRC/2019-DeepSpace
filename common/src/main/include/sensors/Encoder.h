@@ -35,6 +35,8 @@ namespace sensors {
     int GetChannelA();
     int GetChannelB();
 
+    int GetSimulationHandle();
+
    private:
     int          _channelA, _channelB;
     frc::Encoder _nativeEncoder;
