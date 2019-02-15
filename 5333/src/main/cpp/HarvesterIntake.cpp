@@ -22,11 +22,11 @@ void HarvesterIntake::StowedPeriodic() {
 }
 
 void HarvesterIntakeManualStrategy::OnUpdate(double dt) {
-  if (_joy.GetRawButton(ControlMap::harveserIn)) {
+  if (_joyGroup.GetButton(ControlMap::harveserIn)) {
     _harvesterIntake.SetIntaking();
-  } else if (_joy.GetRawButton(ControlMap::harveserOut)) {
+  } else if (_joyGroup.GetButton(ControlMap::harveserOut)) {
     _harvesterIntake.SetOuttaking();
-  } else if (_joy.GetRawButton(ControlMap::harveserStow)) {
+  } else if (_joyGroup.GetButton(ControlMap::harveserStow)) {
     _harvesterIntake.SetStowed();
   }
 }

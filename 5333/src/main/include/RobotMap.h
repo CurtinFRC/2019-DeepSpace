@@ -6,11 +6,14 @@
 #include "CurtinCtre.h"
 #include "CurtinControllers.h"
 #include "Gearbox.h"
+#include "actuators/BinaryServo.h"
 #include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
 #include "sensors/NavX.h"
 
 #include "control/PIDController.h"
+#include "MotionProfiling.h"
+#include "strategy/MPStrategy.h"
 
 #include "ControlMap.h"
 
@@ -21,7 +24,9 @@
 #include "BoxIntake.h"
 
 struct RobotMap {
-  curtinfrc::Joystick joy{ 0 };
+  curtinfrc::Joystick joy1{ 0 }; // Driver
+  curtinfrc::Joystick joy2{ 1 }; // Co-Driver
+  curtinfrc::JoystickGroup joyGroup{ joy1, joy2 };
 
 
   struct DriveTrain {
@@ -43,6 +48,24 @@ struct RobotMap {
 
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
+
+    
+    std::shared_ptr<curtinfrc::PathfinderMPMode> modeLeft = std::make_shared<curtinfrc::PathfinderMPMode>(
+      &leftSrx, mpConfig, (mpFileBase).c_str()
+    );
+    std::shared_ptr<curtinfrc::PathfinderMPMode> modeRight = std::make_shared<curtinfrc::PathfinderMPMode>(
+      &rightSrx, mpConfig, (mpFileBase).c_str()
+    );
+
+    const double gyro_kp = 3 / 80;
+
+   private:
+    std::string mpFileBase = "output/test";
+    curtinfrc::MotionProfileConfig mpConfig = {
+      6 * 3.28,                                     // wheel diameter (in)
+      1.0 / 0.2 * 3.28, 0, 0,                       // P, I, D
+      3.34 / 12.0 * 3.28, 0.76 / 12.0 * 3.28        // kV, kA
+    };
   };
 
   DriveTrain drivetrain;
@@ -74,19 +97,25 @@ struct RobotMap {
   HarvesterIntake harvesterIntake;
 
 
-  struct HatchIntake {
-    frc::Servo servo;
-    curtinfrc::actuators::DoubleSolenoid solenoid;
-    int forward = 60;
-    int reverse = 0;
+  struct SideHatchIntake {
+    curtinfrc::actuators::BinaryServo servo{ 7, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 3 };
+    const int forward = 60;
+    const int reverse = 0;
 
-
-    HatchIntakeConfig config;
-    HatchIntake(int servoPort, int solenoidPortA, int solenoidPortB) : servo(servoPort), solenoid(solenoidPortA, solenoidPortB), config(servo, solenoid, forward, reverse) {};
+    HatchIntakeConfig config{ servo, solenoid };
   };
 
-  HatchIntake leftHatchIntake{ 7, 2, 3 };
-  HatchIntake rightHatchIntake{ 8, 4, 5 };
+  SideHatchIntake sideHatchIntake;
+
+  struct FrontHatchIntake {
+    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 6, 7 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 4, 5 };
+
+    HatchIntakeConfig config{ manipulatorSolenoid, solenoid };
+  };
+
+  FrontHatchIntake frontHatchIntake;
 
 
   struct BoxIntake {

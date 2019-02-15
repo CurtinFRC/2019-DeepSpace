@@ -36,9 +36,10 @@ void TapeProcessing::Init() {
 
 void TapeProcessing::Periodic() {
   Process::Periodic();
-	if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+	if (_capture.IsValidFrame()) {
 
     _capture.CopyCaptureMat(_imgProcessing);
+    _imgProcessing.copyTo(_imgProcessedTrack);
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
     // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack); <-Debug Code
     cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
@@ -58,7 +59,7 @@ void TapeProcessing::Periodic() {
     cv::Scalar green = cv::Scalar(0, 255, 0);
     cv::Scalar red = cv::Scalar(0, 0, 255);
 
-    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+    // _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
       cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue, -1);
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
