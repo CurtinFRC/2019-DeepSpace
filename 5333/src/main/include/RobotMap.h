@@ -84,7 +84,7 @@ struct RobotMap {
     curtinfrc::sensors::DigitalEncoder liftEncoder{ 2, 3, 2048 };
     curtinfrc::Gearbox elevatorGearbox{ &liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
 
-    curtinfrc::sensors::LimitSwitch bottomLimit{9};
+    curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
     curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
@@ -109,10 +109,11 @@ struct RobotMap {
 
 
   struct SideHatchIntake {
-    curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
     const int forward = 115;
     const int reverse = 5;
+
+    curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
 
     HatchIntakeConfig config{ servo, solenoid };
   };

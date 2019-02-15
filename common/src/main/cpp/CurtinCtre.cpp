@@ -16,7 +16,7 @@ double TalonSrx::Get() const {
   return _value;
 }
 
-int TalonSrx::GetEncoderTicks() {
+int TalonSrx::GetEncoderRawTicks() {
   return GetSensorPosition();
 }
 

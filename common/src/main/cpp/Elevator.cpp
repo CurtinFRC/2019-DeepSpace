@@ -62,7 +62,7 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
     
     if (_config.limitSensorBottom != nullptr) {
       if (_config.limitSensorBottom->Get()) {
-        SetHold();
+        SetManual(0);
         GetConfig().spool.encoder->ZeroEncoder();
       }
     } else power = -0.25;
@@ -77,8 +77,10 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
 
   if (_config.limitSensorBottom != nullptr)
     if (power < 0)
-      if (_config.limitSensorBottom->Get())
+      if (_config.limitSensorBottom->Get()) {
         power = 0;
+        GetConfig().spool.encoder->ZeroEncoder();
+      }
 
   power = std::min(1.0, std::max(-1.0, power)) * 0.6;
   GetConfig().spool.transmission->Set(power);

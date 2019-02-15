@@ -99,8 +99,9 @@ namespace curtinfrc {
      */
     int GetSensorVelocity();
 
-    int GetEncoderTicks() override;
+    int GetEncoderRawTicks() override;
     double GetEncoderTickVelocity() override;
+    void ZeroEncoder() override;
 
     /**
      * Load a talon Configuration.

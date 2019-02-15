@@ -7,13 +7,14 @@ namespace sensors {
   class Encoder {
    public:
     Encoder(int encoderTicksPerRotation) : _encoderTicksPerRotation(encoderTicksPerRotation){};
-    virtual int     GetEncoderTicks() = 0;
+    virtual int     GetEncoderRawTicks() = 0;
     virtual double  GetEncoderTickVelocity() = 0;  // ticks/s
+    virtual void    ZeroEncoder();
 
+    int    GetEncoderTicks();
     double GetEncoderRotations();
     int    GetEncoderTicksPerRotation();
     double GetEncoderAngularVelocity();   // rad/s
-    void   ZeroEncoder();
 
    private:
     int _encoderTicksPerRotation;
@@ -28,7 +29,7 @@ namespace sensors {
           _nativeEncoder(channelA, channelB),
           Encoder(ticksPerRotation){};
 
-    int GetEncoderTicks() override;
+    int GetEncoderRawTicks() override;
     double GetEncoderTickVelocity() override;
 
     int GetChannelA();
