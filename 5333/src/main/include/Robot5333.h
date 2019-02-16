@@ -7,6 +7,7 @@
 #include <frc/DoubleSolenoid.h>
 #include <frc/GenericHID.h>
 
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <networktables/NetworkTableInstance.h>
 
 #include "RobotMap.h"
@@ -37,7 +38,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   void TestInit() override;
   void TestPeriodic() override;
 
-  std::shared_ptr<nt::NetworkTable> table;
+  std::shared_ptr<nt::NetworkTable> visionTable;
   nt::NetworkTableEntry yOffset, xOffset, endAngle;
 
 
