@@ -16,16 +16,17 @@ void Robot::RobotInit() {
   timer = new frc::Timer();
   lastTimestamp = Timer::GetFPGATimestamp();
   AI = new frc::AnalogInput(3);
-  arduino = new I2C(frc::I2C::kOnboard, 100);
-  arduino->WriteBulk(&message, 1);
+  arduino = new I2C(frc::I2C::kOnboard, 8);
+  arduino->WriteBulk(&message, 16);
+  message = 78;
 
   //climber
   ClimbLeft = new Spark(0);
   ClimbRight = new Spark(1);
-  BIGBOYS = new DoubleSolenoid(9, 6, 7);
+  BIGBOYS = new DoubleSolenoid(9, 4, 5);
 
   //Mechanisms
-  cargo = new Cargo(6,7,8);
+  cargo = new Cargo(6,11,8);
   hatch = new Hatch(1,0,1,2,3,0);
   driveFunct = new DriveFunc(2,5,3,4);
 
@@ -55,7 +56,8 @@ void Robot::RobotInit() {
 }
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {
-  message = 78;
+  message = 76;
+  arduino->WriteBulk(&message, 16);
 }
 
 void Robot::TeleopInit() {
@@ -86,6 +88,10 @@ void Robot::TeleopPeriodic() {
     power = driveFunct->TurnAngle(180, dt, pressRBumper);
     drivetrain->Set(power, power);
     message = 76;
+  } else if (xbox1->GetBButton()) {
+    pressBButton = xbox1->GetBButtonPressed();
+    powers = driveFunct->Forward(1, dt, pressBButton);
+    drivetrain->Set(-powers[0], powers[1]);
   } else {
     message = 78;
     double left_speed = -xbox1->GetY(hand::kLeftHand);
@@ -95,8 +101,8 @@ void Robot::TeleopPeriodic() {
   // Climb
   if (xbox1->GetBumper(hand::kLeftHand)){
     BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
-    ClimbLeft->Set(xbox1->GetY(hand::kLeftHand));
-    ClimbRight->Set(- xbox1->GetY(hand::kRightHand));
+    ClimbLeft->Set(-xbox1->GetY(hand::kRightHand));
+    ClimbRight->Set(xbox1->GetY(hand::kLeftHand));
   } else {
     BIGBOYS->Set(frc::DoubleSolenoid::kForward);
      ClimbLeft->Set(0);
@@ -105,16 +111,14 @@ void Robot::TeleopPeriodic() {
   //CoDriver-------------------------------------------------------------------------------
 
   //cargo movement
-  if (xbox2->GetXButton()){
-    cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
-  } else if (xbox2->GetAButton()){
+  if (xbox2->GetYButton()){
      cargo->setAngle(0);
-  } else if (xbox2->GetBButton()) {
-    cargo->setAngle(175000);
-  } else if (xbox2->GetYButton()){
-    // cargo->setAngle(40000);
+  } else if (xbox2->GetAButton()){
+     cargo->setAngle(175000);
+  } else if (xbox2->GetXButton()) {
+     cargo->setAngle(40000);
   } else {
-     cargo->setRotationSpeed(0);
+     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
    }
 
   //cargo intake/outtake
@@ -125,8 +129,8 @@ void Robot::TeleopPeriodic() {
   }
   
   //manual hatch
-  if (xbox2->GetYButton()){
-    hatch->setRotationSpeed(-0.03);
+  if (xbox2->GetY(hand::kRightHand)){
+    hatch->setRotationSpeed(xbox2->GetY(hand::kRightHand));
   } else {
     hatch->setRotationSpeed(0);
   }

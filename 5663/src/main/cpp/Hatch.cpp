@@ -4,7 +4,7 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
     Flooper = new curtinfrc::TalonSrx(motorID, 1024);
     Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
-        config.slot0.kI = 0.001;
+        config.slot0.kI = 0.0;
         config.slot0.kD = 0.0;
         config.slot0.kF = 0;
 
@@ -28,19 +28,11 @@ void Hatch::setRotationSpeed(double speed) {
     Flooper->Set(speed);
 }
 
-void Hatch::setAngle(double newAngle) {
-    //double encoderTicks = ((ninetyDegrees - zeroDegrees)/90) * (angle - newAngle);
-  //  double finalEncoderCount = Flooper->GetSensorPosition() + encoderTicks;
-
-   //  Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, finalEncoderCount);
-}
-
 void Hatch::downPosition() {
         Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 30000);
         targetpos = false;
         
 }
-
 
 void Hatch::upPosition() {
     Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -1000);
@@ -49,8 +41,8 @@ void Hatch::upPosition() {
 }
 
 void Hatch::ejectHatch(bool eject) {
-    if(eject) ejection->Set(frc::DoubleSolenoid::kReverse);
-    else ejection->Set(frc::DoubleSolenoid::kForward);
+    if(eject) ejection->Set(frc::DoubleSolenoid::kForward);
+    else ejection->Set(frc::DoubleSolenoid::kReverse);
 }
 
 void Hatch::lockHatch(bool state) {
@@ -60,8 +52,8 @@ void Hatch::lockHatch(bool state) {
 }
 
 void Hatch::alignmentPiston(bool extended) {
-    if(extended) alignment->Set(frc::DoubleSolenoid::kForward);
-    else alignment->Set(frc::DoubleSolenoid::kReverse);
+    if(extended) alignment->Set(frc::DoubleSolenoid::kReverse);
+    else alignment->Set(frc::DoubleSolenoid::kForward);
 }
 
 void Hatch::zeroEncoder() {

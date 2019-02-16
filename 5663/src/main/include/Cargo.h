@@ -5,7 +5,7 @@
 
 class Cargo{
     public:
-        Cargo(int SrxID, int SpxID, int intakeID);
+        Cargo(int SrxID1, int SrxID2, int intakeID);
         void setRotationSpeed(double speed);
         void setAngularSpeed(double speed);
         void setAngle(double newAngle);
@@ -16,8 +16,8 @@ class Cargo{
 
 
     private:
-        curtinfrc::TalonSrx *motorSrx;
-        curtinfrc::VictorSpx *motorSpx, *intakeSpx;
+        curtinfrc::TalonSrx *motorSrx1, *motorSrx2;
+        curtinfrc::VictorSpx *intakeSpx;
 
         double angle = 0;
 

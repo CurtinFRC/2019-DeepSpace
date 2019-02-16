@@ -1,6 +1,5 @@
 #include "DriveFunc.h"
 
-
 DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID){
     TalonL = new curtinfrc::TalonSrx(LSRXID, 1024);
     TalonR = new curtinfrc::TalonSrx(RSRXID, 1024);
@@ -14,24 +13,32 @@ DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID)
 
     Nav = new curtinfrc::sensors::NavX(frc::SPI::Port::kMXP);
     NavG = new curtinfrc::sensors::NavXGyro(*Nav, curtinfrc::sensors::AngularAxis::YAW);
-    _controller = new curtinfrc::control::PIDController(_gains);
-    
+    _turnController = new curtinfrc::control::PIDController(_gains);
+    _driveControllerR = new curtinfrc::control::PIDController(_driveGains);
+    _driveControllerL = new curtinfrc::control::PIDController(_driveGains);
+
 }
 
-void DriveFunc::Forward(double distance){
-    encoderTicks = distance * 22165; //tune this number, but it should be close
-    
+std::vector<double> DriveFunc::Forward(double distance, double dt, bool firstPress){
+    double currentRight = TalonR->GetSensorPosition();
+    double currentLeft = TalonL->GetSensorPosition();
+    if (firstPress) {
+        encoderTicks = distance * 1747; //tune this number, but it should be close
+        _driveControllerR->SetSetpoint(currentRight + encoderTicks);
+        _driveControllerL->SetSetpoint(currentLeft + encoderTicks);
+    }
+    powers.clear();
+    powers.push_back(_driveControllerL->Calculate(currentLeft, dt));
+    powers.push_back(_driveControllerR->Calculate(currentRight, dt));
+    return powers;
 }
 
 
 double DriveFunc::TurnAngle(double TargetAngle, double dt, bool firstPress){
     Nav->Angular(curtinfrc::sensors::AngularAxis::YAW);
     double CurrentAngle = NavG->GetAngle();
-    if (firstPress) _controller->SetSetpoint(CurrentAngle + TargetAngle);
-    double power = _controller->Calculate(CurrentAngle, dt);
-    frc::SmartDashboard::PutNumber("goal", CurrentAngle + TargetAngle);
-    frc::SmartDashboard::PutNumber("power", power);
-    frc::SmartDashboard::PutNumber("dt", dt);
+    if (firstPress) _turnController->SetSetpoint(CurrentAngle + TargetAngle);
+    double power = _turnController->Calculate(CurrentAngle, dt);
     return power;
 }
 

@@ -61,4 +61,6 @@ class Robot : public frc::TimedRobot {
   double lastTimer;
   double power;
   bool pressRBumper;
+  bool pressBButton;
+  std::vector<double> powers;
 };
