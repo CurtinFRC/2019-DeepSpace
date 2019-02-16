@@ -19,8 +19,7 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
     alignment = new frc::DoubleSolenoid(9,align, faceplant);
     Flooper->SetInverted(true);
-    curtinfrc::actuators::BinaryServoConfig lockConfig{ servoID, 180, 180 - 30 };
-    lock = new curtinfrc::actuators::BinaryServo(lockConfig);
+    lock = new curtinfrc::actuators::BinaryServo(servoID, 180, 180 - 30);
 }
 
 void Hatch::setRotationSpeed(double speed) {

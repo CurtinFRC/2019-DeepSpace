@@ -18,7 +18,6 @@ class DriveFunc {
     private:
     curtinfrc::TalonSrx *TalonL, *TalonR;
     curtinfrc::VictorSpx *VictorL, *VictorR;
-    curtinfrc::DrivetrainFieldOrientedControlStrategy *DriveControl;
     curtinfrc::control::PIDGains _gains{"Turning gains", 0.03, 0.0003, 0.003, 0.0}, _driveGains{"Drive forward gains", 0.03, 0.0, 0.0};
     curtinfrc::control::PIDController *_turnController, *_driveControllerR, *_driveControllerL;
     curtinfrc::sensors::NavX *Nav;

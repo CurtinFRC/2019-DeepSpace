@@ -51,6 +51,10 @@ void Robot::RobotInit() {
   timer->Start();
   //Servo *AntiFlooperFlooper = new Servo(1);
 
+  //NetworkTable
+  table = nt::NetworkTableInstance::GetDefault().GetTable("TapeTable");
+  targetAngle = table->GetEntry("Angle");
+
 //  AntiFlooperFlooper->Set(.5);
   //AntiFlooperFlooper->SetAngle(75);
 }
@@ -84,10 +88,11 @@ void Robot::TeleopPeriodic() {
 
 
   if (xbox1->GetBumper(hand::kRightHand)) {
-    pressRBumper = xbox1->GetBumperPressed(hand::kRightHand);
-    power = driveFunct->TurnAngle(180, dt, pressRBumper);
-    drivetrain->Set(power, power);
-    message = 76;
+    // pressRBumper = xbox1->GetBumperPressed(hand::kRightHand);
+    // power = driveFunct->TurnAngle(180, dt, pressRBumper);
+    // drivetrain->Set(power, power);
+    // message = 76;
+
   } else if (xbox1->GetBButton()) {
     pressBButton = xbox1->GetBButtonPressed();
     powers = driveFunct->Forward(1, dt, pressBButton);

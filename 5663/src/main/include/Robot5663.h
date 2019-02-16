@@ -11,6 +11,8 @@
 #include "frc/I2C.h"
 #include <frc/Timer.h>
 
+#include <networktables/NetworkTableInstance.h>
+
 #include "CurtinCtre.h"
 #include "Drivetrain.h"
 #include "Gearbox.h"
@@ -63,4 +65,8 @@ class Robot : public frc::TimedRobot {
   bool pressRBumper;
   bool pressBButton;
   std::vector<double> powers;
+  std::shared_ptr<nt::NetworkTable> table;
+  nt::NetworkTableEntry targetAngle, targetDistance, targetOffset;
+  int stage;
+  float avgDistance, avgAngle, avgOffset;
 };
