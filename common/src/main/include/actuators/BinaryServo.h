@@ -2,25 +2,22 @@
 
 #include <frc/Servo.h>
 
-#include "BinaryActuator.h"
 
-#define _EPS_ 1  // servo accuracy
+#include "actuators/BinaryActuator.h"
 
 namespace curtinfrc {
   namespace actuators {
-    struct BinaryServoConfig {
-      int servoPort;
-      int forward, reverse; // forward and reverse positions, in servo degrees
-    };
-
     class BinaryServo : public BinaryActuator, protected frc::Servo {
      public:
-      BinaryServo(BinaryServoConfig config, BinaryActuatorState initialState = kReverse) : _config(config), BinaryActuator(initialState), frc::Servo(config.servoPort) {};
-
+      BinaryServo(int channel, int forwardPos, int reversePos) : frc::Servo(channel), _forwardPos(forwardPos), _reversePos(reversePos) {};
+      
       virtual void Update(double dt) override;
-
+      virtual void Stop() final {};
+      virtual bool IsDone() override;
+      
      private:
-      BinaryServoConfig _config;
+      int _forwardPos, _reversePos; // Forward and Reverse positions on the servo, in degrees
+
     };
   } // ns actuators
 } // ns curtinfrc

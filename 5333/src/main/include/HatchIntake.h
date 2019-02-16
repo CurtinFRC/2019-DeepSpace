@@ -1,24 +1,24 @@
 #pragma once
 
-#include <frc/Servo.h>
-
 #include "strategy/Strategy.h"
 #include "devices/DeployableDevice.h"
+#include "actuators/BinaryActuator.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
 
 using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
 struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  frc::Servo &servo;
-  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+  curtinfrc::actuators::BinaryActuator &manipulator;
 
-  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn, int forwardIn, int reverseIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn), forward(forwardIn), reverse(reverseIn) {};
+  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
  public:
   HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
+
+  HatchIntakeConfig &GetConfig() { return _config; };
 
  protected:
   virtual void IntakingPeriodic() override;  // Intake a hatch
@@ -30,7 +30,7 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
 
 class HatchIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::Joystick &joy, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _joy(joy), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::JoystickGroup &joyGroup, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _joyGroup(joyGroup), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
     Requires(&hatchIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -40,7 +40,7 @@ class HatchIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   HatchIntake &_hatchIntake;
-  curtinfrc::Joystick &_joy;
+  curtinfrc::JoystickGroup &_joyGroup;
   curtinfrc::Toggle _enabledToggle;
   bool _enabled;
 };

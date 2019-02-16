@@ -18,6 +18,10 @@ namespace devices {
       OnStatePeriodic(_state, dt);
     };
 
+    StateType GetState() {
+      return _state;
+    }
+
    protected:
     void      SetState(StateType state) { _state = state; };
     StateType _state, _lastState;

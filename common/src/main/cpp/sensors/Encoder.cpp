@@ -3,7 +3,11 @@
 using namespace curtinfrc::sensors;
 
 double Encoder::GetEncoderRotations() {
-  return (GetEncoderTicks() - _offset) / (double)_encoderTicksPerRotation;
+  return GetEncoderTicks() / (double)_encoderTicksPerRotation;
+}
+
+int Encoder::GetEncoderTicks() {
+  return GetEncoderRawTicks() - _offset;
 }
 
 int Encoder::GetEncoderTicksPerRotation() {
@@ -11,11 +15,19 @@ int Encoder::GetEncoderTicksPerRotation() {
 }
 
 void Encoder::ZeroEncoder() {
-  _offset = GetEncoderTicks();
+  _offset = GetEncoderRawTicks();
 }
 
-int DigitalEncoder::GetEncoderTicks() {
+double Encoder::GetEncoderAngularVelocity() {
+  return GetEncoderTickVelocity() / _encoderTicksPerRotation * 2 * 3.1415926;
+}
+
+int DigitalEncoder::GetEncoderRawTicks() {
   return _nativeEncoder.Get();
+}
+
+double DigitalEncoder::GetEncoderTickVelocity() {
+  return 1.0 / _nativeEncoder.GetPeriod();
 }
 
 int DigitalEncoder::GetChannelA() {
@@ -24,4 +36,8 @@ int DigitalEncoder::GetChannelA() {
 
 int DigitalEncoder::GetChannelB() {
   return _channelB;
+}
+
+int DigitalEncoder::GetSimulationHandle() {
+  return _nativeEncoder.GetFPGAIndex();
 }

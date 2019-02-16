@@ -48,6 +48,6 @@ void harness::run(std::function<int()> robot_thread) {
 
   while (true) {
     ui::window_manager::INSTANCE()->update();
-    cv::waitKey(static_cast<int>(1000.0 / 45.0));
+    cv::waitKey(static_cast<int>(1000.0 / 30.0));
   }
 }

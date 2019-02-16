@@ -2,27 +2,28 @@
 #include "ControlMap.h"
 
 void LiftManualStrategy::OnUpdate(double dt) {
-  double speed = (_joy.GetRawButton(ControlMap::raiseLift) - _joy.GetRawButton(ControlMap::lowerLift)) * 0.8;
-  _lift.SetManual(speed);
+  double speed = (_joyGroup.GetButton(ControlMap::raiseLift) - _joyGroup.GetButton(ControlMap::lowerLift)) * 0.8;
+  if (std::abs(speed) < 0.001) {
+    if (_lift.GetState() != curtinfrc::ElevatorState::kStationary)
+      _lift.SetHold();
+  } else
+    _lift.SetManual(speed);
 }
 
-void LiftPresetStrategy::OnUpdate(double dt) {
-  if (_joy.GetRawButton(ControlMap::goalGround)) {
-    _lift.SetSetpoint(ControlMap::setpointGround);
+void LiftGotoStrategy::OnStart() {
+  _lift.SetSetpoint(_setpoint);
+}
 
-  } else if (_joy.GetRawButton(ControlMap::goalLower1)) {
-    _lift.SetSetpoint(ControlMap::setpointLower1);
-  } else if (_joy.GetRawButton(ControlMap::goalLower2)) {
-  _lift.SetSetpoint(ControlMap::setpointLower2);
+void LiftGotoStrategy::OnUpdate(double dt) {
+  if (_lift.GetState() != curtinfrc::ElevatorState::kMoving) 
+    SetDone();
+}
 
-  } else if (_joy.GetRawButton(ControlMap::goalMiddle1)) {
-    _lift.SetSetpoint(ControlMap::setpointMiddle1);
-  } else if (_joy.GetRawButton(ControlMap::goalMiddle2)) {
-    _lift.SetSetpoint(ControlMap::setpointMiddle2);
+void LiftZeroStrategy::OnStart() {
+  _lift.SetZeroing();
+}
 
-  } else if (_joy.GetRawButton(ControlMap::goalUpper1)) {
-    _lift.SetSetpoint(ControlMap::setpointUpper1);
-  } else if (_joy.GetRawButton(ControlMap::goalUpper2)) {
-    _lift.SetSetpoint(ControlMap::setpointUpper2);
-  }
+void LiftZeroStrategy::OnUpdate(double dt) {
+  if (_lift.GetState() != curtinfrc::ElevatorState::kZeroing) 
+    SetDone();
 }

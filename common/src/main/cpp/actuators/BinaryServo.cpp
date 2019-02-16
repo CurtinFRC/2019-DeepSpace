@@ -1,5 +1,11 @@
 #include "actuators/BinaryServo.h"
 
-void curtinfrc::actuators::BinaryServo::Update(double dt) {
-  SetAngle(_state == kForward ? _config.forward : _config.reverse);
+using namespace curtinfrc::actuators;
+
+void BinaryServo::Update(double dt) {
+  SetAngle(_state == kForward ? _forwardPos : _reversePos);
+}
+
+bool BinaryServo::IsDone() {
+  return true;
 }

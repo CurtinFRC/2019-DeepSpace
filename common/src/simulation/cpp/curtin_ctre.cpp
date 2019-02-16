@@ -29,6 +29,10 @@ TalonSrx::~TalonSrx() {
   _talons.erase(_port);
 }
 
+void TalonSrx::SetUpdateRate(int hz) {
+  // no op in sim
+}
+
 int TalonSrx::GetPort() {
   return (int) _port;
 }
@@ -68,7 +72,8 @@ int TalonSrx::GetSensorVelocity() {
 }
 
 void TalonSrx::ZeroEncoder() {
-  Encoder::ZeroEncoder();
+
+  _talons[_port].sensor_pos = 0;
 }
 
 void TalonSrx::LoadConfig(TalonSrx::Configuration &config) {
@@ -90,6 +95,10 @@ VictorSpx::VictorSpx(int port) {
 
 VictorSpx::~VictorSpx() {
   _victors.erase(_port);
+}
+
+void VictorSpx::SetUpdateRate(int hz) {
+  // no op in sim
 }
 
 int VictorSpx::GetPort() {
