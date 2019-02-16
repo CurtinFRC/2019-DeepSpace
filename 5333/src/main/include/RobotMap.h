@@ -9,6 +9,7 @@
 #include "actuators/BinaryServo.h"
 #include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
+#include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
 
 #include "control/PIDController.h"
@@ -30,15 +31,17 @@ struct RobotMap {
 
 
   struct DriveTrain {
-    curtinfrc::TalonSrx leftSrx{ 1, 2048 };
-    curtinfrc::VictorSpx leftSpx{ 2 };
+    curtinfrc::TalonSrx leftSrx{ 3 };
+    curtinfrc::VictorSpx leftSpx{ 4 };
     frc::SpeedControllerGroup leftMotors{ leftSrx, leftSpx };
-    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftSrx, 10.71 };
+    curtinfrc::sensors::DigitalEncoder leftEncoder{ 6, 7, 2048 };
+    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
 
-    curtinfrc::TalonSrx rightSrx{ 3, 2048 };
-    curtinfrc::VictorSpx rightSpx{ 4 };
+    curtinfrc::TalonSrx rightSrx{ 1 };
+    curtinfrc::VictorSpx rightSpx{ 2 };
     frc::SpeedControllerGroup rightMotors{ rightSrx, rightSpx }; 
-    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightSrx, 10.71 };
+    curtinfrc::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
+    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
 
     curtinfrc::sensors::NavX navx{};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
@@ -72,23 +75,38 @@ struct RobotMap {
 
 
   struct Elevator {
-    frc::Spark liftMotor{ 5 };
-    curtinfrc::sensors::DigitalEncoder liftEncoder{0, 1, 1024};
-    curtinfrc::Gearbox elevatorGearbox{ &liftMotor, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
+    curtinfrc::VictorSpx liftSpx1{ 5 };
+    curtinfrc::TalonSrx liftSrx1{ 6 };
+    curtinfrc::TalonSrx liftSrx2{ 7 };
+    curtinfrc::VictorSpx liftSpx2{ 8 };
+    frc::SpeedControllerGroup liftMotors{ liftSpx1, liftSrx1, liftSrx2, liftSpx2 };
+
+    curtinfrc::sensors::DigitalEncoder liftEncoder{ 2, 3, 2048 };
+    curtinfrc::Gearbox elevatorGearbox{ &liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
+
+    curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
     curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
-    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
+    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 25 / 1000.0, 20 };
+
+    Elevator() {
+      liftSrx1.SetUpdateRate(200);
+      liftSrx2.SetUpdateRate(200);
+      liftSpx1.SetUpdateRate(200);
+      liftSpx2.SetUpdateRate(200);
+    }
   };
 
   Elevator lift;
 
 
+  // UNUSED
   struct HarvesterIntake {
     frc::Spark harvesterMotor{ 6 };
-    curtinfrc::actuators::DoubleSolenoid harvesterSolenoid{ 0, 1 };
+    curtinfrc::actuators::DoubleSolenoid harvesterSolenoid{ 1, 2, 3 };
     curtinfrc::Gearbox harvesterGearbox{ &harvesterMotor, nullptr, 4 };
 
     HarvesterIntakeConfig config{ harvesterGearbox, harvesterSolenoid };
@@ -98,10 +116,11 @@ struct RobotMap {
 
 
   struct SideHatchIntake {
-    curtinfrc::actuators::BinaryServo servo{ 7, forward, reverse };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 3 };
-    const int forward = 60;
-    const int reverse = 0;
+    const int forward = 115;
+    const int reverse = 5;
+
+    curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
 
     HatchIntakeConfig config{ servo, solenoid };
   };
@@ -109,8 +128,8 @@ struct RobotMap {
   SideHatchIntake sideHatchIntake;
 
   struct FrontHatchIntake {
-    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 6, 7 };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 4, 5 };
+    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
 
     HatchIntakeConfig config{ manipulatorSolenoid, solenoid };
   };
@@ -119,12 +138,12 @@ struct RobotMap {
 
 
   struct BoxIntake {
-    frc::Spark boxMotor{ 9 };
+    curtinfrc::TalonSrx boxMotor{ 9 };
     curtinfrc::Gearbox boxIntakeGearbox{ &boxMotor, nullptr };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 6, 7 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 4, 5 };
 
 
-    BoxIntakeConfig config{ boxIntakeGearbox, solenoid };
+    BoxIntakeConfig config{ boxIntakeGearbox, solenoid, true };
   };
 
   BoxIntake boxIntake;

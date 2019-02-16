@@ -23,6 +23,7 @@ void Robot::RobotInit() {
   CameraServer::GetInstance()->StartAutomaticCapture(1);
 
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true); 
+  robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
@@ -60,31 +61,29 @@ void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
 
-  if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC)
-    enableFOC = false;
-  
-  if (toggleFOC.Update(robotmap.joyGroup.GetButton(ControlMap::activateFOC))) {
+  if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
+  if (robotmap.joyGroup.GetButtonRise(ControlMap::activateFOC)) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
-  
-  if (robotmap.joyGroup.GetButton(ControlMap::liftGoalGround)) {
+
+  if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalGround)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower2));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle2));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
@@ -96,7 +95,9 @@ void Robot::AutonomousInit() { }
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  std::cout << robotmap.lift.liftEncoder.GetEncoderTicks() << std::endl;
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

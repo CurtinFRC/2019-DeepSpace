@@ -58,7 +58,7 @@ namespace curtinfrc {
 
     bool GetRawButton(JoyNum joy, int button);
     bool GetRawButtonRise(JoyNum joy, int button);
-    bool GetRawButtonFall(JoyNum joy, int button);    
+    bool GetRawButtonFall(JoyNum joy, int button);
 
     bool GetButton(tJoypair joyPair);
     bool GetButtonRise(tJoypair joyPair);

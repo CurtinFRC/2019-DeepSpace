@@ -26,8 +26,13 @@ namespace curtinfrc {
      * 
      * @param port The device ID of the Talon SRX on the CAN Bus.
      */
-    TalonSrx(int port, int encoderTicksPerRotation);
+    TalonSrx(int port, int encoderTicksPerRotation = 2048);
     ~TalonSrx();
+
+    /**
+     * Set the Talon SRX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
 
     /**
      * Get the CAN Device ID of the Talon SRX.
@@ -99,8 +104,10 @@ namespace curtinfrc {
      */
     int GetSensorVelocity();
 
-    int GetEncoderTicks() override;
+    int GetEncoderRawTicks() override;
     double GetEncoderTickVelocity() override;
+    void ZeroEncoder() override;
+
 
     /**
      * Load a talon Configuration.
@@ -144,6 +151,11 @@ namespace curtinfrc {
      */
     VictorSpx(int port);
     ~VictorSpx();
+
+    /**
+     * Set the Victor SPX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
 
     /**
      * Get the CAN Device ID of the Victor SPX.

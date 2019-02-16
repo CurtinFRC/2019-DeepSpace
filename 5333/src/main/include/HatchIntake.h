@@ -11,7 +11,7 @@ using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::actuators::BinaryActuator &manipulator;
 
-  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), manipulator(manipulatorIn) {};
+  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
@@ -23,6 +23,7 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
  protected:
   virtual void IntakingPeriodic() override;  // Intake a hatch
   virtual void OuttakingPeriodic() override; // Eject a hatch
+  virtual void StowedPeriodic() override;
 
  private:
   HatchIntakeConfig _config;

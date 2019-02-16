@@ -11,9 +11,12 @@
     ".classpath": true,
     ".project": true,
     "**/.gradle": true,
-    // Hiding files that just clutter up the workspace
     "gradle": true,
-    ".wpilib": true
+    ".wpilib": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
   },
   "files.watcherExclude": {
     "**/.git/objects/**": true,

@@ -13,14 +13,33 @@ void curtinfrc::devices::DeployableDevice::SetIntaking() {
 }
 
 void curtinfrc::devices::DeployableDevice::SetOuttaking() {
-  switch (_state) {
-   case kIntaking:
-   case kOuttaking:
-    SetState(kOuttaking);
-    break;
+  if (!_config.canEject) { // default
+    switch (_state) {
+    case kIntaking:
+    case kOuttaking:
+      SetState(kOuttaking);
+      break;
 
-   default:
-    SetState(kDeploying);
+    default:
+      SetState(kDeploying);
+      break;
+    }
+  } else { // can eject while stowed
+    switch (_state) {
+     case kIntaking:
+     case kOuttaking:
+     case kStowed:
+      SetState(kOuttaking);
+      break;
+
+     case kStowing:
+      SetState(kStowing);
+      break;
+
+     case kDeploying:
+      SetState(kDeploying);
+      break;
+    }
   }
 }
 

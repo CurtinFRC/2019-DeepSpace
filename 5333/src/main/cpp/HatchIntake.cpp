@@ -1,12 +1,16 @@
 #include "HatchIntake.h"
 #include "ControlMap.h"
 
-void HatchIntake::IntakingPeriodic() { // Intake
+void HatchIntake::IntakingPeriodic() { // Primary (e.g. intaking)
   _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
 }
 
-void HatchIntake::OuttakingPeriodic() { // Eject
+void HatchIntake::OuttakingPeriodic() { // Reverse (e.g. ejecting)
   _config.manipulator.SetTarget(curtinfrc::actuators::kReverse);
+}
+
+void HatchIntake::StowedPeriodic() { // Stow
+  _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
 }
 
 
