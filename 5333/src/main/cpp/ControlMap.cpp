@@ -54,3 +54,7 @@ const tJoymap ControlMap::hatchToggleEnabled{ { 1, 8 }, nopair }; // Changes the
 const tJoymap ControlMap::boxIn{ { 1, 3 }, nopair };
 const tJoymap ControlMap::boxOut{ { 1, 5 }, nopair };
 const tJoymap ControlMap::boxStow{ { 1, 11 }, nopair };
+
+
+// CONTROLSYSTEM JOYMAP
+const tJoymap ControlMap::compressorOn{ nopair, { 2, 2 } };

@@ -7,10 +7,12 @@
 #include "CurtinControllers.h"
 #include "Gearbox.h"
 #include "actuators/BinaryServo.h"
+#include "actuators/Compressor.h"
 #include "actuators/DoubleSolenoid.h"
 #include "sensors/Encoder.h"
 #include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
+#include "sensors/PressureSensor.h"
 
 #include "control/PIDController.h"
 // #include "MotionProfiling.h"
@@ -93,9 +95,9 @@ struct RobotMap {
     curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 25 / 1000.0, 20 };
 
     Elevator() {
+      liftSpx1.SetUpdateRate(200);
       liftSrx1.SetUpdateRate(200);
       liftSrx2.SetUpdateRate(200);
-      liftSpx1.SetUpdateRate(200);
       liftSpx2.SetUpdateRate(200);
     }
   };
@@ -147,4 +149,13 @@ struct RobotMap {
   };
 
   BoxIntake boxIntake;
+
+
+  struct ControlSystem {
+    curtinfrc::actuators::Compressor compressor{ 1 };
+
+    curtinfrc::sensors::PressureSensor pressureSensor{ 0 };
+  };
+
+  ControlSystem controlSystem;
 };
