@@ -2,6 +2,7 @@
 
 #include "Drivetrain.h"
 #include "strategy/Strategy.h"
+#include "control/PIDController.h"
 
 class BaseDrivetrainTeleopStrategy : public curtinfrc::Strategy {
  public:
@@ -31,14 +32,14 @@ class DrivetrainFOCStrategy : public BaseDrivetrainTeleopStrategy {
   curtinfrc::Toggle _invertedToggle;
 };
 
-class DrivetrainAngleStrategy : public Strategy {
+class DrivetrainAngleStrategy : public curtinfrc::Strategy {
  public:
-  DrivetrainAngleStrategy(Drivetrain &drivetrain, control::PIDGains gains, double angle);
+  DrivetrainAngleStrategy(curtinfrc::Drivetrain &drivetrain, curtinfrc::control::PIDGains gains, double angle);
 
   void OnUpdate(double dt) override;
  private:
-  Drivetrain &_drivetrain;
-  control::PIDController _pid;
+  curtinfrc::Drivetrain &_drivetrain;
+  curtinfrc::control::PIDController _pid;
   double _angle;
   double _bearing = 0;
 };
