@@ -14,11 +14,11 @@ void BoxIntake::DeployingPeriodic() {
 }
 
 void BoxIntake::StowingPeriodic() {
-  _config.motors.transmission->StopMotor();
+  _config.motors.transmission->Set(-0.1);
 }
 
 void BoxIntake::StowedPeriodic() {
-  _config.motors.transmission->StopMotor();
+  _config.motors.transmission->Set(-0.05);
 }
 
 

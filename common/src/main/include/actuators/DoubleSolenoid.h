@@ -3,12 +3,11 @@
 #include <frc/DoubleSolenoid.h>
 
 #include "actuators/BinaryActuator.h"
-#include "Gearbox.h"
 
 namespace curtinfrc {
   namespace actuators {
     class DoubleSolenoid : public BinaryActuator, protected frc::DoubleSolenoid {
-      public:
+     public:
       DoubleSolenoid(int forwardChannel, int reverseChannel, BinaryActuatorState initialState = actuators::kReverse) : frc::DoubleSolenoid(forwardChannel, reverseChannel), BinaryActuator(initialState) {};
       DoubleSolenoid(int pcmID, int forwardChannel, int reverseChannel, BinaryActuatorState initialState = actuators::kReverse) : frc::DoubleSolenoid(pcmID, forwardChannel, reverseChannel), BinaryActuator(initialState) {};
 
