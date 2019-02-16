@@ -1,11 +1,12 @@
 #include "strategies/DriveStrategies.h"
 
+#include <cmath>
+
 #include "ControlMap.h"
 
 using namespace curtinfrc;
 
-BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Drivetrain &drivetrain,
-                                                           JoystickGroup &joys)
+BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Drivetrain &drivetrain, JoystickGroup &joys)
     : Strategy(name), _drivetrain(drivetrain), _joys(joys) {
   Requires(&drivetrain);
   SetCanBeInterrupted(true);
@@ -19,10 +20,10 @@ void DrivetrainManualStrategy::OnUpdate(double dt) {
   
   if (!_joys.GetButton(ControlMap::holdMovement)) {
     joyForward = -_joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::forwardAxis, ControlMap::turnAxis) * 0.9;
-    joyForward *= abs(joyForward);
+    joyForward *= std::abs(joyForward);
   }
 
-  joyTurn = _joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::turnAxis, ControlMap::forwardAxis) * 0.9;
+  joyTurn = _joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::turnAxis, ControlMap::forwardAxis) * 0.7;
   // joyTurn *= abs(joyTurn);
 
   double leftSpeed = joyForward + joyTurn;

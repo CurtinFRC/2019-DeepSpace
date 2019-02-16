@@ -19,10 +19,10 @@ void Robot::RobotInit() {
   xOffset = visionTable->GetEntry("xOffset");
   endAngle = visionTable->GetEntry("endAngle");
 
-  CameraServer::GetInstance()->StartAutomaticCapture(0);
-  CameraServer::GetInstance()->StartAutomaticCapture(1);
+  // CameraServer::GetInstance()->StartAutomaticCapture(0);
+  // CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  robotmap.drivetrain.leftGearbox.transmission->SetInverted(true); 
+  robotmap.drivetrain.rightGearbox.transmission->SetInverted(true); 
   robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
@@ -37,9 +37,9 @@ void Robot::RobotInit() {
   // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joyGroup));
   // harvester->StartLoop(50);
 
-  sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
-  sideHatchIntake->StartLoop(50);
+  // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
+  // sideHatchIntake->StartLoop(50);
 
   frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
   frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.joyGroup, true));
@@ -52,7 +52,7 @@ void Robot::RobotInit() {
   Register(drivetrain);
   Register(beElevator);
   // Register(harvester);
-  Register(sideHatchIntake);
+  // Register(sideHatchIntake);
   Register(frontHatchIntake);
   Register(boxIntake);
 }
@@ -99,13 +99,11 @@ void Robot::RobotPeriodic() {
   Update(dt);
 }
 
-void Robot::AutonomousInit() { }
+void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {
-  std::cout << robotmap.lift.liftEncoder.GetEncoderTicks() << std::endl;
-}
+void Robot::TeleopPeriodic() {}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

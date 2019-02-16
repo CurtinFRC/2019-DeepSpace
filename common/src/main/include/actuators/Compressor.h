@@ -8,8 +8,8 @@ namespace curtinfrc {
   namespace actuators {
     class Compressor : public BinaryActuator, protected frc::Compressor {
       public:
-      Compressor(BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(), BinaryActuator(initialState) {};
-      Compressor(int pcmID, BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(pcmID), BinaryActuator(initialState) {};
+      Compressor(BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(), BinaryActuator(initialState) { SetClosedLoopControl(false); };
+      Compressor(int pcmID, BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(pcmID), BinaryActuator(initialState) { SetClosedLoopControl(false); };
 
       virtual void Update(double dt) override;
       virtual void Stop() final {};
@@ -17,4 +17,3 @@ namespace curtinfrc {
     };
   } // ns actuators
 } // ns curtinfrc
-

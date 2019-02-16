@@ -5,7 +5,7 @@
 
 namespace curtinfrc {
   namespace devices {
-    enum DeployableDeviceState { kIntaking, kOuttaking, kDeploying, kStowing, kStowed };
+    enum DeployableDeviceState { kStowed = 0, kStowing, kDeploying, kOuttaking, kIntaking };
 
     struct DeployableDeviceConfig {
       actuators::BinaryActuator &actuator;
