@@ -11,7 +11,7 @@ using BoxIntakeState = curtinfrc::devices::DeployableDeviceState;
 struct BoxIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::Gearbox &motors;
 
-  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), motors(motorsIn) {};
+  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = true) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), motors(motorsIn) {};
 };
 
 class BoxIntake : public curtinfrc::devices::DeployableDevice {

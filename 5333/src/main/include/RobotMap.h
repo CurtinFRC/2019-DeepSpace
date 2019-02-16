@@ -143,7 +143,7 @@ struct RobotMap {
     curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 4, 5 };
 
 
-    BoxIntakeConfig config{ boxIntakeGearbox, solenoid };
+    BoxIntakeConfig config{ boxIntakeGearbox, solenoid, true };
   };
 
   BoxIntake boxIntake;
