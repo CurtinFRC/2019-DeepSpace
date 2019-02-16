@@ -72,6 +72,7 @@ int TalonSrx::GetSensorVelocity() {
 }
 
 void TalonSrx::ZeroEncoder() {
+
   _talons[_port].sensor_pos = 0;
 }
 

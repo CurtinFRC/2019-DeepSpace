@@ -2,6 +2,7 @@
 
 #include <frc/Servo.h>
 
+
 #include "actuators/BinaryActuator.h"
 
 namespace curtinfrc {
@@ -16,6 +17,7 @@ namespace curtinfrc {
       
      private:
       int _forwardPos, _reversePos; // Forward and Reverse positions on the servo, in degrees
+
     };
   } // ns actuators
 } // ns curtinfrc

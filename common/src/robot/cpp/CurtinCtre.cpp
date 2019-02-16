@@ -31,6 +31,7 @@ int TalonSrx::GetPort() {
 
 void TalonSrx::SetInverted(bool invert) {
   NativeSrx(this)->SetInverted(invert);
+  NativeSrx(this)->SetSensorPhase(invert);
 }
 
 bool TalonSrx::GetInverted() const {

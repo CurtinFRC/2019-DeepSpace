@@ -14,7 +14,9 @@ namespace sensors {
     int    GetEncoderTicks();
     double GetEncoderRotations();
     int    GetEncoderTicksPerRotation();
+
     double GetEncoderAngularVelocity();   // rad/s
+
 
    private:
     int _encoderTicksPerRotation;

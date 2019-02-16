@@ -108,6 +108,7 @@ namespace curtinfrc {
     double GetEncoderTickVelocity() override;
     void ZeroEncoder() override;
 
+
     /**
      * Load a talon Configuration.
      * 

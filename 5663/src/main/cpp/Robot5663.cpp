@@ -1,73 +1,167 @@
 #include "Robot5663.h"
-#include <math.h>
+#include "Drivetrain.h"
+#include <frc/PowerDistributionPanel.h>
+#include <cmath>
+#include "frc/AnalogInput.h"
+
+#include <iostream>
 
 using namespace curtinfrc;
+using namespace frc;
 using hand = frc::XboxController::JoystickHand; // Type alias for hand
 
+double lastTimestamp;
+
 void Robot::RobotInit() {
+  timer = new frc::Timer();
+  lastTimestamp = Timer::GetFPGATimestamp();
+  AI = new frc::AnalogInput(3);
+  arduino = new I2C(frc::I2C::kOnboard, 8);
+  arduino->WriteBulk(&message, 16);
+  message = 78;
+
+  //climber
+  ClimbLeft = new Spark(0);
+  ClimbRight = new Spark(1);
+  BIGBOYS = new DoubleSolenoid(9, 4, 5);
+
+  //Mechanisms
+  cargo = new Cargo(6,11,8);
+  hatch = new Hatch(1,0,1,2,3,0);
+  driveFunct = new DriveFunc(2,5,3,4);
+
   // Motor_Controllers
-  left_motor1 = new curtinfrc::TalonSrx(0, 0);
-  right_motor1 = new curtinfrc::TalonSrx(2, 0);
-  left_motor2 = new curtinfrc::TalonSrx(1, 0);
-  right_motor2 = new curtinfrc::TalonSrx(3, 0);
+  leftTalon = new TalonSrx(2, 2048);
+  leftVictor = new VictorSpx(3);
+  Left = new Gearbox{ new SpeedControllerGroup(*leftTalon, *leftVictor), nullptr };
 
-  Cargo = new frc::Spark(2);
-  Rotation = new frc::Spark(3);
+  rightTalon = new TalonSrx(5, 2048);
+  rightVictor = new VictorSpx(4);
+  Right = new Gearbox{ new SpeedControllerGroup(*rightTalon, *rightVictor), nullptr };
 
-  // pistons
-  hatch_deploy1 = new frc::DoubleSolenoid(0, 1);
-  hatch_deploy2 = new frc::DoubleSolenoid(2, 3);
-  hatch_deploy3 = new frc::DoubleSolenoid(4, 5);
-
+  DrivetrainConfig drivetrainConfig{*Left, *Right};
+  drivetrain = new Drivetrain(drivetrainConfig);
   
   xbox1 = new frc::XboxController(0);
   xbox2 = new frc::XboxController(1);
+
+ // new PowerDistributionPanel(0);
+  compressor = new Compressor(9);           //initiate compressor with PCM can ID
+  compressor->SetClosedLoopControl(true);   //enable compressor
+  timer->Start();
+  //Servo *AntiFlooperFlooper = new Servo(1);
+
+  //NetworkTable
+  table = nt::NetworkTableInstance::GetDefault().GetTable("TapeTable");
+  targetAngle = table->GetEntry("Angle");
+
+//  AntiFlooperFlooper->Set(.5);
+  //AntiFlooperFlooper->SetAngle(75);
+}
+void Robot::AutonomousInit() {}
+void Robot::AutonomousPeriodic() {
+  message = 76;
+  arduino->WriteBulk(&message, 16);
 }
 
-void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
+void Robot::TeleopInit() {
+  hatch->zeroEncoder();
+  cargo->zeroEncoder();
+  driveFunct->zero();
+  
+}
 
-void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  // Tank drive 
-  double left_speed = -xbox1->GetY(hand::kLeftHand);
-  double right_speed = xbox1->GetY(hand::kRightHand);
+  double dt = timer->Get() - lastTimer;
+  lastTimer = timer->Get();
+  
+ //*-*-*-*-*-{ DRIVER }-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+ // Tank drive 
+  //Drive Functions
+  // if (xbox1->GetAButton()){
+  //    driveFunct->Forward(10000); // input distance in ticks
+  // }
+  // if (xbox1->GetBButton()){
+  //    driveFunct->TurnNinety();
+  //  }
+  frc::SmartDashboard::PutNumber("timer", timer->Get());
 
-  left_speed *= std::abs(left_speed);
-  right_speed *= std::abs(right_speed);
 
-  left_motor1->Set(left_speed);
-  left_motor2->Set(left_speed);
-  right_motor1->Set(right_speed);
-  right_motor2->Set(right_speed);
+  if (xbox1->GetBumper(hand::kRightHand)) {
+    // pressRBumper = xbox1->GetBumperPressed(hand::kRightHand);
+    // power = driveFunct->TurnAngle(180, dt, pressRBumper);
+    // drivetrain->Set(power, power);
+    // message = 76;
 
-  //Rotation
-  double Rotation_speed = xbox2->GetY(hand::kRightHand);
-
-  Rotation_speed *= std::abs(Rotation_speed);
-
-  Rotation->Set(Rotation_speed);
-
-  //Cargo
-  if(xbox2->GetTriggerAxis(hand::kLeftHand) != 0.0) {
-    Cargo->Set(-xbox2->GetTriggerAxis(hand::kLeftHand));
+  } else if (xbox1->GetBButton()) {
+    pressBButton = xbox1->GetBButtonPressed();
+    powers = driveFunct->Forward(1, dt, pressBButton);
+    drivetrain->Set(-powers[0], powers[1]);
   } else {
-    Cargo->Set(xbox2->GetTriggerAxis(hand::kRightHand));
+    message = 78;
+    double left_speed = -xbox1->GetY(hand::kLeftHand);
+    double right_speed = xbox1->GetY(hand::kRightHand);
+    drivetrain->Set(left_speed*std::abs(left_speed), right_speed*std::abs(right_speed));
+  }
+  // Climb
+  if (xbox1->GetBumper(hand::kLeftHand)){
+    BIGBOYS->Set(frc::DoubleSolenoid::kReverse);
+    ClimbLeft->Set(-xbox1->GetY(hand::kRightHand));
+    ClimbRight->Set(xbox1->GetY(hand::kLeftHand));
+  } else {
+    BIGBOYS->Set(frc::DoubleSolenoid::kForward);
+     ClimbLeft->Set(0);
+    ClimbRight->Set(0);
+  }
+  //CoDriver-------------------------------------------------------------------------------
+
+  //cargo movement
+  if (xbox2->GetYButton()){
+     cargo->setAngle(0);
+  } else if (xbox2->GetAButton()){
+     cargo->setAngle(175000);
+  } else if (xbox2->GetXButton()) {
+     cargo->setAngle(40000);
+  } else {
+     cargo->setRotationSpeed(xbox2->GetY(hand::kLeftHand)/2);
+   }
+
+  //cargo intake/outtake
+  if (xbox2->GetTriggerAxis(hand::kLeftHand)){
+    cargo->setIntakeSpeed(-xbox2->GetTriggerAxis(hand::kLeftHand));
+  } else {
+    cargo->setIntakeSpeed(xbox2->GetTriggerAxis(hand::kRightHand)/2);
   }
   
+  //manual hatch
+  if (xbox2->GetY(hand::kRightHand)){
+    hatch->setRotationSpeed(xbox2->GetY(hand::kRightHand));
+  } else {
+    hatch->setRotationSpeed(0);
+  }
+
+  //hatch positioning
+  if (xbox2->GetYButton()){
+    hatch->downPosition();
+  } else if(xbox2->GetXButton()){
+      hatch->upPosition();
+  } else {
+    hatch->setRotationSpeed(0);
+  }
+
+  if (lockToggle.Update(xbox2->GetAButton())) lockState = !lockState;
+
   //Hatch Ejection
-  if(xbox2->GetAButton() == 1){
-    hatch_deploy1->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-    hatch_deploy2->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-    hatch_deploy3->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kForward);
-  } else  { 
-    hatch_deploy1->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-    hatch_deploy2->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-    hatch_deploy3->frc::DoubleSolenoid::Set  (frc::DoubleSolenoid::kReverse);
-  }
+  hatch->ejectHatch(xbox2->GetBumper(hand::kLeftHand));
+  hatch->lockHatch(lockState);
+  hatch->alignmentPiston(xbox2->GetBumper(hand::kRightHand));
 
+  hatch->update();
+  cargo->update();
+  driveFunct->update();
+  frc::SmartDashboard::PutNumber("PSI", (AI->GetValue()*250/4096-25));
+  //Update(dt);
+}
 
-  }
-
-void Robot::TestInit() {}
-void Robot::TestPeriodic() {}
+void Robot::TestInit(){}
+void Robot::TestPeriodic(){}
