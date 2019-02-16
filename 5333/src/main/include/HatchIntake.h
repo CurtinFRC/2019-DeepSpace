@@ -23,6 +23,7 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice {
  protected:
   virtual void IntakingPeriodic() override;  // Intake a hatch
   virtual void OuttakingPeriodic() override; // Eject a hatch
+  virtual void StowedPeriodic() override;
 
  private:
   HatchIntakeConfig _config;
