@@ -9,8 +9,9 @@ namespace curtinfrc {
 
     struct DeployableDeviceConfig {
       actuators::BinaryActuator &actuator;
+      const bool canEject;
 
-      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn) : actuator(actuatorIn) {};
+      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn, bool canEjectIn = false) : actuator(actuatorIn), canEject(canEjectIn) {};
     };
 
     class DeployableDevice : public StateDevice<DeployableDeviceState> {
