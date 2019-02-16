@@ -9,6 +9,10 @@ void HatchIntake::OuttakingPeriodic() { // Eject
   _config.manipulator.SetTarget(curtinfrc::actuators::kReverse);
 }
 
+void HatchIntake::StowedPeriodic() { // Stow
+  _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
+}
+
 
 void HatchIntakeManualStrategy::OnUpdate(double dt) {
   _hatchIntake.GetConfig().manipulator.Update(dt);
