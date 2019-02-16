@@ -31,14 +31,14 @@ struct RobotMap {
 
 
   struct DriveTrain {
-    curtinfrc::TalonSrx leftSrx{ 1 };
-    curtinfrc::VictorSpx leftSpx{ 2 };
+    curtinfrc::TalonSrx leftSrx{ 3 };
+    curtinfrc::VictorSpx leftSpx{ 4 };
     frc::SpeedControllerGroup leftMotors{ leftSrx, leftSpx };
     curtinfrc::sensors::DigitalEncoder leftEncoder{ 6, 7, 2048 };
     curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 10.71 };
 
-    curtinfrc::TalonSrx rightSrx{ 3 };
-    curtinfrc::VictorSpx rightSpx{ 4 };
+    curtinfrc::TalonSrx rightSrx{ 1 };
+    curtinfrc::VictorSpx rightSpx{ 2 };
     frc::SpeedControllerGroup rightMotors{ rightSrx, rightSpx }; 
     curtinfrc::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
     curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 10.71 };
