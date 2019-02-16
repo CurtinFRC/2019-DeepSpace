@@ -13,8 +13,13 @@
 #include "opencv2/core/core.hpp"
 #include <mutex>
 
+#include "networktables/NetworkTableInstance.h"
+
 class Process : public Runnable, public Displayable {
  public:
+
+  nt::NetworkTableEntry TapeCamSet;
+
   virtual void Init() override;
   virtual void Periodic() override;
 

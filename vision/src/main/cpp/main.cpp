@@ -1,5 +1,5 @@
 #include "Capture.h"
-// #include "TapeProcessing.h"
+#include "TapeProcessing.h"
 // #include "BallProcessing.h"
 // #include "HatchProcessing.h"
 #include "Display.h"
@@ -33,9 +33,11 @@ int main(int argc, char **argv) {
   }
 
   Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  Display display{"Side Hatch", sideHatchCapture};
+  TapeProcessing sideTape{sideHatchCapture};
+  Display display{"Side Hatch", sideTape};
 
   sideHatchCapture.StartThread(30.0);
+  sideTape.StartThread(30.0);
   display.StartThread(30.0);
 
   display.JoinThread();
