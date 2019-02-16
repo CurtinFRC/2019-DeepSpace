@@ -44,44 +44,44 @@ curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
 // virtual
 
 void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) {
-  double power = 0;
+  double voltage = 0;
   
   switch (state) {
    case kManual:
-    power = _controller.GetSetpoint();
+    voltage = _controller.GetSetpoint();
     break;
 
    case kMoving:
     if (_controller.IsDone()) SetHold(); // Good enough EPS for now
    case kStationary:
-    power = _controller.Calculate(GetHeight(), dt);
+    voltage = _controller.Calculate(GetHeight(), dt);
     break;
 
    case kZeroing:
-    power = -0.6;
+    voltage = -2;
     
     if (_config.limitSensorBottom != nullptr) {
       if (_config.limitSensorBottom->Get()) {
         SetManual(0);
         GetConfig().spool.encoder->ZeroEncoder();
       }
-    } else power = -0.25;
+    } else SetManual(0);
     break;
   }
 
   // Limiters
   if (_config.limitSensorTop != nullptr)
-    if (power > 0)
+    if (voltage > 0)
       if (_config.limitSensorTop->Get())
-        power = 0;
+        voltage = 0;
 
   if (_config.limitSensorBottom != nullptr)
-    if (power < 0)
+    if (voltage < 0)
       if (_config.limitSensorBottom->Get()) {
-        power = 0;
+        voltage = 0;
         GetConfig().spool.encoder->ZeroEncoder();
       }
 
-  power = std::min(1.0, std::max(-1.0, power)) * 0.6;
-  GetConfig().spool.transmission->Set(power);
+  voltage = std::min(12.0, std::max(-12.0, voltage)) * 0.6;
+  GetConfig().spool.transmission->SetVoltage(voltage);
 }

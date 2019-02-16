@@ -2,23 +2,23 @@
 #include "ControlMap.h"
 
 void BoxIntake::IntakingPeriodic() {
-  _config.motors.transmission->Set(1);
+  _config.motors.transmission->SetVoltage(12);
 }
 
 void BoxIntake::OuttakingPeriodic() {
-  _config.motors.transmission->Set(-1);
+  _config.motors.transmission->SetVoltage(-12);
 }
 
 void BoxIntake::DeployingPeriodic() {
-  _config.motors.transmission->StopMotor();
+  _config.motors.transmission->SetVoltage(0);
 }
 
 void BoxIntake::StowingPeriodic() {
-  _config.motors.transmission->Set(-0.1);
+  _config.motors.transmission->SetVoltage(-1.5);
 }
 
 void BoxIntake::StowedPeriodic() {
-  _config.motors.transmission->Set(-0.05);
+  _config.motors.transmission->SetVoltage(-0.6);
 }
 
 

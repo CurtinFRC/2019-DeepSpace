@@ -33,10 +33,6 @@ void Robot::RobotInit() {
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joyGroup));
   beElevator->StartLoop(100);
 
-  // harvester = new HarvesterIntake(harvesterConfig);
-  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joyGroup));
-  // harvester->StartLoop(50);
-
   sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
   sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
   sideHatchIntake->StartLoop(50);

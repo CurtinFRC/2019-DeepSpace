@@ -1,9 +1,8 @@
 #pragma once
 
-#include <frc/SpeedController.h>
-
 #include "sensors/Encoder.h"
 #include "physics/DcMotor.h"
+#include "actuators/VoltageController.h"
 
 namespace curtinfrc {
 
@@ -16,9 +15,9 @@ namespace curtinfrc {
 struct Gearbox {
 
   /**
-   * The SpeedController (Motor Controller). May not be null.
+   * The VoltageController (Motor Controller). May not be null.
    */
-  frc::SpeedController *transmission;
+  actuators::VoltageController *transmission;
 
   /**
    * The Encoder. May be null, depending on the consumer of this structure.

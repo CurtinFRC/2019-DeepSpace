@@ -12,7 +12,7 @@ inline can::TalonSRX *NativeSrx(const TalonSrx *srx) {
   return static_cast<can::TalonSRX *>(srx->_handle);
 }
 
-TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : Encoder::Encoder(encoderTicksPerRotation) {
+TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : actuators::MotorVoltageController(this), Encoder::Encoder(encoderTicksPerRotation) {
   _handle = (void *)new can::TalonSRX(port);
   _port = port;
 }
@@ -84,7 +84,7 @@ inline can::VictorSPX *NativeSpx(const VictorSpx *srx) {
   return static_cast<can::VictorSPX *>(srx->_handle);
 }
 
-VictorSpx::VictorSpx(int port) {
+VictorSpx::VictorSpx(int port) : actuators::MotorVoltageController(this) {
   _handle = (void *)new can::VictorSPX(port);
   _port = port;
 }

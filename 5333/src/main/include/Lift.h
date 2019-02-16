@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Elevator.h"
-#include "HarvesterIntake.h"
 
+#include "CurtinControllers.h"
 #include "strategy/Strategy.h"
 
 class Lift : public curtinfrc::Elevator {

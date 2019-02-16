@@ -1,5 +1,7 @@
 #include "CurtinCtre.h"
 
+#include <frc/RobotController.h>
+
 using namespace curtinfrc;
 
 // SRX

@@ -18,7 +18,6 @@
 
 #include "Drivetrain.h"
 #include "Lift.h"
-#include "HarvesterIntake.h"
 #include "HatchIntake.h"
 #include "BoxIntake.h"
 
