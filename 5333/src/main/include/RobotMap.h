@@ -35,13 +35,13 @@ struct RobotMap {
     curtinfrc::VictorSpx leftSpx{ 4 };
     frc::SpeedControllerGroup leftMotors{ leftSrx, leftSpx };
     curtinfrc::sensors::DigitalEncoder leftEncoder{ 6, 7, 2048 };
-    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 10.71 };
+    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
 
     curtinfrc::TalonSrx rightSrx{ 1 };
     curtinfrc::VictorSpx rightSpx{ 2 };
     frc::SpeedControllerGroup rightMotors{ rightSrx, rightSpx }; 
     curtinfrc::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
-    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 10.71 };
+    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
 
     curtinfrc::sensors::NavX navx{};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
@@ -91,6 +91,13 @@ struct RobotMap {
 
 
     curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 25 / 1000.0, 20 };
+
+    Elevator() {
+      liftSrx1.SetUpdateRate(200);
+      liftSrx2.SetUpdateRate(200);
+      liftSpx1.SetUpdateRate(200);
+      liftSpx2.SetUpdateRate(200);
+    }
   };
 
   Elevator lift;

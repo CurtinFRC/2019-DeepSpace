@@ -21,6 +21,10 @@ TalonSrx::~TalonSrx() {
   delete NativeSrx(this);
 }
 
+void TalonSrx::SetUpdateRate(int hz) {
+  NativeSrx(this)->SetControlFramePeriod(ctre::phoenix::motorcontrol::ControlFrame::Control_3_General, 1000 / hz);
+}
+
 int TalonSrx::GetPort() {
   return NativeSrx(this)->GetDeviceID();
 }
@@ -75,7 +79,7 @@ TalonSrx::Configuration TalonSrx::SaveConfig() {
 
 // Victor SPX
 
-inline can::VictorSPX *NativeSrx(const VictorSpx *srx) {
+inline can::VictorSPX *NativeSpx(const VictorSpx *srx) {
   return static_cast<can::VictorSPX *>(srx->_handle);
 }
 
@@ -85,23 +89,27 @@ VictorSpx::VictorSpx(int port) {
 }
 
 VictorSpx::~VictorSpx() {
-  delete NativeSrx(this);
+  delete NativeSpx(this);
+}
+
+void VictorSpx::SetUpdateRate(int hz) {
+  NativeSpx(this)->SetControlFramePeriod(ctre::phoenix::motorcontrol::ControlFrame::Control_3_General, 1000 / hz);
 }
 
 int VictorSpx::GetPort() {
-  return NativeSrx(this)->GetDeviceID();
+  return NativeSpx(this)->GetDeviceID();
 }
 
 void VictorSpx::SetInverted(bool invert) {
-  NativeSrx(this)->SetInverted(invert);
+  NativeSpx(this)->SetInverted(invert);
 }
 
 bool VictorSpx::GetInverted() const {
-  return NativeSrx(this)->GetInverted();
+  return NativeSpx(this)->GetInverted();
 }
 
 void VictorSpx::Disable() {
-  NativeSrx(this)->NeutralOutput();
+  NativeSpx(this)->NeutralOutput();
 }
 
 void VictorSpx::Set(double speed) {
@@ -109,20 +117,20 @@ void VictorSpx::Set(double speed) {
 }
 
 void VictorSpx::Set(VictorSpx::ControlMode mode, double value) {
-  NativeSrx(this)->Set(mode, value);
+  NativeSpx(this)->Set(mode, value);
   _value = value;
 }
 
 VictorSpx::ControlMode VictorSpx::GetMode() {
-  return NativeSrx(this)->GetControlMode();
+  return NativeSpx(this)->GetControlMode();
 }
 
 void VictorSpx::LoadConfig(VictorSpx::Configuration &config) {
-  NativeSrx(this)->ConfigAllSettings(config);
+  NativeSpx(this)->ConfigAllSettings(config);
 }
 
 VictorSpx::Configuration VictorSpx::SaveConfig() {
   VictorSpx::Configuration config;
-  NativeSrx(this)->GetAllConfigs(config);
+  NativeSpx(this)->GetAllConfigs(config);
   return config;
 }

@@ -30,6 +30,11 @@ namespace curtinfrc {
     ~TalonSrx();
 
     /**
+     * Set the Talon SRX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
+
+    /**
      * Get the CAN Device ID of the Talon SRX.
      */
     int GetPort();
@@ -145,6 +150,11 @@ namespace curtinfrc {
      */
     VictorSpx(int port);
     ~VictorSpx();
+
+    /**
+     * Set the Victor SPX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
 
     /**
      * Get the CAN Device ID of the Victor SPX.
