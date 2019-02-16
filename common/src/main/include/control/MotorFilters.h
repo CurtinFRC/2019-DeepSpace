@@ -36,7 +36,17 @@ namespace control {
      */
     double Get(double voltage) override;
 
-   private:
+    /**
+     * Set the minimum and maximum limits for the current.
+     * 
+     * @param min The minimum amount of current to allow. Note that this must be negative, else the motor will never
+     *            spin backwards. Measured in Amps.
+     * @param max The maximum amount of current to allow. Note that this must be positive, else the motor will never
+     *            spin forwards. Measured in Amps.
+     */
+    virtual void SetLimits(double min, double max);
+
+   protected:
     curtinfrc::Gearbox _gearbox;
 
     double _min_curr, _max_curr;
@@ -65,6 +75,19 @@ namespace control {
      * @param mass    The mass of the robot, in kilograms.
      */
     AccelerationFFFilter(double min, double max, curtinfrc::Gearbox &gearbox, double radius, double mass);
+
+    /**
+     * Set the minimum and maximum limits for the acceleration.
+     * 
+     * @param min The minimum amount of acceleration to allow. Note that this must be negative, else the motor will never
+     *            slow down. Measured in m/s/s.
+     * @param max The maximum amount of acceleration to allow. Note that this must be positive, else the motor will never
+     *            speed up. Measured in m/s/s.
+     */
+    void SetLimits(double min, double max) override;
+
+   private:
+    double _radius, _mass;
   };
 }  // namespace control
 }  // namespace curtinfrc
