@@ -81,6 +81,7 @@ void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::D
     _config.actuator.SetTarget(curtinfrc::actuators::kReverse);
 
     if (_config.actuator.IsDone()) {
+      _config.actuator.Stop();
       SetState(kStowed);
       break;
     }

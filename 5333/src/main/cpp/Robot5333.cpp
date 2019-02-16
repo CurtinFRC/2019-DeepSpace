@@ -14,10 +14,10 @@ double lastTimestamp;
 void Robot::RobotInit() {
   lastTimestamp = Timer::GetFPGATimestamp();
 
-  table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
-  yOffset = table->GetEntry("yOffset");
-  xOffset = table->GetEntry("xOffset");
-  endAngle = table->GetEntry("endAngle");
+  visionTable = nt::NetworkTableInstance::GetDefault().GetTable("vision");
+  yOffset = visionTable->GetEntry("yOffset");
+  xOffset = visionTable->GetEntry("xOffset");
+  endAngle = visionTable->GetEntry("endAngle");
 
   CameraServer::GetInstance()->StartAutomaticCapture(0);
   CameraServer::GetInstance()->StartAutomaticCapture(1);
@@ -87,6 +87,14 @@ void Robot::RobotPeriodic() {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
+
+  frc::SmartDashboard::PutNumber("PSI", robotmap.controlSystem.pressureSensor.GetPSI());
+  if (robotmap.joyGroup.GetButtonRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  
+  robotmap.controlSystem.compressor.Update(dt);
+  if (robotmap.controlSystem.compressor.IsDone()) {
+    robotmap.controlSystem.compressor.Stop();
+  }
 
   Update(dt);
 }
