@@ -61,15 +61,13 @@ void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
 
-  if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC)
-    enableFOC = false;
-  
-  if (toggleFOC.Update(robotmap.joyGroup.GetButtonRise(ControlMap::activateFOC))) {
+  if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
+  if (robotmap.joyGroup.GetButtonRise(ControlMap::activateFOC)) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
-  
+
   if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalGround)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 

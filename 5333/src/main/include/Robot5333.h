@@ -45,7 +45,6 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
 
   curtinfrc::Drivetrain *drivetrain;
 
-  curtinfrc::Toggle toggleFOC;
   bool enableFOC = false;
   std::shared_ptr<DrivetrainFOCStrategy> stratFOC;
 
