@@ -64,28 +64,28 @@ void Robot::RobotPeriodic() {
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC)
     enableFOC = false;
   
-  if (toggleFOC.Update(robotmap.joyGroup.GetButton(ControlMap::activateFOC))) {
+  if (toggleFOC.Update(robotmap.joyGroup.GetButtonRise(ControlMap::activateFOC))) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
   
-  if (robotmap.joyGroup.GetButton(ControlMap::liftGoalGround)) {
+  if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalGround)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalLower2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower2));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalMiddle2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle2));
 
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper1)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper1));
-  } else if (robotmap.joyGroup.GetButton(ControlMap::liftGoalUpper2)) {
+  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
