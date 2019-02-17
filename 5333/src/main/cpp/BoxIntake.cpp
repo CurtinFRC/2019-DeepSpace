@@ -2,11 +2,11 @@
 #include "ControlMap.h"
 
 void BoxIntake::IntakingPeriodic() {
-  _config.motors.transmission->Set(1);
+  _config.motors.transmission->Set(1 * ControlMap::boxDeployedThrottle);
 }
 
 void BoxIntake::OuttakingPeriodic() {
-  _config.motors.transmission->Set(-1);
+  _config.motors.transmission->Set(-1 * ControlMap::boxDeployedThrottle);
 }
 
 void BoxIntake::DeployingPeriodic() {
@@ -14,11 +14,11 @@ void BoxIntake::DeployingPeriodic() {
 }
 
 void BoxIntake::StowingPeriodic() {
-  _config.motors.transmission->Set(-0.1);
+  _config.motors.transmission->Set(ControlMap::boxStowingThrottle);
 }
 
 void BoxIntake::StowedPeriodic() {
-  _config.motors.transmission->Set(-0.05);
+  _config.motors.transmission->Set(ControlMap::boxStowedThrottle);
 }
 
 

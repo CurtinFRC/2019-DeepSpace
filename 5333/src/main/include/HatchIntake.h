@@ -10,8 +10,9 @@ using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
 struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::actuators::BinaryActuator &manipulator;
+  curtinfrc::actuators::BinaryActuatorState stowedState;
 
-  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), manipulator(manipulatorIn) {};
+  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
