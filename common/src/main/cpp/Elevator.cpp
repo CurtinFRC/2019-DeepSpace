@@ -22,7 +22,7 @@ void curtinfrc::Elevator::SetZeroing() { // Reset encoder to zero
 
 void curtinfrc::Elevator::SetHold() {
   SetState(kStationary);
-  _controller.SetSetpoint(GetHeight());
+  _controller.SetSetpoint(GetHeight() + 0.1);
 }
 
 

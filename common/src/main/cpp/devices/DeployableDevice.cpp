@@ -1,42 +1,56 @@
 #include "devices/DeployableDevice.h"
 
 void curtinfrc::devices::DeployableDevice::SetIntaking() {
-  switch (_state) {
-   case kIntaking:
-   case kOuttaking:
-    SetState(kIntaking);
-    break;
-
-   default:
-    SetState(kDeploying);
-  }
-}
-
-void curtinfrc::devices::DeployableDevice::SetOuttaking() {
   if (!_config.canEject) { // default
     switch (_state) {
-    case kIntaking:
-    case kOuttaking:
-      SetState(kOuttaking);
+     case kIntaking:
       break;
 
-    default:
+     case kOuttaking:
+      SetState(kIntaking);
+      break;
+
+     default:
       SetState(kDeploying);
       break;
     }
   } else { // can eject while stowed
     switch (_state) {
      case kIntaking:
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
+  }
+}
+
+void curtinfrc::devices::DeployableDevice::SetOuttaking() {
+  if (!_config.canEject) { // default
+    switch (_state) {
      case kOuttaking:
+      break;
+
+     case kIntaking:
+      SetState(kOuttaking);
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
+  } else { // can eject while stowed
+    switch (_state) {
+     case kOuttaking:
+      break;
+
+     case kIntaking:
      case kStowed:
       SetState(kOuttaking);
       break;
 
-     case kStowing:
-      SetState(kStowing);
-      break;
-
-     case kDeploying:
+     default:
       SetState(kDeploying);
       break;
     }
@@ -70,6 +84,7 @@ void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::D
     _config.actuator.SetTarget(curtinfrc::actuators::kForward);
 
     if (_config.actuator.IsDone()) {
+      _config.actuator.Stop();
       SetState(kIntaking); // Changes to kIntaking (as opposed to kOuttaking) by default
       break;
     }
