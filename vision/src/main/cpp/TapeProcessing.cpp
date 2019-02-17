@@ -22,9 +22,9 @@
 
 cv::RNG rngTape(12345);
 
+TapeProcessing::TapeProcessing(Capture &capture) : _capture(capture) {}
+
 void TapeProcessing::Init() {
-	Processing::Init();
-  processType = "TapeProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");
@@ -35,7 +35,6 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  Processing::Periodic();
 	if (_capture.IsValidFrame()) {
 
     _capture.CopyCaptureMat(_imgProcessing);

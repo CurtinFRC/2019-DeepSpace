@@ -21,7 +21,6 @@ class Processing : public Runnable, public Displayable {
 
  protected:
   std::mutex _classMutex;
-  Capture &_capture;
   cs::VideoMode _videoMode;
 
   cv::Mat _imgProcessedTrack;

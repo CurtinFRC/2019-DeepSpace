@@ -10,7 +10,7 @@ class TapeProcessing {
   nt::NetworkTableEntry TapeDistanceEntry;
   nt::NetworkTableEntry TapeAngleEntry;
   nt::NetworkTableEntry TapeTargetEntry;
-  TapeProcessing(Capture &capture) {}
+  TapeProcessing(Capture &capture);
 
   void Init();
   void Periodic();
@@ -28,4 +28,5 @@ class TapeProcessing {
   std::vector<float> angles;
   std::vector<float> heights;
   std::vector<float> distances;
+  Capture &_capture;
 };

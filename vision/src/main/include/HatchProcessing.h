@@ -7,7 +7,7 @@
 
 class HatchProcessing {
  public:
-  HatchProcessing(Capture &capture) {};
+  HatchProcessing(Capture &capture);
   
   nt::NetworkTableEntry HatchDistanceEntry;
   nt::NetworkTableEntry HatchXoffsetEntry;
