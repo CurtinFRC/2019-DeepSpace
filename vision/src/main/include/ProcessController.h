@@ -2,9 +2,10 @@
 #include "threading/Runnable.h"
 #include "Display.h"
 #include "TapeProcessing.h"
+#include "process.h"
 #include "HatchProcessing.h"
 #include <string.h>
-
+#include <iostream>
 #include "networktables/NetworkTableInstance.h"
 
 class Processing : public Runnable, public Displayable {

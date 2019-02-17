@@ -7,7 +7,7 @@
 #include "networktables/NetworkTableInstance.h"
 #include <mutex>
 
-class TapeProcessing : public Processing {
+class TapeProcessing {
  public:
   nt::NetworkTableEntry TapeDistanceEntry;
   nt::NetworkTableEntry TapeAngleEntry;
