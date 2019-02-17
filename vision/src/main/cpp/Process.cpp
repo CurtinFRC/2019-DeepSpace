@@ -12,8 +12,6 @@
 using namespace cv;
 using namespace std;
 
-
-bool _tapeSet = true;
 //Set _capture as a Capture object reference
 Process::Process(Capture &capture) : _capture(capture) {}
 
@@ -56,16 +54,9 @@ cv::Size Process::GetDisplaySize() {
 }
 
 void Process::Init() {
-  auto inst = nt::NetworkTableInstance::GetDefault();
-  auto visionTable = inst.GetTable("VisionTracking");
-  TapeCamSet = visionTable->GetEntry("Camera Set");
-
-
   _videoMode = _capture.GetVideoMode();
   _imgProcessedTrack = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
   _imgProcessedThresh = cv::Mat{_videoMode.height, _videoMode.width, CV_8UC3};
 }
 
-void Process::Periodic() {
-  TapeCamSet.SetBoolean(_tapeSet);
-}
+void Process::Periodic() {}

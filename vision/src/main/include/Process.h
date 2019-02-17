@@ -17,9 +17,6 @@
 
 class Process : public Runnable, public Displayable {
  public:
-
-  nt::NetworkTableEntry TapeCamSet;
-
   virtual void Init() override;
   virtual void Periodic() override;
 

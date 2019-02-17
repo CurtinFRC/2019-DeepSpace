@@ -5,15 +5,15 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
-class TapeProcessing : public Process {
+class TapeProcessing {
  public:
   nt::NetworkTableEntry TapeDistanceEntry;
   nt::NetworkTableEntry TapeAngleEntry;
   nt::NetworkTableEntry TapeTargetEntry;
-  TapeProcessing(Capture &capture) : Process(capture) {}
+  TapeProcessing(Capture &capture) {}
 
-  void Init() override;
-  void Periodic() override;
+  void Init();
+  void Periodic();
 
  private:
   cv::Mat imgHSV;

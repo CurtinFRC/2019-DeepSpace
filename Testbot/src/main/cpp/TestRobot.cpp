@@ -3,17 +3,19 @@
 #include <math.h>
 #include <iostream>
 
+#define JOY_EPS 0.05
+
 using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
-  xbox = new XboxController(0);
+  joy = new curtinfrc::Joystick(0);
   
-  leftMotors[0] = new Spark(2);
+  leftMotors[0] = new Talon(1);
   leftMotors[0]->SetInverted(false);
   left = new Gearbox{new SpeedControllerGroup(*leftMotors[0]), nullptr};
 
-  rightMotors[0] = new Spark(3);
+  rightMotors[0] = new Talon(0);
   rightMotors[0]->SetInverted(true);
   right = new Gearbox{new SpeedControllerGroup(*rightMotors[0]), nullptr};
 
@@ -28,22 +30,22 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  double leftSpeed = -xbox->GetY(xbox->kLeftHand);
-  double rightSpeed = -xbox->GetY(xbox->kRightHand);
+  double joyForward = 0, joyTurn = 0;
 
-  leftSpeed *= fabs(leftSpeed);
-  rightSpeed *= fabs(rightSpeed);
+  joyForward = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
+  if (std::abs(joyForward) < JOY_EPS) joyForward = 0;
+  joyForward *= abs(joyForward);
+
+  joyTurn = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.9;
+  if (std::abs(joyTurn) < JOY_EPS) joyTurn = 0;
+  // joyTurn *= abs(joyTurn);
+
+  double leftSpeed = joyForward + joyTurn;
+  double rightSpeed = joyForward - joyTurn;
 
   drivetrain->Set(leftSpeed, rightSpeed);
 
-  hatchEjector->Set(!xbox->GetBumper(xbox->kRightHand) ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
-  // if (xbox->GetBumper(xbox->kRightHand)) {
-  //   solState++;
-  //   solState %= 2; //2;
-  //   hatchEjector->Set((bool)solState ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
-  // }
-
-  // if (xbox->GetBumper(xbox->kLeftHand)) hatchEjector->Set(DoubleSolenoid::kReverse);
+  drivetrain->Set(leftSpeed, rightSpeed);
 }
 
 void Robot::TestInit() {}

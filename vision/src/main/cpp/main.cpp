@@ -1,7 +1,8 @@
 #include "Capture.h"
 #include "TapeProcessing.h"
+#include "ProcessController.h"
 // #include "BallProcessing.h"
-// #include "HatchProcessing.h"
+#include "HatchProcessing.h"
 #include "Display.h"
 #include <iostream>
 #include <networktables/NetworkTableInstance.h>
@@ -33,7 +34,7 @@ int main(int argc, char **argv) {
   }
 
   Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  TapeProcessing sideTape{sideHatchCapture};
+  Processing sideTape{sideHatchCapture};
   Display display{"Side Hatch", sideTape};
 
   sideHatchCapture.StartThread(30.0);

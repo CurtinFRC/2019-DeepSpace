@@ -1,6 +1,7 @@
 #include "Display.h"
 #include "Capture.h"
 #include "HatchProcessing.h"
+#include "ProcessController.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -35,8 +36,6 @@ float hatch_height_goal = 240;
 std::string Hatch_Distance = "Sumthin";
 
 void HatchProcessing::Init() {
-  Process::Init();
-  processType = "HatchProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");

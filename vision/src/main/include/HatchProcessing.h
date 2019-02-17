@@ -5,14 +5,14 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
-class HatchProcessing : public Process {
+class HatchProcessing {
  public:
-  HatchProcessing(Capture &capture) : Process(capture) {}
+  HatchProcessing(Capture &capture) {}
   
   nt::NetworkTableEntry HatchDistanceEntry;
   nt::NetworkTableEntry HatchXoffsetEntry;
   nt::NetworkTableEntry HatchYoffsetEntry;
 
-  void Init() override;
-  void Periodic() override;
+  void Init();
+  void Periodic();
 };
