@@ -1,7 +1,7 @@
 #include "Display.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
-#include "Display.h"
+#include "ProcessController.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -23,7 +23,7 @@
 cv::RNG rngTape(12345);
 
 void TapeProcessing::Init() {
-	Process::Init();
+	Processing::Init();
   processType = "TapeProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
@@ -35,7 +35,7 @@ void TapeProcessing::Init() {
 }
 
 void TapeProcessing::Periodic() {
-  Process::Periodic();
+  Processing::Periodic();
 	if (_capture.IsValidFrame()) {
 
     _capture.CopyCaptureMat(_imgProcessing);

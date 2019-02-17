@@ -46,7 +46,7 @@ void HatchProcessing::Init() {
 }
 
 void HatchProcessing::Periodic() {
-  Process::Periodic();
+  Processing::Periodic();
   if (_capture.IsValidFrame()) {
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
