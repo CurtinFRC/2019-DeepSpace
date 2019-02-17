@@ -48,6 +48,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
 
   bool enableFOC = false;
   std::shared_ptr<DrivetrainFOCStrategy> stratFOC;
+  std::shared_ptr<DrivetrainAngleStrategy> stratPOV;
 
 
   HatchIntake *sideHatchIntake, *frontHatchIntake;
