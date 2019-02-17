@@ -1,104 +1,69 @@
 #pragma once
 
 #include <frc/SpeedController.h>
-#include <pathfinder-frc.h>
+#include <pathfinder.h>
 
 #include "sensors/Encoder.h"
+#include "Files.h"
+#include "NTUtil.h"
 
 namespace curtinfrc {
 
-  // class Pathfinder {
-  // public:
-  //   /**
-  //   * Load a pathfinder trajectory from a .csv file.
-  //   */
-  //   static int pathfinder_load_file(const char *filename, Segment *segments) {
-  //     FILE *fp;
-  //     fp = fopen(filename, "rb");
-  //     int len = pathfinder_deserialize_csv(fp, segments);
-  //     fclose(fp);
-  //     return len;
-  //   }
-  // };
-
-  struct MotionProfileConfig {
-    double wheel_diameter, kp, ki, kd, kv, ka;  // note: ki unused in pathfinder, ka unused on Talon internal profile
-  };
-
-  /**
-   * Motion Profiling Mode.
-   * Contains the inner logic of different Motion Profiling Modes available to use on 
-   * a given subsystem.
-   */
-  class MotionProfilingMode {
+  class CurtinPathfinder {
   public:
-    MotionProfilingMode(MotionProfileConfig cfg, const char *file)
-      : _cfg(cfg) {
-      _seg_length = PathfinderFRC::get_trajectory(file, _segments);
+    /**
+    * Load a pathfinder trajectory from a .csv file.
+    */
+    static int LoadDeployedFile(std::string project, std::string filename, Segment *segments) {
+      FILE *fp;
+      std::string base_path = curtinfrc::files::GetDeployDirectory(project);
+      fp = fopen((base_path + "paths/output/" + filename + ".pf1.csv").c_str(), "r"); 
+      int len = pathfinder_deserialize_csv(fp, segments); 
+      fclose(fp);
+      return len;
     }
-
-    /**
-     * Initialize the Motion Profile. Only called once per follow.
-     */
-    virtual void init() = 0;
-
-    /**
-     * Get the required Control Loop period based on the given path.
-     * This is the desired speed to call the calculate() method at.
-     */
-    virtual double ctrl_period() {
-      return _segments[0].dt;
-    }
-
-    /**
-     * Calculate a single step of the Motion Profile. 
-     * \return \c The output to send to the motor controller
-     *            or other actuator.
-     */
-    virtual double calculate() = 0;
-
-    virtual bool gyro_capable() { return false; };
-    virtual double gyro_desired() { return 0; };
-    bool done;
-
-  protected:
-    MotionProfileConfig _cfg;
-    Segment _segments[8192];
-    int _seg_length;
   };
 
-  class PathfinderMPMode : public MotionProfilingMode {
-  public:
-    PathfinderMPMode(sensors::Encoder *enc, MotionProfileConfig cfg, const char *file)
-      : _enc(enc), MotionProfilingMode(cfg, file) { }
+  class PathfinderGains {
+   public:
+    PathfinderGains(std::string name, double kP = 0, double kI = 0, double kD = 0, double kV = 0, double kA = 0, double kG = 0);
 
-    void init() override;
-    double calculate() override;
+    // Needed since we need to reinit NT Bound Doubles with new address
+    PathfinderGains(const PathfinderGains &other) : PathfinderGains(other._name, other._kP, other._kI, other._kD, other._kV, other._kA, other._kG) {}
 
-    bool gyro_capable() override { return true; }
-    double gyro_desired() override { 
-      return fmod((_follow.heading / PI * 180.0), 360);
-    }
+    double GetkP() const;
+    double GetkI() const;
+    double GetkD() const;
+    double GetkA() const;
+    double GetkV() const;
+    double GetkG() const;
 
-  private:
-    sensors::Encoder *_enc;
+   private:
+    std::shared_ptr<nt::NetworkTable> _table;
+    double _kP, _kI, _kD, _kA, _kV, _kG;
+    std::string _name;
 
-    EncoderFollower _follow;
-    EncoderConfig _ecfg;
+    wpi::SmallVector<NTBoundDouble, 4> _ntbounds;
   };
 
-  // class TalonMPMode : public MotionProfilingMode {
-  // public:
-  //   TalonMPMode(CurtinTalonSRX *talon, MotionProfileConfig cfg, const char *file)
-  //     : _talon(talon), MotionProfilingMode(cfg, file) { }
+  class PathfinderController {
+   public:
+    PathfinderController(PathfinderGains gains);
+    
+    void Load(std::string project, std::string pathname);
 
-  //   void init() override;
-  //   double ctrl_period() override {
-  //     return _segments[0].dt / 2;
-  //   }
-  //   double calculate() override;
+    void Reset();
+    std::pair<double, double> Calculate(double distanceLeft, double distanceRight, double gyroAngle); 
+   private:
+    bool _isLoaded = false;
+    PathfinderGains _gains;
 
-  // private:
-  //   CurtinTalonSRX *_talon;
-  // };
+    int _trajLen;
+    Segment _segmentsL[8192];
+    Segment _segmentsR[8192];
+
+    FollowerConfig _cfg;
+    DistanceFollower _followerL, _followerR;
+  };
+
 } // ns curtinfrc

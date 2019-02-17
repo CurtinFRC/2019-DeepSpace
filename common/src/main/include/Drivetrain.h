@@ -63,6 +63,9 @@ namespace curtinfrc {
 
     DrivetrainConfig &GetConfig() { return _config; };
 
+    double GetLeftDistance();
+    double GetRightDistance();
+
    protected:
     Gearbox &GetLeft();
     Gearbox &GetRight();
