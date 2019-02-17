@@ -2,11 +2,11 @@
 #include "ControlMap.h"
 
 void BoxIntake::IntakingPeriodic() {
-  _config.motors.transmission->SetVoltage(12);
+  _config.motors.transmission->SetVoltage(12 * ControlMap::boxDeployedThrottle);
 }
 
 void BoxIntake::OuttakingPeriodic() {
-  _config.motors.transmission->SetVoltage(-12);
+  _config.motors.transmission->SetVoltage(-12 * ControlMap::boxDeployedThrottle);
 }
 
 void BoxIntake::DeployingPeriodic() {
@@ -14,13 +14,12 @@ void BoxIntake::DeployingPeriodic() {
 }
 
 void BoxIntake::StowingPeriodic() {
-  _config.motors.transmission->SetVoltage(-1.5);
+  _config.motors.transmission->SetVoltage(12 * ControlMap::boxStowingThrottle);
 }
 
 void BoxIntake::StowedPeriodic() {
-  _config.motors.transmission->SetVoltage(-0.6);
+  _config.motors.transmission->SetVoltage(12 * ControlMap::boxStowedThrottle);
 }
-
 
 void BoxIntakeManualStrategy::OnUpdate(double dt) {
   if (_joyGroup.GetButton(ControlMap::boxIn)) {

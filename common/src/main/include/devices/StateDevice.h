@@ -9,6 +9,8 @@ namespace devices {
   template <typename StateType>
   class StateDevice : public StrategySystem, public loops::LoopSystem {
    public:
+    StateDevice() { _state = (StateType)0; };
+
     void Update(double dt) override {
       if (_state != _lastState) {
         OnStateChange(_state, _lastState);

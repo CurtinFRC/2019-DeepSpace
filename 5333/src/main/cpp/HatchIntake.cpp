@@ -10,7 +10,7 @@ void HatchIntake::OuttakingPeriodic() { // Reverse (e.g. ejecting)
 }
 
 void HatchIntake::StowedPeriodic() { // Stow
-  _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
+  _config.manipulator.SetTarget(_config.stowedState);
 }
 
 

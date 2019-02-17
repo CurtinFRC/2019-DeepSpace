@@ -1,11 +1,12 @@
 #include "strategies/DriveStrategies.h"
 
+#include <cmath>
+
 #include "ControlMap.h"
 
 using namespace curtinfrc;
 
-BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Drivetrain &drivetrain,
-                                                           JoystickGroup &joys)
+BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Drivetrain &drivetrain, JoystickGroup &joys)
     : Strategy(name), _drivetrain(drivetrain), _joys(joys) {
   Requires(&drivetrain);
   SetCanBeInterrupted(true);
@@ -19,10 +20,10 @@ void DrivetrainManualStrategy::OnUpdate(double dt) {
   
   if (!_joys.GetButton(ControlMap::holdMovement)) {
     joyForward = -_joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::forwardAxis, ControlMap::turnAxis) * 0.9;
-    joyForward *= abs(joyForward);
+    joyForward *= std::abs(joyForward);
   }
 
-  joyTurn = _joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::turnAxis, ControlMap::forwardAxis) * 0.9;
+  joyTurn = _joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::turnAxis, ControlMap::forwardAxis) * 0.7;
   // joyTurn *= abs(joyTurn);
 
   double leftSpeed = joyForward + joyTurn;
@@ -34,7 +35,7 @@ void DrivetrainManualStrategy::OnUpdate(double dt) {
   _drivetrain.Set(leftSpeed, rightSpeed);
 }
 
-DrivetrainFOCStrategy::DrivetrainFOCStrategy(Drivetrain &drivetrain, JoystickGroup &joys, control::PIDGains gains) : BaseDrivetrainTeleopStrategy("Drivetrain Manual", drivetrain, joys), _foc(gains) { }
+DrivetrainFOCStrategy::DrivetrainFOCStrategy(Drivetrain &drivetrain, JoystickGroup &joys, control::PIDGains gains) : BaseDrivetrainTeleopStrategy("Drivetrain FOC", drivetrain, joys), _foc(gains) { }
 
 void DrivetrainFOCStrategy::OnUpdate(double dt) {
   double joyForward = -_joys.GetJoystick((JoystickGroup::JoyNum)1).GetCircularisedAxisAgainst(ControlMap::forwardAxisFOC, ControlMap::turnAxisFOC);
@@ -55,4 +56,16 @@ void DrivetrainFOCStrategy::OnUpdate(double dt) {
   std::pair<double, double> speed = _foc.Calculate(_drivetrain.GetConfig().gyro->GetAngle(), dt);
 
   _drivetrain.Set(speed.first, speed.second);
+}
+
+DrivetrainAngleStrategy::DrivetrainAngleStrategy(Drivetrain &drivetrain, control::PIDGains gains, double angle) : Strategy("Drivetrain Angle"), _drivetrain(drivetrain), _pid(gains), _angle(_drivetrain.GetConfig().gyro->GetAngle()) { }
+
+void DrivetrainAngleStrategy::OnUpdate(double dt) {
+  _bearing *= 180 / 3.141592;
+  _bearing = fmod(_bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
+  _pid.SetSetpoint(_bearing);
+  _pid.SetWrap(360.0);
+
+  double offset = _pid.Calculate(fmod(_angle, 360), dt);
+  _drivetrain.Set(offset, -offset);
 }
