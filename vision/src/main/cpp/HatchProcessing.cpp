@@ -35,6 +35,8 @@ float hatch_width_goal = 320;
 float hatch_height_goal = 240;
 std::string Hatch_Distance = "Sumthin";
 
+HatchProcessing::HatchProcessing(Capture &capture) : _capture(capture) {}
+
 void HatchProcessing::Init() {
 
   auto inst = nt::NetworkTableInstance::GetDefault();
@@ -46,7 +48,6 @@ void HatchProcessing::Init() {
 }
 
 void HatchProcessing::Periodic() {
-  HatchProcessing(Capture &capture) {};
   if (_capture.IsValidFrame()) {
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
@@ -167,4 +168,8 @@ void HatchProcessing::Periodic() {
     
   }
   
+}
+
+void HatchProcessing::GetDisplayMat(cv::Mat &displayMat) {
+  //same as TapeProcessing
 }

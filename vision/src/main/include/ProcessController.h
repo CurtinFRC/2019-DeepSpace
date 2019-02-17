@@ -14,7 +14,7 @@ class Processing : public Runnable, public Displayable {
 	std::string GetProcessType();
 	Processing(Capture &capture); // need to _capture = capture later
 	virtual void Init() override;
-  virtual void Periodic() override;
+  	virtual void Periodic() override;
 
 	virtual void GetDisplayMat(cv::Mat &displayMat) override {};
 	virtual cv::Size GetDisplaySize() override {};

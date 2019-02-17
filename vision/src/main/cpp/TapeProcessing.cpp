@@ -32,6 +32,7 @@ void TapeProcessing::Init() {
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
+  _videoMode = _capture.GetVideoMode;
 }
 
 void TapeProcessing::Periodic() {
@@ -162,4 +163,17 @@ void TapeProcessing::Periodic() {
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
   }
+}
+
+void TapeProcessing::CopyProcessedTrack(cv::Mat &imgProcessedTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgProcessedTrack.copyTo(imgProcessedTrack);
+}
+
+void TapeProcessing::GetDisplayMat(cv::Mat &displayMat) {
+  CopyProcessedTrack(displayMat);
+}
+
+cv::Size TapeProcessing::GetDisplaySize() {
+  return _capture.GetDisplaySize();
 }

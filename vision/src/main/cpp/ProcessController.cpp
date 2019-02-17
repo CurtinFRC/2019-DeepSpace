@@ -32,3 +32,13 @@ void Processing::ProcessPick() {
     
     _lastTapeSet = _tapeSet;    
 }
+
+void Processing::GetDisplayMat(cv::Mat &displayMat) {
+    if (_tapeSet) {
+        _tape.GetDisplayMat(_imgProcessedTrack);
+        _imgProcessedTrack.copyTo(displayMat);
+    } else {
+        _hatch.GetDisplayMat(_imgProcessedTrack);
+        _imgProcessedTrack.copyTo(displayMat);
+    }
+}
