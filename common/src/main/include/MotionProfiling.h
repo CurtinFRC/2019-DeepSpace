@@ -53,6 +53,8 @@ namespace curtinfrc {
     void Load(std::string project, std::string pathname);
 
     void Reset();
+
+    void SetOffset(double distanceLeft, double distanceRight);
     std::pair<double, double> Calculate(double distanceLeft, double distanceRight, double gyroAngle); 
    private:
     bool _isLoaded = false;
@@ -64,6 +66,8 @@ namespace curtinfrc {
 
     FollowerConfig _cfg;
     DistanceFollower _followerL, _followerR;
+
+    double _offsetL, _offsetR;
   };
 
 } // ns curtinfrc

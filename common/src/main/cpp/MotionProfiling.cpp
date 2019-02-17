@@ -55,9 +55,14 @@ void PathfinderController::Reset() {
   _followerR = DistanceFollower{0, 0, 0, 0, false};
 }
 
+void PathfinderController::SetOffset(double distanceL, double distanceR) {
+  _offsetL = distanceL;
+  _offsetR = distanceR;
+} 
+
 std::pair<double, double> PathfinderController::Calculate(double distL, double distR, double gyroAngle) {
-  double l = pathfinder_follow_distance(_cfg, &_followerL, _segmentsL, _trajLen, distL);
-  double r = pathfinder_follow_distance(_cfg, &_followerR, _segmentsR, _trajLen, distR);
+  double l = pathfinder_follow_distance(_cfg, &_followerL, _segmentsL, _trajLen, distL - _offsetL);
+  double r = pathfinder_follow_distance(_cfg, &_followerR, _segmentsR, _trajLen, distR - _offsetR);
 
   double desiredAngle = -r2d(_followerL.heading);
   double turnCoeff = _gains.GetkG() * (desiredAngle - gyroAngle);
