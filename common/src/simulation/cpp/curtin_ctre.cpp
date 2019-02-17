@@ -19,7 +19,7 @@ std::map<int, simulation::ctre::victor_data> &simulation::ctre::all_victors() {
 
 // Talon SRX
 
-TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : Encoder::Encoder(encoderTicksPerRotation) {
+TalonSrx::TalonSrx(int port, int encoderTicksPerRotation) : actuators::MotorVoltageController(this), Encoder::Encoder(encoderTicksPerRotation) {
   _talons[port] = simulation::ctre::talon_data{};
   _talons[port].port = port;
   _port = port;
@@ -87,7 +87,7 @@ TalonSrx::Configuration TalonSrx::SaveConfig() {
 
 // Victor SPX
 
-VictorSpx::VictorSpx(int port) {
+VictorSpx::VictorSpx(int port) : actuators::MotorVoltageController(this) {
   _victors[port] = simulation::ctre::victor_data{};
   _victors[port].port = port;
   _port = port;

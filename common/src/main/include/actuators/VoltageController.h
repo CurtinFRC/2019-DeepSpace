@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frc/SpeedController.h>
+#include <frc/SpeedControllerGroup.h>
 
 namespace curtinfrc {
 namespace actuators { 
@@ -53,6 +54,11 @@ namespace actuators {
     static MotorVoltageController Of(Args ...args) {
       T *t = new T(args...);  // Be warned, does not deallocate!
       return MotorVoltageController{t};
+    }
+
+    template<typename ...Args>
+    static MotorVoltageController Group(Args ...args) {
+      return Of<frc::SpeedControllerGroup>(args...);
     }
 
    private:
