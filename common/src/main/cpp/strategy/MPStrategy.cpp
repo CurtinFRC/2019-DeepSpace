@@ -11,8 +11,8 @@ using namespace curtinfrc;
 // CHARACTERIZATION STRATEGY //
 DrivetrainCharacterizationStrategy::DrivetrainCharacterizationStrategy(Drivetrain &drivetrain) : _drivetrain(drivetrain), Strategy("MP Characterization") {
   Requires(&drivetrain);
-  SetCanBeInterrupted(false);
-  SetCanBeReused(false);
+  SetCanBeInterrupted(true);
+  SetCanBeReused(true);
 
   _autospeedEntry = nt::NetworkTableInstance::GetDefault().GetEntry("/robot/autospeed");
   _telemetryEntry = nt::NetworkTableInstance::GetDefault().GetEntry("/robot/telemetry");

@@ -39,6 +39,14 @@ double PathfinderGains::GetkG() const {
   return _kG;
 }
 
+double PathfinderGains::GetMaximumVelocity() const {
+  return 12.0 / GetkV();
+}
+
+double PathfinderGains::GetMaximumAcceleration() const {
+  return 12.0 / GetkA();
+}
+
 PathfinderController::PathfinderController(PathfinderGains gains) : _gains(gains) {
   Reset();
 }
@@ -68,4 +76,8 @@ std::pair<double, double> PathfinderController::Calculate(double distL, double d
   double turnCoeff = _gains.GetkG() * (desiredAngle - gyroAngle);
 
   return std::pair<double, double>{l + turnCoeff, r - turnCoeff};
+}
+
+bool PathfinderController::IsDone() {
+  return _followerL.finished || _followerR.finished;
 }

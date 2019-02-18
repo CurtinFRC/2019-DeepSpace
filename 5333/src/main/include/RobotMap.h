@@ -35,7 +35,7 @@ struct RobotMap {
     curtinfrc::TalonSrx leftSrx{ 3 };
     curtinfrc::VictorSpx leftSpx{ 4 };
     curtinfrc::actuators::MotorVoltageController leftMotors = curtinfrc::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
-    curtinfrc::sensors::DigitalEncoder leftEncoder{ 6, 7, 2048 };
+    curtinfrc::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
     curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
 
     curtinfrc::TalonSrx rightSrx{ 1 };

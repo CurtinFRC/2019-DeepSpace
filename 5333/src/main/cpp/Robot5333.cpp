@@ -24,6 +24,8 @@ void Robot::RobotInit() {
 
   robotmap.drivetrain.rightGearbox.transmission->SetInverted(true); 
   robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
+  robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
+  robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
