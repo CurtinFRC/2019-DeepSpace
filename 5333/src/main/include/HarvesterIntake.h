@@ -34,7 +34,7 @@ class HarvesterIntake : public curtinfrc::devices::DeployableDevice {
 
 class HarvesterIntakeManualStrategy : public curtinfrc::Strategy {
  public: 
-  HarvesterIntakeManualStrategy(HarvesterIntake &harvesterIntake, curtinfrc::JoystickGroup &joyGroup) : Strategy("Harvester Manual"), _harvesterIntake(harvesterIntake), _joyGroup(joyGroup) {
+  HarvesterIntakeManualStrategy(HarvesterIntake &harvesterIntake, curtinfrc::ControllerGroup &contGroup) : Strategy("Harvester Manual"), _harvesterIntake(harvesterIntake), _contGroup(contGroup) {
     Requires(&harvesterIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -44,7 +44,7 @@ class HarvesterIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   HarvesterIntake &_harvesterIntake;
-  curtinfrc::JoystickGroup &_joyGroup;
+  curtinfrc::ControllerGroup &_contGroup;
 };
 
 

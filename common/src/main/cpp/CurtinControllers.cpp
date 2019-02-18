@@ -2,15 +2,15 @@
 
 #include "CurtinControllers.h"
 
-double curtinfrc::Joystick::GetAxis(AxisType axis) {
+double curtinfrc::Joystick::GetAxis(int axis) {
   switch (axis) {
-   case kXAxis:
+   case kDefaultXChannel:
     return frc::Joystick::GetX();
 
-   case kYAxis:
+   case kDefaultYChannel:
     return frc::Joystick::GetY();
 
-   case kZAxis:
+   case kDefaultZChannel:
     return frc::Joystick::GetZ();
 
    case kTwistAxis:
@@ -31,7 +31,7 @@ bool curtinfrc::Joystick::GetButtonFall(int button) {
   return buttonFallToggle[button - 1]->Update(GetButton(button));
 }
 
-double curtinfrc::Joystick::GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis) {
+double curtinfrc::Joystick::GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) {
   double primary = GetAxis(primaryAxis), compare = GetAxis(compareAxis);
   //std::cout << "prim: " << primary << std::endl;
   //std::cout << "comp: " << compare << std::endl;
@@ -59,63 +59,53 @@ double curtinfrc::Joystick::GetCircularisedAxisAgainst(AxisType primaryAxis, Axi
   return mag * cos(theta);
 }
 
-double curtinfrc::Joystick::GetCircularisedAxis(AxisType axis) {
-  if (axis == kXAxis) {
-    return GetCircularisedAxisAgainst(kXAxis, kYAxis);
-  } else if (axis == kYAxis) {
-    return GetCircularisedAxisAgainst(kYAxis, kXAxis);
+double curtinfrc::Joystick::GetCircularisedAxis(int axis) {
+  if (axis == kDefaultXChannel) {
+    return GetCircularisedAxisAgainst(kDefaultXChannel, kDefaultYChannel);
+  } else if (axis == kDefaultYChannel) {
+    return GetCircularisedAxisAgainst(kDefaultYChannel, kDefaultXChannel);
   }
 
   return GetAxis(axis);
 }
 
 
+double curtinfrc::ControllerGroup::GetRawAxis(ContNum cont, int axis) {
+  return GetController(cont).GetRawAxis(axis);
+}
+
+double curtinfrc::ControllerGroup::GetAxis(tControllerAxis contAxis) {
+  return GetRawAxis((ContNum)contAxis.first, contAxis.second);
+}
+
+
+double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(ContNum cont, int primaryAxis, int compareAxis) {
+  return GetController(cont).GetCircularisedAxisAgainst(primaryAxis, compareAxis);
+}
+
+double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis) {
+  return GetCircularisedAxisAgainst((ContNum)primaryAxis.first, primaryAxis.second, compareAxis.second);
+}
+
+double curtinfrc::ControllerGroup::GetCircularisedAxis(ContNum cont, int axis) {
+  return GetController(cont).GetCircularisedAxis(axis);
+}
+
+double curtinfrc::ControllerGroup::GetCircularisedAxis(tControllerAxis axis) {
+  return GetCircularisedAxis((ContNum)axis.first, axis.second);
+}
+
+
 bool curtinfrc::ControllerGroup::GetRawButton(ContNum cont, int button) {
-  bool val = false;
-
-  switch (cont) {
-   case first:
-    val = _cont1.GetRawButton(button);
-    break;
-
-   case second:
-    val = _cont2.GetRawButton(button);
-    break;
-  }
-
-  return val;
+  return GetController(cont).GetButtonRise(button);
 }
 
 bool curtinfrc::ControllerGroup::GetRawButtonRise(ContNum cont, int button) {
-  bool val = false;
-
-  switch (cont) {
-   case first:
-    val = _cont1.GetButtonRise(button);
-    break;
-
-   case second:
-    val = _cont2.GetButtonRise(button);
-    break;
-  }
-
-  return val;
+  return GetController(cont).GetButtonRise(button);
 }
 
 bool curtinfrc::ControllerGroup::GetRawButtonFall(ContNum cont, int button) {
-  bool val = false;
-
-  switch (cont) {
-   case first:
-    val = _cont1.GetButtonFall(button);
-    break;
-
-   case second:
-    val = _cont2.GetButtonFall(button);
-    break;
-  }
-
-  return val;
+  return GetController(cont).GetButtonFall(button);
 }
 
 

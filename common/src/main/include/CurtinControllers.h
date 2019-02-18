@@ -27,6 +27,10 @@ namespace curtinfrc {
     virtual bool GetButtonRise(int button) = 0;
     virtual bool GetButtonFall(int button) = 0;
 
+    // only required for Joystick
+    virtual double GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) { return GetCircularisedAxis(primaryAxis); };
+    virtual double GetCircularisedAxis(int axis) { return GetRawAxis(axis); };
+
    private:
     virtual double GetX(JoystickHand hand = kRightHand) const override { return 0; };
     virtual double GetY(JoystickHand hand = kRightHand) const override { return 0; };
@@ -39,6 +43,12 @@ namespace curtinfrc {
 
     double GetRawAxis(ContNum cont, int axis);
     double GetAxis(tControllerAxis contAxis);
+
+    virtual double GetCircularisedAxisAgainst(ContNum cont, int primaryAxis, int compareAxis);
+    virtual double GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis);
+    virtual double GetCircularisedAxis(ContNum cont, int axis);
+    virtual double GetCircularisedAxis(tControllerAxis axis);
+
 
     bool GetRawButton(ContNum cont, int button);
     bool GetRawButtonRise(ContNum cont, int button);
@@ -67,13 +77,6 @@ namespace curtinfrc {
       }
     };
 
-    using frc::Joystick::AxisType;
-    using frc::Joystick::kXAxis;
-    using frc::Joystick::kYAxis;
-    using frc::Joystick::kZAxis;
-    using frc::Joystick::kTwistAxis;
-    using frc::Joystick::kThrottleAxis;
-
     using frc::Joystick::kDefaultXChannel;
     using frc::Joystick::kDefaultYChannel;
     using frc::Joystick::kDefaultZChannel;
@@ -87,11 +90,11 @@ namespace curtinfrc {
     virtual bool GetButtonFall(int button) override;
     using frc::Joystick::GetPOV;
 
-    virtual double GetAxis(AxisType axis);
+    virtual double GetAxis(int axis);
     virtual bool GetButton(int button) { return Controller::GetRawButton(button); };
 
-    double GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis);
-    double GetCircularisedAxis(AxisType axis);
+    virtual double GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) override;
+    virtual double GetCircularisedAxis(int axis) override;
 
    private:
     wpi::SmallVector<Toggle *, 12>  buttonRiseToggle, buttonFallToggle;
