@@ -141,6 +141,19 @@ struct RobotMap {
     curtinfrc::actuators::Compressor compressor{ 1 };
 
     curtinfrc::sensors::PressureSensor pressureSensor{ 0 };
+    
+    
+    // vision
+    std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
+    std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
+    std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
+    
+    nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
+                          hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
+                          hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
+                          tapeDistanceEntry   = table->GetEntry("Distance");
+                          tapeAngleEntry      = table->GetEntry("Angle");
+                          tapeTargetEntry     = table->GetEntry("Target");
   };
 
   ControlSystem controlSystem;
