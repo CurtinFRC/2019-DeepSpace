@@ -89,7 +89,7 @@ void Robot::RobotPeriodic() {
   
   frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
   frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
-  frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargeteEntry.GetDouble(-1));
+  frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
   
   
   robotmap.controlSystem.compressor.Update(dt);
