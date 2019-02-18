@@ -28,6 +28,8 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   void RobotInit() override;
   void RobotPeriodic() override;
 
+  void DisabledInit() override;
+
   void AutonomousInit() override;
   void AutonomousPeriodic() override;
 

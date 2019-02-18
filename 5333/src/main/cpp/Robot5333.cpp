@@ -95,6 +95,10 @@ void Robot::RobotPeriodic() {
   Update(dt);
 }
 
+void Robot::DisabledInit() {
+  InterruptAll(true);
+}
+
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 
