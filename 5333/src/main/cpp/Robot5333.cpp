@@ -109,7 +109,7 @@ void Robot::DisabledInit() {
 }
 
 void Robot::AutonomousInit() {
-  Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "d2_bM"));
+  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "d2_bM"));
 }
 void Robot::AutonomousPeriodic() {}
 

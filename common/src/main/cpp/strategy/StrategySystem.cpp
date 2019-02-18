@@ -43,9 +43,9 @@ void StrategySystem::StrategyReplace(std::shared_ptr<Strategy> newStrat) {
   if (_active != nullptr) {
     _active->Interrupt();
   }
+  _active = newStrat;
   if (newStrat != nullptr) {
     std::cout << "Strategy Loaded: " << newStrat->GetStrategyName() << std::endl;
+    _active->Start();
   }
-  _active = newStrat;
-  _active->Start();
 }
