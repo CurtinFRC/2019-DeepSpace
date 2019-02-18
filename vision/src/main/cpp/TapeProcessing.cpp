@@ -39,7 +39,6 @@ void TapeProcessing::Init() {
 
 void TapeProcessing::Periodic() {
 	if (_capture.IsValidFrame()) {
-
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
     cv::putText(_imgProcessedTrack,"test", cv::Point2f(125,125), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target

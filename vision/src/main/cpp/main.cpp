@@ -52,37 +52,6 @@ int main(int argc, char **argv) {
   while (true) {
     sideTape.ProcessPick();
   }
-
-  // VisionRunner vision;
-  // #ifdef __DESKTOP__
-  // Capture capture{0, -100};
-  // // Capture captureGamePiece{1, 50};
-  // #else
-  // Capture capture{4, -100};
-  // Capture captureGamePiece{5, 60};
-  // #endif
-  // // HatchProcessing hatchProcess{captureGamePiece};
-  // // BallProcessing ballProcess{capture};
-  // TapeProcessing tapeProcess{capture};
-  
-  // // Display displayBall{ballProcess};
-  // // Display displayHatch{"Hatch Tracking", hatchProcess};
-  // Display displayTape{"Tape Tracking", tapeProcess};
-  
-  // vision.Run(capture);
-  // // vision.Run(captureGamePiece);
-  // // vision.Run(ballProcess);
-  // // vision.Run(hatchProcess);
-  // vision.Run(tapeProcess);
-
-  // // vision.Run(displayBall); 
-  // vision.Run(displayHatch);
-  // vision.Run(displayTape);
-
-
-  // for (int i = 0; i < vision.workers.size(); i++) {
-  //   vision.workers[i].join();
-  // }
   
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
