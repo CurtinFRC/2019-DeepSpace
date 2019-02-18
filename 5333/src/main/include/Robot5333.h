@@ -37,9 +37,6 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
   void TestInit() override;
   void TestPeriodic() override;
 
-  std::shared_ptr<nt::NetworkTable> visionTable;
-  nt::NetworkTableEntry yOffset, xOffset, endAngle;
-
 
   RobotMap robotmap;
 
