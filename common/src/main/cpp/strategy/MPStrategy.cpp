@@ -1,7 +1,52 @@
 #include "strategy/MPStrategy.h"
+
+#include <frc/Timer.h>
+#include <frc/RobotController.h>
+#include <networktables/NetworkTableInstance.h>
+
 #include <iostream>
 
 using namespace curtinfrc;
+
+// CHARACTERIZATION STRATEGY //
+DrivetrainCharacterizationStrategy::DrivetrainCharacterizationStrategy(Drivetrain &drivetrain) : _drivetrain(drivetrain), Strategy("MP Characterization") {
+  Requires(&drivetrain);
+  SetCanBeInterrupted(false);
+  SetCanBeReused(false);
+
+  _autospeedEntry = nt::NetworkTableInstance::GetDefault().GetEntry("/robot/autospeed");
+  _telemetryEntry = nt::NetworkTableInstance::GetDefault().GetEntry("/robot/telemetry");
+}
+
+void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
+  double now = frc::Timer::GetFPGATimestamp();
+
+  double leftPos = _drivetrain.GetLeftDistance();
+  double rightPos = _drivetrain.GetRightDistance();
+
+  double leftRate = _drivetrain.GetConfig().leftDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
+  double rightRate = _drivetrain.GetConfig().rightDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
+
+  double battery = frc::RobotController::GetInputVoltage();
+  double motorVolts = battery * std::abs(_lastAutospeed);
+
+  double autospeed = _autospeedEntry.GetDouble(0);
+  _lastAutospeed = autospeed;
+
+  _drivetrain.SetVoltage(motorVolts, motorVolts);
+
+  _telemetryArray[0] = now;
+  _telemetryArray[1] = battery;
+  _telemetryArray[2] = autospeed;
+  _telemetryArray[3] = motorVolts;
+  _telemetryArray[4] = motorVolts;
+  _telemetryArray[5] = leftPos;
+  _telemetryArray[6] = rightPos;
+  _telemetryArray[7] = leftRate;
+  _telemetryArray[8] = rightRate;
+
+  _telemetryEntry.SetDoubleArray(_telemetryArray);
+}
 
 // BASE STRATEGY //
 

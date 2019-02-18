@@ -55,6 +55,7 @@ namespace curtinfrc {
     Drivetrain(DrivetrainConfig config) : _config(config) {};
 
     void Set(double leftPower, double rightPower);
+    void SetVoltage(double left, double right);
     void SetLeft(double leftPower);
     void SetRight(double rightPower);
 

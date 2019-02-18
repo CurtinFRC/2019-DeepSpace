@@ -10,6 +10,27 @@
 #include <frc/interfaces/Gyro.h>
 
 namespace curtinfrc {
+
+  /**
+   * Strategy used to work with the RobotPy data characterization program.
+   * https://github.com/robotpy/robot-characterization
+   * 
+   * To make this work, schedule this strategy and ensure that it is not interrupted.
+   * 
+   * Note that this reports values in metric, whereas the robotpy program uses feet.
+   */
+  class DrivetrainCharacterizationStrategy : public Strategy {
+   public:
+    DrivetrainCharacterizationStrategy(Drivetrain &drivetrain);
+
+    void OnUpdate(double dt) override;
+   private:
+    Drivetrain &_drivetrain;
+    nt::NetworkTableEntry _autospeedEntry, _telemetryEntry;
+    std::array<double, 9> _telemetryArray;
+    double _lastAutospeed = 0;
+  };
+
   // class MotionProfileStrategy : public Strategy {
   // public:
   //   MotionProfileStrategy(

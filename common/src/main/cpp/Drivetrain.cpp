@@ -5,6 +5,11 @@ void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
   SetRight(rightPower);
 }
 
+void curtinfrc::Drivetrain::SetVoltage(double left, double right) {
+  GetLeft().transmission->SetVoltage(left);
+  GetRight().transmission->SetVoltage(right);
+}
+
 void curtinfrc::Drivetrain::SetLeft(double leftPower) {
   GetLeft().transmission->SetVoltage(leftPower * 12);
 }
