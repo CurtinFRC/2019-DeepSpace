@@ -55,6 +55,7 @@ namespace curtinfrc {
     Drivetrain(DrivetrainConfig config) : _config(config) {};
 
     void Set(double leftPower, double rightPower);
+    void SetVoltage(double left, double right);
     void SetLeft(double leftPower);
     void SetRight(double rightPower);
 
@@ -62,6 +63,9 @@ namespace curtinfrc {
     bool GetInverted() { return _config.reversed; };
 
     DrivetrainConfig &GetConfig() { return _config; };
+
+    double GetLeftDistance();
+    double GetRightDistance();
 
    protected:
     Gearbox &GetLeft();

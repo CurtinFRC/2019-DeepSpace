@@ -5,6 +5,11 @@ void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
   SetRight(rightPower);
 }
 
+void curtinfrc::Drivetrain::SetVoltage(double left, double right) {
+  GetLeft().transmission->SetVoltage(left);
+  GetRight().transmission->SetVoltage(right);
+}
+
 void curtinfrc::Drivetrain::SetLeft(double leftPower) {
   GetLeft().transmission->SetVoltage(leftPower * 12);
 }
@@ -19,6 +24,20 @@ void curtinfrc::Drivetrain::SetInverted(bool inverted) {
     _config.leftDrive.transmission->SetInverted(!_config.leftDrive.transmission->GetInverted());
     _config.rightDrive.transmission->SetInverted(!_config.rightDrive.transmission->GetInverted());
   }
+}
+
+double curtinfrc::Drivetrain::GetLeftDistance() {
+  auto gb = GetLeft();
+
+  assert(gb.encoder != nullptr);
+  return gb.encoder->GetEncoderRotations() * 3.14159265 * 2 * _config.wheelRadius;
+}
+
+double curtinfrc::Drivetrain::GetRightDistance() {
+  auto gb = GetRight();
+
+  assert(gb.encoder != nullptr);
+  return gb.encoder->GetEncoderRotations() * 3.14159265 * 2 * _config.wheelRadius;
 }
 
 

@@ -1,76 +1,71 @@
 #include "MotionProfiling.h"
 
+#include <networktables/NetworkTableInstance.h>
+
 using namespace curtinfrc;
 
-// Implement encoder follower here so we can adjust if necessary.
-double pf_follow_enc(EncoderConfig c, EncoderFollower *follower, Segment *segs, int trajectory_length, int encoder_tick) {
-  int segment = follower->segment;
-  if (segment >= trajectory_length) {
-    follower->finished = 1;
-    follower->output = 0.0;
-    Segment last = segs[trajectory_length - 1];
-    follower->heading = last.heading;
-    return 0.0;
-  }
-  
-  double distance_covered = ((double)encoder_tick - (double)c.initial_position) / ((double)c.ticks_per_revolution);
-  distance_covered = distance_covered * c.wheel_circumference;
+PathfinderGains::PathfinderGains(std::string name, double kP, double kI, double kD, double kV, double kA, double kG) : _name(name), _kP(kP), _kI(kI), _kD(kD), _kV(kV), _kA(kA), _kG(kG) {
+  _table = nt::NetworkTableInstance::GetDefault().GetTable("PathfinderGains[" + name + "]");
 
-  Segment s = segs[segment];
-  if (follower->segment < trajectory_length) {
-    follower->finished = 0;
-    double error = s.position - distance_covered;
-    double calculated_value = c.kp * error +
-      c.kd * ((error - follower->last_error) / s.dt) +
-      (c.kv * s.velocity + c.ka * s.acceleration);
-
-    follower->last_error = error;
-    follower->heading = s.heading;
-    follower->output = calculated_value;
-    follower->segment = follower->segment + 1;
-    return calculated_value;
-  } else {
-    follower->finished = 1;
-    return 0.0;
-  }
+  _ntbounds.emplace_back(_table, "kP", &_kP);
+  _ntbounds.emplace_back(_table, "kI", &_kI);
+  _ntbounds.emplace_back(_table, "kD", &_kD);
+  _ntbounds.emplace_back(_table, "kV", &_kV);
+  _ntbounds.emplace_back(_table, "kA", &_kA);
+  _ntbounds.emplace_back(_table, "kG", &_kG);
 }
 
-// Pathfinder MP
-
-void PathfinderMPMode::init() {
-  _ecfg = {
-    _enc->GetEncoderTicks(),
-    _enc->GetEncoderTicksPerRotation(), _cfg.wheel_diameter * 0.0254 * PI, _cfg.kp, _cfg.ki, _cfg.kd, _cfg.kv, _cfg.ka
-  };
-  _follow = { 0, 0, 0, 0, 0 };
+double PathfinderGains::GetkP() const {
+  return _kP;
 }
 
-double PathfinderMPMode::calculate() {
-  double ret = pf_follow_enc(_ecfg, &_follow, _segments, _seg_length, _enc->GetEncoderRotations());
-  done = _follow.finished;
-  return ret;
+double PathfinderGains::GetkI() const {
+  return _kI;
 }
 
-// void TalonMPMode::init() {
-//   _talon->reset_mp();
-//   _talon->SetSelectedSensorPosition(0, 0, 0);
-//   _talon->configure_mp_update_rate(_segments[0].dt * 1000);
-//   _talon->configure_encoder_edges_per_rev(_cfg.enc_ticks_per_rev);
-//   _talon->configure_wheel_diameter(_cfg.wheel_diameter);
-//   _talon->configure_pidf(
-//     _cfg.kp, _cfg.ki, _cfg.kd,
-//     1023.0 / _cfg.kv 
-//   );
-//   _talon->load_pathfinder(_segments, _seg_length);
-//   _talon->Set(ctre::phoenix::motion::SetValueMotionProfile::Disable);
-// }
+double PathfinderGains::GetkD() const {
+  return _kD;
+}
 
-// // Talon FP
+double PathfinderGains::GetkV() const {
+  return _kV;
+}
 
-// double TalonMPMode::calculate() {
-//   _talon->load_pathfinder(_segments, _seg_length);
-//   auto status = _talon->process_mp();
+double PathfinderGains::GetkA() const {
+  return _kA;
+}
 
-//   done = status.isLast;
-//   return status.isLast ? ctre::phoenix::motion::SetValueMotionProfile::Hold : ctre::phoenix::motion::SetValueMotionProfile::Enable;
-// }
+double PathfinderGains::GetkG() const {
+  return _kG;
+}
+
+PathfinderController::PathfinderController(PathfinderGains gains) : _gains(gains) {
+  Reset();
+}
+
+void PathfinderController::Load(std::string project, std::string pathname) {
+  Reset();
+  CurtinPathfinder::LoadDeployedFile(project, pathname + ".left", _segmentsL);
+  _trajLen = CurtinPathfinder::LoadDeployedFile(project, pathname + ".right", _segmentsR);
+}
+
+void PathfinderController::Reset() {
+  _cfg = FollowerConfig{ _gains.GetkP(), _gains.GetkI(), _gains.GetkD(), _gains.GetkV(), _gains.GetkA() };
+  _followerL = DistanceFollower{0, 0, 0, 0, false};
+  _followerR = DistanceFollower{0, 0, 0, 0, false};
+}
+
+void PathfinderController::SetOffset(double distanceL, double distanceR) {
+  _offsetL = distanceL;
+  _offsetR = distanceR;
+} 
+
+std::pair<double, double> PathfinderController::Calculate(double distL, double distR, double gyroAngle) {
+  double l = pathfinder_follow_distance(_cfg, &_followerL, _segmentsL, _trajLen, distL - _offsetL);
+  double r = pathfinder_follow_distance(_cfg, &_followerR, _segmentsR, _trajLen, distR - _offsetR);
+
+  double desiredAngle = -r2d(_followerL.heading);
+  double turnCoeff = _gains.GetkG() * (desiredAngle - gyroAngle);
+
+  return std::pair<double, double>{l + turnCoeff, r - turnCoeff};
+}
