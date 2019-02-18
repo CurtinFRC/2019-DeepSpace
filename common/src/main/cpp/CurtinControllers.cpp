@@ -2,8 +2,25 @@
 
 #include "CurtinControllers.h"
 
-bool curtinfrc::Joystick::GetButton(int button) {
-  return GetRawButton(button);
+double curtinfrc::Joystick::GetAxis(AxisType axis) {
+  switch (axis) {
+   case kXAxis:
+    return frc::Joystick::GetX();
+
+   case kYAxis:
+    return frc::Joystick::GetY();
+
+   case kZAxis:
+    return frc::Joystick::GetZ();
+
+   case kTwistAxis:
+    return frc::Joystick::GetTwist();
+  
+   case kThrottleAxis:
+    return frc::Joystick::GetThrottle();
+  }
+
+  return 0;
 }
 
 bool curtinfrc::Joystick::GetButtonRise(int button) {
@@ -12,27 +29,6 @@ bool curtinfrc::Joystick::GetButtonRise(int button) {
 
 bool curtinfrc::Joystick::GetButtonFall(int button) {
   return buttonFallToggle[button - 1]->Update(GetButton(button));
-}
-
-double curtinfrc::Joystick::GetAxis(AxisType axis) {
-  switch (axis) {
-   case kXAxis:
-    return GetX();
-
-   case kYAxis:
-    return GetY();
-
-   case kZAxis:
-    return GetZ();
-
-   case kTwistAxis:
-    return GetTwist();
-  
-   case kThrottleAxis:
-    return GetThrottle();
-  }
-
-  return 0;
 }
 
 double curtinfrc::Joystick::GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis) {
@@ -74,48 +70,48 @@ double curtinfrc::Joystick::GetCircularisedAxis(AxisType axis) {
 }
 
 
-bool curtinfrc::JoystickGroup::GetRawButton(JoyNum joy, int button) {
+bool curtinfrc::ControllerGroup::GetRawButton(ContNum cont, int button) {
   bool val = false;
 
-  switch (joy) {
+  switch (cont) {
    case first:
-    val = _joy1.GetRawButton(button);
+    val = _cont1.GetRawButton(button);
     break;
 
    case second:
-    val = _joy2.GetRawButton(button);
+    val = _cont2.GetRawButton(button);
     break;
   }
 
   return val;
 }
 
-bool curtinfrc::JoystickGroup::GetRawButtonRise(JoyNum joy, int button) {
+bool curtinfrc::ControllerGroup::GetRawButtonRise(ContNum cont, int button) {
   bool val = false;
 
-  switch (joy) {
+  switch (cont) {
    case first:
-    val = _joy1.GetButtonRise(button);
+    val = _cont1.GetButtonRise(button);
     break;
 
    case second:
-    val = _joy2.GetButtonRise(button);
+    val = _cont2.GetButtonRise(button);
     break;
   }
 
   return val;
 }
 
-bool curtinfrc::JoystickGroup::GetRawButtonFall(JoyNum joy, int button) {
+bool curtinfrc::ControllerGroup::GetRawButtonFall(ContNum cont, int button) {
   bool val = false;
 
-  switch (joy) {
+  switch (cont) {
    case first:
-    val = _joy1.GetButtonFall(button);
+    val = _cont1.GetButtonFall(button);
     break;
 
    case second:
-    val = _joy2.GetButtonFall(button);
+    val = _cont2.GetButtonFall(button);
     break;
   }
 
@@ -123,43 +119,43 @@ bool curtinfrc::JoystickGroup::GetRawButtonFall(JoyNum joy, int button) {
 }
 
 
-bool curtinfrc::JoystickGroup::GetButton(tJoypair joyPair) {
-  if (joyPair == nopair) return false;
-  return GetRawButton((JoyNum)joyPair.first, joyPair.second);
+bool curtinfrc::ControllerGroup::GetButton(tControllerButton cont) {
+  if (cont == noButton) return false;
+  return GetRawButton((ContNum)cont.first, cont.second);
 }
 
-bool curtinfrc::JoystickGroup::GetButtonRise(tJoypair joyPair) {
-  if (joyPair == nopair) return false;
-  return GetRawButtonRise((JoyNum)joyPair.first, joyPair.second);
+bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButton cont) {
+  if (cont == noButton) return false;
+  return GetRawButtonRise((ContNum)cont.first, cont.second);
 }
 
-bool curtinfrc::JoystickGroup::GetButtonFall(tJoypair joyPair) {
-  if (joyPair == nopair) return false;
-  return GetRawButtonFall((JoyNum)joyPair.first, joyPair.second);
-}
-
-
-bool curtinfrc::JoystickGroup::GetButton(tJoymap joyMap) {
-  return GetButton(joyMap.first) || GetButton(joyMap.second);
-}
-
-bool curtinfrc::JoystickGroup::GetButtonRise(tJoymap joyMap) {
-  return GetButtonRise(joyMap.first) || GetButtonRise(joyMap.second);
-}
-
-bool curtinfrc::JoystickGroup::GetButtonFall(tJoymap joyMap) {
-  return GetButtonFall(joyMap.first) || GetButtonFall(joyMap.second);
+bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButton cont) {
+  if (cont == noButton) return false;
+  return GetRawButtonFall((ContNum)cont.first, cont.second);
 }
 
 
-curtinfrc::Joystick &curtinfrc::JoystickGroup::GetJoystick(curtinfrc::JoystickGroup::JoyNum joy) {
-  switch (joy) {
+bool curtinfrc::ControllerGroup::GetButton(tControllerButtonMap cont) {
+  return GetButton(cont.first) || GetButton(cont.second);
+}
+
+bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButtonMap cont) {
+  return GetButtonRise(cont.first) || GetButtonRise(cont.second);
+}
+
+bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButtonMap cont) {
+  return GetButtonFall(cont.first) || GetButtonFall(cont.second);
+}
+
+
+curtinfrc::Controller &curtinfrc::ControllerGroup::GetController(curtinfrc::ControllerGroup::ContNum cont) {
+  switch (cont) {
    case first:
-    return _joy1;
+    return _cont1;
 
    case second:
-    return _joy2;
+    return _cont2;
   }
   
-  return _joy1;
+  return _cont1;
 }

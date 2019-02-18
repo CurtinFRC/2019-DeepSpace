@@ -8,16 +8,62 @@
 #include "Toggle.h"
 
 namespace curtinfrc {
-  typedef std::pair<int, int> tJoypair;
-  typedef std::pair<tJoypair, tJoypair> tJoymap;
-  constexpr tJoypair nopair{ -1, -1 };
+  typedef std::pair<int, int> tControllerButton;
+  constexpr tControllerButton noButton{ -1, -1 };
+  typedef std::pair<tControllerButton, tControllerButton> tControllerButtonMap;
 
-  class Joystick : private frc::Joystick {
+  typedef std::pair<int, int> tControllerAxis;
+  constexpr tControllerAxis noAxis{ -1, -1 };
+  // typedef std::pair<tControllerAxis, tControllerAxis> tControllerAxisMap;
+
+  class Controller : private frc::GenericHID {
    public:
-    Joystick(int port) : frc::Joystick(port) {
+    Controller(int port) : GenericHID(port) {};
+
+    using frc::GenericHID::GetPort;
+    virtual double GetRawAxis(int axis) { return frc::GenericHID::GetRawAxis(axis); };
+    virtual bool GetRawButton(int button) { return frc::GenericHID::GetRawButton(button); };
+
+    virtual bool GetButtonRise(int button) = 0;
+    virtual bool GetButtonFall(int button) = 0;
+
+   private:
+    virtual double GetX(JoystickHand hand = kRightHand) const override { return 0; };
+    virtual double GetY(JoystickHand hand = kRightHand) const override { return 0; };
+  };
+
+  class ControllerGroup {
+   public:
+    ControllerGroup(Controller &cont1, Controller &cont2) : _cont1(cont1), _cont2(cont2) {};
+    enum ContNum { first = 1, second = 2 }; // TEMP
+
+    double GetRawAxis(ContNum cont, int axis);
+    double GetAxis(tControllerAxis contAxis);
+
+    bool GetRawButton(ContNum cont, int button);
+    bool GetRawButtonRise(ContNum cont, int button);
+    bool GetRawButtonFall(ContNum cont, int button);
+
+    bool GetButton(tControllerButton contButton);
+    bool GetButtonRise(tControllerButton contButton);
+    bool GetButtonFall(tControllerButton contButton);
+
+    bool GetButton(tControllerButtonMap contMap);
+    bool GetButtonRise(tControllerButtonMap contMap);
+    bool GetButtonFall(tControllerButtonMap contMap);
+
+    Controller &GetController(ContNum cont);
+
+   private:
+    Controller &_cont1, &_cont2;
+  };
+
+  class Joystick : public Controller, private frc::Joystick {
+   public:
+    Joystick(int port) : Controller(port), frc::Joystick(port) {
       for (int i = 0; i < 12; i++) {
-        buttonRiseToggle[i] = new Toggle(ToggleEvent::ONRISE);
-        buttonFallToggle[i] = new Toggle(ToggleEvent::ONFALL, false);
+        buttonRiseToggle.push_back(new Toggle(ToggleEvent::ONRISE));
+        buttonFallToggle.push_back(new Toggle(ToggleEvent::ONFALL, false));
       }
     };
 
@@ -27,50 +73,43 @@ namespace curtinfrc {
     using frc::Joystick::kZAxis;
     using frc::Joystick::kTwistAxis;
     using frc::Joystick::kThrottleAxis;
-    
+
     using frc::Joystick::kDefaultXChannel;
     using frc::Joystick::kDefaultYChannel;
     using frc::Joystick::kDefaultZChannel;
     using frc::Joystick::kDefaultTwistChannel;
     using frc::Joystick::kDefaultThrottleChannel;
 
-    using frc::Joystick::GetPort;
-    using frc::Joystick::GetRawButton;
-    bool GetButtonRise(int button);
-    bool GetButtonFall(int button);
+    using Controller::GetPort;
+    // virtual double GetRawAxis(int axis);     // inherited
+    // virtual bool GetRawButton(int button);   // inherited
+    virtual bool GetButtonRise(int button) override;
+    virtual bool GetButtonFall(int button) override;
     using frc::Joystick::GetPOV;
 
-    virtual bool GetButton(int button);
     virtual double GetAxis(AxisType axis);
+    virtual bool GetButton(int button) { return Controller::GetRawButton(button); };
 
     double GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis);
     double GetCircularisedAxis(AxisType axis);
 
    private:
-    Toggle *buttonRiseToggle[12];
-    Toggle *buttonFallToggle[12];
+    wpi::SmallVector<Toggle *, 12>  buttonRiseToggle, buttonFallToggle;
+
+    // using frc::Joystick::GetX;
+    // using frc::Joystick::GetY;
   };
 
-  class JoystickGroup {
+  class XboxController : public Controller, private frc::XboxController {
    public:
-    JoystickGroup(Joystick &joy1, Joystick &joy2) : _joy1(joy1), _joy2(joy2) {};
-    enum JoyNum { first = 1, second = 2 }; // TEMP
-
-    bool GetRawButton(JoyNum joy, int button);
-    bool GetRawButtonRise(JoyNum joy, int button);
-    bool GetRawButtonFall(JoyNum joy, int button);
-
-    bool GetButton(tJoypair joyPair);
-    bool GetButtonRise(tJoypair joyPair);
-    bool GetButtonFall(tJoypair joyPair);
-
-    bool GetButton(tJoymap joyMap);
-    bool GetButtonRise(tJoymap joyMap);
-    bool GetButtonFall(tJoymap joyMap);
-
-    Joystick &GetJoystick(JoyNum joy);
+    XboxController(int port) : Controller(port), frc::XboxController(port) {
+      for (int i = 0; i < 12; i++) {
+        buttonRiseToggle.push_back(new Toggle(ToggleEvent::ONRISE));
+        buttonFallToggle.push_back(new Toggle(ToggleEvent::ONFALL, false));
+      }
+    };
 
    private:
-    Joystick &_joy1, &_joy2;
+    wpi::SmallVector<Toggle *, 12>  buttonRiseToggle, buttonFallToggle;
   };
 } // ns curtinfrc
