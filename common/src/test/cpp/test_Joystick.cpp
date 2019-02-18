@@ -38,7 +38,7 @@ namespace testing {
 TEST (testing_Joystick, Constructor) {
   testing::Joystick joystickDef(0);
 
-  ASSERT_EQ(joystickDef.GetPort(), 0);
+  ASSERT_EQ(joystickDef.CurrentPort(), 0);
   ASSERT_EQ(joystickDef.GetAxis(joystickDef.kDefaultXChannel), 0);
   ASSERT_EQ(joystickDef.GetAxis(joystickDef.kDefaultYChannel), 0);
   ASSERT_EQ(joystickDef.GetAxis(joystickDef.kDefaultZChannel), 0);

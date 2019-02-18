@@ -2,73 +2,8 @@
 
 #include "CurtinControllers.h"
 
-double curtinfrc::Joystick::GetAxis(int axis) {
-  switch (axis) {
-   case kDefaultXChannel:
-    return frc::Joystick::GetX();
 
-   case kDefaultYChannel:
-    return frc::Joystick::GetY();
-
-   case kDefaultZChannel:
-    return frc::Joystick::GetZ();
-
-   case kTwistAxis:
-    return frc::Joystick::GetTwist();
-  
-   case kThrottleAxis:
-    return frc::Joystick::GetThrottle();
-  }
-
-  return 0;
-}
-
-bool curtinfrc::Joystick::GetButtonRise(int button) {
-  return buttonRiseToggle[button - 1]->Update(GetButton(button));  
-}
-
-bool curtinfrc::Joystick::GetButtonFall(int button) {
-  return buttonFallToggle[button - 1]->Update(GetButton(button));
-}
-
-double curtinfrc::Joystick::GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) {
-  double primary = GetAxis(primaryAxis), compare = GetAxis(compareAxis);
-  //std::cout << "prim: " << primary << std::endl;
-  //std::cout << "comp: " << compare << std::endl;
-
-  // Break into polar components (with angle as a bearing)
-  double theta = atan2(compare, primary), mag = sqrt(pow(primary, 2) + pow(compare, 2));
-
-  // Calculate maximum magnitude for given angle
-  double max_mag;
-
-  if (fmod(theta * 57.2957795131 + 225, 180) < 90) { // Offset anticlockwise by 45 degrees, then break up into quadrants
-    max_mag = 1 / cos(theta);
-  } else {
-    max_mag = 1 / sin(theta);
-  }
-
-  max_mag = fabs(max_mag);
-
-  //std::cout << "    mag: " << mag << std::endl;
-  //std::cout << "max_mag: " << max_mag << std::endl;
-
-  // Divide current magnitude by maximum magnitude and calculate new axial magnitude
-  mag /= max_mag;
-
-  return mag * cos(theta);
-}
-
-double curtinfrc::Joystick::GetCircularisedAxis(int axis) {
-  if (axis == kDefaultXChannel) {
-    return GetCircularisedAxisAgainst(kDefaultXChannel, kDefaultYChannel);
-  } else if (axis == kDefaultYChannel) {
-    return GetCircularisedAxisAgainst(kDefaultYChannel, kDefaultXChannel);
-  }
-
-  return GetAxis(axis);
-}
-
+// CONTROLLERGROUP
 
 double curtinfrc::ControllerGroup::GetRawAxis(ContNum cont, int axis) {
   return GetController(cont).GetRawAxis(axis);
@@ -148,4 +83,97 @@ curtinfrc::Controller &curtinfrc::ControllerGroup::GetController(curtinfrc::Cont
   }
   
   return _cont1;
+}
+
+
+// JOYSTICK
+
+double curtinfrc::Joystick::GetAxis(int axis) {
+  switch (axis) {
+   case kDefaultXChannel:
+    return frc::Joystick::GetX();
+
+   case kDefaultYChannel:
+    return frc::Joystick::GetY();
+
+   case kDefaultZChannel:
+    return frc::Joystick::GetZ();
+
+   case kTwistAxis:
+    return frc::Joystick::GetTwist();
+  
+   case kThrottleAxis:
+    return frc::Joystick::GetThrottle();
+  }
+
+  return 0;
+}
+
+bool curtinfrc::Joystick::GetButton(int button) {
+  return Controller::GetRawButton(button);
+}
+
+bool curtinfrc::Joystick::GetButtonRise(int button) {
+  return buttonRiseToggle[button - 1]->Update(GetButton(button));  
+}
+
+bool curtinfrc::Joystick::GetButtonFall(int button) {
+  return buttonFallToggle[button - 1]->Update(GetButton(button));
+}
+
+double curtinfrc::Joystick::GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) {
+  double primary = GetAxis(primaryAxis), compare = GetAxis(compareAxis);
+  //std::cout << "prim: " << primary << std::endl;
+  //std::cout << "comp: " << compare << std::endl;
+
+  // Break into polar components (with angle as a bearing)
+  double theta = atan2(compare, primary), mag = sqrt(pow(primary, 2) + pow(compare, 2));
+
+  // Calculate maximum magnitude for given angle
+  double max_mag;
+
+  if (fmod(theta * 57.2957795131 + 225, 180) < 90) { // Offset anticlockwise by 45 degrees, then break up into quadrants
+    max_mag = 1 / cos(theta);
+  } else {
+    max_mag = 1 / sin(theta);
+  }
+
+  max_mag = fabs(max_mag);
+
+  //std::cout << "    mag: " << mag << std::endl;
+  //std::cout << "max_mag: " << max_mag << std::endl;
+
+  // Divide current magnitude by maximum magnitude and calculate new axial magnitude
+  mag /= max_mag;
+
+  return mag * cos(theta);
+}
+
+double curtinfrc::Joystick::GetCircularisedAxis(int axis) {
+  if (axis == kDefaultXChannel) {
+    return GetCircularisedAxisAgainst(kDefaultXChannel, kDefaultYChannel);
+  } else if (axis == kDefaultYChannel) {
+    return GetCircularisedAxisAgainst(kDefaultYChannel, kDefaultXChannel);
+  }
+
+  return GetAxis(axis);
+}
+
+
+// XBOXCONTROLLER
+
+double curtinfrc::XboxController::GetAxis(int axis) {
+  return Controller::GetRawAxis(axis);
+}
+
+bool curtinfrc::XboxController::GetButton(int button) {
+  return Controller::GetRawButton(button);
+}
+
+bool curtinfrc::XboxController::GetButtonRise(int button) {
+  return buttonRiseToggle[button - 1]->Update(GetButton(button));  
+}
+
+bool curtinfrc::XboxController::GetButtonFall(int button) {
+  return buttonFallToggle[button - 1]->Update(GetButton(button));
 }

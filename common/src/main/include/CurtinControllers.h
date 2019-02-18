@@ -20,7 +20,7 @@ namespace curtinfrc {
    public:
     Controller(int port) : GenericHID(port) {};
 
-    using frc::GenericHID::GetPort;
+    int CurrentPort() { return frc::GenericHID::GetPort(); };
     virtual double GetRawAxis(int axis) { return frc::GenericHID::GetRawAxis(axis); };
     virtual bool GetRawButton(int button) { return frc::GenericHID::GetRawButton(button); };
 
@@ -83,7 +83,6 @@ namespace curtinfrc {
     using frc::Joystick::kDefaultTwistChannel;
     using frc::Joystick::kDefaultThrottleChannel;
 
-    using Controller::GetPort;
     // virtual double GetRawAxis(int axis);     // inherited
     // virtual bool GetRawButton(int button);   // inherited
     virtual bool GetButtonRise(int button) override;
@@ -91,16 +90,13 @@ namespace curtinfrc {
     using frc::Joystick::GetPOV;
 
     virtual double GetAxis(int axis);
-    virtual bool GetButton(int button) { return Controller::GetRawButton(button); };
+    virtual bool GetButton(int button);
 
     virtual double GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) override;
     virtual double GetCircularisedAxis(int axis) override;
 
    private:
     wpi::SmallVector<Toggle *, 12>  buttonRiseToggle, buttonFallToggle;
-
-    // using frc::Joystick::GetX;
-    // using frc::Joystick::GetY;
   };
 
   class XboxController : public Controller, private frc::XboxController {
@@ -111,6 +107,13 @@ namespace curtinfrc {
         buttonFallToggle.push_back(new Toggle(ToggleEvent::ONFALL, false));
       }
     };
+
+    virtual bool GetButtonRise(int button) override;
+    virtual bool GetButtonFall(int button) override;
+    using frc::XboxController::GetPOV;
+
+    virtual double GetAxis(int axis);
+    virtual bool GetButton(int button);
 
    private:
     wpi::SmallVector<Toggle *, 12>  buttonRiseToggle, buttonFallToggle;
