@@ -48,7 +48,7 @@ struct RobotMap {
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
     curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
-    curtinfrc::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 12.0, 0, 0, 2.246, 0.5409, 12.0 / 90.0 };    // PIDVAG
+    curtinfrc::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 24.0, 0, 1.5, 0.36, 0.08, 12.0 / 90.0 };    // PIDVAG
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
   };

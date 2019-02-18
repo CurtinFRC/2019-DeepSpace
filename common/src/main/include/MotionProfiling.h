@@ -7,6 +7,8 @@
 #include "Files.h"
 #include "NTUtil.h"
 
+#include <stdexcept>
+
 namespace curtinfrc {
 
   class CurtinPathfinder {
@@ -17,8 +19,12 @@ namespace curtinfrc {
     static int LoadDeployedFile(std::string project, std::string filename, Segment *segments) {
       FILE *fp;
       std::string base_path = curtinfrc::files::GetDeployDirectory(project);
-      fp = fopen((base_path + "paths/output/" + filename + ".pf1.csv").c_str(), "r"); 
+      std::string full_path = base_path + "/paths/output/" + filename + ".pf1.csv";
+      fp = fopen(full_path.c_str(), "r"); 
       int len = pathfinder_deserialize_csv(fp, segments); 
+      if (len < 0) {
+        throw std::runtime_error("File does not exist: " + full_path);
+      }
       fclose(fp);
       return len;
     }
