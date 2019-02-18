@@ -33,11 +33,11 @@ void Robot::RobotInit() {
   // Motor_Controllers
   leftTalon = new TalonSrx(2, 2048);
   leftVictor = new VictorSpx(3);
-  Left = new Gearbox{ new SpeedControllerGroup(*leftTalon, *leftVictor), nullptr };
+  Left = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*leftTalon, *leftVictor)), nullptr };
 
   rightTalon = new TalonSrx(5, 2048);
   rightVictor = new VictorSpx(4);
-  Right = new Gearbox{ new SpeedControllerGroup(*rightTalon, *rightVictor), nullptr };
+  Right = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*rightTalon, *rightVictor)), nullptr };
 
   DrivetrainConfig drivetrainConfig{*Left, *Right};
   drivetrain = new Drivetrain(drivetrainConfig);

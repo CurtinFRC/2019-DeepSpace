@@ -24,18 +24,17 @@ void Robot::RobotInit() {
 
   robotmap.drivetrain.rightGearbox.transmission->SetInverted(true); 
   robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
+  robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
+  robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.contGroup));
+  drivetrain->StartLoop(100);
   stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.contGroup, robotmap.drivetrain.gainsFOC);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup));
   beElevator->StartLoop(100);
-
-  // harvester = new HarvesterIntake(harvesterConfig);
-  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.contGroup));
-  // harvester->StartLoop(50);
 
   // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
   // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
@@ -99,7 +98,13 @@ void Robot::RobotPeriodic() {
   Update(dt);
 }
 
-void Robot::AutonomousInit() {}
+void Robot::DisabledInit() {
+  InterruptAll(true);
+}
+
+void Robot::AutonomousInit() {
+  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "test"));
+}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}

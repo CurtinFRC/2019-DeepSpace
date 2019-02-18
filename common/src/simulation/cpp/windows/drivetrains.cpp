@@ -67,7 +67,7 @@ drivetrain_window::drivetrain_window(DrivetrainConfig *config) : ui::window("Dri
 
 double drivetrain_window::get_motor_val(bool left) {
   auto &trans = left ? _config->leftDrive.transmission : _config->rightDrive.transmission;
-  return trans->Get() * (trans->GetInverted() ? -1 : 1);
+  return trans->GetVoltage() * (trans->GetInverted() ? -1 : 1);
 }
 
 void drivetrain_window::update_encoder(bool left, double pos, double vel) {
@@ -88,8 +88,7 @@ void drivetrain_window::update_encoder(bool left, double pos, double vel) {
 void drivetrain_window::update_physics(double time_delta) {
   for (bool left : {true, false}) {
     wheel_state &state = left ? _wheel_left : _wheel_right;
-    double speed = get_motor_val(left) * (left ? -1 : 1);
-    double voltage = speed * frc::RobotController::GetInputVoltage();
+    double voltage = get_motor_val(left) * (left ? -1 : 1);
 
     physics::DcMotor motor = left ? _config->leftDrive.motor : _config->rightDrive.motor;
     motor = motor.reduce(left ? _config->leftDrive.reduction : _config->rightDrive.reduction);

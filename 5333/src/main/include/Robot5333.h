@@ -18,7 +18,6 @@
 
 #include "Drivetrain.h"
 #include "Lift.h"
-#include "HarvesterIntake.h"
 #include "HatchIntake.h"
 #include "BoxIntake.h"
 
@@ -28,6 +27,8 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
+
+  void DisabledInit() override;
 
   void AutonomousInit() override;
   void AutonomousPeriodic() override;
