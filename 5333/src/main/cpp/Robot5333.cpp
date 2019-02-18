@@ -28,24 +28,24 @@ void Robot::RobotInit() {
   robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
+  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.contGroup));
   drivetrain->StartLoop(100);
-  stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsFOC);
+  stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.contGroup, robotmap.drivetrain.gainsFOC);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
-  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joyGroup));
+  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup));
   beElevator->StartLoop(100);
 
   // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.joyGroup, false));
+  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
   // sideHatchIntake->StartLoop(50);
 
   frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
-  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.joyGroup, true));
+  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, true));
   frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
-  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joyGroup));
+  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.contGroup));
   boxIntake->StartLoop(50);
 
   Register(drivetrain);
@@ -61,34 +61,34 @@ void Robot::RobotPeriodic() {
   lastTimestamp = Timer::GetFPGATimestamp();
 
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
-  if (robotmap.joyGroup.GetButtonRise(ControlMap::activateFOC)) {
+  if (robotmap.contGroup.GetButtonRise(ControlMap::activateFOC)) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
 
-  if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalGround)) {
+  if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalGround)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower1)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalLower1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalLower2)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalLower2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower2));
 
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle1)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalMiddle1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle1));
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalMiddle2)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalMiddle2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle2));
 
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper1)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalUpper1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper1));
-  } else if (robotmap.joyGroup.GetButtonRise(ControlMap::liftGoalUpper2)) {
+  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalUpper2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
 
   frc::SmartDashboard::PutNumber("PSI", robotmap.controlSystem.pressureSensor.GetPSI());
-  if (robotmap.joyGroup.GetButtonRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  if (robotmap.contGroup.GetButtonRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   robotmap.controlSystem.compressor.Update(dt);
   if (robotmap.controlSystem.compressor.IsDone()) {

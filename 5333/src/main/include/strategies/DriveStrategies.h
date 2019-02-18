@@ -6,16 +6,16 @@
 
 class BaseDrivetrainTeleopStrategy : public curtinfrc::Strategy {
  public:
-  BaseDrivetrainTeleopStrategy(std::string name, curtinfrc::Drivetrain &drive, curtinfrc::JoystickGroup &joys);
+  BaseDrivetrainTeleopStrategy(std::string name, curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup);
 
  protected:
   curtinfrc::Drivetrain &_drivetrain;
-  curtinfrc::JoystickGroup &_joys;
+  curtinfrc::ControllerGroup &_contGroup;
 };
 
 class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::JoystickGroup &joys);
+  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup);
 
   void OnUpdate(double dt) override;
  private:
@@ -24,7 +24,7 @@ class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
 
 class DrivetrainFOCStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainFOCStrategy(curtinfrc::Drivetrain &drive, curtinfrc::JoystickGroup &joys, curtinfrc::control::PIDGains gains);
+  DrivetrainFOCStrategy(curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup, curtinfrc::control::PIDGains gains);
 
   void OnUpdate(double dt) override;
  private:

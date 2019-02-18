@@ -29,7 +29,7 @@
 struct RobotMap {
   curtinfrc::Joystick joy1{ 0 }; // Driver
   curtinfrc::Joystick joy2{ 1 }; // Co-Driver
-  curtinfrc::JoystickGroup joyGroup{ joy1, joy2 };
+  curtinfrc::ControllerGroup contGroup{ joy1, joy2 };
 
   struct DriveTrain {
     curtinfrc::TalonSrx leftSrx{ 3 };
