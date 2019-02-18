@@ -29,6 +29,7 @@ void Robot::RobotInit() {
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joyGroup));
+  drivetrain->StartLoop(100);
   stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.joyGroup, robotmap.drivetrain.gainsFOC);
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
@@ -101,7 +102,9 @@ void Robot::DisabledInit() {
   InterruptAll(true);
 }
 
-void Robot::AutonomousInit() {}
+void Robot::AutonomousInit() {
+  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "test"));
+}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}

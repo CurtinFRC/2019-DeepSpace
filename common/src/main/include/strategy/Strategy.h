@@ -40,6 +40,10 @@ class StrategyQueue;
 class Strategy {
  public:
   Strategy(std::string name = "<no name>") : _strategy_name(name) {}
+  ~Strategy() {
+    if (!IsFinished())
+      Stop(StrategyState::INTERRUPTED);
+  }
   /**
    * Get the name of this Strategy
    */
