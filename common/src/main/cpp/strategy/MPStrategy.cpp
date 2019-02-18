@@ -33,7 +33,7 @@ void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
   double autospeed = _autospeedEntry.GetDouble(0);
   _lastAutospeed = autospeed;
 
-  _drivetrain.SetVoltage(motorVolts, motorVolts);
+  _drivetrain.SetVoltage(battery * autospeed, battery * autospeed);
 
   _telemetryArray[0] = now;
   _telemetryArray[1] = battery;
