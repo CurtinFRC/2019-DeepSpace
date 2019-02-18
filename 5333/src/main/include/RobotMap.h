@@ -151,8 +151,8 @@ struct RobotMap {
     nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
                           hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
                           hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
-                          tapeDistanceEntry   = tapeTable->GetEntry("Distance");
-                          tapeAngleEntry      = tapeTable->GetEntry("Angle");
+                          tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
+                          tapeAngleEntry      = tapeTable->GetEntry("Angle"),
                           tapeTargetEntry     = tapeTable->GetEntry("Target");
   };
 
