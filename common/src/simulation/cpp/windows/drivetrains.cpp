@@ -67,7 +67,7 @@ drivetrain_window::drivetrain_window(DrivetrainConfig *config) : ui::window("Dri
 
 double drivetrain_window::get_motor_val(bool left) {
   auto &trans = left ? _config->leftDrive.transmission : _config->rightDrive.transmission;
-  return trans->Get() * (trans->GetInverted() ? -1 : 1);
+  return trans->GetVoltage() * (trans->GetInverted() ? -1 : 1);
 }
 
 void drivetrain_window::update_encoder(bool left, double pos, double vel) {
@@ -80,7 +80,7 @@ void drivetrain_window::update_encoder(bool left, double pos, double vel) {
   auto encoder = left ? _config->leftDrive.encoder : _config->rightDrive.encoder;
 
   if (encoder != nullptr) {
-    sim_encoder->set_counts(static_cast<int>(encoder->GetEncoderTicks() + rots * encoder->GetEncoderTicksPerRotation()));
+    sim_encoder->set_counts(static_cast<int>(encoder->GetEncoderRawTicks() + rots * encoder->GetEncoderTicksPerRotation()));
     sim_encoder->set_counts_per_sec(static_cast<int>(rotspersec * encoder->GetEncoderTicksPerRotation()));
   }
 }
@@ -88,8 +88,7 @@ void drivetrain_window::update_encoder(bool left, double pos, double vel) {
 void drivetrain_window::update_physics(double time_delta) {
   for (bool left : {true, false}) {
     wheel_state &state = left ? _wheel_left : _wheel_right;
-    double speed = get_motor_val(left) * (left ? -1 : 1);
-    double voltage = speed * frc::RobotController::GetInputVoltage();
+    double voltage = get_motor_val(left) * (left ? -1 : 1);
 
     physics::DcMotor motor = left ? _config->leftDrive.motor : _config->rightDrive.motor;
     motor = motor.reduce(left ? _config->leftDrive.reduction : _config->rightDrive.reduction);
@@ -108,8 +107,8 @@ void drivetrain_window::update_physics(double time_delta) {
   _linear_vel = (_wheel_left.angular_vel + _wheel_right.angular_vel) * _config->wheelRadius / 2.0;
   _heading += robot_angular_vel * time_delta;
 
-  _x += _linear_vel * time_delta * std::cos(_heading);
-  _y += _linear_vel * time_delta * std::sin(_heading);
+  _x += _linear_vel * time_delta * std::cos(-_heading);
+  _y += _linear_vel * time_delta * std::sin(-_heading);
 
   if (_gyro_sim != nullptr) {
     // Unfortunately WPILib convention is backwards - clockwise is +ve according to frc::Gyro.

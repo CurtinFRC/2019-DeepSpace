@@ -1,104 +1,127 @@
 #pragma once
 
 #include <frc/SpeedController.h>
-#include <pathfinder-frc.h>
+#include <pathfinder.h>
 
 #include "sensors/Encoder.h"
+#include "Files.h"
+#include "NTUtil.h"
 
 namespace curtinfrc {
 
-  // class Pathfinder {
-  // public:
-  //   /**
-  //   * Load a pathfinder trajectory from a .csv file.
-  //   */
-  //   static int pathfinder_load_file(const char *filename, Segment *segments) {
-  //     FILE *fp;
-  //     fp = fopen(filename, "rb");
-  //     int len = pathfinder_deserialize_csv(fp, segments);
-  //     fclose(fp);
-  //     return len;
-  //   }
-  // };
-
-  struct MotionProfileConfig {
-    double wheel_diameter, kp, ki, kd, kv, ka;  // note: ki unused in pathfinder, ka unused on Talon internal profile
+  class CurtinPathfinder {
+  public:
+    /**
+    * Load a pathfinder trajectory from a .csv file.
+    */
+    static int LoadDeployedFile(std::string project, std::string filename, Segment *segments) {
+      FILE *fp;
+      std::string base_path = curtinfrc::files::GetDeployDirectory(project);
+      fp = fopen((base_path + "paths/output/" + filename + ".pf1.csv").c_str(), "r"); 
+      int len = pathfinder_deserialize_csv(fp, segments); 
+      fclose(fp);
+      return len;
+    }
   };
 
   /**
-   * Motion Profiling Mode.
-   * Contains the inner logic of different Motion Profiling Modes available to use on 
-   * a given subsystem.
+   * Gains for the Pathfinder Control Loop
+   * 
+   * These gains are in terms of the output value of voltage.
+   * kP should be tested, with initial value of 12 (12 volts per metre from target). This is the primary gain.
+   * kI is unused.
+   * kD should be tested, with initial value of 0 (0 volts per metre per second). This is used to correct for overshoot / unstable following
+   * kV should be taken from the Drivetrain Characterization Tests, run with @ref DrivetrainCharacterizationStrategy.
+   * kA should be taken from the Drivetrain Characterization Tests, run with @ref DrivetrainCharacterizationStrategy.
+   * kG should be tested, starting with 12 / 90 (12 volts per 90 deg from target heading). This is used to correct heading.
    */
-  class MotionProfilingMode {
-  public:
-    MotionProfilingMode(MotionProfileConfig cfg, const char *file)
-      : _cfg(cfg) {
-      _seg_length = PathfinderFRC::get_trajectory(file, _segments);
-    }
+  class PathfinderGains {
+   public:
+    PathfinderGains(std::string name, double kP = 0, double kI = 0, double kD = 0, double kV = 0, double kA = 0, double kG = 0);
+
+    // Needed since we need to reinit NT Bound Doubles with new address
+    PathfinderGains(const PathfinderGains &other) : PathfinderGains(other._name, other._kP, other._kI, other._kD, other._kV, other._kA, other._kG) {}
+
+    double GetkP() const;
+    double GetkI() const;
+    double GetkD() const;
+    double GetkA() const;
+    double GetkV() const;
+    double GetkG() const;
 
     /**
-     * Initialize the Motion Profile. Only called once per follow.
+     * Get the Maximum Acceleration of the robot at 12V, according to kA
      */
-    virtual void init() = 0;
+    double GetMaximumAcceleration() const;
 
     /**
-     * Get the required Control Loop period based on the given path.
-     * This is the desired speed to call the calculate() method at.
+     * Get the Maximum Velocity of the robot at 12V, according to kV
      */
-    virtual double ctrl_period() {
-      return _segments[0].dt;
-    }
+    double GetMaximumVelocity() const;
 
-    /**
-     * Calculate a single step of the Motion Profile. 
-     * \return \c The output to send to the motor controller
-     *            or other actuator.
-     */
-    virtual double calculate() = 0;
+   private:
+    std::shared_ptr<nt::NetworkTable> _table;
+    double _kP, _kI, _kD, _kA, _kV, _kG;
+    std::string _name;
 
-    virtual bool gyro_capable() { return false; };
-    virtual double gyro_desired() { return 0; };
-    bool done;
-
-  protected:
-    MotionProfileConfig _cfg;
-    Segment _segments[8192];
-    int _seg_length;
+    wpi::SmallVector<NTBoundDouble, 4> _ntbounds;
   };
 
-  class PathfinderMPMode : public MotionProfilingMode {
-  public:
-    PathfinderMPMode(sensors::Encoder *enc, MotionProfileConfig cfg, const char *file)
-      : _enc(enc), MotionProfilingMode(cfg, file) { }
+  /**
+   * Create a Controller for a Pathfinder Control Loop. This is analogous to PIDController, but for 
+   * Pathfinder v1.
+   */
+  class PathfinderController {
+   public:
+    PathfinderController(PathfinderGains gains);
+    
+    /**
+     * Load a Pathfinder path from file. 
+     * 
+     * @param project The project this path is on, e.g. 5333 or 5663
+     * @param pathname The name of the path, as saved by Pathweaver
+     */
+    void Load(std::string project, std::string pathname);
 
-    void init() override;
-    double calculate() override;
+    /**
+     * Reset the controller. Reloads the gains, resets followers, but does not reset offsets
+     * nor the paths loaded.
+     */
+    void Reset();
 
-    bool gyro_capable() override { return true; }
-    double gyro_desired() override { 
-      return fmod((_follow.heading / PI * 180.0), 360);
-    }
+    /**
+     * Set the offset of the PathfinderController. Use this when starting to follow a path such that the distance
+     * starts from 0.
+     */
+    void SetOffset(double distanceLeft, double distanceRight);
 
-  private:
-    sensors::Encoder *_enc;
+    /**
+     * Run a single iteration of the control loop calculation.
+     * 
+     * @param distanceLeft  The distance travelled by the left wheels, in metres.
+     * @param distanceRight The distance travelled by the right wheels, in metres.
+     * @param gyroAngle     The current angle of the gyroscope, in degrees, clockwise positive.
+     * 
+     * @return The left and right voltages respectively. May be larger in magnitude than 12.0 if the path is behind.
+     */
+    std::pair<double, double> Calculate(double distanceLeft, double distanceRight, double gyroAngle); 
 
-    EncoderFollower _follow;
-    EncoderConfig _ecfg;
+    /**
+     * Is the controller done?
+     */
+    bool IsDone();
+   private:
+    bool _isLoaded = false;
+    PathfinderGains _gains;
+
+    int _trajLen;
+    Segment _segmentsL[8192];
+    Segment _segmentsR[8192];
+
+    FollowerConfig _cfg;
+    DistanceFollower _followerL, _followerR;
+
+    double _offsetL, _offsetR;
   };
 
-  // class TalonMPMode : public MotionProfilingMode {
-  // public:
-  //   TalonMPMode(CurtinTalonSRX *talon, MotionProfileConfig cfg, const char *file)
-  //     : _talon(talon), MotionProfilingMode(cfg, file) { }
-
-  //   void init() override;
-  //   double ctrl_period() override {
-  //     return _segments[0].dt / 2;
-  //   }
-  //   double calculate() override;
-
-  // private:
-  //   CurtinTalonSRX *_talon;
-  // };
 } // ns curtinfrc

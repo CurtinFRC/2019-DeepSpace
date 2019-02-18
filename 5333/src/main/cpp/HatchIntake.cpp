@@ -1,16 +1,23 @@
 #include "HatchIntake.h"
 #include "ControlMap.h"
 
-void HatchIntake::IntakingPeriodic() { // Intake
-  _config.servo.SetAngle(_config.forward);
+void HatchIntake::IntakingPeriodic() { // Primary (e.g. intaking)
+  _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
 }
 
-void HatchIntake::OuttakingPeriodic() { // Eject
-  _config.servo.SetAngle(_config.reverse);
+void HatchIntake::OuttakingPeriodic() { // Reverse (e.g. ejecting)
+  _config.manipulator.SetTarget(curtinfrc::actuators::kReverse);
+}
+
+void HatchIntake::StowedPeriodic() { // Stow
+  _config.manipulator.SetTarget(_config.stowedState);
 }
 
 
 void HatchIntakeManualStrategy::OnUpdate(double dt) {
+  _hatchIntake.GetConfig().manipulator.Update(dt);
+  if (_hatchIntake.GetConfig().manipulator.IsDone()) _hatchIntake.GetConfig().manipulator.Stop();
+
   if (_enabledToggle.Update(_joyGroup.GetButton(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
 
   if (_enabled) {

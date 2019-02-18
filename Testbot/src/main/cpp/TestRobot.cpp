@@ -1,5 +1,7 @@
 #include "TestRobot.h"
 
+#include <actuators/VoltageController.h>
+
 #include <math.h>
 #include <iostream>
 
@@ -13,11 +15,11 @@ void Robot::RobotInit() {
   
   leftMotors[0] = new Talon(1);
   leftMotors[0]->SetInverted(false);
-  left = new Gearbox{new SpeedControllerGroup(*leftMotors[0]), nullptr};
+  left = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*leftMotors[0])), nullptr};
 
   rightMotors[0] = new Talon(0);
   rightMotors[0]->SetInverted(true);
-  right = new Gearbox{new SpeedControllerGroup(*rightMotors[0]), nullptr};
+  right = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*rightMotors[0])), nullptr};
 
   hatchEjector = new DoubleSolenoid(0, 1);
 

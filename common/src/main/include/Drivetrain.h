@@ -55,6 +55,7 @@ namespace curtinfrc {
     Drivetrain(DrivetrainConfig config) : _config(config) {};
 
     void Set(double leftPower, double rightPower);
+    void SetVoltage(double left, double right);
     void SetLeft(double leftPower);
     void SetRight(double rightPower);
 
@@ -62,6 +63,9 @@ namespace curtinfrc {
     bool GetInverted() { return _config.reversed; };
 
     DrivetrainConfig &GetConfig() { return _config; };
+
+    double GetLeftDistance();
+    double GetRightDistance();
 
    protected:
     Gearbox &GetLeft();
@@ -73,58 +77,17 @@ namespace curtinfrc {
     Usage<DrivetrainConfig>::Scoped _usage{&_config};
   };
 
-  class DrivetrainManualStrategy : public Strategy {
+  class DrivetrainFOCController {
    public:
-    DrivetrainManualStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup) : Strategy("Drivetrain Manual"), _drivetrain(drivetrain), _joyGroup(joyGroup) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-    
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file
+    DrivetrainFOCController(control::PIDGains gains);
 
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::JoystickGroup &_joyGroup;
-
-    Toggle _invertedToggle;
-  };
-
-  class DrivetrainFieldOrientedControlStrategy : public Strategy {
-   public:
-    DrivetrainFieldOrientedControlStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joyGroup(joyGroup), _controller(gains) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file (calc with FOCCalc())
-    std::pair<double, double> FOCCalc(double mag, double bearing, double dt, bool hold = false); // bearing in degrees
-
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::JoystickGroup &_joyGroup;
-
-    control::PIDController _controller;
-    Toggle _invertedToggle;
-  };
-
-  class DrivetrainPOVSnapStrategy : public Strategy {
-   public:
-    DrivetrainPOVSnapStrategy(Drivetrain &drivetrain, curtinfrc::JoystickGroup &joyGroup, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joyGroup(joyGroup), _controller(gains) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file (calc with FOCCalc())
-    std::pair<double, double> POVCalc(double mag, double bearing, double dt, bool hold = false); // bearing in degrees
-
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::JoystickGroup &_joyGroup;
-
-    control::PIDController _controller;
-    Toggle _invertedToggle;
+    void SetSetpoint(double magnitude, double bearing, bool hold = false);
+    std::pair<double, double> Calculate(double angle, double dt);
+   
+   private:
+    control::PIDController _pid;
+    double _magnitude = 0;
+    double _bearing = 0;
+    bool _hold = false;
   };
 } // ns curtinfrc

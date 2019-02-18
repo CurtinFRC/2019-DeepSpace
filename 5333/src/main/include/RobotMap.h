@@ -6,19 +6,23 @@
 #include "CurtinCtre.h"
 #include "CurtinControllers.h"
 #include "Gearbox.h"
+#include "actuators/BinaryServo.h"
+#include "actuators/Compressor.h"
 #include "actuators/DoubleSolenoid.h"
+#include "actuators/VoltageController.h"
 #include "sensors/Encoder.h"
+#include "sensors/LimitSwitch.h"
 #include "sensors/NavX.h"
+#include "sensors/PressureSensor.h"
 
 #include "control/PIDController.h"
-#include "MotionProfiling.h"
-#include "strategy/MPStrategy.h"
+// #include "MotionProfiling.h"
+// #include "strategy/MPStrategy.h"
 
 #include "ControlMap.h"
 
 #include "Drivetrain.h"
 #include "Elevator.h"
-#include "HarvesterIntake.h"
 #include "HatchIntake.h"
 #include "BoxIntake.h"
 
@@ -27,98 +31,97 @@ struct RobotMap {
   curtinfrc::Joystick joy2{ 1 }; // Co-Driver
   curtinfrc::JoystickGroup joyGroup{ joy1, joy2 };
 
-
   struct DriveTrain {
-    curtinfrc::TalonSrx leftSrx{ 1, 2048 };
-    curtinfrc::VictorSpx leftSpx{ 2 };
-    frc::SpeedControllerGroup leftMotors{ leftSrx, leftSpx };
-    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftSrx, 10.71 };
+    curtinfrc::TalonSrx leftSrx{ 3 };
+    curtinfrc::VictorSpx leftSpx{ 4 };
+    curtinfrc::actuators::MotorVoltageController leftMotors = curtinfrc::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
+    curtinfrc::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
+    curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
 
-    curtinfrc::TalonSrx rightSrx{ 3, 2048 };
-    curtinfrc::VictorSpx rightSpx{ 4 };
-    frc::SpeedControllerGroup rightMotors{ rightSrx, rightSpx }; 
-    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightSrx, 10.71 };
+    curtinfrc::TalonSrx rightSrx{ 1 };
+    curtinfrc::VictorSpx rightSpx{ 2 };
+    curtinfrc::actuators::MotorVoltageController rightMotors = curtinfrc::actuators::MotorVoltageController::Group(rightSrx, rightSpx);
+    curtinfrc::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
+    curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
 
     curtinfrc::sensors::NavX navx{};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
     curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
-    curtinfrc::control::PIDGains gainsPOV{ "POV", 0.032 }; // temp value
-
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
-
-    
-    std::shared_ptr<curtinfrc::PathfinderMPMode> modeLeft = std::make_shared<curtinfrc::PathfinderMPMode>(
-      &leftSrx, mpConfig, (mpFileBase).c_str()
-    );
-    std::shared_ptr<curtinfrc::PathfinderMPMode> modeRight = std::make_shared<curtinfrc::PathfinderMPMode>(
-      &rightSrx, mpConfig, (mpFileBase).c_str()
-    );
-
-    const double gyro_kp = 3 / 80;
-
-   private:
-    std::string mpFileBase = "output/test";
-    curtinfrc::MotionProfileConfig mpConfig = {
-      6 * 3.28,                                     // wheel diameter (in)
-      1.0 / 0.2 * 3.28, 0, 0,                       // P, I, D
-      3.34 / 12.0 * 3.28, 0.76 / 12.0 * 3.28        // kV, kA
-    };
   };
 
   DriveTrain drivetrain;
 
 
   struct Elevator {
-    frc::Spark liftMotor{ 5 };
-    curtinfrc::sensors::DigitalEncoder liftEncoder{0, 1, 1024};
-    curtinfrc::Gearbox elevatorGearbox{ &liftMotor, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
+    curtinfrc::VictorSpx liftSpx1{ 5 };
+    curtinfrc::TalonSrx liftSrx1{ 6 };
+    curtinfrc::TalonSrx liftSrx2{ 7 };
+    curtinfrc::VictorSpx liftSpx2{ 8 };
+    curtinfrc::actuators::MotorVoltageController liftMotors = curtinfrc::actuators::MotorVoltageController::Group(liftSpx1, liftSrx1, liftSrx2, liftSpx2);
+
+    curtinfrc::sensors::DigitalEncoder liftEncoder{ 2, 3, 2048 };
+    curtinfrc::Gearbox elevatorGearbox{ &liftMotors, &liftEncoder, 15.79, curtinfrc::physics::DcMotor::m775pro() * 4 };
+
+    curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
     curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
-    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, nullptr, 2.1, 25 / 1000.0, 20 };
+    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 25 / 1000.0, 20 };
+
+    Elevator() {
+      liftSpx1.SetUpdateRate(200);
+      liftSrx1.SetUpdateRate(200);
+      liftSrx2.SetUpdateRate(200);
+      liftSpx2.SetUpdateRate(200);
+    }
   };
 
   Elevator lift;
 
+  struct SideHatchIntake {
+    const int forward = 115;
+    const int reverse = 5;
 
-  struct HarvesterIntake {
-    frc::Spark harvesterMotor{ 6 };
-    curtinfrc::actuators::DoubleSolenoid harvesterSolenoid{ 0, 1 };
-    curtinfrc::Gearbox harvesterGearbox{ &harvesterMotor, nullptr, 4 };
+    curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
 
-    HarvesterIntakeConfig config{ harvesterGearbox, harvesterSolenoid };
+    HatchIntakeConfig config{ servo, solenoid };
   };
 
-  HarvesterIntake harvesterIntake;
+  SideHatchIntake sideHatchIntake;
 
+  struct FrontHatchIntake {
+    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
 
-  struct HatchIntake {
-    frc::Servo servo;
-    curtinfrc::actuators::DoubleSolenoid solenoid;
-    int forward = 60;
-    int reverse = 0;
-
-
-    HatchIntakeConfig config;
-    HatchIntake(int servoPort, int solenoidPortA, int solenoidPortB) : servo(servoPort), solenoid(solenoidPortA, solenoidPortB), config(servo, solenoid, forward, reverse) {};
+    HatchIntakeConfig config{ manipulatorSolenoid, solenoid };
   };
 
-  HatchIntake leftHatchIntake{ 7, 2, 3 };
-  HatchIntake rightHatchIntake{ 8, 4, 5 };
+  FrontHatchIntake frontHatchIntake;
 
 
   struct BoxIntake {
-    frc::Spark boxMotor{ 9 };
+    curtinfrc::TalonSrx boxMotor{ 9 };
     curtinfrc::Gearbox boxIntakeGearbox{ &boxMotor, nullptr };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 6, 7 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 4, 5 };
 
 
-    BoxIntakeConfig config{ boxIntakeGearbox, solenoid };
+    BoxIntakeConfig config{ boxIntakeGearbox, solenoid, true };
   };
 
   BoxIntake boxIntake;
+
+
+  struct ControlSystem {
+    curtinfrc::actuators::Compressor compressor{ 1 };
+
+    curtinfrc::sensors::PressureSensor pressureSensor{ 0 };
+  };
+
+  ControlSystem controlSystem;
 };

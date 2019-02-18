@@ -30,7 +30,7 @@ namespace curtinfrc {
     double mass;
   };
 
-  enum ElevatorState { kStationary, kMoving, kZeroing, kManual };
+  enum ElevatorState { kStationary = 0, kMoving, kZeroing, kManual };
   class Elevator : public devices::StateDevice<ElevatorState> {
    public:
     Elevator(ElevatorConfig config, control::PIDGains gain) : _config(config), _gain(gain), _controller(gain) {};

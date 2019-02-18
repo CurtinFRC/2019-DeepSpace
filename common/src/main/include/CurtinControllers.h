@@ -5,6 +5,8 @@
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
 
+#include "Toggle.h"
+
 namespace curtinfrc {
   typedef std::pair<int, int> tJoypair;
   typedef std::pair<tJoypair, tJoypair> tJoymap;
@@ -12,7 +14,12 @@ namespace curtinfrc {
 
   class Joystick : private frc::Joystick {
    public:
-    using frc::Joystick::Joystick;
+    Joystick(int port) : frc::Joystick(port) {
+      for (int i = 0; i < 12; i++) {
+        buttonRiseToggle[i] = new Toggle(ToggleEvent::ONRISE);
+        buttonFallToggle[i] = new Toggle(ToggleEvent::ONFALL, false);
+      }
+    };
 
     using frc::Joystick::AxisType;
     using frc::Joystick::kXAxis;
@@ -29,12 +36,19 @@ namespace curtinfrc {
 
     using frc::Joystick::GetPort;
     using frc::Joystick::GetRawButton;
+    bool GetButtonRise(int button);
+    bool GetButtonFall(int button);
     using frc::Joystick::GetPOV;
 
+    virtual bool GetButton(int button);
     virtual double GetAxis(AxisType axis);
 
     double GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis);
     double GetCircularisedAxis(AxisType axis);
+
+   private:
+    Toggle *buttonRiseToggle[12];
+    Toggle *buttonFallToggle[12];
   };
 
   class JoystickGroup {
@@ -43,8 +57,16 @@ namespace curtinfrc {
     enum JoyNum { first = 1, second = 2 }; // TEMP
 
     bool GetRawButton(JoyNum joy, int button);
-    bool GetRawButton(tJoypair joyPair);
+    bool GetRawButtonRise(JoyNum joy, int button);
+    bool GetRawButtonFall(JoyNum joy, int button);
+
+    bool GetButton(tJoypair joyPair);
+    bool GetButtonRise(tJoypair joyPair);
+    bool GetButtonFall(tJoypair joyPair);
+
     bool GetButton(tJoymap joyMap);
+    bool GetButtonRise(tJoymap joyMap);
+    bool GetButtonFall(tJoymap joyMap);
 
     Joystick &GetJoystick(JoyNum joy);
 

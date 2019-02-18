@@ -2,6 +2,18 @@
 
 #include "CurtinControllers.h"
 
+bool curtinfrc::Joystick::GetButton(int button) {
+  return GetRawButton(button);
+}
+
+bool curtinfrc::Joystick::GetButtonRise(int button) {
+  return buttonRiseToggle[button - 1]->Update(GetButton(button));  
+}
+
+bool curtinfrc::Joystick::GetButtonFall(int button) {
+  return buttonFallToggle[button - 1]->Update(GetButton(button));
+}
+
 double curtinfrc::Joystick::GetAxis(AxisType axis) {
   switch (axis) {
    case kXAxis:
@@ -78,14 +90,67 @@ bool curtinfrc::JoystickGroup::GetRawButton(JoyNum joy, int button) {
   return val;
 }
 
-bool curtinfrc::JoystickGroup::GetRawButton(tJoypair joyPair) {
+bool curtinfrc::JoystickGroup::GetRawButtonRise(JoyNum joy, int button) {
+  bool val = false;
+
+  switch (joy) {
+   case first:
+    val = _joy1.GetButtonRise(button);
+    break;
+
+   case second:
+    val = _joy2.GetButtonRise(button);
+    break;
+  }
+
+  return val;
+}
+
+bool curtinfrc::JoystickGroup::GetRawButtonFall(JoyNum joy, int button) {
+  bool val = false;
+
+  switch (joy) {
+   case first:
+    val = _joy1.GetButtonFall(button);
+    break;
+
+   case second:
+    val = _joy2.GetButtonFall(button);
+    break;
+  }
+
+  return val;
+}
+
+
+bool curtinfrc::JoystickGroup::GetButton(tJoypair joyPair) {
   if (joyPair == nopair) return false;
   return GetRawButton((JoyNum)joyPair.first, joyPair.second);
 }
 
-bool curtinfrc::JoystickGroup::GetButton(tJoymap joyMap) {
-  return GetRawButton(joyMap.first) || GetRawButton(joyMap.second);
+bool curtinfrc::JoystickGroup::GetButtonRise(tJoypair joyPair) {
+  if (joyPair == nopair) return false;
+  return GetRawButtonRise((JoyNum)joyPair.first, joyPair.second);
 }
+
+bool curtinfrc::JoystickGroup::GetButtonFall(tJoypair joyPair) {
+  if (joyPair == nopair) return false;
+  return GetRawButtonFall((JoyNum)joyPair.first, joyPair.second);
+}
+
+
+bool curtinfrc::JoystickGroup::GetButton(tJoymap joyMap) {
+  return GetButton(joyMap.first) || GetButton(joyMap.second);
+}
+
+bool curtinfrc::JoystickGroup::GetButtonRise(tJoymap joyMap) {
+  return GetButtonRise(joyMap.first) || GetButtonRise(joyMap.second);
+}
+
+bool curtinfrc::JoystickGroup::GetButtonFall(tJoymap joyMap) {
+  return GetButtonFall(joyMap.first) || GetButtonFall(joyMap.second);
+}
+
 
 curtinfrc::Joystick &curtinfrc::JoystickGroup::GetJoystick(curtinfrc::JoystickGroup::JoyNum joy) {
   switch (joy) {

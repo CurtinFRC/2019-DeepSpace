@@ -1,28 +1,30 @@
 #pragma once
 
-#include <frc/Servo.h>
-
 #include "strategy/Strategy.h"
 #include "devices/DeployableDevice.h"
+#include "actuators/BinaryActuator.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
 
 using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
 
 struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  frc::Servo &servo;
-  int forward, reverse; // Servo position in degrees (forward => grab, reverse => eject)
+  curtinfrc::actuators::BinaryActuator &manipulator;
+  curtinfrc::actuators::BinaryActuatorState stowedState;
 
-  HatchIntakeConfig(frc::Servo &servoIn, curtinfrc::actuators::BinaryActuator &actuatorIn, int forwardIn, int reverseIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), servo(servoIn), forward(forwardIn), reverse(reverseIn) {};
+  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice {
  public:
   HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
+  HatchIntakeConfig &GetConfig() { return _config; };
+
  protected:
   virtual void IntakingPeriodic() override;  // Intake a hatch
   virtual void OuttakingPeriodic() override; // Eject a hatch
+  virtual void StowedPeriodic() override;
 
  private:
   HatchIntakeConfig _config;

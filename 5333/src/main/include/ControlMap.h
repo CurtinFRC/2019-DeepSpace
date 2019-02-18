@@ -60,4 +60,12 @@ class ControlMap {
   static const curtinfrc::tJoymap boxIn;
   static const curtinfrc::tJoymap boxOut;
   static const curtinfrc::tJoymap boxStow;
+
+  static const double boxDeployedThrottle;
+  static const double boxStowingThrottle;
+  static const double boxStowedThrottle;
+
+
+  // CONTROLSYSTEM JOYMAP
+  static const curtinfrc::tJoymap compressorOn;
 };
