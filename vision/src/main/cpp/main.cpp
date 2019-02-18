@@ -33,14 +33,25 @@ int main(int argc, char **argv) {
   }
 
   Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  Processing sideTape{sideHatchCapture};
+  
+  TapeProcessing tapeBoi{sideHatchCapture};
+  HatchProcessing hatchBoi{sideHatchCapture};
+  
+  Processing sideTape{sideHatchCapture, tapeBoi, hatchBoi};
+  
   Display display{"Side Hatch", sideTape};
 
   sideHatchCapture.StartThread(30.0);
   sideTape.StartThread(30.0);
   display.StartThread(30.0);
 
+  sideHatchCapture.JoinThread();
+  sideTape.JoinThread();
   display.JoinThread();
+
+  while (true) {
+    sideTape.ProcessPick();
+  }
 
   // VisionRunner vision;
   // #ifdef __DESKTOP__

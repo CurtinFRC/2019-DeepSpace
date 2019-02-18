@@ -8,8 +8,14 @@
 
 #include "threading/Runnable.h"
 
-bool _tapeSet = true;
-bool _lastTapeSet = false;
+void Processing::Init() {
+    _tapeSet = true;
+    _lastTapeSet = false;
+}
+
+void Processing::Periodic() {
+
+}
 
 void Processing::ProcessPick() {
     auto inst = nt::NetworkTableInstance::GetDefault();
@@ -40,5 +46,13 @@ void Processing::GetDisplayMat(cv::Mat &displayMat) {
     } else {
         _hatch.GetDisplayMat(_imgProcessedTrack);
         _imgProcessedTrack.copyTo(displayMat);
+    }
+}
+
+cv::Size Processing::GetDisplaySize() {
+    if (_tapeSet) {
+        return _tape.GetDisplaySize();
+    } else {
+        return _hatch.GetDisplaySize();
     }
 }

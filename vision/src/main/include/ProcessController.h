@@ -1,8 +1,8 @@
 #pragma once
 #include "threading/Runnable.h"
 #include "Display.h"
+#include "Process.h"
 #include "TapeProcessing.h"
-#include "process.h"
 #include "HatchProcessing.h"
 #include <string.h>
 #include <iostream>
@@ -13,12 +13,12 @@ class Processing : public Runnable, public Displayable {
 	void ProcessPick();
 	nt::NetworkTableEntry TapeCamSet;
 	std::string GetProcessType();
-	Processing(Capture &capture); // need to _capture = capture later
+	Processing(Capture &capture, TapeProcessing &tape, HatchProcessing &hatch) : _capture(capture), _tape(tape), _hatch(hatch) {} // need to _capture = capture later
 	virtual void Init() override;
-  	virtual void Periodic() override;
+	virtual void Periodic() override;
 
-	virtual void GetDisplayMat(cv::Mat &displayMat) override {};
-	virtual cv::Size GetDisplaySize() override {};
+	virtual void GetDisplayMat(cv::Mat &displayMat) override;
+	virtual cv::Size GetDisplaySize() override;
 
  protected:
   std::mutex _classMutex;
@@ -29,8 +29,10 @@ class Processing : public Runnable, public Displayable {
   cv::Mat _imgProcessing;
 
  private:
-	Capture _capture{"HatchSide", 0};
-	TapeProcessing _tape{_capture};
-	HatchProcessing _hatch{_capture};
+	Capture &_capture;
+	TapeProcessing &_tape;
+	HatchProcessing &_hatch;
 	std::string processType;
+	bool _tapeSet;
+	bool _lastTapeSet;
 };

@@ -10,13 +10,15 @@ class HatchProcessing {
   HatchProcessing(Capture &capture);
   
   nt::NetworkTableEntry HatchDistanceEntry;
-  nt::NetworkTableEntry HatchXoffsetEntry;
-  nt::NetworkTableEntry HatchYoffsetEntry;
+  nt::NetworkTableEntry HatchXOffsetEntry;
+  nt::NetworkTableEntry HatchYOffsetEntry;
 
   void Init();
   void Periodic();
   void GetDisplayMat(cv::Mat &displayMat);
   cv::Size GetDisplaySize();
+  void CopyProcessedTrack(cv::Mat &imgProcessedTrack);
+
 
  private:
   cv::Mat imgHSV;
@@ -27,4 +29,7 @@ class HatchProcessing {
   cv::Mat _imgProcessing;
   cv::Mat _imgProcessedTrack;
   cs::VideoMode _videoMode;
+
+ protected:
+  std::mutex _classMutex;
 };

@@ -1,7 +1,7 @@
 #include "Display.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
-#include "ProcessController.h"
+// #include "ProcessController.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -32,7 +32,9 @@ void TapeProcessing::Init() {
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
-  _videoMode = _capture.GetVideoMode;
+  _videoMode = _capture.GetVideoMode();
+
+  _capture.SetExposure(-11);
 }
 
 void TapeProcessing::Periodic() {
