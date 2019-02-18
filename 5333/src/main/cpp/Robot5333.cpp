@@ -83,13 +83,13 @@ void Robot::RobotPeriodic() {
   if (robotmap.joyGroup.GetButtonRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   // Redundant, as it can already be accessed on shuffleboard via nt, but ~
-  frc::SmartDashboard::PutNumber("Hatch Distance", hatchDistanceEntry.GetDouble(-1));
-  frc::SmartDashboard::PutNumber("Hatch X Offset", hatchXoffsetEntry.GetDouble(0));
-  frc::SmartDashboard::PutNumber("Hatch Y Offset", hatchYoffsetEntry.GetDouble(0));
+  frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
+  frc::SmartDashboard::PutNumber("Hatch X Offset", robotmap.controlSystem.hatchXoffsetEntry.GetDouble(0));
+  frc::SmartDashboard::PutNumber("Hatch Y Offset", robotmap.controlSystem.hatchYoffsetEntry.GetDouble(0));
   
-  frc::SmartDashboard::PutNumber("Tape Distance", tapeDistanceEntry.GetDouble(-1));
-  frc::SmartDashboard::PutNumber("Tape Angle", tapeAngleEntry.GetDouble(0));
-  frc::SmartDashboard::PutNumber("Tape Target", tapeTargeteEntry.GetDouble(-1));
+  frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
+  frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
+  frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargeteEntry.GetDouble(-1));
   
   
   robotmap.controlSystem.compressor.Update(dt);
