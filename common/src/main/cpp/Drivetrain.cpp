@@ -1,21 +1,21 @@
 #include "Drivetrain.h"
 
 void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
-  SetLeft(leftPower);
-  SetRight(rightPower);
+  SetVoltage(leftPower * 12, rightPower * 12);
 }
 
 void curtinfrc::Drivetrain::SetVoltage(double left, double right) {
-  GetLeft().transmission->SetVoltage(left);
-  GetRight().transmission->SetVoltage(right);
+  _setpoint = std::pair<double, double>{left, right};
+  SetState(curtinfrc::DrivetrainState::kManual);
 }
 
-void curtinfrc::Drivetrain::SetLeft(double leftPower) {
-  GetLeft().transmission->SetVoltage(leftPower * 12);
+void curtinfrc::Drivetrain::SetExternalLoop(std::function<std::pair<double, double>(curtinfrc::Drivetrain &, double)> func) {
+  _externalLoop = func;
+  SetState(curtinfrc::DrivetrainState::kExternalLoop);
 }
 
-void curtinfrc::Drivetrain::SetRight(double rightPower) {
-  GetRight().transmission->SetVoltage(rightPower * 12);
+void curtinfrc::Drivetrain::SetIdle() {
+  SetState(curtinfrc::DrivetrainState::kIdle);
 }
 
 void curtinfrc::Drivetrain::SetInverted(bool inverted) {
@@ -42,6 +42,24 @@ double curtinfrc::Drivetrain::GetRightDistance() {
 
 
 // Protected
+
+void curtinfrc::Drivetrain::OnStatePeriodic(curtinfrc::DrivetrainState state, double dt) {
+  std::pair<double, double> outputs{0, 0};
+
+  switch (state) {
+   case curtinfrc::DrivetrainState::kManual:
+    outputs = _setpoint;
+    break;
+   case curtinfrc::DrivetrainState::kExternalLoop:
+    outputs = _externalLoop(*this, dt);
+    break;
+   default:
+    break;
+  }
+
+  GetLeft().transmission->SetVoltage(outputs.first);
+  GetRight().transmission->SetVoltage(outputs.second); 
+}
 
 curtinfrc::Gearbox &curtinfrc::Drivetrain::GetLeft() {
   return !_config.reversed ? _config.leftDrive : _config.rightDrive;

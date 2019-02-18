@@ -24,8 +24,8 @@ void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
   double leftPos = _drivetrain.GetLeftDistance();
   double rightPos = _drivetrain.GetRightDistance();
 
-  double leftRate = _drivetrain.GetConfig().leftDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
-  double rightRate = _drivetrain.GetConfig().rightDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
+  double leftRate = _drivetrain.GetConfig().leftDrive.encoder->GetEncoderAngularVelocity() * 3.14159265 * 2 * _drivetrain.GetConfig().wheelRadius;
+  double rightRate = _drivetrain.GetConfig().rightDrive.encoder->GetEncoderAngularVelocity() * 3.14159265 * 2 * _drivetrain.GetConfig().wheelRadius;
 
   double battery = frc::RobotController::GetInputVoltage();
   double motorVolts = battery * std::abs(_lastAutospeed);
@@ -48,63 +48,30 @@ void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
   _telemetryEntry.SetDoubleArray(_telemetryArray);
 }
 
-// BASE STRATEGY //
+// PATHFINDER STRATEGY //
 
-// void MotionProfileStrategy::start() {
-//   _notifier = new frc::Notifier([=]() {
-//     if (_running) {
-//       _esc->Set(_mode->calculate());
-//       done = _mode->done;
-//     }
-//   });
-//   _mode->init();
-//   _running = true;
-//   _notifier->StartPeriodic(_mode->ctrl_period());
-// }
+PathfinderMPStrategy::PathfinderMPStrategy(Drivetrain &drivetrain, PathfinderGains gains, std::string project, std::string pathname) : _drivetrain(drivetrain), _pf(gains) {
+  Requires(&drivetrain);
+  SetCanBeInterrupted(true);
+  SetCanBeReused(false);
+  _pf.Load(project, pathname);
+}
 
-// void MotionProfileStrategy::tick(double time) {}
+void PathfinderMPStrategy::OnStart() {
+  _pf.Reset();
+  _pf.SetOffset(_drivetrain.GetLeftDistance(), _drivetrain.GetRightDistance());
+  _drivetrain.SetExternalLoop([&](Drivetrain &drive, double) {
+    if (_pf.IsDone())
+      return std::pair<double, double>{0, 0};
+    return _pf.Calculate(drive.GetLeftDistance(), drive.GetRightDistance(), drive.GetConfig().gyro->GetAngle());
+  });
+}
 
-// void MotionProfileStrategy::stop() {
-//   _running = false;
-//   _notifier->Stop();
-//   delete _notifier;
-//   _esc->StopMotor();
-// }
+void PathfinderMPStrategy::OnUpdate(double dt) {
+  if (_pf.IsDone())
+    SetDone();
+}
 
-// DRIVETRAIN //
-
-// void DrivetrainMotionProfileStrategy::OnStart() {
-//   _notifier = new frc::Notifier([=]() {
-//     if (_running) {
-//       double l = _mode_left->calculate();
-//       double r = _mode_right->calculate();
-
-//       if (_drivetrain.GetConfig().gyro != nullptr && _mode_left->gyro_capable() && _mode_right->gyro_capable()) {
-//         double gyro = fmod(-_drivetrain.GetConfig().gyro->GetAngle(), 360);
-//         double heading = _mode_left->gyro_desired();
-
-//         double angle_error = fmod(heading - gyro, 360);
-//         angle_error = angle_error > 180 ? angle_error - 360 : angle_error;
-//         double turn = _gyro_kP * angle_error;
-
-//         l -= turn;
-//         r += turn;
-//       }
-
-//       _drivetrain.Set(l, r);
-//     }
-//   });
-//   _mode_left->init();
-//   _mode_right->init();
-//   _running = true;
-//   _notifier->StartPeriodic(_mode_left->ctrl_period());
-// }
-
-// void DrivetrainMotionProfileStrategy::OnUpdate(double dt) {}
-
-// void DrivetrainMotionProfileStrategy::OnStop() {
-//   _running = false;
-//   _notifier->Stop();
-//   delete _notifier;
-//   _drivetrain.Set(0, 0);
-// }
+void PathfinderMPStrategy::OnStop() {
+  _drivetrain.SetIdle();
+}

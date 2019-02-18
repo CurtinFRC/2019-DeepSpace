@@ -16,7 +16,7 @@
 #include "sensors/PressureSensor.h"
 
 #include "control/PIDController.h"
-// #include "MotionProfiling.h"
+#include "MotionProfiling.h"
 // #include "strategy/MPStrategy.h"
 
 #include "ControlMap.h"
@@ -48,6 +48,7 @@ struct RobotMap {
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
     curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
+    curtinfrc::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 12.0, 0, 0, 2.246, 0.5409, 12.0 / 90.0 };    // PIDVAG
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
   };
