@@ -9,44 +9,42 @@
 #include "threading/Runnable.h"
 
 void Processing::Init() {
-  _tapeSet = true;
-  _lastTapeSet = false;
-}
+  _useTape = true;
+  _lastUseTape = false;
 
-void Processing::Periodic() {}
-
-void Processing::ProcessPick() {
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");
-  TapeCamSet = visionTable->GetEntry("Camera Set");
+  _usingTapeEntry = visionTable->GetEntry("Camera Set");
+}
 
-  _tapeSet = TapeCamSet.GetBoolean(true);
+void Processing::Periodic() {
+  _useTape = _usingTapeEntry.GetBoolean(true);
 
-  if (_tapeSet) {
-    // Use tape
-    if (_tapeSet != _lastTapeSet) _tape.Init();
+  if (_useTape) {
+    // Using Tape Tracking
+    if (_useTape != _lastUseTape)
+      _tape.Init();
     _tape.Periodic();
   } else {
-    // Use hatch
-    if (_tapeSet != _lastTapeSet) _hatch.Init();
+    // Using Hatch Tracking
+    if (_useTape != _lastUseTape)
+      _hatch.Init();
     _hatch.Periodic();
   }
-  
-  _lastTapeSet = _tapeSet;    
+
+  _lastUseTape = _useTape;
 }
 
 void Processing::GetDisplayMat(cv::Mat &displayMat) {
-  if (_tapeSet) {
-    _tape.GetDisplayMat(_imgProcessedTrack);
-    _imgProcessedTrack.copyTo(displayMat);
+  if (_useTape) {
+    _tape.GetDisplayMat(displayMat);
   } else {
-    _hatch.GetDisplayMat(_imgProcessedTrack);
-    _imgProcessedTrack.copyTo(displayMat);
+    _hatch.GetDisplayMat(displayMat);
   }
 }
 
 cv::Size Processing::GetDisplaySize() {
-  if (_tapeSet) {
+  if (_useTape) {
     return _tape.GetDisplaySize();
   } else {
     return _hatch.GetDisplaySize();

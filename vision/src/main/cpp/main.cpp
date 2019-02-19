@@ -32,27 +32,21 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  
+  Capture sideHatchCapture{"HatchSide", isDesktop ? 1 : 4};
   TapeProcessing tapeBoi{sideHatchCapture};
   HatchProcessing hatchBoi{sideHatchCapture};
-  
-  Processing sideTape{sideHatchCapture, tapeBoi, hatchBoi};
-  
-  Display display{"Side Hatch", sideTape};
+
+  Processing sideHatchProcess{sideHatchCapture, tapeBoi, hatchBoi};
+  Display sideHatchDisplay{"Side Hatch", sideHatchProcess};
 
   sideHatchCapture.StartThread(30.0);
-  sideTape.StartThread(30.0);
-  display.StartThread(30.0);
+  sideHatchProcess.StartThread(30.0);
+  sideHatchDisplay.StartThread(30.0);
 
   sideHatchCapture.JoinThread();
-  sideTape.JoinThread();
-  display.JoinThread();
+  sideHatchProcess.JoinThread();
+  sideHatchDisplay.JoinThread();
 
-  while (true) {
-    sideTape.ProcessPick();
-  }
-  
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
 }
