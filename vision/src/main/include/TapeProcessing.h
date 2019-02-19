@@ -39,6 +39,10 @@ class TapeProcessing {
   cv::Mat _imgProcessedTrack;
   cs::VideoMode _videoMode;
 
+  nt::NetworkTableEntry _usingTapeEntry;
+  bool _useTape;
+	bool _lastUseTape;
+
  protected:
   std::mutex _classMutex;
 };

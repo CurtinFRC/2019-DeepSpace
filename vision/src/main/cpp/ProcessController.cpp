@@ -9,7 +9,7 @@
 #include "threading/Runnable.h"
 
 void Processing::Init() {
-  _useTape = false;
+  _useTape = true;
   _lastUseTape = false;
 
   auto inst = nt::NetworkTableInstance::GetDefault();

@@ -29,13 +29,21 @@ void TapeProcessing::Init() {
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");
   auto table = visionTable->GetSubTable("TapeTracking");
+  _usingTapeEntry = visionTable->GetEntry("Camera Set");
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
   _videoMode = _capture.GetVideoMode();
 
+  _useTape = _usingTapeEntry.GetBoolean(true);
   
-  _capture.SetExposure(-100);
+  if (_useTape) {
+    _capture.SetExposure(-100);
+  }
+  else {
+    _capture.SetExposure(40);
+  }
+
 }
 
 void TapeProcessing::Periodic() {
