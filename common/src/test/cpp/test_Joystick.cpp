@@ -38,12 +38,12 @@ namespace testing {
 TEST (testing_Joystick, Constructor) {
   testing::Joystick joy(0);
 
-  ASSERT_EQ(joystickDef.GetPort(), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joy::kXAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joy::kYAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joy::kZAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joy::kTwistAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joy::kThrottleAxis), 0);
+  ASSERT_EQ(joy.GetPort(), 0);
+  ASSERT_EQ(joy.GetAxis(joy::kXAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy::kYAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy::kZAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy::kTwistAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy::kThrottleAxis), 0);
 }
 
 
