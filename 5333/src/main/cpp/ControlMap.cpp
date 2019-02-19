@@ -40,14 +40,6 @@ const double ControlMap::liftSetpointUpper1 = 1.89;
 const double ControlMap::liftSetpointUpper2 = 2.10;
 
 
-// HARVESTER JOYMAP
-const tControllerButtonMap ControlMap::harveserIn{ { 1, 3 } };
-const tControllerButtonMap ControlMap::harveserOut{ { 1, 5 } };
-const tControllerButtonMap ControlMap::harveserStow{ { 1, 11 } };
-
-const double ControlMap::harvesterThrottle = 1;
-
-
 // HATCH JOYMAP
 const tControllerButtonMap ControlMap::hatchGrab{ { 1, 3 }, { 2, 6 } };
 const tControllerButtonMap ControlMap::hatchRelease{ { 1, 5 }, { 2, 4 } };
