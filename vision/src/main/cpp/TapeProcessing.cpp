@@ -34,7 +34,8 @@ void TapeProcessing::Init() {
   TapeTargetEntry = table->GetEntry("Target");
   _videoMode = _capture.GetVideoMode();
 
-  _capture.SetExposure(-11);
+  
+  _capture.SetExposure(-100);
 }
 
 void TapeProcessing::Periodic() {

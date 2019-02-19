@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  Capture sideHatchCapture{"HatchSide", isDesktop ? 1 : 4};
+  Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
   TapeProcessing tapeBoi{sideHatchCapture};
   HatchProcessing hatchBoi{sideHatchCapture};
 

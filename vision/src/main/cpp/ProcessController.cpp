@@ -9,7 +9,7 @@
 #include "threading/Runnable.h"
 
 void Processing::Init() {
-  _useTape = true;
+  _useTape = false;
   _lastUseTape = false;
 
   auto inst = nt::NetworkTableInstance::GetDefault();
@@ -25,11 +25,13 @@ void Processing::Periodic() {
     if (_useTape != _lastUseTape)
       _tape.Init();
     _tape.Periodic();
+    // Switch to Hatch Port, And Increase Tape Exposure
   } else {
     // Using Hatch Tracking
     if (_useTape != _lastUseTape)
       _hatch.Init();
     _hatch.Periodic();
+    // Switch Tape Port, And Lower Tape Exposure
   }
 
   _lastUseTape = _useTape;
