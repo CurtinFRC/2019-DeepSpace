@@ -12,9 +12,7 @@ void Processing::Init() {
   _useTape = true;
   _lastUseTape = false;
 
-  auto inst = nt::NetworkTableInstance::GetDefault();
-  auto visionTable = inst.GetTable("VisionTracking");
-  _usingTapeEntry = visionTable->GetEntry("Camera Set");
+  
 }
 
 void Processing::Periodic() {

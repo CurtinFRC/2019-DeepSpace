@@ -54,6 +54,7 @@ void HatchProcessing::Periodic() {
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
+    cv::putText(_imgProcessedTrack,"test Hatch", cv::Point2f(125,125), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
 

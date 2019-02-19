@@ -10,7 +10,7 @@
 
 class Processing : public Runnable, public Displayable {
  public:
-	Processing(Capture &capture, TapeProcessing &tape, HatchProcessing &hatch) : _capture(capture), _tape(tape), _hatch(hatch) {} // need to _capture = capture later
+	Processing(Capture &capture, TapeProcessing &tape, HatchProcessing &hatch, nt::NetworkTableEntry tableEntry) : _capture(capture), _tape(tape), _hatch(hatch), _usingTapeEntry(tableEntry) {} // need to _capture = capture later
 	virtual void Init() override;
 	virtual void Periodic() override;
 

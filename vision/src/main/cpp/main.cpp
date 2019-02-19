@@ -32,20 +32,38 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  TapeProcessing tapeBoi{sideHatchCapture};
-  HatchProcessing hatchBoi{sideHatchCapture};
+  //Capture sideCapture{"HatchSide", isDesktop ? 1 : 5};
+  Capture frontCapture{"FrontSide", isDesktop ? 0 : 4};
+  
+  // TapeProcessing tapeSide{sideCapture};
+  // HatchProcessing hatchSide{sideCapture};
+  TapeProcessing tapeFront{frontCapture};
+  HatchProcessing hatchFront{frontCapture};
 
-  Processing sideHatchProcess{sideHatchCapture, tapeBoi, hatchBoi};
-  Display sideHatchDisplay{"Side Hatch", sideHatchProcess};
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTracking");
 
-  sideHatchCapture.StartThread(30.0);
-  sideHatchProcess.StartThread(30.0);
-  sideHatchDisplay.StartThread(30.0);
+  // Processing sideProcess{sideCapture, tapeSide, hatchSide, visionTable->GetEntry("Camera Set Side")};
+  Processing frontProcess{frontCapture, tapeFront, hatchFront, visionTable->GetEntry("Camera Set Front")};
 
-  sideHatchCapture.JoinThread();
-  sideHatchProcess.JoinThread();
-  sideHatchDisplay.JoinThread();
+  // Display sideDisplay{"Side Display", sideProcess};
+  Display frontDisplay{"Front Display", frontProcess};
+
+  // sideCapture.StartThread(30.0);
+  // sideProcess.StartThread(30.0);
+  // sideDisplay.StartThread(30.0);
+
+  frontCapture.StartThread(30.0);
+  frontProcess.StartThread(30.0);
+  frontDisplay.StartThread(30.0);
+
+  // sideCapture.JoinThread();
+  // sideProcess.JoinThread();
+  // sideDisplay.JoinThread();
+
+  frontCapture.JoinThread();
+  frontProcess.JoinThread();
+  frontDisplay.JoinThread();
 
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
