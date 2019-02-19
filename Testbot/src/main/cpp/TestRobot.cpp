@@ -5,19 +5,17 @@
 #include <math.h>
 #include <iostream>
 
-#define JOY_EPS 0.05
-
 using namespace frc;
 using namespace curtinfrc;
 
 void Robot::RobotInit() {
   xbox = new curtinfrc::XboxController(0);
   
-  leftMotors[0] = new Talon(1);
+  leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
   left = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*leftMotors[0])), nullptr};
 
-  rightMotors[0] = new Talon(0);
+  rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
   right = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*rightMotors[0])), nullptr};
 
@@ -35,13 +33,10 @@ void Robot::TeleopPeriodic() {
   double leftSpeed = -xbox->GetAxis(1); // L Y axis
   double rightSpeed = -xbox->GetAxis(5); // R Y axis
 
-  joyForward = -joy->GetCircularisedAxisAgainst(joy->kYAxis, joy->kZAxis) * 0.9;
-  if (std::abs(joyForward) < JOY_EPS) joyForward = 0;
-  joyForward *= abs(joyForward);
+  leftSpeed *= fabs(leftSpeed);
+  rightSpeed *= fabs(rightSpeed);
 
-  joyTurn = joy->GetCircularisedAxisAgainst(joy->kZAxis, joy->kYAxis) * 0.9;
-  if (std::abs(joyTurn) < JOY_EPS) joyTurn = 0;
-  // joyTurn *= abs(joyTurn);
+  drivetrain->Set(leftSpeed, rightSpeed);
 
   hatchEjector->Set(!xbox->GetButton(6) ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse); // R bumper
   // if (xbox->GetBumper(xbox->kRightHand)) {
@@ -50,9 +45,7 @@ void Robot::TeleopPeriodic() {
   //   hatchEjector->Set((bool)solState ? DoubleSolenoid::kForward : DoubleSolenoid::kReverse);
   // }
 
-  drivetrain->Set(leftSpeed, rightSpeed);
-
-  drivetrain->Set(leftSpeed, rightSpeed);
+  // if (xbox->GetBumper(xbox->kLeftHand)) hatchEjector->Set(DoubleSolenoid::kReverse);
 }
 
 void Robot::TestInit() {}
