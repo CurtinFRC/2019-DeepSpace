@@ -24,8 +24,8 @@ void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
   double leftPos = _drivetrain.GetLeftDistance();
   double rightPos = _drivetrain.GetRightDistance();
 
-  double leftRate = _drivetrain.GetConfig().leftDrive.encoder->GetEncoderAngularVelocity() * 3.14159265 * 2 * _drivetrain.GetConfig().wheelRadius;
-  double rightRate = _drivetrain.GetConfig().rightDrive.encoder->GetEncoderAngularVelocity() * 3.14159265 * 2 * _drivetrain.GetConfig().wheelRadius;
+  double leftRate = _drivetrain.GetConfig().leftDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
+  double rightRate = _drivetrain.GetConfig().rightDrive.encoder->GetEncoderAngularVelocity() * _drivetrain.GetConfig().wheelRadius;
 
   double battery = frc::RobotController::GetInputVoltage();
   double motorVolts = battery * std::abs(_lastAutospeed);

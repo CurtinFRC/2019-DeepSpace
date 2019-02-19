@@ -1,6 +1,7 @@
 #pragma once
 
 #include "strategy/Strategy.h"
+#include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
 #include "CurtinControllers.h"
 #include "Toggle.h"
@@ -14,7 +15,7 @@ struct BoxIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = true) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), motors(motorsIn) {};
 };
 
-class BoxIntake : public curtinfrc::devices::DeployableDevice {
+class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc::StrategySystem {
  public:
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 

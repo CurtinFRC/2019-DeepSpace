@@ -52,14 +52,15 @@ namespace curtinfrc {
     bool reversed = false;
   };
   
-  enum class DrivetrainState { kManual = 0, kIdle, kExternalLoop };
+  enum class DrivetrainState { kManual = 0, kVelocity, kIdle, kExternalLoop };
 
-  class Drivetrain : public devices::StateDevice<DrivetrainState> {
+  class Drivetrain : public devices::StateDevice<DrivetrainState>, public StrategySystem {
    public:
-    Drivetrain(DrivetrainConfig config) : _config(config) {};
+    Drivetrain(DrivetrainConfig config, control::PIDGains gains = { "Drivetrain Velocity" }) : _config(config), _pidLeft(gains), _pidRight(gains) {};
 
     void Set(double leftPower, double rightPower);
     void SetVoltage(double left, double right);
+    void SetVelocity(double left, double right);
     void SetExternalLoop(std::function<std::pair<double, double>(Drivetrain &, double)> func);
     void SetIdle();
 
@@ -72,12 +73,14 @@ namespace curtinfrc {
     double GetRightDistance();
 
    protected:
+    void OnStateChange(DrivetrainState newState, DrivetrainState oldState) override;
     void OnStatePeriodic(DrivetrainState state, double dt) override;
 
     Gearbox &GetLeft();
     Gearbox &GetRight();
 
    private:
+    control::PIDController _pidLeft, _pidRight;
     std::pair<double, double> _setpoint;
     std::function<std::pair<double,double>(Drivetrain &,double)> _externalLoop;
 

@@ -33,7 +33,7 @@ void Robot::RobotInit() {
   robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
   robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
-  drivetrain = new Drivetrain(robotmap.drivetrain.config);
+  drivetrain = new Drivetrain(robotmap.drivetrain.config, robotmap.drivetrain.gainsVelocity);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.contGroup));
   drivetrain->StartLoop(100);
   stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.contGroup, robotmap.drivetrain.gainsFOC);

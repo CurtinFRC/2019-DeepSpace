@@ -5,8 +5,13 @@ void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
 }
 
 void curtinfrc::Drivetrain::SetVoltage(double left, double right) {
-  _setpoint = std::pair<double, double>{left, right};
+  _setpoint = std::pair<double, double>{ left, right };
   SetState(curtinfrc::DrivetrainState::kManual);
+}
+
+void curtinfrc::Drivetrain::SetVelocity(double left, double right) {
+  _setpoint = std::pair<double, double>{ left, right };
+  SetState(curtinfrc::DrivetrainState::kVelocity);
 }
 
 void curtinfrc::Drivetrain::SetExternalLoop(std::function<std::pair<double, double>(curtinfrc::Drivetrain &, double)> func) {
@@ -43,16 +48,40 @@ double curtinfrc::Drivetrain::GetRightDistance() {
 
 // Protected
 
+void curtinfrc::Drivetrain::OnStateChange(DrivetrainState newState, DrivetrainState oldState) {
+  switch (newState) {
+   case curtinfrc::DrivetrainState::kVelocity:
+    _pidLeft.SetSetpoint(_setpoint.first);
+    _pidRight.SetSetpoint(_setpoint.second);
+    break;
+
+   default:
+    break;
+  }
+}
+
 void curtinfrc::Drivetrain::OnStatePeriodic(curtinfrc::DrivetrainState state, double dt) {
-  std::pair<double, double> outputs{0, 0};
+  std::pair<double, double> outputs{ 0, 0 };
 
   switch (state) {
    case curtinfrc::DrivetrainState::kManual:
     outputs = _setpoint;
     break;
+
+   case curtinfrc::DrivetrainState::kVelocity:
+    _pidLeft.SetSetpoint(_setpoint.first, false);
+    _pidRight.SetSetpoint(_setpoint.second, false);
+
+    outputs = {
+      _pidLeft.Calculate(GetLeft().encoder->GetEncoderAngularVelocity() * _config.wheelRadius, dt),
+      _pidRight.Calculate(GetRight().encoder->GetEncoderAngularVelocity() * _config.wheelRadius, dt)
+    };
+    break;
+
    case curtinfrc::DrivetrainState::kExternalLoop:
     outputs = _externalLoop(*this, dt);
     break;
+
    default:
     break;
   }

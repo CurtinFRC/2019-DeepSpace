@@ -1,13 +1,12 @@
 #pragma once
 
 #include "loops/LoopSystem.h"
-#include "strategy/StrategySystem.h"
 
 namespace curtinfrc {
 namespace devices {
 
   template <typename StateType>
-  class StateDevice : public StrategySystem, public loops::LoopSystem {
+  class StateDevice : public loops::LoopSystem {
    public:
     StateDevice() { _state = (StateType)0; };
 

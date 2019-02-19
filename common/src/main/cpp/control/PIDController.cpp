@@ -41,8 +41,8 @@ double PIDGains::GetkF() const {
 
 PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0), _filterPos(LinearFilter::MovingAverage(20)), _filterVel(LinearFilter::MovingAverage(20)) {}
 
-void PIDController::SetSetpoint(double setpoint) {
-  Reset();
+void PIDController::SetSetpoint(double setpoint, bool reset) {
+  if (reset) Reset();
   _setpoint = setpoint;
   if (_threshAvgSet == false) {
     _threshAvgPos = setpoint * 0.05;
