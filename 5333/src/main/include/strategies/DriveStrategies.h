@@ -41,5 +41,4 @@ class DrivetrainAngleStrategy : public curtinfrc::Strategy {
   curtinfrc::Drivetrain &_drivetrain;
   curtinfrc::control::PIDController _pid;
   double _angle;
-  double _bearing = 0;
 };
