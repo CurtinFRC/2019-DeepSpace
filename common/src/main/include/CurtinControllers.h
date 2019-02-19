@@ -22,14 +22,29 @@ namespace curtinfrc {
    public:
     Controller(frc::GenericHID *cont, int nButtons = 12) : _cont(cont), _nButtons(nButtons), _buttonRiseToggle(nButtons, Toggle(ToggleEvent::ONRISE)), _buttonFallToggle(nButtons, Toggle(ToggleEvent::ONFALL, false)) {};
 
+    enum POVPos {
+      kNone = -1,
+      kTop = 0,
+      kTopRight = 45,
+      kRight = 90,
+      kBottomRight = 135,
+      kBottom = 180,
+      kBottomLeft = 215,
+      kLeft = 270,
+      kTopLeft = 315
+    };
+
     /* virtual */ int GetButtonCount() const { return _nButtons; };
 
     int GetPort() { return _cont->GetPort(); };
     double GetRawAxis(int axis = 1) { return _cont->GetRawAxis(axis); };
     bool GetRawButton(int button = 1) { return _cont->GetRawButton(button); };
+    int GetRawPOVAngle() { return _cont->GetPOV(); };
 
     virtual double GetAxis(int axis = 1) { return GetRawAxis(axis); };
     virtual bool GetButton(int button = 1) { return GetRawButton(button); };
+    virtual double GetPOVAngle() { return GetRawPOVAngle(); };
+    virtual POVPos GetPOV() { return (POVPos)GetRawPOVAngle(); };
 
     virtual bool GetButtonRise(int button = 1) { return _buttonRiseToggle[button - 1].Update(GetButton(button)); };
     virtual bool GetButtonFall(int button = 1) { return _buttonFallToggle[button - 1].Update(GetButton(button)); };
