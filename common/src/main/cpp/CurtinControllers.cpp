@@ -5,6 +5,11 @@
 
 // CONTROLLERGROUP
 
+int curtinfrc::ControllerGroup::GetPort(int cont) {
+  return GetController(cont).GetPort();
+}
+
+
 double curtinfrc::ControllerGroup::GetRawAxis(int cont, int axis) {
   return GetController(cont).GetRawAxis(axis);
 }
@@ -85,7 +90,7 @@ bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButtonMap map) {
 }
 
 
-curtinfrc::Controller<frc::GenericHID> &curtinfrc::ControllerGroup::GetController(int cont) {
+curtinfrc::Controller &curtinfrc::ControllerGroup::GetController(int cont) {
   return m_conts[cont];
 }
 
