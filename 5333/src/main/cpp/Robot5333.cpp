@@ -37,9 +37,9 @@ void Robot::RobotInit() {
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup));
   beElevator->StartLoop(100);
 
-  // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
-  // sideHatchIntake->StartLoop(50);
+  sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
+  sideHatchIntake->StartLoop(50);
 
   frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
   frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, true));
@@ -51,8 +51,7 @@ void Robot::RobotInit() {
 
   Register(drivetrain);
   Register(beElevator);
-  // Register(harvester);
-  // Register(sideHatchIntake);
+  Register(sideHatchIntake);
   Register(frontHatchIntake);
   Register(boxIntake);
 }
@@ -107,6 +106,8 @@ void Robot::RobotPeriodic() {
   }
 
   Update(dt);
+
+  std::cout << beElevator->GetHeight() << std::endl;
 }
 
 void Robot::DisabledInit() {
@@ -120,7 +121,6 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  std::cout << beElevator->GetHeight() << std::endl;
 }
 
 void Robot::TestInit() {}

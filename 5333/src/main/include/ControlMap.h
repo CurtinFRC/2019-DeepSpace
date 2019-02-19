@@ -2,6 +2,8 @@
 
 #include "CurtinControllers.h"
 
+#define N_CONT 2
+
 class ControlMap {
  public:
   // DRIVETRAIN AXIS JOYMAP
