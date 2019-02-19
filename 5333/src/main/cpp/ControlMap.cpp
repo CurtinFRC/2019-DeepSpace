@@ -23,12 +23,12 @@ const tControllerButtonMap ControlMap::activateFOC{ { 1, 10 } };        // Toggl
 const tControllerButtonMap ControlMap::raiseLift{ { 2, 8 } };
 const tControllerButtonMap ControlMap::lowerLift{ { 2, 7 } };
 
-const tControllerButtonMap ControlMap::liftGoalGround{}; //{ { 2, 1 } };
-const tControllerButtonMap ControlMap::liftGoalLower1{}; //{ { 2, 7 } };
+const tControllerButtonMap ControlMap::liftGoalGround{ {2, 1} }; //{ { 2, 1 } };
+const tControllerButtonMap ControlMap::liftGoalLower1{ {2, 9} }; //{ { 2, 7 } };
 const tControllerButtonMap ControlMap::liftGoalLower2{}; //{ { 2, 8 } };
-const tControllerButtonMap ControlMap::liftGoalMiddle1{}; //{ { 2, 9 } };
+const tControllerButtonMap ControlMap::liftGoalMiddle1{ {2, 10} }; //{ { 2, 9 } };
 const tControllerButtonMap ControlMap::liftGoalMiddle2{}; //{ { 2, 10 } };
-const tControllerButtonMap ControlMap::liftGoalUpper1{}; //{ { 2, 11 } };
+const tControllerButtonMap ControlMap::liftGoalUpper1{ {2, 11} }; //{ { 2, 11 } };
 const tControllerButtonMap ControlMap::liftGoalUpper2{}; //{ { 2, 12 } };
 
 const double ControlMap::liftSetpointGround = 0;                                     // Exact values need to be tested
@@ -37,8 +37,7 @@ const double ControlMap::liftSetpointLower2 = 0.68;
 const double ControlMap::liftSetpointMiddle1 = 1.18;
 const double ControlMap::liftSetpointMiddle2 = 1.39;
 const double ControlMap::liftSetpointUpper1 = 1.89;
-const double ControlMap::liftSetpointUpper2 = 2.10;
-
+const double ControlMap::liftSetpointUpper2 = 1.7;
 
 // HATCH JOYMAP
 const tControllerButtonMap ControlMap::hatchGrab{ { 1, 3 }, { 2, 6 } };
@@ -47,10 +46,11 @@ const tControllerButtonMap ControlMap::hatchStow{ { 2, 12 } };
 const tControllerButtonMap ControlMap::hatchToggleEnabled{ { 1, 8 }, { 2, 1 } }; // Changes the currently enabled hatch intake
 
 
+
 // BOX INTAKE JOYMAP
 const tControllerButtonMap ControlMap::boxIn{ { 1, 4 }, { 2, 5 } };
 const tControllerButtonMap ControlMap::boxOut{ { 1, 6 }, { 2, 3 } };
-const tControllerButtonMap ControlMap::boxStow{ { 2, 11 } };
+const tControllerButtonMap ControlMap::boxStow{ { 1, 11 }, { 2, 11 } };
 
 const double ControlMap::boxDeployedThrottle = 0.6;
 const double ControlMap::boxStowingThrottle = 0.4;

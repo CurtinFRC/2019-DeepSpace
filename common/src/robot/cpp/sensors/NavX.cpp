@@ -1,6 +1,8 @@
 #include "sensors/NavX.h"
 #include "AHRS.h"
 
+#include <iostream>
+
 using namespace curtinfrc::sensors;
 
 struct NavX::Impl : public AHRS {
@@ -15,7 +17,7 @@ NavX::NavX(frc::I2C::Port i2c, uint8_t update_hz) : _port{i2c} {
   _impl = std::make_unique<NavX::Impl>(i2c, update_hz);
 }
 
-NavX::~NavX() {}
+NavX::~NavX() { }
 
 double NavXGyro::GetActualAngle() const {
   switch (_axis) {

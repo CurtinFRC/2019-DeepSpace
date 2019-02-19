@@ -41,6 +41,11 @@ curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
   return _config;
 }
 
+double curtinfrc::Elevator::GetFeedforward() {
+  // V = IR, I = kt * t, I = kt * m * a * r
+  return _config.spool.motor.kt() * _config.mass * -9.81 * _config.spoolRadius;
+}
+
 // virtual
 
 void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) {
@@ -54,7 +59,7 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
    case curtinfrc::ElevatorState::kMoving:
     if (_controller.IsDone()) SetHold(); // Good enough EPS for now
    case curtinfrc::ElevatorState::kStationary:
-    voltage = _controller.Calculate(GetHeight(), dt);
+    voltage = _controller.Calculate(GetHeight(), dt, GetFeedforward());
     break;
 
    case curtinfrc::ElevatorState::kZeroing:
@@ -82,6 +87,7 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
         GetConfig().spool.encoder->ZeroEncoder();
       }
 
-  voltage = std::min(12.0, std::max(-12.0, voltage)) * 0.6;
+  voltage = std::min(12.0, std::max(-12.0, voltage)) * 0.7;
+  voltage = _current_filter.Get(voltage);
   GetConfig().spool.transmission->SetVoltage(voltage);
 }
