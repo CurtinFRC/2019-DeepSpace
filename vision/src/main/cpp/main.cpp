@@ -1,7 +1,7 @@
 #include "Capture.h"
-// #include "TapeProcessing.h"
-// #include "BallProcessing.h"
-// #include "HatchProcessing.h"
+#include "TapeProcessing.h"
+#include "ProcessController.h"
+#include "HatchProcessing.h"
 #include "Display.h"
 #include <iostream>
 #include <networktables/NetworkTableInstance.h>
@@ -32,45 +32,39 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  Capture sideHatchCapture{"HatchSide", isDesktop ? 0 : 4};
-  Display display{"Side Hatch", sideHatchCapture};
-
-  sideHatchCapture.StartThread(30.0);
-  display.StartThread(30.0);
-
-  display.JoinThread();
-
-  // VisionRunner vision;
-  // #ifdef __DESKTOP__
-  // Capture capture{0, -100};
-  // // Capture captureGamePiece{1, 50};
-  // #else
-  // Capture capture{4, -100};
-  // Capture captureGamePiece{5, 60};
-  // #endif
-  // // HatchProcessing hatchProcess{captureGamePiece};
-  // // BallProcessing ballProcess{capture};
-  // TapeProcessing tapeProcess{capture};
+  //Capture sideCapture{"HatchSide", isDesktop ? 1 : 5};
+  Capture frontCapture{"FrontSide", isDesktop ? 0 : 4};
   
-  // // Display displayBall{ballProcess};
-  // // Display displayHatch{"Hatch Tracking", hatchProcess};
-  // Display displayTape{"Tape Tracking", tapeProcess};
-  
-  // vision.Run(capture);
-  // // vision.Run(captureGamePiece);
-  // // vision.Run(ballProcess);
-  // // vision.Run(hatchProcess);
-  // vision.Run(tapeProcess);
+  // TapeProcessing tapeSide{sideCapture};
+  // HatchProcessing hatchSide{sideCapture};
+  TapeProcessing tapeFront{frontCapture};
+  HatchProcessing hatchFront{frontCapture};
 
-  // // vision.Run(displayBall); 
-  // vision.Run(displayHatch);
-  // vision.Run(displayTape);
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTracking");
 
+  // Processing sideProcess{sideCapture, tapeSide, hatchSide, visionTable->GetEntry("Camera Set Side")};
+  Processing frontProcess{frontCapture, tapeFront, hatchFront, visionTable->GetEntry("Camera Set Front")};
 
-  // for (int i = 0; i < vision.workers.size(); i++) {
-  //   vision.workers[i].join();
-  // }
-  
+  // Display sideDisplay{"Side Display", sideProcess};
+  Display frontDisplay{"Front Display", frontProcess};
+
+  // sideCapture.StartThread(30.0);
+  // sideProcess.StartThread(30.0);
+  // sideDisplay.StartThread(30.0);
+
+  frontCapture.StartThread(30.0);
+  frontProcess.StartThread(30.0);
+  frontDisplay.StartThread(30.0);
+
+  // sideCapture.JoinThread();
+  // sideProcess.JoinThread();
+  // sideDisplay.JoinThread();
+
+  frontCapture.JoinThread();
+  frontProcess.JoinThread();
+  frontDisplay.JoinThread();
+
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
 }
