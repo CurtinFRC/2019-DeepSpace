@@ -18,14 +18,14 @@ void HatchIntakeManualStrategy::OnUpdate(double dt) {
   _hatchIntake.GetConfig().manipulator.Update(dt);
   if (_hatchIntake.GetConfig().manipulator.IsDone()) _hatchIntake.GetConfig().manipulator.Stop();
 
-  if (_enabledToggle.Update(_joyGroup.GetButton(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
+  if (_enabledToggle.Update(_contGroup.GetButton(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
 
   if (_enabled) {
-    if (_joyGroup.GetButton(ControlMap::hatchGrab)) {
+    if (_contGroup.GetButton(ControlMap::hatchGrab)) {
       _hatchIntake.SetIntaking();
-    } else if (_joyGroup.GetButton(ControlMap::hatchRelease)) {
+    } else if (_contGroup.GetButton(ControlMap::hatchRelease)) {
       _hatchIntake.SetOuttaking();
-    } else if (_joyGroup.GetButton(ControlMap::hatchStow)) {
+    } else if (_contGroup.GetButton(ControlMap::hatchStow)) {
       _hatchIntake.SetStowed();
     }
   } else {

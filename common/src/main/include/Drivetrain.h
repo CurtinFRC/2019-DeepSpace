@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <cmath>
+#include <functional>
 
 #include <frc/SpeedController.h>
 #include <frc/interfaces/Gyro.h>
@@ -11,6 +12,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "control/PIDController.h"
+#include "devices/StateDevice.h"
 
 #include "Usage.h"
 #include "CurtinControllers.h"
@@ -50,24 +52,35 @@ namespace curtinfrc {
     bool reversed = false;
   };
   
-  class Drivetrain : public StrategySystem {
+  enum class DrivetrainState { kManual = 0, kIdle, kExternalLoop };
+
+  class Drivetrain : public devices::StateDevice<DrivetrainState> {
    public:
     Drivetrain(DrivetrainConfig config) : _config(config) {};
 
     void Set(double leftPower, double rightPower);
-    void SetLeft(double leftPower);
-    void SetRight(double rightPower);
+    void SetVoltage(double left, double right);
+    void SetExternalLoop(std::function<std::pair<double, double>(Drivetrain &, double)> func);
+    void SetIdle();
 
     void SetInverted(bool inverted = false);
     bool GetInverted() { return _config.reversed; };
 
     DrivetrainConfig &GetConfig() { return _config; };
 
+    double GetLeftDistance();
+    double GetRightDistance();
+
    protected:
+    void OnStatePeriodic(DrivetrainState state, double dt) override;
+
     Gearbox &GetLeft();
     Gearbox &GetRight();
 
    private:
+    std::pair<double, double> _setpoint;
+    std::function<std::pair<double,double>(Drivetrain &,double)> _externalLoop;
+
     DrivetrainConfig _config;
 
     Usage<DrivetrainConfig>::Scoped _usage{&_config};

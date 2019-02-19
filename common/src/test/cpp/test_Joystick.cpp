@@ -18,37 +18,12 @@ namespace testing {
     };
 
 
-    double GetAxis(AxisType axis) override {
-      switch (axis) {
-       case curtinfrc::Joystick::kXAxis:
-       case kYAxis:
-       case kZAxis:
-        return _axis[(int)axis];
-
-       case kTwistAxis:
-        return _axis[kDefaultTwistChannel];
-      
-       case kThrottleAxis:
-        return _axis[kDefaultThrottleChannel];
-      }
+    double GetAxis(int axis) override {
+      return _axis[axis];
     };
 
-    void SetAxis(AxisType axis, double val) {
-      switch (axis) {
-       case kXAxis:
-       case kYAxis:
-       case kZAxis:
-        _axis[(int)axis] = val;
-        break;
-
-       case kTwistAxis:
-        _axis[kDefaultTwistChannel] = val;
-        break;
-      
-       case kThrottleAxis:
-        _axis[kDefaultThrottleChannel] = val;
-        break;
-      }
+    void SetAxis(int axis, double val) {
+      _axis[axis] = val;
     };
 
    private:
@@ -61,14 +36,14 @@ namespace testing {
 // CONSTRUCTION TEST
 
 TEST (testing_Joystick, Constructor) {
-  testing::Joystick joystickDef(0);
+  testing::Joystick joy(0);
 
-  ASSERT_EQ(joystickDef.GetPort(), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joystickDef.kXAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joystickDef.kYAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joystickDef.kZAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joystickDef.kTwistAxis), 0);
-  ASSERT_EQ(joystickDef.GetAxis(joystickDef.kThrottleAxis), 0);
+  ASSERT_EQ(joy.GetPort(), 0);
+  ASSERT_EQ(joy.GetAxis(joy.kXAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy.kYAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy.kZAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy.kTwistAxis), 0);
+  ASSERT_EQ(joy.GetAxis(joy.kThrottleAxis), 0);
 }
 
 
@@ -77,7 +52,7 @@ TEST (testing_Joystick, Constructor) {
 TEST (testing_Joystick, SetButton) {
   testing::Joystick joy(0);
 
-  for (int i = 0; i < 12; i++) {
+  for (int i = 1; i <= 12; i++) {
     EXPECT_FALSE(joy.GetButton(i));
 
     for (int j = 0; j < 2; j++) {

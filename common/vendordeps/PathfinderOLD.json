@@ -1,7 +1,7 @@
 {
     "fileName": "PathfinderOLD.json",
     "name": "PathfinderOld",
-    "version": "2019.1.12",
+    "version": "2019.2.19",
     "uuid": "7194a2d4-2860-4bcc-86c0-97879737d875",
     "mavenUrls": [
         "https://dev.imjac.in/maven"
@@ -11,7 +11,7 @@
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-Core",
-            "version": "2019.1.12",
+            "version": "2019.2.19",
             "libName": "pathfinder",
             "configuration": "native_pathfinder_old",
             "headerClassifier": "headers",
@@ -28,7 +28,7 @@
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-FRCSupport",
-            "version": "2019.1.12",
+            "version": "2019.2.19",
             "libName": "pathfinder_frc",
             "configuration": "native_pathfinder_old",
             "headerClassifier": "headers",
@@ -41,7 +41,7 @@
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-Java",
-            "version": "2019.1.12"
+            "version": "2019.2.19"
         },
         {
             "groupId": "jaci.jniloader",
@@ -51,14 +51,14 @@
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-FRCSupport",
-            "version": "2019.1.12"
+            "version": "2019.2.19"
         }
     ],
     "jniDependencies": [
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-JNI",
-            "version": "2019.1.12",
+            "version": "2019.2.19",
             "isJar": true,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -72,7 +72,7 @@
         {
             "groupId": "jaci.pathfinder",
             "artifactId": "Pathfinder-CoreJNI",
-            "version": "2019.1.12",
+            "version": "2019.2.19",
             "isJar": true,
             "skipInvalidPlatforms": true,
             "validPlatforms": [

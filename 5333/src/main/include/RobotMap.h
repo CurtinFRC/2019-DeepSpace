@@ -16,7 +16,7 @@
 #include "sensors/PressureSensor.h"
 
 #include "control/PIDController.h"
-// #include "MotionProfiling.h"
+#include "MotionProfiling.h"
 // #include "strategy/MPStrategy.h"
 
 #include "ControlMap.h"
@@ -29,13 +29,13 @@
 struct RobotMap {
   curtinfrc::Joystick joy1{ 0 }; // Driver
   curtinfrc::Joystick joy2{ 1 }; // Co-Driver
-  curtinfrc::JoystickGroup joyGroup{ joy1, joy2 };
+  curtinfrc::ControllerGroup contGroup{ joy1, joy2 };
 
   struct DriveTrain {
     curtinfrc::TalonSrx leftSrx{ 3 };
     curtinfrc::VictorSpx leftSpx{ 4 };
     curtinfrc::actuators::MotorVoltageController leftMotors = curtinfrc::actuators::MotorVoltageController::Group(leftSrx, leftSpx);
-    curtinfrc::sensors::DigitalEncoder leftEncoder{ 6, 7, 2048 };
+    curtinfrc::sensors::DigitalEncoder leftEncoder{ 7, 6, 2048 };
     curtinfrc::Gearbox leftGearbox{ &leftMotors, &leftEncoder, 8.45 };
 
     curtinfrc::TalonSrx rightSrx{ 1 };
@@ -47,29 +47,11 @@ struct RobotMap {
     curtinfrc::sensors::NavX navx{};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
-    curtinfrc::control::PIDGains gainsFOC{ "FOC", 0.008 };
-    curtinfrc::control::PIDGains gainsPOV{ "POV", 0.032 }; // temp value
+    curtinfrc::control::PIDGains gainsFOC{ "Drivetrain FOC", 0.008, 0, 0 };
+    curtinfrc::control::PIDGains gainsAlign{ "Drivetrain Align", 0.3, 0, 0.04 };
+    curtinfrc::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 24.0, 0, 1.5, 0.36, 0.08, 12.0 / 90.0 };    // PIDVAG
 
-
-    curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 }; 
-
-    
-    // std::shared_ptr<curtinfrc::PathfinderMPMode> modeLeft = std::make_shared<curtinfrc::PathfinderMPMode>(
-    //   &leftSrx, mpConfig, (mpFileBase).c_str()
-    // );
-    // std::shared_ptr<curtinfrc::PathfinderMPMode> modeRight = std::make_shared<curtinfrc::PathfinderMPMode>(
-    //   &rightSrx, mpConfig, (mpFileBase).c_str()
-    // );
-
-    const double gyro_kp = 3 / 80;
-
-   private:
-    // std::string mpFileBase = "output/test";
-    // curtinfrc::MotionProfileConfig mpConfig = {
-    //   6 * 3.28,                                     // wheel diameter (in)
-    //   1.0 / 0.2 * 3.28, 0, 0,                       // P, I, D
-    //   3.34 / 12.0 * 3.28, 0.76 / 12.0 * 3.28        // kV, kA
-    // };
+    curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
   };
 
   DriveTrain drivetrain;
@@ -87,7 +69,7 @@ struct RobotMap {
 
     curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
-    curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 12.0, 0, 0 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <utility>
+#include <vector>
 
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
@@ -8,69 +10,117 @@
 #include "Toggle.h"
 
 namespace curtinfrc {
-  typedef std::pair<int, int> tJoypair;
-  typedef std::pair<tJoypair, tJoypair> tJoymap;
-  constexpr tJoypair nopair{ -1, -1 };
+  typedef std::pair<int, int> tControllerButton;
+  constexpr tControllerButton noButton{ -1, -1 };
+  typedef std::vector<tControllerButton> tControllerButtonMap;
 
-  class Joystick : private frc::Joystick {
+  typedef std::pair<int, int> tControllerAxis;
+  constexpr tControllerAxis noAxis{ -1, -1 };
+  // typedef std::vector<tControllerAxis> tControllerAxisMap;
+
+  class Controller {
    public:
-    Joystick(int port) : frc::Joystick(port) {
-      for (int i = 0; i < 12; i++) {
-        buttonRiseToggle[i] = new Toggle(ToggleEvent::ONRISE);
-        buttonFallToggle[i] = new Toggle(ToggleEvent::ONFALL, false);
-      }
-    };
+    Controller(frc::GenericHID *cont, int nButtons = 12) : _cont(cont), _nButtons(nButtons), _buttonRiseToggle(nButtons, Toggle(ToggleEvent::ONRISE)), _buttonFallToggle(nButtons, Toggle(ToggleEvent::ONFALL, false)) {};
 
-    using frc::Joystick::AxisType;
-    using frc::Joystick::kXAxis;
-    using frc::Joystick::kYAxis;
-    using frc::Joystick::kZAxis;
-    using frc::Joystick::kTwistAxis;
-    using frc::Joystick::kThrottleAxis;
-    
-    using frc::Joystick::kDefaultXChannel;
-    using frc::Joystick::kDefaultYChannel;
-    using frc::Joystick::kDefaultZChannel;
-    using frc::Joystick::kDefaultTwistChannel;
-    using frc::Joystick::kDefaultThrottleChannel;
+    /* virtual */ int GetButtonCount() const { return _nButtons; };
 
-    using frc::Joystick::GetPort;
-    using frc::Joystick::GetRawButton;
-    bool GetButtonRise(int button);
-    bool GetButtonFall(int button);
-    using frc::Joystick::GetPOV;
+    int GetPort() { return _cont->GetPort(); };
+    double GetRawAxis(int axis = 1) { return _cont->GetRawAxis(axis); };
+    bool GetRawButton(int button = 1) { return _cont->GetRawButton(button); };
 
-    virtual bool GetButton(int button);
-    virtual double GetAxis(AxisType axis);
+    virtual double GetAxis(int axis = 1) { return GetRawAxis(axis); };
+    virtual bool GetButton(int button = 1) { return GetRawButton(button); };
 
-    double GetCircularisedAxisAgainst(AxisType primaryAxis, AxisType compareAxis);
-    double GetCircularisedAxis(AxisType axis);
+    virtual bool GetButtonRise(int button = 1) { return _buttonRiseToggle[button - 1].Update(GetButton(button)); };
+    virtual bool GetButtonFall(int button = 1) { return _buttonFallToggle[button - 1].Update(GetButton(button)); };
+
+    // Joystick specific override
+    virtual double GetCircularisedAxisAgainst(int primaryAxis = 1, int compareAxis = 0) { return GetCircularisedAxis(primaryAxis); };
+    virtual double GetCircularisedAxis(int axis = 1) { return GetAxis(axis); };
+
+   protected:
+    frc::GenericHID *_cont;
 
    private:
-    Toggle *buttonRiseToggle[12];
-    Toggle *buttonFallToggle[12];
+    const int _nButtons;
+    std::vector<Toggle> _buttonRiseToggle, _buttonFallToggle;
   };
 
-  class JoystickGroup {
+  class ControllerGroup {
    public:
-    JoystickGroup(Joystick &joy1, Joystick &joy2) : _joy1(joy1), _joy2(joy2) {};
-    enum JoyNum { first = 1, second = 2 }; // TEMP
+    template <class... Controllers>
+    explicit ControllerGroup(Controller& cont, Controllers&... conts) : m_conts{cont, conts...} {}
 
-    bool GetRawButton(JoyNum joy, int button);
-    bool GetRawButtonRise(JoyNum joy, int button);
-    bool GetRawButtonFall(JoyNum joy, int button);
+    ControllerGroup(ControllerGroup&&) = default;
+    ControllerGroup& operator=(ControllerGroup&&) = default;
 
-    bool GetButton(tJoypair joyPair);
-    bool GetButtonRise(tJoypair joyPair);
-    bool GetButtonFall(tJoypair joyPair);
+    int GetPort(int cont);
 
-    bool GetButton(tJoymap joyMap);
-    bool GetButtonRise(tJoymap joyMap);
-    bool GetButtonFall(tJoymap joyMap);
+    double GetRawAxis(int cont, int axis = 1);
+    double GetAxis(tControllerAxis contAxis);
 
-    Joystick &GetJoystick(JoyNum joy);
+    double GetCircularisedAxisAgainst(int cont, int primaryAxis = 1, int compareAxis = 0);
+    double GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis);
+    double GetCircularisedAxis(int cont, int axis = 1);
+    double GetCircularisedAxis(tControllerAxis axis);
+
+
+    bool GetRawButton(int cont, int button = 1);
+    bool GetRawButtonRise(int cont, int button = 1);
+    bool GetRawButtonFall(int cont, int button = 1);
+
+    bool GetButton(tControllerButton pair);
+    bool GetButtonRise(tControllerButton pair);
+    bool GetButtonFall(tControllerButton pair);
+
+    bool GetButton(tControllerButtonMap map);
+    bool GetButtonRise(tControllerButtonMap map);
+    bool GetButtonFall(tControllerButtonMap map);
+
+    Controller &GetController(int cont);
 
    private:
-    Joystick &_joy1, &_joy2;
+    std::vector<std::reference_wrapper<Controller>> m_conts;
+  };
+
+  class Joystick : public Controller {
+   public:
+    Joystick(int port) : Controller(new frc::Joystick(port), 12) {};
+    
+    enum JoyAxis {
+      kXAxis = 0,
+      kYAxis = 1,
+      kZAxis = 2, kTwistAxis = 2,
+      kThrottleAxis = 3
+    };
+
+    virtual double GetCircularisedAxisAgainst(int primaryAxis, int compareAxis) override;
+    virtual double GetCircularisedAxis(int axis) override;
+  };
+
+  class XboxController : public Controller {
+   public:
+    XboxController(int port) : Controller(new frc::XboxController(port), 11) {};
+
+    enum XboxAxis {
+      kLeftXAxis = 0,
+      kLeftYAxis = 1,
+      // Throttles?
+      kRightXAxis = 4,
+      kRightYAxis = 5,
+    };
+
+    enum XboxButton {
+      kBumperLeft = 5,
+      kBumperRight = 6,
+      kStickLeft = 9,
+      kStickRight = 10,
+      kA = 1,
+      kB = 2,
+      kX = 3,
+      kY = 4,
+      kBack = 7,
+      kStart = 8
+    };
   };
 } // ns curtinfrc
