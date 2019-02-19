@@ -87,6 +87,7 @@ namespace curtinfrc {
   class Joystick : public Controller<frc::Joystick> {
    public:
     Joystick(int port) : Controller(port, 12) {};
+    
     enum JoyAxis {
       kXAxis = 0,
       kYAxis = 1,
@@ -110,6 +111,17 @@ namespace curtinfrc {
       kRightYAxis = 5,
     };
 
-    using XboxButton = frc::XboxController::Button;
+    enum XboxButton {
+      kBumperLeft = 5,
+      kBumperRight = 6,
+      kStickLeft = 9,
+      kStickRight = 10,
+      kA = 1,
+      kB = 2,
+      kX = 3,
+      kY = 4,
+      kBack = 7,
+      kStart = 8
+    };
   };
 } // ns curtinfrc
