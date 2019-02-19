@@ -53,8 +53,9 @@ PathfinderController::PathfinderController(PathfinderGains gains) : _gains(gains
 
 void PathfinderController::Load(std::string project, std::string pathname) {
   Reset();
-  CurtinPathfinder::LoadDeployedFile(project, pathname + ".left", _segmentsL);
-  _trajLen = CurtinPathfinder::LoadDeployedFile(project, pathname + ".right", _segmentsR);
+  // PathWeaver has a bug where the left is actually the right, and the right is actually the left.
+  CurtinPathfinder::LoadDeployedFile(project, pathname + ".left", _segmentsR);
+  _trajLen = CurtinPathfinder::LoadDeployedFile(project, pathname + ".right", _segmentsL);
 }
 
 void PathfinderController::Reset() {
@@ -72,8 +73,14 @@ std::pair<double, double> PathfinderController::Calculate(double distL, double d
   double l = pathfinder_follow_distance(_cfg, &_followerL, _segmentsL, _trajLen, distL - _offsetL);
   double r = pathfinder_follow_distance(_cfg, &_followerR, _segmentsR, _trajLen, distR - _offsetR);
 
-  double desiredAngle = -r2d(_followerL.heading);
-  double turnCoeff = _gains.GetkG() * (desiredAngle - gyroAngle);
+  double desiredAngle = r2d(_followerL.heading);
+  double angleDiff = desiredAngle - gyroAngle;
+  angleDiff = std::fmod(angleDiff, 360.0);
+  if (std::abs(angleDiff) > 180.0) {
+    angleDiff = (angleDiff > 0) ? angleDiff - 360 : angleDiff + 360;
+  } 
+
+  double turnCoeff = _gains.GetkG() * angleDiff;
 
   return std::pair<double, double>{l + turnCoeff, r - turnCoeff};
 }

@@ -6,22 +6,22 @@
 // public
 
 void curtinfrc::Elevator::SetManual(double power) {
-  SetState(kManual);
+  SetState(curtinfrc::ElevatorState::kManual);
   _controller.SetSetpoint(power);
 }
 
 void curtinfrc::Elevator::SetSetpoint(double setpoint) {
-  SetState(kMoving);
+  SetState(curtinfrc::ElevatorState::kMoving);
   _controller.SetSetpoint(setpoint);
 }
 
 void curtinfrc::Elevator::SetZeroing() { // Reset encoder to zero
-  SetState(kZeroing);
+  SetState(curtinfrc::ElevatorState::kZeroing);
   _controller.SetSetpoint(0);
 }
 
 void curtinfrc::Elevator::SetHold() {
-  SetState(kStationary);
+  SetState(curtinfrc::ElevatorState::kStationary);
   _controller.SetSetpoint(GetHeight() + 0.1);
 }
 
@@ -47,17 +47,17 @@ void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double
   double voltage = 0;
   
   switch (state) {
-   case kManual:
+   case curtinfrc::ElevatorState::kManual:
     voltage = _controller.GetSetpoint();
     break;
 
-   case kMoving:
+   case curtinfrc::ElevatorState::kMoving:
     if (_controller.IsDone()) SetHold(); // Good enough EPS for now
-   case kStationary:
+   case curtinfrc::ElevatorState::kStationary:
     voltage = _controller.Calculate(GetHeight(), dt);
     break;
 
-   case kZeroing:
+   case curtinfrc::ElevatorState::kZeroing:
     voltage = -2;
     
     if (_config.limitSensorBottom != nullptr) {

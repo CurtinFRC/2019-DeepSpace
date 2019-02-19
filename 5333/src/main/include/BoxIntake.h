@@ -31,7 +31,7 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice {
 
 class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::JoystickGroup &joyGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _joyGroup(joyGroup) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::ControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -41,5 +41,5 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   BoxIntake &_boxIntake;
-  curtinfrc::JoystickGroup &_joyGroup;
+  curtinfrc::ControllerGroup &_contGroup;
 };

@@ -15,7 +15,7 @@ class Lift : public curtinfrc::Elevator {
 
 class LiftManualStrategy : public curtinfrc::Strategy {
  public:
-  LiftManualStrategy(Lift &lift, curtinfrc::JoystickGroup &joyGroup) : Strategy("Lift Manual"), _lift(lift), _joyGroup(joyGroup) {
+  LiftManualStrategy(Lift &lift, curtinfrc::ControllerGroup &contGroup) : Strategy("Lift Manual"), _lift(lift), _contGroup(contGroup) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -25,7 +25,7 @@ class LiftManualStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::JoystickGroup &_joyGroup;
+  curtinfrc::ControllerGroup &_contGroup;
 };
 
 class LiftGotoStrategy : public curtinfrc::Strategy {
@@ -46,7 +46,7 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
 
 class LiftZeroStrategy : public curtinfrc::Strategy {
  public: 
-  LiftZeroStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Lift Zero"), _lift(lift), _joy(joy) {
+  LiftZeroStrategy(Lift &lift) : Strategy("Lift Zero"), _lift(lift) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(false);
@@ -57,6 +57,5 @@ class LiftZeroStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::Joystick &_joy;
 };
 
