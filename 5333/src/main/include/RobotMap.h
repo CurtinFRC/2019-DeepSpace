@@ -69,7 +69,7 @@ struct RobotMap {
 
     curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
-    curtinfrc::control::PIDGains lower{ "Lower Elevator", 1 };
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 12.0, 0, 0 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
