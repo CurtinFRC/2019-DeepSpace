@@ -1,5 +1,6 @@
 #include "Robot5333.h"
 #include "ControlMap.h"
+#include "strategy/MPStrategy.h"
 
 #include <math.h>
 #include <iostream>
@@ -22,7 +23,12 @@ void Robot::RobotInit() {
   // CameraServer::GetInstance()->StartAutomaticCapture(0);
   // CameraServer::GetInstance()->StartAutomaticCapture(1);
 
+  // Our motors are mounted backwards, but the simulation doesn't know about that.
+#ifdef __FRC_ROBORIO__
   robotmap.drivetrain.rightGearbox.transmission->SetInverted(true); 
+#else
+  robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
+#endif
   robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
   robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
   robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
@@ -103,7 +109,7 @@ void Robot::DisabledInit() {
 }
 
 void Robot::AutonomousInit() {
-  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "test"));
+  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "d2_bM"));
 }
 void Robot::AutonomousPeriodic() {}
 

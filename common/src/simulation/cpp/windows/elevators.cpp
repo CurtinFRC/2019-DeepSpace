@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <thread>
+#include <cmath>
 
 using namespace simulation;
 using namespace curtinfrc;
@@ -26,7 +27,8 @@ elevator_window::elevator_window(ElevatorConfig *config) : ui::window("Elevator"
 }
 
 double elevator_window::get_motor_val() {
-  return _config->spool.transmission->GetVoltage();
+  auto bat_volt = frc::RobotController::GetInputVoltage();
+  return std::min(bat_volt, std::max(-bat_volt, _config->spool.transmission->GetVoltage()));
 }
 
 void elevator_window::update_encoder(double pos, double vel) {

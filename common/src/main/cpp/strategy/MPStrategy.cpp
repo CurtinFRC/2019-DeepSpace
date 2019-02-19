@@ -50,7 +50,7 @@ void DrivetrainCharacterizationStrategy::OnUpdate(double dt) {
 
 // PATHFINDER STRATEGY //
 
-PathfinderMPStrategy::PathfinderMPStrategy(Drivetrain &drivetrain, PathfinderGains gains, std::string project, std::string pathname) : _drivetrain(drivetrain), _pf(gains) {
+PathfinderMPStrategy::PathfinderMPStrategy(Drivetrain &drivetrain, PathfinderGains gains, std::string project, std::string pathname) : _drivetrain(drivetrain), _pf(gains), Strategy("Drivetrain Pathfinder MP") {
   Requires(&drivetrain);
   SetCanBeInterrupted(true);
   SetCanBeReused(false);

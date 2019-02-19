@@ -39,7 +39,7 @@ namespace control {
     void SetIZone(double threshIZone);
     void SetWrap(double range);
     bool IsDone();
-    void SetIsDoneThreshold(double threshAvg);
+    void SetIsDoneThreshold(double threshAvgPos, double threshAvgVel);
 
     double Calculate(double processVariable, double dt, double feedforward = 0.0);
 
@@ -48,7 +48,7 @@ namespace control {
 
    private:
     PIDGains _gains;
-    LinearFilter _movingAverage;
+    LinearFilter _filterPos, _filterVel;
 
     double Wrap(double val);
 
@@ -57,11 +57,11 @@ namespace control {
     double _integral;
     double _derivative;
     double _lastError;
-    double _avgError;
+    double _avgError, _avgVel;
     int _iterations = 0;    // Used to check if we have sufficient size in avgError.
 
     double _threshIZone = -1;
-    double _threshAvg = -1;
+    double _threshAvgPos = -1, _threshAvgVel = -1;
     double _wrapRange = -1;
     bool _threshAvgSet = false; // Used to check if _threshAvg has already been manually set.
   };

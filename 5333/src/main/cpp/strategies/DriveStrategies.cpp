@@ -58,14 +58,22 @@ void DrivetrainFOCStrategy::OnUpdate(double dt) {
   _drivetrain.Set(speed.first, speed.second);
 }
 
-DrivetrainAngleStrategy::DrivetrainAngleStrategy(Drivetrain &drivetrain, control::PIDGains gains, double angle) : Strategy("Drivetrain Angle"), _drivetrain(drivetrain), _pid(gains), _angle(_drivetrain.GetConfig().gyro->GetAngle()) { }
+DrivetrainAngleStrategy::DrivetrainAngleStrategy(Drivetrain &drivetrain, control::PIDGains gains, double angle) : Strategy("Drivetrain Angle"), _drivetrain(drivetrain), _pid(gains) {
+  Requires(&drivetrain);
+  SetCanBeInterrupted(true);
+  SetCanBeReused(false);
 
-void DrivetrainAngleStrategy::OnUpdate(double dt) {
-  _bearing *= 180 / 3.141592;
-  _bearing = fmod(_bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
-  _pid.SetSetpoint(_bearing);
+  _angle = fmod(angle + (_drivetrain.GetInverted() ? 180 : 360), 360);
+  _pid.SetSetpoint(_angle);
   _pid.SetWrap(360.0);
 
-  double offset = _pid.Calculate(fmod(_angle, 360), dt);
-  _drivetrain.Set(offset, -offset);
+  _drivetrain.SetExternalLoop([&](Drivetrain &, double dt) {
+    double offset = _pid.Calculate(_drivetrain.GetConfig().gyro->GetAngle(), dt);
+    return std::pair<double, double>(offset, -offset);
+  });
+}
+
+void DrivetrainAngleStrategy::OnUpdate(double dt) {
+  if (_pid.IsDone())
+    SetDone();
 }
