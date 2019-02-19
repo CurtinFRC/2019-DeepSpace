@@ -119,7 +119,9 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  std::cout << beElevator->GetHeight() << std::endl;
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

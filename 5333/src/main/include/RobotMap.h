@@ -2,6 +2,7 @@
 
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
+#include <frc/PowerDistributionPanel.h>
 
 #include "CurtinCtre.h"
 #include "CurtinControllers.h"
@@ -31,6 +32,8 @@ struct RobotMap {
   curtinfrc::Joystick joy2{ 1 }; // Co-Driver
   curtinfrc::ControllerGroup contGroup{ joy1, joy2 };
 
+  frc::PowerDistributionPanel pdp{0};
+
   struct DriveTrain {
     curtinfrc::TalonSrx leftSrx{ 3 };
     curtinfrc::VictorSpx leftSpx{ 4 };
@@ -44,7 +47,7 @@ struct RobotMap {
     curtinfrc::sensors::DigitalEncoder rightEncoder{ 4, 5, 2048 };
     curtinfrc::Gearbox rightGearbox{ &rightMotors, &rightEncoder, 8.45 };
 
-    curtinfrc::sensors::NavX navx{};
+    curtinfrc::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
 
     curtinfrc::control::PIDGains gainsFOC{ "Drivetrain FOC", 0.008, 0, 0 };
@@ -70,11 +73,11 @@ struct RobotMap {
 
     curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
-    curtinfrc::control::PIDGains lower{ "Lower Elevator", 24.0, 0, 0 };
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 25.0, 0, 1.5 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
-    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 25 / 1000.0, 20 };
+    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 30 / 1000.0, 20 };
 
     Elevator() {
       liftSpx1.SetUpdateRate(200);
