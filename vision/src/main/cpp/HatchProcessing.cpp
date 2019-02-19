@@ -1,6 +1,7 @@
 #include "Display.h"
 #include "Capture.h"
 #include "HatchProcessing.h"
+// #include "ProcessController.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -26,32 +27,34 @@
 #include "devices/kinect.h"
 
 cv::RNG rngHatch(12345);
-cv::Rect hatch_bounding_rect;
-int hatch_thresh = 100;
-float hatch_height_offset;
-float hatch_width_offset;
-float hatch_width_goal = 320;
-float hatch_height_goal = 240;
-std::string Hatch_Distance = "Sumthin";
+cv::Rect hatchBoundingRect;
+int hatchThresh = 100;
+float hatchHeightOffset;
+float hatchWidthOffset;
+float hatchWidthGoal = 320;
+float hatchHeightGoal = 240;
+std::string HatchDistance = "Sumthin";
+
+HatchProcessing::HatchProcessing(Capture &capture) : _capture(capture) {}
 
 void HatchProcessing::Init() {
-  Process::Init();
-  processType = "HatchProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");
   auto table = visionTable->GetSubTable("HatchTracking");
   HatchDistanceEntry = table->GetEntry("Hatch Distance");
-  HatchXoffsetEntry = table->GetEntry("Hatch X Offset");
-  HatchYoffsetEntry = table->GetEntry("Hatch Y Offset");
+  HatchXOffsetEntry = table->GetEntry("Hatch X Offset");
+  HatchYOffsetEntry = table->GetEntry("Hatch Y Offset");
+
+  _capture.SetExposure(40);
 }
 
 void HatchProcessing::Periodic() {
-  Process::Periodic();
   if (_capture.IsValidFrame()) {
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
+    cv::putText(_imgProcessedTrack,"test Hatch", cv::Point2f(125,125), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
 
     // Contours Blocks (Draws a convex shell over the thresholded image.)
 
@@ -92,7 +95,7 @@ void HatchProcessing::Periodic() {
     }
 
     /// Detect edges using Canny
-    cv::Canny(_imgProcessing, _imgProcessing, hatch_thresh, hatch_thresh * 2);
+    cv::Canny(_imgProcessing, _imgProcessing, hatchThresh, hatchThresh * 2);
 
     /// Find contours
     std::vector<cv::Vec4i> hierarchy;
@@ -115,21 +118,21 @@ void HatchProcessing::Periodic() {
     
     /// Find contoursBox
     /// Approximate contoursBox to polygons + get bounding rects and circles
-    std::vector<std::vector<cv::Point>> hullHatch_poly(hull.size());
+    std::vector<std::vector<cv::Point>> hullHatchPoly(hull.size());
     std::vector<cv::Point2f> centerHatch(hull.size());
     std::vector<float> radiusHatch(hull.size());
 
     for(int i = 0; i < hull.size(); i++) {
-      approxPolyDP(cv::Mat(hull[i]), hullHatch_poly[i], 3, true);
-      boundRectHatch[i] = cv::boundingRect(cv::Mat(hullHatch_poly[i]));
-      cv::minEnclosingCircle((cv::Mat)hullHatch_poly[i], centerHatch[i], radiusHatch[i]);
+      approxPolyDP(cv::Mat(hull[i]), hullHatchPoly[i], 3, true);
+      boundRectHatch[i] = cv::boundingRect(cv::Mat(hullHatchPoly[i]));
+      cv::minEnclosingCircle((cv::Mat)hullHatchPoly[i], centerHatch[i], radiusHatch[i]);
     }
   
     /// Draw polygonal contour + bonding rects + circles
     for(int i = 0; i < hull.size(); i++) {
       cv::Scalar color = cv::Scalar(rngHatch.uniform(0, 255), rngHatch.uniform(0,255), rngHatch.uniform(0,255));
-      cv::drawContours(_imgProcessing, hullHatch_poly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-      hatch_bounding_rect = cv::boundingRect(filteredContoursHatch[i]); // Find the bounding rectangle for biggest contour
+      cv::drawContours(_imgProcessing, hullHatchPoly, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+      hatchBoundingRect = cv::boundingRect(filteredContoursHatch[i]); // Find the bounding rectangle for biggest contour
       // _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
       cv::rectangle(_imgProcessedTrack, boundRectHatch[i].tl(), boundRectHatch[i].br(), color, 2, 8, 0);
       cv::circle(_imgProcessedTrack, centerHatch[i], (int)radiusHatch[i], color, 2, 8, 0);
@@ -138,34 +141,47 @@ void HatchProcessing::Periodic() {
     
     //_____________________Center Calcs______(Calculates the center from Border Box, And calculates X,Y Offset)_______ Ok.. it's suppose to calculate from borderbox, but not yet. using hull instead
     
-    std::vector<cv::Moments> muHatch(hullHatch_poly.size()); // do we need this if we have mutex ? *
-    for(int i = 0; i < hullHatch_poly.size(); i++) {
-      muHatch[i] = moments(hullHatch_poly[i], false);
+    std::vector<cv::Moments> muHatch(hullHatchPoly.size()); // do we need this if we have mutex ? *
+    for(int i = 0; i < hullHatchPoly.size(); i++) {
+      muHatch[i] = moments(hullHatchPoly[i], false);
     }
 
     // get the centroid of figures.
-    std::vector<cv::Point2f> mcHatch(hullHatch_poly.size());
-    for(int i = 0; i < hullHatch_poly.size(); i++) {
+    std::vector<cv::Point2f> mcHatch(hullHatchPoly.size());
+    for(int i = 0; i < hullHatchPoly.size(); i++) {
       mcHatch[i] = cv::Point2f(muHatch[i].m10/muHatch[i].m00 , muHatch[i].m01/muHatch[i].m00);
     }
 
-    for(int i = 0; i < hullHatch_poly.size(); i++) {
+    for(int i = 0; i < hullHatchPoly.size(); i++) {
       cv::Scalar color = cv::Scalar(167,151,0); // B G R values
       cv::circle(_imgProcessedTrack, mcHatch[i], 4, color, -1, 8, 0);
     
       // offsets from centerHatch
       cv::Point centerHatch = cv::Point((mcHatch[i].x), (mcHatch[i].y));
-      hatch_width_offset = hatch_width_goal - centerHatch.x;
-      hatch_height_offset = hatch_height_goal - centerHatch.y;
-      std::cout << "Offset From CenterHatch x,y = " << hatch_width_offset << "," << hatch_height_offset << std::endl;
-      HatchDistanceEntry.SetString(Hatch_Distance);
-      HatchXoffsetEntry.SetDouble(hatch_width_offset);
-      HatchYoffsetEntry.SetDouble(hatch_height_offset);
-      std::stringstream offsetY;	offsetY << hatch_height_offset;
-      std::stringstream offsetX;	offsetX << hatch_width_offset;
+      hatchWidthOffset = hatchWidthGoal - centerHatch.x;
+      hatchHeightOffset = hatchHeightGoal - centerHatch.y;
+      std::cout << "Offset From CenterHatch x,y = " << hatchWidthOffset << "," << hatchHeightOffset << std::endl;
+      HatchDistanceEntry.SetString(HatchDistance);
+      HatchXOffsetEntry.SetDouble(hatchWidthOffset);
+      HatchYOffsetEntry.SetDouble(hatchHeightOffset);
+      std::stringstream offsetY;	offsetY << hatchHeightOffset;
+      std::stringstream offsetX;	offsetX << hatchWidthOffset;
       cv::putText(_imgProcessedTrack, "xy(" + offsetX.str() + "," + offsetY.str() + ")", mcHatch[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
     
   }
   
+}
+
+void HatchProcessing::CopyProcessedTrack(cv::Mat &imgProcessedTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgProcessedTrack.copyTo(imgProcessedTrack);
+}
+
+void HatchProcessing::GetDisplayMat(cv::Mat &displayMat) {
+  CopyProcessedTrack(displayMat);
+}
+
+cv::Size HatchProcessing::GetDisplaySize() {
+  return _capture.GetDisplaySize();
 }

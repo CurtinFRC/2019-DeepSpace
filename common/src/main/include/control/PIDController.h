@@ -33,7 +33,7 @@ namespace control {
    public:
     PIDController(PIDGains gains, double setpoint = 0);
 
-    void SetSetpoint(double setpoint);
+    void SetSetpoint(double setpoint, bool reset = true);
     double GetSetpoint();
 
     void SetIZone(double threshIZone);

@@ -1,7 +1,7 @@
 #include "Display.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
-#include "Display.h"
+// #include "ProcessController.h"
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/objdetect.hpp"
@@ -22,24 +22,31 @@
 
 cv::RNG rngTape(12345);
 
+TapeProcessing::TapeProcessing(Capture &capture) : _capture(capture) {}
+
 void TapeProcessing::Init() {
-	Process::Init();
-  processType = "TapeProcessing";
 
   auto inst = nt::NetworkTableInstance::GetDefault();
   auto visionTable = inst.GetTable("VisionTracking");
   auto table = visionTable->GetSubTable("TapeTracking");
+  _usingTapeEntry = visionTable->GetEntry("Camera Set");
   TapeDistanceEntry = table->GetEntry("Distance");
   TapeAngleEntry = table->GetEntry("Angle");
   TapeTargetEntry = table->GetEntry("Target");
+  _videoMode = _capture.GetVideoMode();
+
+  _useTape = _usingTapeEntry.GetBoolean(true);
+  
+  _capture.SetExposure(-100);
+
 }
 
 void TapeProcessing::Periodic() {
-  Process::Periodic();
 	if (_capture.IsValidFrame()) {
-
     _capture.CopyCaptureMat(_imgProcessing);
     _imgProcessing.copyTo(_imgProcessedTrack);
+    cv::putText(_imgProcessedTrack,"test Tape", cv::Point2f(125,125), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
+
 		cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
     // cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessedTrack); <-Debug Code
     cv::inRange(_imgProcessing, cv::Scalar(40, 0, 75), cv::Scalar(75, 255, 125), _imgProcessing);
@@ -161,4 +168,17 @@ void TapeProcessing::Periodic() {
       cv::putText(_imgProcessedTrack, dis.str() + "m, " + ang.str() + "deg", targets[i] + cv::Point2f(-25,25), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255,0,255)); //text with distance and angle on target
     }
   }
+}
+
+void TapeProcessing::CopyProcessedTrack(cv::Mat &imgProcessedTrack) {
+  std::lock_guard<std::mutex> lock(_classMutex);
+  _imgProcessedTrack.copyTo(imgProcessedTrack);
+}
+
+void TapeProcessing::GetDisplayMat(cv::Mat &displayMat) {
+  CopyProcessedTrack(displayMat);
+}
+
+cv::Size TapeProcessing::GetDisplaySize() {
+  return _capture.GetDisplaySize();
 }

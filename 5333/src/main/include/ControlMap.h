@@ -41,14 +41,6 @@ class ControlMap {
   static const double liftSetpointUpper2;
 
 
-  // HARVESTER JOYMAP
-  static const curtinfrc::tControllerButtonMap harveserIn;
-  static const curtinfrc::tControllerButtonMap harveserOut;
-  static const curtinfrc::tControllerButtonMap harveserStow;
-
-  static const double harvesterThrottle;
-
-
   // HATCH JOYMAP
   static const curtinfrc::tControllerButtonMap hatchGrab;
   static const curtinfrc::tControllerButtonMap hatchRelease;

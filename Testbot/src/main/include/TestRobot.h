@@ -5,7 +5,9 @@
 #include <frc/XboxController.h>
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Spark.h>
+#include <frc/Talon.h>
 #include <frc/DoubleSolenoid.h>
+#include "CurtinControllers.h"
 
 #include "CurtinCtre.h"
 #include "Gearbox.h"

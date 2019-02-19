@@ -52,6 +52,7 @@ struct RobotMap {
     curtinfrc::PathfinderGains gainsPathfinder{ "Drivetrain Pathfinder", 24.0, 0, 1.5, 0.36, 0.08, 12.0 / 90.0 };    // PIDVAG
 
     curtinfrc::DrivetrainConfig config{ leftGearbox, rightGearbox, &gyro, 0.71, 0.71, 0.0762, 50 };
+    curtinfrc::control::PIDGains gainsVelocity{ "Drivetrain Velocity", 1 };
   };
 
   DriveTrain drivetrain;
@@ -69,7 +70,7 @@ struct RobotMap {
 
     curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
-    curtinfrc::control::PIDGains lower{ "Lower Elevator", 12.0, 0, 0 };
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 24.0, 0, 0 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
@@ -123,6 +124,19 @@ struct RobotMap {
     curtinfrc::actuators::Compressor compressor{ 1 };
 
     curtinfrc::sensors::PressureSensor pressureSensor{ 0 };
+    
+    
+    // vision
+    std::shared_ptr<nt::NetworkTable> visionTable = nt::NetworkTableInstance::GetDefault().GetTable("VisionTracking");
+    std::shared_ptr<nt::NetworkTable> hatchTable = visionTable->GetSubTable("HatchTracking");
+    std::shared_ptr<nt::NetworkTable> tapeTable = visionTable->GetSubTable("TapeTracking");
+    
+    nt::NetworkTableEntry hatchDistanceEntry  = hatchTable->GetEntry("Hatch Distance"),
+                          hatchXoffsetEntry   = hatchTable->GetEntry("Hatch X Offset"),
+                          hatchYoffsetEntry   = hatchTable->GetEntry("Hatch Y Offset"),
+                          tapeDistanceEntry   = tapeTable->GetEntry("Distance"),
+                          tapeAngleEntry      = tapeTable->GetEntry("Angle"),
+                          tapeTargetEntry     = tapeTable->GetEntry("Target");
   };
 
   ControlSystem controlSystem;
