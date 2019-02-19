@@ -4,6 +4,7 @@
 #include "Gearbox.h"
 #include "sensors/BinarySensor.h"
 #include "control/PIDController.h"
+#include "strategy/StrategySystem.h"
 
 #include "Usage.h"
 
@@ -31,7 +32,7 @@ namespace curtinfrc {
   };
 
   enum class ElevatorState { kStationary = 0, kMoving, kZeroing, kManual };
-  class Elevator : public devices::StateDevice<ElevatorState> {
+  class Elevator : public devices::StateDevice<ElevatorState>, public StrategySystem {
    public:
     Elevator(ElevatorConfig config, control::PIDGains gain) : _config(config), _gain(gain), _controller(gain) {};
 
