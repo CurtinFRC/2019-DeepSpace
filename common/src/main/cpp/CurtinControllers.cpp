@@ -32,7 +32,7 @@ double curtinfrc::ControllerGroup::GetCircularisedAxis(tControllerAxis axis) {
 
 
 bool curtinfrc::ControllerGroup::GetRawButton(ContNum cont, int button) {
-  return GetController(cont).GetButtonRise(button);
+  return GetController(cont).GetRawButton(button);
 }
 
 bool curtinfrc::ControllerGroup::GetRawButtonRise(ContNum cont, int button) {
