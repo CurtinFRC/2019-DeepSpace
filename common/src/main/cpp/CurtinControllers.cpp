@@ -91,7 +91,7 @@ bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButtonMap map) {
 
 
 curtinfrc::Controller &curtinfrc::ControllerGroup::GetController(int cont) {
-  return m_conts[cont];
+  return m_conts[cont - 1];
 }
 
 
