@@ -54,20 +54,20 @@ namespace curtinfrc {
     ControllerGroup(ControllerGroup&&) = default;
     ControllerGroup& operator=(ControllerGroup&&) = default;
 
-    int GetPort(int cont = 0);
+    int GetPort(int cont);
 
-    double GetRawAxis(int cont = 0, int axis);
+    double GetRawAxis(int cont, int axis = 1);
     double GetAxis(tControllerAxis contAxis);
 
-    double GetCircularisedAxisAgainst(int cont = 0, int primaryAxis, int compareAxis);
+    double GetCircularisedAxisAgainst(int cont, int primaryAxis = 1, int compareAxis = 0);
     double GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis);
-    double GetCircularisedAxis(int cont = 0, int axis)
+    double GetCircularisedAxis(int cont, int axis = 1);
     double GetCircularisedAxis(tControllerAxis axis);
 
 
-    bool GetRawButton(int cont = 0, int button);
-    bool GetRawButtonRise(int cont = 0, int button);
-    bool GetRawButtonFall(int cont = 0, int button);
+    bool GetRawButton(int cont, int button = 1);
+    bool GetRawButtonRise(int cont, int button = 1);
+    bool GetRawButtonFall(int cont, int button = 1);
 
     bool GetButton(tControllerButton pair);
     bool GetButtonRise(tControllerButton pair);
@@ -77,7 +77,7 @@ namespace curtinfrc {
     bool GetButtonRise(tControllerButtonMap map);
     bool GetButtonFall(tControllerButtonMap map);
 
-    Controller &GetController(int cont = 0);
+    Controller &GetController(int cont);
 
    private:
     std::vector<std::reference_wrapper<Controller>> m_conts;
