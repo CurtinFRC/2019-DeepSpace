@@ -49,7 +49,7 @@ namespace curtinfrc {
   class ControllerGroup {
    public:
     template <class... Controllers>
-    explicit ControllerGroup(Controller& cont, Controllers&... conts) : m_conts{cont, conts...} {};
+    explicit ControllerGroup(Controller& cont, Controllers&... conts) : m_conts{cont, conts...} {}
 
     ControllerGroup(ControllerGroup&&) = default;
     ControllerGroup& operator=(ControllerGroup&&) = default;
