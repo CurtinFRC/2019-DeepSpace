@@ -2,7 +2,7 @@
 
 #include "CurtinControllers.h"
 
-#define N_CONT 2
+#define N_CONT 3
 
 class ControlMap {
  public:
@@ -26,6 +26,7 @@ class ControlMap {
   static const curtinfrc::tControllerButtonMap raiseLift;
   static const curtinfrc::tControllerButtonMap lowerLift;
 
+  #if N_CONT == 2
   static const curtinfrc::tControllerButtonMap liftGoalGround;
   static const curtinfrc::tControllerButtonMap liftGoalLower1;
   static const curtinfrc::tControllerButtonMap liftGoalLower2;
@@ -33,6 +34,18 @@ class ControlMap {
   static const curtinfrc::tControllerButtonMap liftGoalMiddle2;
   static const curtinfrc::tControllerButtonMap liftGoalUpper1;
   static const curtinfrc::tControllerButtonMap liftGoalUpper2;
+  #elif N_CONT == 3
+  static const int liftSelectorID = 0;
+  static const curtinfrc::tControllerSelectorMapping liftSelectorConfig;
+
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalGround;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalLower1;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalLower2;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalMiddle1;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalMiddle2;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalUpper1;
+  static const curtinfrc::tControllerSelectorButtonMap liftGoalUpper2;
+  #endif
 
   static const double liftSetpointGround; // Exact values need to be tested *
   static const double liftSetpointLower1;

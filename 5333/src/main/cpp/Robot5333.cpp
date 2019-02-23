@@ -28,6 +28,10 @@ void Robot::RobotInit() {
   robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
   robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
+  #if N_CONT == 3
+  robotmap.contGroup.MakeSelector(ControlMap::liftSelectorConfig);
+  #endif
+
   drivetrain = new Drivetrain(robotmap.drivetrain.config, robotmap.drivetrain.gainsVelocity);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.contGroup));
   drivetrain->StartLoop(100);
@@ -59,6 +63,10 @@ void Robot::RobotInit() {
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
+
+  // Update Joystick Selectors
+  robotmap.contGroup.UpdateSelectors();
+  
 
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
   if (robotmap.contGroup.GetInputRise(ControlMap::activateFOC)) {

@@ -84,13 +84,18 @@ const tControllerButtonMap ControlMap::activateFOC{ { 1, 10 } };        // Toggl
 const tControllerButtonMap ControlMap::raiseLift{};
 const tControllerButtonMap ControlMap::lowerLift{};
 
-const tControllerButtonMap ControlMap::liftGoalGround{ { 2, 1 } };
-const tControllerButtonMap ControlMap::liftGoalLower1{ { 2, 7 } };
-const tControllerButtonMap ControlMap::liftGoalLower2{ { 2, 8 }};
-const tControllerButtonMap ControlMap::liftGoalMiddle1{ { 2, 9 } };
-const tControllerButtonMap ControlMap::liftGoalMiddle2{ { 2, 10 } }; 
-const tControllerButtonMap ControlMap::liftGoalUpper1{ { 2, 11 } }; 
-const tControllerButtonMap ControlMap::liftGoalUpper2{ { 2, 12 } }; 
+const tControllerSelectorMapping ControlMap::liftSelectorConfig{
+  { 3, XboxController::kBumperLeft }, { 3, XboxController::kBumperRight },
+  7, 0, ControlMap::liftSelectorID
+};
+
+const tControllerSelectorButtonMap ControlMap::liftGoalGround{ { 3, 1, ControlMap::liftSelectorID } };
+const tControllerSelectorButtonMap ControlMap::liftGoalLower1{ { 3, 7, ControlMap::liftSelectorID } };
+const tControllerSelectorButtonMap ControlMap::liftGoalLower2{ { 3, 8, ControlMap::liftSelectorID }};
+const tControllerSelectorButtonMap ControlMap::liftGoalMiddle1{ { 3, 9, ControlMap::liftSelectorID } };
+const tControllerSelectorButtonMap ControlMap::liftGoalMiddle2{ { 3, 10, ControlMap::liftSelectorID } }; 
+const tControllerSelectorButtonMap ControlMap::liftGoalUpper1{ { 3, 11, ControlMap::liftSelectorID } }; 
+const tControllerSelectorButtonMap ControlMap::liftGoalUpper2{ { 3, 12, ControlMap::liftSelectorID } }; 
 
 const double ControlMap::liftSetpointGround = 0;                                     // Exact values need to be tested
 const double ControlMap::liftSetpointLower1 = 0.46;
@@ -101,10 +106,10 @@ const double ControlMap::liftSetpointUpper1 = 1.89;
 const double ControlMap::liftSetpointUpper2 = 1.7;
 
 // HATCH JOYMAP
-const tControllerButtonMap ControlMap::hatchGrab{ { 1, 3 }, { 2, 6 }, { 3, 1 } };
-const tControllerButtonMap ControlMap::hatchRelease{ { 1, 5 }, { 2, 4 }, { 3, 4 } };
-const tControllerButtonMap ControlMap::hatchStow{ { 3, 6 } };
-const tControllerButtonMap ControlMap::hatchToggleEnabled{ { 3, 10 } }; // Changes the currently enabled hatch intake
+const tControllerButtonMap ControlMap::hatchGrab{ { 1, 3 }, { 2, 6 }, { 3, XboxController::kA } };
+const tControllerButtonMap ControlMap::hatchRelease{ { 1, 5 }, { 2, 4 }, { 3, XboxController::kY } };
+const tControllerButtonMap ControlMap::hatchStow{}; //{ { 3, 6 } };
+const tControllerButtonMap ControlMap::hatchToggleEnabled{ { 3, XboxController::kStickRight } }; // Changes the currently enabled hatch intake
 
 
 
