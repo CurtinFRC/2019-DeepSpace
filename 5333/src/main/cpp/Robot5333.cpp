@@ -61,34 +61,34 @@ void Robot::RobotPeriodic() {
   lastTimestamp = Timer::GetFPGATimestamp();
 
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
-  if (robotmap.contGroup.GetButtonRise(ControlMap::activateFOC)) {
+  if (robotmap.contGroup.GetInputRise(ControlMap::activateFOC)) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
   }
 
-  if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalGround)) {
+  if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalGround)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalLower1)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalLower1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalLower2)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalLower2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower2));
 
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalMiddle1)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalMiddle1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle1));
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalMiddle2)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalMiddle2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle2));
 
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalUpper1)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalUpper1)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper1));
-  } else if (robotmap.contGroup.GetButtonRise(ControlMap::liftGoalUpper2)) {
+  } else if (robotmap.contGroup.GetInputRise(ControlMap::liftGoalUpper2)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
   // Need to schedule stratPOV *
 
   frc::SmartDashboard::PutNumber("PSI", robotmap.controlSystem.pressureSensor.GetPSI());
-  if (robotmap.contGroup.GetButtonRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  if (robotmap.contGroup.GetInputRise(ControlMap::compressorOn)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   // Redundant, as it can already be accessed on shuffleboard via nt, but ~
   frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));

@@ -10,7 +10,8 @@ namespace testing {
     using curtinfrc::Joystick::Joystick;
 
     bool GetButton(int button) override {
-      return _buttons[button - 1];
+      if (GetEnabled()) return _buttons[button - 1];
+      else return false;
     };
 
     void SetButton(int button, bool val) {
@@ -19,7 +20,8 @@ namespace testing {
 
 
     double GetAxis(int axis) override {
-      return _axis[axis];
+      if (GetEnabled()) return _axis[axis];
+      else return 0;
     };
 
     void SetAxis(int axis, double val) {
@@ -61,8 +63,8 @@ TEST (testing_Joystick, SetButton) {
       ASSERT_FALSE(joy.GetButton(i));
 
       joy.SetButton(i, 1);
-      ASSERT_TRUE(joy.GetButton(i));
-      ASSERT_TRUE(joy.GetButton(i));
+      ASSERT_TRUE (joy.GetButton(i));
+      ASSERT_TRUE (joy.GetButton(i));
     }
   }
 }
@@ -287,7 +289,7 @@ TEST (testing_Joystick, GetButtonRise) {
 
   for (int i = 0; i < 2; i++) {
     joy.SetButton(1, true);
-    ASSERT_TRUE(joy.GetButtonRise(1));
+    ASSERT_TRUE (joy.GetButtonRise(1));
     ASSERT_FALSE(joy.GetButtonRise(1));
     ASSERT_FALSE(joy.GetButtonRise(1));
 
@@ -308,8 +310,69 @@ TEST (testing_Joystick, GetButtonFall) {
     ASSERT_FALSE(joy.GetButtonFall(1));
 
     joy.SetButton(1, false);
-    ASSERT_TRUE(joy.GetButtonFall(1));
+    ASSERT_TRUE (joy.GetButtonFall(1));
     ASSERT_FALSE(joy.GetButtonFall(1));
     ASSERT_FALSE(joy.GetButtonFall(1));
   }
+}
+
+TEST (testing_Joystick, MakeSelector) {
+  testing::Joystick joy(0);
+  const int id = 2;
+  ASSERT_TRUE(joy.MakeSelector(3, 4, 5, 1, id));
+
+  ASSERT_EQ(joy.GetButtonCount(), 10);
+  ASSERT_EQ(joy.GetSelectorLength(id), 5);
+  ASSERT_EQ(joy.GetRawSelectorValue(id), 1); // test initial position and selector ID
+
+  // 0, 1, 0, 0, 0
+  ASSERT_FALSE(joy.GetSelectorValue(0, id));
+  ASSERT_TRUE (joy.GetSelectorValue(1, id));
+  ASSERT_FALSE(joy.GetSelectorValue(2, id));
+  ASSERT_FALSE(joy.GetSelectorValue(3, id));
+  ASSERT_FALSE(joy.GetSelectorValue(4, id));
+}
+
+TEST (testing_Joystick, Selector) {
+  testing::Joystick joy(0);
+  ASSERT_TRUE(joy.MakeSelector(3, 4, 4));
+
+  ASSERT_EQ(joy.GetButtonCount(), 10);
+  ASSERT_EQ(joy.GetSelectorLength(), 4);
+  ASSERT_EQ(joy.GetRawSelectorValue(), 0);
+
+  joy.SetButton(4, true);
+  joy.UpdateSelectors();
+  joy.SetButton(4, false);
+  joy.UpdateSelectors();
+
+  // 0, 1, 0, 0
+  ASSERT_FALSE(joy.GetSelectorValue(0));
+  ASSERT_TRUE (joy.GetSelectorValue(1));
+  ASSERT_FALSE(joy.GetSelectorValue(2));
+  ASSERT_FALSE(joy.GetSelectorValue(3));
+
+  joy.IncrementSelector(1);
+  
+  // 0, 0, 1, 0
+  ASSERT_FALSE(joy.GetSelectorValue(0));
+  ASSERT_FALSE(joy.GetSelectorValue(1));
+  ASSERT_TRUE (joy.GetSelectorValue(2));
+  ASSERT_FALSE(joy.GetSelectorValue(3));
+
+  joy.DecrementSelector(3);
+
+  // 0, 0, 0, 1
+  ASSERT_FALSE(joy.GetSelectorValue(0));
+  ASSERT_FALSE(joy.GetSelectorValue(1));
+  ASSERT_FALSE(joy.GetSelectorValue(2));
+  ASSERT_TRUE (joy.GetSelectorValue(3));
+
+  joy.SetSelector(4);
+
+  // 1, 0, 0, 0
+  ASSERT_TRUE (joy.GetSelectorValue(0));
+  ASSERT_FALSE(joy.GetSelectorValue(1));
+  ASSERT_FALSE(joy.GetSelectorValue(2));
+  ASSERT_FALSE(joy.GetSelectorValue(3));
 }

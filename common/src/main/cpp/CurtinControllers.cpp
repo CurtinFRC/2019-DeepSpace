@@ -1,12 +1,114 @@
 #include "CurtinControllers.h"
 
-// #include <cmath> // ?
+
+// CONROLLER
+double curtinfrc::Controller::GetRawAxis(int axis) {
+  if (GetEnabled()) return _cont->GetRawAxis(axis);
+  else return 0;
+}
+
+bool curtinfrc::Controller::GetRawButton(int button) {
+  if (GetEnabled()) return _cont->GetRawButton(button);
+  else return false;
+}
+
+int curtinfrc::Controller::GetRawPOVAngle() {
+  if (GetEnabled()) return _cont->GetPOV();
+  else return -1;
+}
+
+int curtinfrc::Controller::GetRawSelectorValue(int id) {
+  /* if (GetEnabled()) */ return GetRawSelector(id).Get();
+  // else return -1;
+}
+
+
+void curtinfrc::Controller::UpdateSelectors() {
+  if (GetEnabled()) {
+    for (auto pair : _selectors) UpdateSelector(pair.first);
+  }
+}
+
+int curtinfrc::Controller::UpdateSelector(int id) {
+  if (GetEnabled()) {
+    ButtonSelector &buttonSelector = _selectors.at(id);
+
+    if (buttonSelector.incrementButtonToggle.Update(GetButton(buttonSelector.incrementButton))) IncrementSelector(1, id);
+    if (buttonSelector.decrementButtonToggle.Update(GetButton(buttonSelector.decrementButton))) DecrementSelector(1, id);
+  }
+
+  return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::GetSelectorLength(int id) {
+  return _selectors.at(id).selector.GetLength();
+}
+
+
+int curtinfrc::Controller::IncrementSelector(int amount, int id) {
+  if (GetEnabled()) return GetRawSelector(id).ShiftRight(amount);
+  else return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::DecrementSelector(int amount, int id) {
+  if (GetEnabled()) return GetRawSelector(id).ShiftLeft(amount);
+  else return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::SetSelector(int value, int id) {
+  if (GetEnabled()) return GetRawSelector(id).Set(value);
+  else return GetRawSelectorValue(id);
+}
+
+bool curtinfrc::Controller::GetSelectorValue(int button, int id) {
+  if (GetEnabled()) return GetRawSelectorValue(id) == button;
+  else return false;
+}
+
+bool curtinfrc::Controller::GetSelectorRise(int button, int id) {
+  if (GetEnabled()) return _selectors.at(id).buttonToggles[button].first.Update(GetSelectorValue(button, id));
+  else return false;
+}
+
+bool curtinfrc::Controller::GetSelectorFall(int button, int id) {
+  if (GetEnabled()) return _selectors.at(id).buttonToggles[button].second.Update(GetSelectorValue(button, id));
+  else return false;
+}
+
+
+bool curtinfrc::Controller::MakeSelector(int decrementButton, int incrementButton, int size, int position, int id) {
+  if (decrementButton == incrementButton) return false;
+
+  // Test buttons still exist
+  auto dec = _buttonToggles.find(decrementButton), inc = _buttonToggles.find(incrementButton), end = _buttonToggles.end();
+
+  if (dec == end || inc == end) {
+    return false;
+  } else {
+    _buttonToggles.erase(dec);
+    _buttonToggles.erase(inc);
+    _nButtons = _buttonToggles.size();
+
+    if (id < 0) id = _selectors.size();
+    _selectors.insert({ id, ButtonSelector(decrementButton, incrementButton, Selector(size, position)) });
+  }
+
+  return true;
+}
 
 
 // CONTROLLERGROUP
 
 int curtinfrc::ControllerGroup::GetPort(int cont) {
   return GetController(cont).GetPort();
+}
+
+bool curtinfrc::ControllerGroup::MakeSelector(curtinfrc::tControllerSelectorMapping config) {
+  tControllerButton dec = std::get<0>(config), inc = std::get<1>(config);
+  int cont = dec.first;
+
+  if (cont != inc.first) return false;
+  return GetController(cont).MakeSelector(dec.second, inc.second, std::get<2>(config), std::get<3>(config), std::get<4>(config));
 }
 
 
@@ -65,7 +167,42 @@ bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButton pair) {
 }
 
 
-bool curtinfrc::ControllerGroup::GetButton(tControllerButtonMap map) {
+void curtinfrc::ControllerGroup::UpdateSelectors() {
+  for (auto cont : m_conts) cont.get().UpdateSelectors();
+}
+
+int curtinfrc::ControllerGroup::GetSelectorLength(int cont, int id) {
+  return GetController(cont).GetSelectorLength(id);
+}
+
+
+bool curtinfrc::ControllerGroup::GetRawSelectorValue(int cont, int button, int id) {
+  return GetController(cont).GetSelectorValue(button, id);
+}
+
+bool curtinfrc::ControllerGroup::GetRawSelectorRise(int cont, int button, int id) {
+  return GetController(cont).GetSelectorRise(button, id);
+}
+
+bool curtinfrc::ControllerGroup::GetRawSelectorFall(int cont, int button, int id) {
+  return GetController(cont).GetSelectorFall(button, id);
+}
+
+
+bool curtinfrc::ControllerGroup::GetSelectorValue(tControllerSelectorButton tuple) {
+  return GetRawSelectorValue(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+}
+
+bool curtinfrc::ControllerGroup::GetSelectorRise(tControllerSelectorButton tuple) {
+  return GetRawSelectorRise(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+}
+
+bool curtinfrc::ControllerGroup::GetSelectorFall(tControllerSelectorButton tuple) {
+  return GetRawSelectorFall(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+}
+
+
+bool curtinfrc::ControllerGroup::GetInput(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButton(pair);
@@ -73,7 +210,7 @@ bool curtinfrc::ControllerGroup::GetButton(tControllerButtonMap map) {
   return val;
 }
 
-bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButtonMap map) {
+bool curtinfrc::ControllerGroup::GetInputRise(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButtonRise(pair);
@@ -81,10 +218,35 @@ bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButtonMap map) {
   return val;
 }
 
-bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButtonMap map) {
+bool curtinfrc::ControllerGroup::GetInputFall(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButtonFall(pair);
+
+  return val;
+}
+
+
+bool curtinfrc::ControllerGroup::GetInput(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorValue(tuple);
+
+  return val;
+}
+
+bool curtinfrc::ControllerGroup::GetInputRise(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorRise(tuple);
+
+  return val;
+}
+
+bool curtinfrc::ControllerGroup::GetInputFall(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorFall(tuple);
 
   return val;
 }
