@@ -17,6 +17,7 @@ const double ControlMap::axisDeadzoneFOC = 0.05;
 const tControllerButtonMap ControlMap::reverseDrivetrain{ { 1, 2 } };   // Toggles the direction of the drivetrain
 const tControllerButtonMap ControlMap::holdMovement{ { 1, 9 } };        // Makes the robot 'line up' (0 magnitude but still rotating)
 const tControllerButtonMap ControlMap::activateFOC{ { 1, 10 } };        // Toggles the drivetrain between Manual and FOC control
+const tControllerButtonMap ControlMap::tapeAlign{ { 1, 11 } };
 
 
 // BEELEVATOR JOYMAP
