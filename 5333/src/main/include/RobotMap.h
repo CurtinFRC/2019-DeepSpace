@@ -30,7 +30,13 @@
 struct RobotMap {
   curtinfrc::Joystick joy1{ 0 }; // Driver
   curtinfrc::Joystick joy2{ 1 }; // Co-Driver
+
+  #if N_CONT == 2
   curtinfrc::ControllerGroup contGroup{ joy1, joy2 };
+  #elif N_CONT == 3
+  curtinfrc::XboxController xbox{ 2 };
+  curtinfrc::ControllerGroup contGroup{ joy1, joy2, xbox };
+  #endif
 
   frc::PowerDistributionPanel pdp{0};
 
