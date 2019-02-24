@@ -13,24 +13,21 @@
 #include "Toggle.h"
 
 namespace curtinfrc {
-  typedef std::pair<int, int> tControllerButton; // < nCont, nButton >
-  constexpr tControllerButton noButton{ -1, -1 };
+  struct tControllerButton { const int cont, button; };
   typedef std::vector<tControllerButton> tControllerButtonMap;
 
-  typedef std::pair<int, int> tControllerAxis; // < nCont, nAxis >
-  constexpr tControllerAxis noAxis{ -1, -1 };
+  struct tControllerAxis { const int cont, axis; };
   // typedef std::vector<tControllerAxis> tControllerAxisMap;
 
-  typedef std::tuple<int, int, int> tControllerSelectorButton; // < nCont, nButton, ID >
-  constexpr tControllerSelectorButton noSelectorButton{ -1, -1, -1 };
+  struct tControllerSelectorButton { const int cont, button, id; };
   typedef std::vector<tControllerSelectorButton> tControllerSelectorButtonMap;
 
-  typedef std::tuple<tControllerButton, tControllerButton, int, int, int> tControllerSelectorMapping; // < decButton, incButton, size, initPos, ID >
+  struct tControllerSelectorMapping{ tControllerButton decButton, incButton; const int size, initPos, id; };
 
 
   class Controller {
    public:
-    Controller(frc::GenericHID *cont, int nButtons = 12) : _cont(cont), _nButtons(nButtons), _enabled(true) {
+    Controller(frc::GenericHID *cont, int nButtons = 12, int nAxis = 4) : _cont(cont), _nButtons(nButtons), _nAxis(nAxis), _enabled(true) {
       for (int i = 1; i <= nButtons; i++) {
         _buttonToggles[i] = { Toggle(ToggleEvent::ONRISE), Toggle(ToggleEvent::ONFALL, false) };
       }
@@ -95,6 +92,9 @@ namespace curtinfrc {
     int _nButtons;
     std::map<int, std::pair<Toggle, Toggle>> _buttonToggles;
 
+    int _nAxis;
+    
+
     struct ButtonSelector {
       int decrementButton, incrementButton;
       Toggle decrementButtonToggle, incrementButtonToggle;
@@ -123,7 +123,7 @@ namespace curtinfrc {
     bool MakeSelector(tControllerSelectorMapping config);
 
     double GetRawAxis(int cont, int axis = 1);
-    double GetAxis(tControllerAxis contAxis);
+    double GetAxis(tControllerAxis axis);
 
     double GetCircularisedAxisAgainst(int cont, int primaryAxis = 1, int compareAxis = 0);
     double GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis);
@@ -147,9 +147,9 @@ namespace curtinfrc {
     bool GetRawSelectorRise(int cont, int button, int id = 0);
     bool GetRawSelectorFall(int cont, int button, int id = 0);
 
-    bool GetSelectorValue(tControllerSelectorButton tuple);
-    bool GetSelectorRise(tControllerSelectorButton tuple);
-    bool GetSelectorFall(tControllerSelectorButton tuple);
+    bool GetSelectorValue(tControllerSelectorButton button);
+    bool GetSelectorRise(tControllerSelectorButton button);
+    bool GetSelectorFall(tControllerSelectorButton button);
 
 
     bool GetInput(tControllerButtonMap map);
@@ -169,7 +169,7 @@ namespace curtinfrc {
 
   class Joystick : public Controller {
    public:
-    Joystick(int port) : Controller(new frc::Joystick(port), 12) {};
+    Joystick(int port) : Controller(new frc::Joystick(port), 12, 4) {};
     
     enum JoyAxis {
       kXAxis = 0,
@@ -184,7 +184,7 @@ namespace curtinfrc {
 
   class XboxController : public Controller {
    public:
-    XboxController(int port) : Controller(new frc::XboxController(port), 11) {};
+    XboxController(int port) : Controller(new frc::XboxController(port), 11, 6) {};
 
     enum XboxAxis {
       kLeftXAxis = 0,

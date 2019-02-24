@@ -2,6 +2,28 @@
 
 
 // CONROLLER
+
+bool curtinfrc::Controller::MakeSelector(int decrementButton, int incrementButton, int size, int position, int id) {
+  if (decrementButton == incrementButton) return false;
+
+  // Test buttons still exist
+  auto dec = _buttonToggles.find(decrementButton), inc = _buttonToggles.find(incrementButton), end = _buttonToggles.end();
+
+  if (dec == end || inc == end) {
+    return false;
+  } else {
+    _buttonToggles.erase(dec);
+    _buttonToggles.erase(inc);
+    _nButtons = _buttonToggles.size();
+
+    if (id < 0) id = _selectors.size();
+    _selectors.insert({ id, ButtonSelector(decrementButton, incrementButton, Selector(size, position)) });
+  }
+
+  return true;
+}
+
+
 double curtinfrc::Controller::GetRawAxis(int axis) {
   if (GetEnabled()) return _cont->GetRawAxis(axis);
   else return 0;
@@ -76,27 +98,6 @@ bool curtinfrc::Controller::GetSelectorFall(int button, int id) {
 }
 
 
-bool curtinfrc::Controller::MakeSelector(int decrementButton, int incrementButton, int size, int position, int id) {
-  if (decrementButton == incrementButton) return false;
-
-  // Test buttons still exist
-  auto dec = _buttonToggles.find(decrementButton), inc = _buttonToggles.find(incrementButton), end = _buttonToggles.end();
-
-  if (dec == end || inc == end) {
-    return false;
-  } else {
-    _buttonToggles.erase(dec);
-    _buttonToggles.erase(inc);
-    _nButtons = _buttonToggles.size();
-
-    if (id < 0) id = _selectors.size();
-    _selectors.insert({ id, ButtonSelector(decrementButton, incrementButton, Selector(size, position)) });
-  }
-
-  return true;
-}
-
-
 // CONTROLLERGROUP
 
 int curtinfrc::ControllerGroup::GetPort(int cont) {
@@ -104,11 +105,11 @@ int curtinfrc::ControllerGroup::GetPort(int cont) {
 }
 
 bool curtinfrc::ControllerGroup::MakeSelector(curtinfrc::tControllerSelectorMapping config) {
-  tControllerButton dec = std::get<0>(config), inc = std::get<1>(config);
-  int cont = dec.first;
-
-  if (cont != inc.first) return false;
-  return GetController(cont).MakeSelector(dec.second, inc.second, std::get<2>(config), std::get<3>(config), std::get<4>(config));
+  if (config.decButton.cont != config.incButton.cont) return false;
+  return GetController(config.decButton.cont).MakeSelector(
+    config.decButton.button, config.incButton.button,
+    config.size, config.initPos, config.id
+  );
 }
 
 
@@ -116,8 +117,8 @@ double curtinfrc::ControllerGroup::GetRawAxis(int cont, int axis) {
   return GetController(cont).GetRawAxis(axis);
 }
 
-double curtinfrc::ControllerGroup::GetAxis(tControllerAxis contAxis) {
-  return GetRawAxis(contAxis.first, contAxis.second);
+double curtinfrc::ControllerGroup::GetAxis(tControllerAxis axis) {
+  return GetRawAxis(axis.cont, axis.axis);
 }
 
 
@@ -126,7 +127,7 @@ double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(int cont, int prim
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis) {
-  return GetCircularisedAxisAgainst(primaryAxis.first, primaryAxis.second, compareAxis.second);
+  return GetCircularisedAxisAgainst(primaryAxis.cont, primaryAxis.axis, compareAxis.axis);
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxis(int cont, int axis) {
@@ -134,7 +135,7 @@ double curtinfrc::ControllerGroup::GetCircularisedAxis(int cont, int axis) {
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxis(tControllerAxis pair) {
-  return GetCircularisedAxis(pair.first, pair.second);
+  return GetCircularisedAxis(pair.cont, pair.axis);
 }
 
 
@@ -152,18 +153,15 @@ bool curtinfrc::ControllerGroup::GetRawButtonFall(int cont, int button) {
 
 
 bool curtinfrc::ControllerGroup::GetButton(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButton(pair.first, pair.second);
+  return GetRawButton(pair.cont, pair.button);
 }
 
 bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButtonRise(pair.first, pair.second);
+  return GetRawButtonRise(pair.cont, pair.button);
 }
 
 bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButtonFall(pair.first, pair.second);
+  return GetRawButtonFall(pair.cont, pair.button);
 }
 
 
@@ -189,16 +187,16 @@ bool curtinfrc::ControllerGroup::GetRawSelectorFall(int cont, int button, int id
 }
 
 
-bool curtinfrc::ControllerGroup::GetSelectorValue(tControllerSelectorButton tuple) {
-  return GetRawSelectorValue(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+bool curtinfrc::ControllerGroup::GetSelectorValue(tControllerSelectorButton button) {
+  return GetRawSelectorValue(button.cont, button.button, button.id);
 }
 
-bool curtinfrc::ControllerGroup::GetSelectorRise(tControllerSelectorButton tuple) {
-  return GetRawSelectorRise(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+bool curtinfrc::ControllerGroup::GetSelectorRise(tControllerSelectorButton button) {
+  return GetRawSelectorRise(button.cont, button.button, button.id);
 }
 
-bool curtinfrc::ControllerGroup::GetSelectorFall(tControllerSelectorButton tuple) {
-  return GetRawSelectorFall(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+bool curtinfrc::ControllerGroup::GetSelectorFall(tControllerSelectorButton button) {
+  return GetRawSelectorFall(button.cont, button.button, button.id);
 }
 
 
