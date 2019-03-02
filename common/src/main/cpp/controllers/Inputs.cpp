@@ -91,3 +91,11 @@ int curtinfrc::controllers::inputs::ButtonSelector::Get() {
 bool curtinfrc::controllers::inputs::ButtonSelectorButton::Get() {
   return _selector.Get() == _id;
 }
+
+
+
+// POV CASTS
+
+bool curtinfrc::controllers::inputs::POVButton::Get() {
+  return _pov.Get() == _id;
+}

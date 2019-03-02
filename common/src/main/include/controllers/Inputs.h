@@ -178,9 +178,16 @@ namespace curtinfrc {
       // };
 
       // @TODO: POV casts;
-      // class POVButton : public ContButton {
-      //  public:
-      // };
+      class POVButton : public ContButton {
+       public:
+        POVButton(POV &pov, int id) : _pov(pov), _id(id) {};
+
+        virtual bool Get() override;
+
+       private:
+        POV &_pov;
+        const int _id;
+      };
 
       // class POVField : public Field { // uhhhhh, needs to be stored as FieldAxis, so...
       //  public:
