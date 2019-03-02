@@ -18,7 +18,7 @@ DrivetrainManualStrategy::DrivetrainManualStrategy(Drivetrain &drivetrain, Contr
 void DrivetrainManualStrategy::OnUpdate(double dt) {
   double joyForward = 0, joyTurn = 0;
   
-  if (!_contGroup.GetButton(ControlMap::holdMovement)) {
+  if (!_contGroup.GetInput(ControlMap::holdMovement)) {
     joyForward = -_contGroup.GetCircularisedAxisAgainst(ControlMap::forwardAxis, ControlMap::turnAxis) * 0.9;
     joyForward *= std::abs(joyForward);
   }
@@ -29,7 +29,7 @@ void DrivetrainManualStrategy::OnUpdate(double dt) {
   double leftSpeed = joyForward + joyTurn;
   double rightSpeed = joyForward - joyTurn;
 
-  if (_invertedToggle.Update(_contGroup.GetButton(ControlMap::reverseDrivetrain)))
+  if (_invertedToggle.Update(_contGroup.GetInput(ControlMap::reverseDrivetrain)))
     _drivetrain.SetInverted(!_drivetrain.GetInverted());
 
   _drivetrain.Set(leftSpeed, rightSpeed);
@@ -45,14 +45,14 @@ void DrivetrainFOCStrategy::OnUpdate(double dt) {
   mag *= std::abs(mag);
   double bearing = atan2(joyTurn, joyForward);
 
-  if (_invertedToggle.Update(_contGroup.GetButton(ControlMap::reverseDrivetrain))) _drivetrain.SetInverted(!_drivetrain.GetInverted());
+  if (_invertedToggle.Update(_contGroup.GetInput(ControlMap::reverseDrivetrain))) _drivetrain.SetInverted(!_drivetrain.GetInverted());
 
   bearing *= 180 / 3.141592;
 
   if (mag < ControlMap::axisDeadzoneFOC) mag = 0;
 
   bearing = fmod(bearing + (_drivetrain.GetInverted() ? 180 : 360), 360);
-  _foc.SetSetpoint(mag, bearing, _contGroup.GetButton(ControlMap::holdMovement));
+  _foc.SetSetpoint(mag, bearing, _contGroup.GetInput(ControlMap::holdMovement));
   std::pair<double, double> speed = _foc.Calculate(_drivetrain.GetConfig().gyro->GetAngle(), dt);
 
   _drivetrain.Set(speed.first, speed.second);

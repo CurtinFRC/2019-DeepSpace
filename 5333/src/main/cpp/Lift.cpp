@@ -2,7 +2,7 @@
 #include "ControlMap.h"
 
 void LiftManualStrategy::OnUpdate(double dt) {
-  double speed = (_contGroup.GetButton(ControlMap::raiseLift) - _contGroup.GetButton(ControlMap::lowerLift)) * 9;
+  double speed = (_contGroup.GetInput(ControlMap::raiseLift) - _contGroup.GetInput(ControlMap::lowerLift)) * 9;
   if (std::abs(speed) < 0.001) {
     if (_lift.GetState() != curtinfrc::ElevatorState::kStationary)
       _lift.SetHold();
