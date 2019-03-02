@@ -1,6 +1,101 @@
 #include "CurtinControllers.h"
 
-// #include <cmath> // ?
+
+// CONROLLER
+
+bool curtinfrc::Controller::MakeSelector(int decrementButton, int incrementButton, int size, int position, int id) {
+  if (decrementButton == incrementButton) return false;
+
+  // Test buttons still exist
+  auto dec = _buttonToggles.find(decrementButton), inc = _buttonToggles.find(incrementButton), end = _buttonToggles.end();
+
+  if (dec == end || inc == end) {
+    return false;
+  } else {
+    _buttonToggles.erase(dec);
+    _buttonToggles.erase(inc);
+    _nButtons = _buttonToggles.size();
+
+    if (id < 0) id = _selectors.size();
+    _selectors.insert({ id, ButtonSelector(decrementButton, incrementButton, Selector(size, position)) });
+  }
+
+  return true;
+}
+
+
+double curtinfrc::Controller::GetRawAxis(int axis) {
+  if (GetEnabled()) return _cont->GetRawAxis(axis);
+  else return 0;
+}
+
+bool curtinfrc::Controller::GetRawButton(int button) {
+  if (GetEnabled()) return _cont->GetRawButton(button);
+  else return false;
+}
+
+int curtinfrc::Controller::GetRawPOVAngle() {
+  if (GetEnabled()) return _cont->GetPOV();
+  else return -1;
+}
+
+int curtinfrc::Controller::GetRawSelectorValue(int id) {
+  /* if (GetEnabled()) */ return GetRawSelector(id).Get();
+  // else return -1;
+}
+
+
+void curtinfrc::Controller::UpdateSelectors() {
+  if (GetEnabled()) {
+    for (auto pair : _selectors) UpdateSelector(pair.first);
+  }
+}
+
+int curtinfrc::Controller::UpdateSelector(int id) {
+  if (GetEnabled()) {
+    ButtonSelector &buttonSelector = _selectors.at(id);
+
+    if (buttonSelector.incrementButtonToggle.Update(GetButton(buttonSelector.incrementButton))) IncrementSelector(1, id);
+    if (buttonSelector.decrementButtonToggle.Update(GetButton(buttonSelector.decrementButton))) DecrementSelector(1, id);
+  }
+
+  return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::GetSelectorLength(int id) {
+  return _selectors.at(id).selector.GetLength();
+}
+
+
+int curtinfrc::Controller::IncrementSelector(int amount, int id) {
+  if (GetEnabled()) return GetRawSelector(id).ShiftRight(amount);
+  else return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::DecrementSelector(int amount, int id) {
+  if (GetEnabled()) return GetRawSelector(id).ShiftLeft(amount);
+  else return GetRawSelectorValue(id);
+}
+
+int curtinfrc::Controller::SetSelector(int value, int id) {
+  if (GetEnabled()) return GetRawSelector(id).Set(value);
+  else return GetRawSelectorValue(id);
+}
+
+bool curtinfrc::Controller::GetSelectorValue(int button, int id) {
+  if (GetEnabled()) return GetRawSelectorValue(id) == button;
+  else return false;
+}
+
+bool curtinfrc::Controller::GetSelectorRise(int button, int id) {
+  if (GetEnabled()) return _selectors.at(id).buttonToggles[button].first.Update(GetSelectorValue(button, id));
+  else return false;
+}
+
+bool curtinfrc::Controller::GetSelectorFall(int button, int id) {
+  if (GetEnabled()) return _selectors.at(id).buttonToggles[button].second.Update(GetSelectorValue(button, id));
+  else return false;
+}
 
 
 // CONTROLLERGROUP
@@ -9,13 +104,21 @@ int curtinfrc::ControllerGroup::GetPort(int cont) {
   return GetController(cont).GetPort();
 }
 
+bool curtinfrc::ControllerGroup::MakeSelector(curtinfrc::tControllerSelectorMapping config) {
+  if (config.decButton.cont != config.incButton.cont) return false;
+  return GetController(config.decButton.cont).MakeSelector(
+    config.decButton.button, config.incButton.button,
+    config.size, config.initPos, config.id
+  );
+}
+
 
 double curtinfrc::ControllerGroup::GetRawAxis(int cont, int axis) {
   return GetController(cont).GetRawAxis(axis);
 }
 
-double curtinfrc::ControllerGroup::GetAxis(tControllerAxis contAxis) {
-  return GetRawAxis(contAxis.first, contAxis.second);
+double curtinfrc::ControllerGroup::GetAxis(tControllerAxis axis) {
+  return GetRawAxis(axis.cont, axis.axis);
 }
 
 
@@ -24,7 +127,7 @@ double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(int cont, int prim
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxisAgainst(tControllerAxis primaryAxis, tControllerAxis compareAxis) {
-  return GetCircularisedAxisAgainst(primaryAxis.first, primaryAxis.second, compareAxis.second);
+  return GetCircularisedAxisAgainst(primaryAxis.cont, primaryAxis.axis, compareAxis.axis);
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxis(int cont, int axis) {
@@ -32,7 +135,7 @@ double curtinfrc::ControllerGroup::GetCircularisedAxis(int cont, int axis) {
 }
 
 double curtinfrc::ControllerGroup::GetCircularisedAxis(tControllerAxis pair) {
-  return GetCircularisedAxis(pair.first, pair.second);
+  return GetCircularisedAxis(pair.cont, pair.axis);
 }
 
 
@@ -50,22 +153,54 @@ bool curtinfrc::ControllerGroup::GetRawButtonFall(int cont, int button) {
 
 
 bool curtinfrc::ControllerGroup::GetButton(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButton(pair.first, pair.second);
+  return GetRawButton(pair.cont, pair.button);
 }
 
 bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButtonRise(pair.first, pair.second);
+  return GetRawButtonRise(pair.cont, pair.button);
 }
 
 bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButton pair) {
-  if (pair == noButton) return false;
-  return GetRawButtonFall(pair.first, pair.second);
+  return GetRawButtonFall(pair.cont, pair.button);
 }
 
 
-bool curtinfrc::ControllerGroup::GetButton(tControllerButtonMap map) {
+void curtinfrc::ControllerGroup::UpdateSelectors() {
+  for (auto cont : m_conts) cont.get().UpdateSelectors();
+}
+
+int curtinfrc::ControllerGroup::GetSelectorLength(int cont, int id) {
+  return GetController(cont).GetSelectorLength(id);
+}
+
+
+bool curtinfrc::ControllerGroup::GetRawSelectorValue(int cont, int button, int id) {
+  return GetController(cont).GetSelectorValue(button, id);
+}
+
+bool curtinfrc::ControllerGroup::GetRawSelectorRise(int cont, int button, int id) {
+  return GetController(cont).GetSelectorRise(button, id);
+}
+
+bool curtinfrc::ControllerGroup::GetRawSelectorFall(int cont, int button, int id) {
+  return GetController(cont).GetSelectorFall(button, id);
+}
+
+
+bool curtinfrc::ControllerGroup::GetSelectorValue(tControllerSelectorButton button) {
+  return GetRawSelectorValue(button.cont, button.button, button.id);
+}
+
+bool curtinfrc::ControllerGroup::GetSelectorRise(tControllerSelectorButton button) {
+  return GetRawSelectorRise(button.cont, button.button, button.id);
+}
+
+bool curtinfrc::ControllerGroup::GetSelectorFall(tControllerSelectorButton button) {
+  return GetRawSelectorFall(button.cont, button.button, button.id);
+}
+
+
+bool curtinfrc::ControllerGroup::GetInput(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButton(pair);
@@ -73,7 +208,7 @@ bool curtinfrc::ControllerGroup::GetButton(tControllerButtonMap map) {
   return val;
 }
 
-bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButtonMap map) {
+bool curtinfrc::ControllerGroup::GetInputRise(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButtonRise(pair);
@@ -81,10 +216,35 @@ bool curtinfrc::ControllerGroup::GetButtonRise(tControllerButtonMap map) {
   return val;
 }
 
-bool curtinfrc::ControllerGroup::GetButtonFall(tControllerButtonMap map) {
+bool curtinfrc::ControllerGroup::GetInputFall(tControllerButtonMap map) {
   bool val = false;
 
   for (auto pair : map) val |= GetButtonFall(pair);
+
+  return val;
+}
+
+
+bool curtinfrc::ControllerGroup::GetInput(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorValue(tuple);
+
+  return val;
+}
+
+bool curtinfrc::ControllerGroup::GetInputRise(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorRise(tuple);
+
+  return val;
+}
+
+bool curtinfrc::ControllerGroup::GetInputFall(tControllerSelectorButtonMap map) {
+  bool val = false;
+
+  for (auto tuple : map) val |= GetSelectorFall(tuple);
 
   return val;
 }
