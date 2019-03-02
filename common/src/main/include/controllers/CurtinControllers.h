@@ -1,6 +1,6 @@
 #pragma once
 
-#include "controllers/Controller.h"
+#include "controllers/SmartController.h"
 
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>

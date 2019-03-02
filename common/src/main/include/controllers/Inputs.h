@@ -3,7 +3,10 @@
 #include <utility>
 
 #include "controllers/Controller.h"
-#include "Selector"
+
+
+#include "Toggle.h"
+#include "Selector.h"
 
 namespace curtinfrc {
   namespace controllers {
@@ -28,13 +31,16 @@ namespace curtinfrc {
       class Field { // wrapper for two axi
        public:
         Field(std::pair<Axis&, Axis&> field, bool square = false) : _field(field), _square(square) {};
-        enum FieldAxis { primary = 0, secondary = 1 };
+        enum FieldAxisType { primary = 0, secondary = 1 };
 
-        double Get(FieldAxis axis);
+        double Get(FieldAxisType axis);
         virtual std::pair<double, double> Get() { return { Get(primary), Get(secondary) }; };
 
+        double GetMag() { return sqrt(pow(Get(primary), 2) + pow(Get(secondary), 2)); };
+        double GetAngle() { return atan2(Get(primary), Get(secondary)); };
+
         std::pair<Axis&, Axis&> GetAxi() { return _field; };
-        Axis &GetAxis(FieldAxis axis) {
+        Axis &GetAxis(FieldAxisType axis) {
           switch (axis) {
            case primary:
             return GetAxi().first;
@@ -43,7 +49,9 @@ namespace curtinfrc {
             return GetAxi().second;
           };
 
-          return Axis(Controller(nullptr), 0); // help
+          Controller cont_(nullptr);
+          Axis axis_(cont_, 0);
+          return axis_;
         };
         Axis &GetPrimaryAxis() { return GetAxis(primary); };
         Axis &GetSecondaryAxis() { return GetAxis(secondary); };
@@ -55,7 +63,19 @@ namespace curtinfrc {
         bool _square; // whether the field is a square or circle (xbox => circle, joy/raw => square)
       };
 
-      class ContButton { public: virtual bool Get() = 0; };
+      class ContButton {
+       public:
+        ContButton() : _toggles({ Toggle(ToggleEvent::ONRISE), Toggle(ToggleEvent::ONFALL, false) }) {};
+        
+        virtual bool Get() = 0;
+
+        bool GetOnRise() { return _toggles.first.Update(Get()); };
+        bool GetOnFall() { return _toggles.second.Update(Get()); };
+
+       private:
+        std::pair<Toggle, Toggle> _toggles;
+      };
+
       class Button : public ContInput, public ContButton {
        public:
         Button(Controller &cont, int id) : ContInput(cont, id) {};
@@ -72,11 +92,13 @@ namespace curtinfrc {
       };
 
 
+      // CAST TYPES
+
       class AxisButton : public ContButton {
        public:
         AxisButton(Axis &axis, double threshold) : _axis(axis), _threshold(threshold) {};
 
-        virtual bool Get();
+        virtual bool Get() override;
 
         void SetThreshold(double threshold) { _threshold = threshold; };
         double GetThreshold() { return _threshold; };
@@ -88,48 +110,81 @@ namespace curtinfrc {
 
       class AxisSelector {
        public:
-        AxisSelector(Axis &axis) : _axis(axis) {};
+        AxisSelector(Axis &axis, int divisions) : _axis(axis), _divisions(divisions) {};
+
+        int Get();
 
        private:
         Axis &_axis;
+        int _divisions;
       };
 
       class AxisSelectorButton : public ContButton {
        public:
-        AxisSelectorButton(AxisSelector &selector) : _selector(selector) {};
+        AxisSelectorButton(AxisSelector &selector, int id) : _selector(selector), _id(id) {};
+
+        virtual bool Get() override;
 
        private:
         AxisSelector &_selector;
+        const int _id;
       };
 
-      class AxisPOV : public ContPOV {
-       public:
-      };
 
       class FieldAxis : public ContAxis { // Fields need to be stored as 2 axi, not actually a cast/conversion
        public:
-      };
-      // class FieldPOV : public POV {}; // Why. Just why would you be using this.
+        FieldAxis(Field &field, Field::FieldAxisType axis) : _field(field), _axis(axis) {};
 
-      class ButtonAxis : public ContAxis {
-       public:
+        virtual double Get() override;
+
+       private:
+        Field &_field;
+        Field::FieldAxisType _axis;
       };
+      // class FieldPOV : public POV {}; // Why. Just why would you be using this. Just use GetAngle() on the field.
+
+
+      // class ButtonAxis : public ContAxis {
+      //  public:
+      //   ButtonAxis() {};
+      // };
+
       class ButtonSelector {
        public:
-      };
-      class ButtonSelectorButton : public ContButton {
-       public:
-      };
-      class ButtonPOV : public ContPOV {
-       public:
+        ButtonSelector(Button &dec, Button &inc, int nButtons) : _buttons({ dec, inc }), _selector(nButtons) {};
+        ButtonSelector(std::pair<Button&, Button&> buttons, int nButtons) : _buttons(buttons), _selector(nButtons) {};
+
+        int Get();
+
+       private:
+        std::pair<Button&, Button&> _buttons;
+        Selector _selector;
       };
 
-      class POVButton : public ContButton {
+      class ButtonSelectorButton : public ContButton {
        public:
+        ButtonSelectorButton(ButtonSelector &selector, int id) : _selector(selector), _id(id) {};
+
+        virtual bool Get() override;
+
+       private:
+        ButtonSelector &_selector;
+        const int _id;
       };
-      class POVField : public Field { // uhhhhh, needs to be stored as FieldAxis, so...
-       public:
-      };
+
+      // class ButtonPOV : public ContPOV {
+      //  public:
+      //   ButtonPOV() {};
+      // };
+
+      // @TODO: POV casts;
+      // class POVButton : public ContButton {
+      //  public:
+      // };
+
+      // class POVField : public Field { // uhhhhh, needs to be stored as FieldAxis, so...
+      //  public:
+      // };
     } // ns inputs
   } // ns controllers
 } // ns curtinfrc
