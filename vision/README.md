@@ -22,7 +22,7 @@ Vision Tracking Documentation.
 ### 6. Run `./gradlew :vision:deploy` (`./gradlew :vision:deploy -Praspberry` for the Raspberry Pi) to deploy your code!
 
 
-### Competition Code ###
+## Competition Code ##
 
   - Variables are passed over via NetworkTables to the roborio and in turn can be accessed via shuffleboard
   - These Tables are located in the `VisionTracking` table, and include `HatchTracking` & `TapeTracking`
