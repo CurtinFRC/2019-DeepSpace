@@ -43,7 +43,7 @@ bool Button::Get() {
 }
 
 
-int POV::Get() {
+curtinfrc::controllers::Controller::POVPos POV::Get() {
   return _cont.GetPOV(_id);
 }
 

@@ -27,7 +27,7 @@ namespace curtinfrc {
 
       virtual double GetAxis(int axis = 1) { return GetRawAxis(axis); };
       virtual bool GetButton(int button = 1) { return GetRawButton(button); };
-      virtual double GetPOVAngle(int pov = 0) { return GetRawPOVAngle(pov); };
+      virtual int GetPOVAngle(int pov = 0) { return GetRawPOVAngle(pov); };
       virtual POVPos GetPOV(int pov = 0) { return (POVPos)GetRawPOVAngle(pov); };
 
      protected:

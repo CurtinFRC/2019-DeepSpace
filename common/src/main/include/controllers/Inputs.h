@@ -88,12 +88,12 @@ namespace curtinfrc {
         virtual bool Get() override;
       };
 
-      class ContPOV { public: virtual int Get() = 0; };
-      class POV : public ContInput<int>, public ContPOV {
+      class ContPOV { public: virtual Controller::POVPos Get() = 0; };
+      class POV : public ContInput<Controller::POVPos>, public ContPOV {
        public:
         POV(Controller &cont, int id = 0) : ContInput(cont, id) {};
 
-        virtual int Get() override; // raw POV output
+        virtual Controller::POVPos Get() override; // raw POV output
       };
 
 
@@ -201,14 +201,14 @@ namespace curtinfrc {
 
 
       // ------------------------------------- 'CONSTRUCTOR' FUNCTIONS -------------------------------------
-      std::vector<AxisButton*> MakeAxisButton(ContAxis *axis, double threshold = 0.3);   // returns 1
-      std::vector<AxisSelectorButton*> MakeAxisSelectorButtons(ContAxis *axis, int n);   // returns n
+      std::vector<AxisButton*> MakeAxisButton(ContAxis *axis, double threshold = 0.3);  // returns 1
+      std::vector<AxisSelectorButton*> MakeAxisSelectorButtons(ContAxis *axis, int n);  // returns n
 
-      std::vector<FieldAxis*> MakeFieldAxi(Field *field);                            // returns 2
+      std::vector<FieldAxis*> MakeFieldAxi(Field *field);                               // returns 2
 
       std::vector<ButtonSelectorButton*> MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttons, int n); // returns n
 
-      std::vector<POVButton*> MakePOVButtons(ContPOV *pov);                              // returns 8
+      std::vector<POVButton*> MakePOVButtons(ContPOV *pov);                             // returns 8
     } // ns inputs
   } // ns controllers
 } // ns curtinfrc
