@@ -1,13 +1,16 @@
 #include "controllers/Inputs.h"
 
-double curtinfrc::controllers::inputs::Axis::Get() {
+using namespace curtinfrc::controllers::inputs;
+
+
+double Axis::Get() {
   return _cont.GetAxis(_id);
 }
 
 
-double curtinfrc::controllers::inputs::Field::Get(curtinfrc::controllers::inputs::Field::FieldAxisType axis) {
+double Field::Get(Field::FieldAxisType axis) {
   if (IsSquare()) {
-    double primary = GetAxis(axis).Get(), compare = GetAxis(axis == FieldAxisType::primary ? FieldAxisType::secondary : FieldAxisType::primary).Get();
+    double primary = GetAxis(axis)->Get(), compare = GetAxis(axis == FieldAxisType::primary ? FieldAxisType::secondary : FieldAxisType::primary)->Get();
 
     // Break into polar components (with angle as a bearing)
     double theta = atan2(compare, primary), mag = sqrt(pow(primary, 2) + pow(compare, 2));
@@ -30,31 +33,33 @@ double curtinfrc::controllers::inputs::Field::Get(curtinfrc::controllers::inputs
 
     return mag * cos(theta);
   } else {
-    return GetAxis(axis).Get();
+    return GetAxis(axis)->Get();
   }
 }
 
 
-bool curtinfrc::controllers::inputs::Button::Get() {
+bool Button::Get() {
   return _cont.GetButton(_id);
 }
 
 
-int curtinfrc::controllers::inputs::POV::Get() {
+int POV::Get() {
   return _cont.GetPOV(_id);
 }
 
 
+// ---------------------------------------------- CAST TYPES ----------------------------------------------
+
 
 // AXIS CASTS
 
-bool curtinfrc::controllers::inputs::AxisButton::Get() {
-  return std::abs(_axis.Get()) > _threshold;
+bool AxisButton::Get() {
+  return std::abs(_axis->Get()) > _threshold;
 }
 
 
-int curtinfrc::controllers::inputs::AxisSelector::Get() {
-  double value = _axis.Get();
+int AxisSelector::Get() {
+  double value = _axis->Get();
   if (value == 1) return _divisions - 1;
 
   double size = 2 / _divisions;
@@ -64,38 +69,77 @@ int curtinfrc::controllers::inputs::AxisSelector::Get() {
 }
 
 
-bool curtinfrc::controllers::inputs::AxisSelectorButton::Get() {
+bool AxisSelectorButton::Get() {
   return _selector.Get() == _id;
 }
 
 
-
 // FIELD CASTS
 
-double curtinfrc::controllers::inputs::FieldAxis::Get() {
-  return _field.Get(_axis);
+double FieldAxis::Get() {
+  return _field->Get(_axis);
 }
-
 
 
 // BUTTON CASTS
 
-int curtinfrc::controllers::inputs::ButtonSelector::Get() {
-  if (_buttons.first.GetOnRise()) _selector.ShiftLeft();
-  if (_buttons.second.GetOnRise()) _selector.ShiftRight();
+int ButtonSelector::Get() {
+  if (_buttons.first->GetOnRise()) _selector.ShiftLeft();
+  if (_buttons.second->GetOnRise()) _selector.ShiftRight();
 
   return _selector.Get();
 }
 
 
-bool curtinfrc::controllers::inputs::ButtonSelectorButton::Get() {
+bool ButtonSelectorButton::Get() {
   return _selector.Get() == _id;
 }
 
 
-
 // POV CASTS
 
-bool curtinfrc::controllers::inputs::POVButton::Get() {
-  return _pov.Get() == _id;
+bool POVButton::Get() {
+  return _pov->Get() == _id;
+}
+
+
+
+// --------------------------------------- 'CONSTRUCTOR' FUNCTIONS ---------------------------------------
+
+
+std::vector<AxisButton*> curtinfrc::controllers::inputs::MakeAxisButton(ContAxis *axis, double threshold) {
+  return { new AxisButton(axis, threshold) };
+}
+
+std::vector<AxisSelectorButton*> curtinfrc::controllers::inputs::MakeAxisSelectorButtons(ContAxis *axis, int n) {
+  std::vector<AxisSelectorButton*> buttons;
+
+  AxisSelector selector(axis, n);
+  for (int i = 0; i < n; i++) buttons.push_back(new AxisSelectorButton(selector, i));
+
+  return buttons;
+}
+
+
+std::vector<FieldAxis*> curtinfrc::controllers::inputs::MakeFieldAxi(Field *field) {
+  return { new FieldAxis(field, Field::FieldAxisType::primary), new FieldAxis(field, Field::FieldAxisType::secondary) };
+}
+
+
+std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n) {
+  std::vector<ButtonSelectorButton*> buttons;
+
+  ButtonSelector selector(buttonPair, n);
+  for (int i = 0; i < n; i++) buttons.push_back(new ButtonSelectorButton(selector, i));
+
+  return buttons;
+}
+
+
+std::vector<POVButton*> curtinfrc::controllers::inputs::MakePOVButtons(ContPOV *pov) {
+  std::vector<POVButton*> buttons;
+
+  for (int i = 0; i < 8; i++) buttons.push_back(new POVButton(pov, i + 1));
+
+  return buttons;
 }
