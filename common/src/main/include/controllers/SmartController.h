@@ -11,28 +11,6 @@
 
 namespace curtinfrc {
   namespace controllers {
-    struct tInput {
-      int cont, id;
-
-      bool operator== (const tInput comp) {
-        return this->cont == comp.cont && this->id == comp.id;
-      };
-
-      bool operator!= (const tInput comp) {
-        return !(*this == comp);
-      };
-
-      tInput(int contIn, int idIn) : cont(contIn), id(idIn) {};
-    };
-
-    struct tAxis : public tInput { tAxis(int cont, int id) : tInput(cont, id) {}; };
-    const tAxis noAxis(-1, -1);
-    struct tButton : public tInput { tButton(int cont, int id) : tInput(cont, id) {}; };
-    const tButton noButton(-1, -1);
-    struct tPOV : public tInput { tPOV(int cont, int id) : tInput(cont, id) {}; };
-    const tPOV noPOV(-1, -1);
-
-
     struct SmartControllerConfig {
       const int nAxi;
       const int nButtons;
@@ -68,13 +46,17 @@ namespace curtinfrc {
 
       // Controller::Get overrides
       virtual double GetAxis(int axis = 1) override { return Get(tAxis(-1, axis)); };
-      virtual bool GetButton(int button = 1) override { return Get(tButton(-1, button)); };
+      virtual bool GetButton(int button = 1) override { return Get(tButton(-1, button), RAW); };
       virtual int GetPOVAngle(int pov = 0) override { return (int)Get(tPOV(-1, pov)); };
       virtual POVPos GetPOV(int pov = 0) override { return Get(tPOV(-1, pov)); };
 
       virtual double Get(tAxis axis);
-      virtual bool Get(tButton button);
+      virtual bool Get(tButton button, ButtonMode mode = RAW);
       virtual POVPos Get(tPOV pov);
+
+      int GetButtonCount() const { return _buttons.size(); };
+      int GetAxisCount() const { return _axi.size(); };
+      int GetPOVCount() const { return _POVs.size(); };
 
 
      protected:

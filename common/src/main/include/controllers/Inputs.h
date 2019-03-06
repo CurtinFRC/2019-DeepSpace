@@ -11,6 +11,28 @@
 
 namespace curtinfrc {
   namespace controllers {
+    struct tInput {
+      int cont, id;
+
+      bool operator== (const tInput comp) {
+        return this->cont == comp.cont && this->id == comp.id;
+      };
+
+      bool operator!= (const tInput comp) {
+        return !(*this == comp);
+      };
+
+      tInput(int contIn, int idIn) : cont(contIn), id(idIn) {};
+    };
+
+    struct tAxis : public tInput { tAxis(int cont, int id) : tInput(cont, id) {}; };
+    const tAxis noAxis(-1, -1);
+    struct tButton : public tInput { tButton(int cont, int id) : tInput(cont, id) {}; };
+    const tButton noButton(-1, -1);
+    struct tPOV : public tInput { tPOV(int cont, int id) : tInput(cont, id) {}; };
+    const tPOV noPOV(-1, -1);
+
+    
     namespace inputs {
       // ----------------------------------------- CONTINPUT TYPES -----------------------------------------
 

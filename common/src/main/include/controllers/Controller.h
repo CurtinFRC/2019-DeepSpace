@@ -8,6 +8,12 @@ namespace curtinfrc {
      public:
       Controller(frc::GenericHID *cont) : _cont(cont) {};
 
+      enum ButtonMode {
+        RAW = 0,
+        ONRISE = 1,
+        ONFALL = -1
+      };
+
       enum POVPos {
         kNone = -1,
         kTop = 0,

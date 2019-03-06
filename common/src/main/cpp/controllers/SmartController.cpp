@@ -127,9 +127,13 @@ double SmartController::Get(tAxis axis) {
   return GetObj(axis)->Get();
 }
 
-bool SmartController::Get(tButton button) {
+bool SmartController::Get(tButton button, SmartController::ButtonMode mode) {
   if (Exists(button, false)) return false;
-  return GetObj(button)->Get();
+
+  if (mode == ButtonMode::RAW) return GetObj(button)->Get();
+  else if (mode == ButtonMode::ONRISE) return GetObj(button)->GetOnRise();
+  else if (mode == ButtonMode::ONFALL) return GetObj(button)->GetOnFall();
+  else return false;
 }
 
 curtinfrc::controllers::Controller::POVPos SmartController::Get(tPOV pov) {
