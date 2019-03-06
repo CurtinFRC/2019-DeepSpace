@@ -66,6 +66,18 @@ namespace ui {
     return point{p.x * scale, p.y * scale};
   }
 
+  inline point operator*(const point &p1, const point &p2) {
+    return point{p1.x * p2.x, p1.y * p2.y};
+  }
+
+  inline point operator/(double a, const point &p) {
+    return point{a / p.x, a / p.y};
+  }
+
+  inline point operator/(const point &p1, const point &p2) {
+    return point{p1.x / p2.x, p1.y / p2.y};
+  }
+
   struct box {
     double x, y, w, h;
 

@@ -10,13 +10,14 @@
 #include <functional>
 
 #include "sensors/Encoder.h"
+#include "actuators/VoltageController.h"
 
 namespace curtinfrc {
 
   /**
    * Curtin FRC Wrapper around the CTRE Talon SRX.
    */
-  class TalonSrx : public frc::SpeedController, public curtinfrc::sensors::Encoder {
+  class TalonSrx : public curtinfrc::actuators::MotorVoltageController, public frc::SpeedController, public curtinfrc::sensors::Encoder {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
@@ -26,8 +27,13 @@ namespace curtinfrc {
      * 
      * @param port The device ID of the Talon SRX on the CAN Bus.
      */
-    TalonSrx(int port, int encoderTicksPerRotation);
+    TalonSrx(int port, int encoderTicksPerRotation = 2048);
     ~TalonSrx();
+
+    /**
+     * Set the Talon SRX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
 
     /**
      * Get the CAN Device ID of the Talon SRX.
@@ -99,8 +105,10 @@ namespace curtinfrc {
      */
     int GetSensorVelocity();
 
-    int GetEncoderTicks() override;
+    int GetEncoderRawTicks() override;
     double GetEncoderTickVelocity() override;
+    void ZeroEncoder() override;
+
 
     /**
      * Load a talon Configuration.
@@ -132,7 +140,7 @@ namespace curtinfrc {
   /**
    * Curtin FRC Wrapper around the CTRE Victor SPX.
    */
-  class VictorSpx : public frc::SpeedController {
+  class VictorSpx : public curtinfrc::actuators::MotorVoltageController, public frc::SpeedController {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::VictorSPXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
@@ -144,6 +152,11 @@ namespace curtinfrc {
      */
     VictorSpx(int port);
     ~VictorSpx();
+
+    /**
+     * Set the Victor SPX Packet Update Rate in Hz
+     */
+    void SetUpdateRate(int hz);
 
     /**
      * Get the CAN Device ID of the Victor SPX.

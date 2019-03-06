@@ -1,3 +1,4 @@
+/*
 #include "Display.h"
 #include "Capture.h"
 #include "BallProcessing.h"
@@ -43,7 +44,7 @@ void BallProcessing::Init() {
 
 void BallProcessing::Periodic() {
   Process::Periodic();
-  if (_capture.IsValidFrameThresh() && _capture.IsValidFrameTrack()) {
+  if (_capture.IsValidFrame()) {
 
     _capture.CopyCaptureMat(_imgProcessing);
     cv::cvtColor(_imgProcessing, _imgProcessing, cv::COLOR_BGR2HSV);
@@ -161,3 +162,4 @@ void BallProcessing::Periodic() {
     }
   }
 }
+*/

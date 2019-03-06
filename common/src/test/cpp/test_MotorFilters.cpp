@@ -8,7 +8,7 @@ class MockEncoder : public sensors::Encoder {
  public:
   MockEncoder() : Encoder(2048) { }
 
-  int GetEncoderTicks() override {
+  int GetEncoderRawTicks() override {
     return 0;
   }
 

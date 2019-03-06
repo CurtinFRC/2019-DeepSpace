@@ -20,6 +20,11 @@ double control::CurrentFFFilter::Get(double voltage) {
   return voltage;
 }
 
+void control::CurrentFFFilter::SetLimits(double min, double max) {
+  _min_curr = min;
+  _max_curr = max;
+}
+
 static double accel_to_current(curtinfrc::Gearbox &gb, double mass, double radius, double accel) {
   // I = kt * t, t = mar
   return mass * accel * radius * gb.motor.reduce(gb.reduction).kt();
@@ -27,4 +32,8 @@ static double accel_to_current(curtinfrc::Gearbox &gb, double mass, double radiu
 
 control::AccelerationFFFilter::AccelerationFFFilter(double min, double max, Gearbox &gb, double radius,
                                                     double mass)
-    : CurrentFFFilter(accel_to_current(gb, mass, radius, min), accel_to_current(gb, mass, radius, max), gb) {}
+    : _mass(mass), _radius(radius), CurrentFFFilter(accel_to_current(gb, mass, radius, min), accel_to_current(gb, mass, radius, max), gb) {}
+
+void control::AccelerationFFFilter::SetLimits(double min, double max) {
+  CurrentFFFilter::SetLimits(accel_to_current(_gearbox, _mass, _radius, min), accel_to_current(_gearbox, _mass, _radius, max));
+}

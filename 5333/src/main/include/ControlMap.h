@@ -5,59 +5,60 @@
 class ControlMap {
  public:
   // DRIVETRAIN AXIS JOYMAP
-  static const curtinfrc::Joystick::AxisType forwardAxis = curtinfrc::Joystick::kYAxis;
-  static const curtinfrc::Joystick::AxisType turnAxis = curtinfrc::Joystick::kZAxis;
-  static const curtinfrc::Joystick::AxisType forwardAxisFOC = curtinfrc::Joystick::kYAxis;
-  static const curtinfrc::Joystick::AxisType turnAxisFOC = curtinfrc::Joystick::kXAxis;
+  static const curtinfrc::tControllerAxis forwardAxis;
+  static const curtinfrc::tControllerAxis turnAxis;
+  static const curtinfrc::tControllerAxis forwardAxisFOC;
+  static const curtinfrc::tControllerAxis turnAxisFOC;
 
-  static constexpr double axisDeadzone = 0.05;
-  static constexpr double axisDeadzoneFOC = 0.05;
+  static const double axisDeadzone;
+  static const double axisDeadzoneFOC;
 
 
   // DRIVETRAIN JOYMAP
-  static const int reverseDrivetrain = 2;   // Toggles the direction of the drivetrain
-  static const int holdMovement = 9;        // Makes the robot 'line up' (0 magnitude but still rotating)
-  static const int activateFOC = 10;        // Toggles the drivetrain between Manual and FOC control
+  static const curtinfrc::tControllerButtonMap reverseDrivetrain;   // Toggles the direction of the drivetrain
+  static const curtinfrc::tControllerButtonMap holdMovement;        // Makes the robot 'line up' (0 magnitude but still rotating)
+  static const curtinfrc::tControllerButtonMap activateFOC;        // Toggles the drivetrain between Manual and FOC control
+  static const curtinfrc::tControllerButtonMap tapeAlign;
 
 
   // BEELEVATOR JOYMAP
-  static const int raiseLift = 8;
-  static const int lowerLift = 7;
+  static const curtinfrc::tControllerButtonMap raiseLift;
+  static const curtinfrc::tControllerButtonMap lowerLift;
 
-  static const int goalGround = 1; // Gonna have conflicting buttons for now, but oh well *
-  static const int goalLower1 = 7;
-  static const int goalLower2 = 8;
-  static const int goalMiddle1 = 9;
-  static const int goalMiddle2 = 10;
-  static const int goalUpper1 = 11;
-  static const int goalUpper2 = 12;
+  static const curtinfrc::tControllerButtonMap liftGoalGround;
+  static const curtinfrc::tControllerButtonMap liftGoalLower1;
+  static const curtinfrc::tControllerButtonMap liftGoalLower2;
+  static const curtinfrc::tControllerButtonMap liftGoalMiddle1;
+  static const curtinfrc::tControllerButtonMap liftGoalMiddle2;
+  static const curtinfrc::tControllerButtonMap liftGoalUpper1;
+  static const curtinfrc::tControllerButtonMap liftGoalUpper2;
 
-  static constexpr double setpointGround = 0; // Exact values need to be tested *
-  static constexpr double setpointLower1 = 0.46;
-  static constexpr double setpointLower2 = 0.68;
-  static constexpr double setpointMiddle1 = 1.18;
-  static constexpr double setpointMiddle2 = 1.39;
-  static constexpr double setpointUpper1 = 1.89;
-  static constexpr double setpointUpper2 = 2.10;
-
-
-  // HARVESTER JOYMAP
-  static const int harveserIn = 3;
-  static const int harveserOut = 5;
-  static const int harveserStow = 11;
-
-  static constexpr double harvesterThrottle = 1;
+  static const double liftSetpointGround; // Exact values need to be tested *
+  static const double liftSetpointLower1;
+  static const double liftSetpointLower2;
+  static const double liftSetpointMiddle1;
+  static const double liftSetpointMiddle2;
+  static const double liftSetpointUpper1;
+  static const double liftSetpointUpper2;
 
 
   // HATCH JOYMAP
-  static const int hatchGrab = 4;
-  static const int hatchRelease = 6;
-  static const int hatchStow = 12;
-  static const int hatchToggleEnabled = 13; // Changes the currently enabled hatch intake
+  static const curtinfrc::tControllerButtonMap hatchGrab;
+  static const curtinfrc::tControllerButtonMap hatchRelease;
+  static const curtinfrc::tControllerButtonMap hatchStow;
+  static const curtinfrc::tControllerButtonMap hatchToggleEnabled; // Changes the currently enabled hatch intake
 
 
   // BOX INTAKE JOYMAP
-  static const int boxIn = 3;
-  static const int boxOut = 5;
-  static const int boxStow = 11;
+  static const curtinfrc::tControllerButtonMap boxIn;
+  static const curtinfrc::tControllerButtonMap boxOut;
+  static const curtinfrc::tControllerButtonMap boxStow;
+
+  static const double boxDeployedThrottle;
+  static const double boxStowingThrottle;
+  static const double boxStowedThrottle;
+
+
+  // CONTROLSYSTEM JOYMAP
+  static const curtinfrc::tControllerButtonMap compressorOn;
 };

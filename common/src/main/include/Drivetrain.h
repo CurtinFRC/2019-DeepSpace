@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <cmath>
+#include <functional>
 
 #include <frc/SpeedController.h>
 #include <frc/interfaces/Gyro.h>
@@ -11,6 +12,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "control/PIDController.h"
+#include "devices/StateDevice.h"
 
 #include "Usage.h"
 #include "CurtinControllers.h"
@@ -50,81 +52,54 @@ namespace curtinfrc {
     bool reversed = false;
   };
   
-  class Drivetrain : public StrategySystem {
+  enum class DrivetrainState { kManual = 0, kVelocity, kIdle, kExternalLoop };
+
+  class Drivetrain : public devices::StateDevice<DrivetrainState>, public StrategySystem {
    public:
-    Drivetrain(DrivetrainConfig config) : _config(config) {};
+    Drivetrain(DrivetrainConfig config, control::PIDGains gains = { "Drivetrain Velocity" }) : _config(config), _pidLeft(gains), _pidRight(gains) {};
 
     void Set(double leftPower, double rightPower);
-    void SetLeft(double leftPower);
-    void SetRight(double rightPower);
+    void SetVoltage(double left, double right);
+    void SetVelocity(double left, double right);
+    void SetExternalLoop(std::function<std::pair<double, double>(Drivetrain &, double)> func);
+    void SetIdle();
 
     void SetInverted(bool inverted = false);
     bool GetInverted() { return _config.reversed; };
 
     DrivetrainConfig &GetConfig() { return _config; };
 
+    double GetLeftDistance();
+    double GetRightDistance();
+
    protected:
+    void OnStateChange(DrivetrainState newState, DrivetrainState oldState) override;
+    void OnStatePeriodic(DrivetrainState state, double dt) override;
+
     Gearbox &GetLeft();
     Gearbox &GetRight();
 
    private:
+    control::PIDController _pidLeft, _pidRight;
+    std::pair<double, double> _setpoint;
+    std::function<std::pair<double,double>(Drivetrain &,double)> _externalLoop;
+
     DrivetrainConfig _config;
 
     Usage<DrivetrainConfig>::Scoped _usage{&_config};
   };
 
-  class DrivetrainManualStrategy : public Strategy {
+  class DrivetrainFOCController {
    public:
-    DrivetrainManualStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy) : Strategy("Drivetrain Manual"), _drivetrain(drivetrain), _joy(joy) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-    
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file
+    DrivetrainFOCController(control::PIDGains gains);
 
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
-
-    Toggle _invertedToggle;
-  };
-
-  class DrivetrainFieldOrientedControlStrategy : public Strategy {
-   public:
-    DrivetrainFieldOrientedControlStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joy(joy), _controller(gains) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file (calc with FOCCalc())
-    std::pair<double, double> FOCCalc(double mag, double bearing, double dt, bool hold = false); // bearing in degrees
-
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
-
-    control::PIDController _controller;
-    Toggle _invertedToggle;
-  };
-
-  class DrivetrainPOVSnapStrategy : public Strategy {
-   public:
-    DrivetrainPOVSnapStrategy(Drivetrain &drivetrain, curtinfrc::Joystick &joy, control::PIDGains gains) : Strategy("Drivetrain Field Oriented Control"), _drivetrain(drivetrain), _joy(joy), _controller(gains) {
-      Requires(&drivetrain);
-      SetCanBeInterrupted(true);
-      SetCanBeReused(true);
-    };
-
-    virtual void OnUpdate(double dt) override; // Should be defined in a team specific file (calc with FOCCalc())
-    std::pair<double, double> POVCalc(double mag, double bearing, double dt, bool hold = false); // bearing in degrees
-
-   protected:
-    Drivetrain &_drivetrain;
-    curtinfrc::Joystick &_joy;
-
-    control::PIDController _controller;
-    Toggle _invertedToggle;
+    void SetSetpoint(double magnitude, double bearing, bool hold = false);
+    std::pair<double, double> Calculate(double angle, double dt);
+   
+   private:
+    control::PIDController _pid;
+    double _magnitude = 0;
+    double _bearing = 0;
+    bool _hold = false;
   };
 } // ns curtinfrc

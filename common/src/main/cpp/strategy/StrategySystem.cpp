@@ -1,6 +1,7 @@
 #include "strategy/Strategy.h"
 
 #include <exception>
+#include <iostream>
 
 using namespace curtinfrc;
 
@@ -31,8 +32,10 @@ void StrategySystem::StrategyStatusUpdate() {
   // Employ the default strategy if this one is complete
   if (_active == nullptr || _active->IsFinished()) {
     _active = _default;
-    if (_active != nullptr)
+    if (_active != nullptr) {
+      std::cout << "Default Strategy Loaded: " << _active->GetStrategyName() << std::endl;
       _active->Start();
+    }
   }
 }
 
@@ -41,5 +44,8 @@ void StrategySystem::StrategyReplace(std::shared_ptr<Strategy> newStrat) {
     _active->Interrupt();
   }
   _active = newStrat;
-  _active->Start();
+  if (newStrat != nullptr) {
+    std::cout << "Strategy Loaded: " << newStrat->GetStrategyName() << std::endl;
+    _active->Start();
+  }
 }

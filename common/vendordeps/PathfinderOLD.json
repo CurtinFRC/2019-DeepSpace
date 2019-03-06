@@ -1,87 +1,87 @@
 {
-  "fileName": "PathfinderOLD.json",
-  "name": "PathfinderOld",
-  "version": "2019.1.11",
-  "uuid": "7194a2d4-2860-4bcc-86c0-97879737d875",
-  "mavenUrls": [
-      "https://dev.imjac.in/maven"
-  ],
-  "jsonUrl": "https://dev.imjac.in/maven/jaci/pathfinder/PathfinderOLD-latest.json",
-  "cppDependencies": [
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-Core",
-          "version": "2019.1.11",
-          "libName": "pathfinder",
-          "configuration": "native_pathfinder_old",
-          "headerClassifier": "headers",
-          "sharedLibrary": true,
-          "skipInvalidPlatforms": true,
-          "binaryPlatforms": [
-              "linuxx86-64",
-              "windowsx86-64",
-              "osxx86-64",
-              "linuxathena",
-              "linuxraspbian"
-          ]
-      },
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-FRCSupport",
-          "version": "2019.1.11",
-          "libName": "pathfinder_frc",
-          "configuration": "native_pathfinder_old",
-          "headerClassifier": "headers",
-          "binaryPlatforms": [
-              
-          ]
-      }
-  ],
-  "javaDependencies": [
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-Java",
-          "version": "2019.1.11"
-      },
-      {
-          "groupId": "jaci.jniloader",
-          "artifactId": "JNILoader",
-          "version": "1.0.1"
-      },
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-FRCSupport",
-          "version": "2019.1.11"
-      }
-  ],
-  "jniDependencies": [
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-JNI",
-          "version": "2019.1.11",
-          "isJar": true,
-          "skipInvalidPlatforms": true,
-          "validPlatforms": [
-              "linuxx86-64",
-              "windowsx86-64",
-              "osxx86-64",
-              "linuxathena",
-              "linuxraspbian"
-          ]
-      },
-      {
-          "groupId": "jaci.pathfinder",
-          "artifactId": "Pathfinder-CoreJNI",
-          "version": "2019.1.11",
-          "isJar": true,
-          "skipInvalidPlatforms": true,
-          "validPlatforms": [
-              "linuxx86-64",
-              "windowsx86-64",
-              "osxx86-64",
-              "linuxathena",
-              "linuxraspbian"
-          ]
-      }
-  ]
+    "fileName": "PathfinderOLD.json",
+    "name": "PathfinderOld",
+    "version": "2019.2.19",
+    "uuid": "7194a2d4-2860-4bcc-86c0-97879737d875",
+    "mavenUrls": [
+        "https://dev.imjac.in/maven"
+    ],
+    "jsonUrl": "https://dev.imjac.in/maven/jaci/pathfinder/PathfinderOLD-latest.json",
+    "cppDependencies": [
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-Core",
+            "version": "2019.2.19",
+            "libName": "pathfinder",
+            "configuration": "native_pathfinder_old",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "linuxx86-64",
+                "windowsx86-64",
+                "osxx86-64",
+                "linuxathena",
+                "linuxraspbian"
+            ]
+        },
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-FRCSupport",
+            "version": "2019.2.19",
+            "libName": "pathfinder_frc",
+            "configuration": "native_pathfinder_old",
+            "headerClassifier": "headers",
+            "binaryPlatforms": [
+                
+            ]
+        }
+    ],
+    "javaDependencies": [
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-Java",
+            "version": "2019.2.19"
+        },
+        {
+            "groupId": "jaci.jniloader",
+            "artifactId": "JNILoader",
+            "version": "1.0.1"
+        },
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-FRCSupport",
+            "version": "2019.2.19"
+        }
+    ],
+    "jniDependencies": [
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-JNI",
+            "version": "2019.2.19",
+            "isJar": true,
+            "skipInvalidPlatforms": true,
+            "validPlatforms": [
+                "linuxx86-64",
+                "windowsx86-64",
+                "osxx86-64",
+                "linuxathena",
+                "linuxraspbian"
+            ]
+        },
+        {
+            "groupId": "jaci.pathfinder",
+            "artifactId": "Pathfinder-CoreJNI",
+            "version": "2019.2.19",
+            "isJar": true,
+            "skipInvalidPlatforms": true,
+            "validPlatforms": [
+                "linuxx86-64",
+                "windowsx86-64",
+                "osxx86-64",
+                "linuxathena",
+                "linuxraspbian"
+            ]
+        }
+    ]
 }

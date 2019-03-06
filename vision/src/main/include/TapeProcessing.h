@@ -1,19 +1,25 @@
 #pragma once
 
 #include "Process.h"
+// #include "ProcessController.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
+#include <mutex>
 
-class TapeProcessing : public Process {
+class TapeProcessing {
  public:
   nt::NetworkTableEntry TapeDistanceEntry;
   nt::NetworkTableEntry TapeAngleEntry;
   nt::NetworkTableEntry TapeTargetEntry;
-  TapeProcessing(Capture &capture) : Process(capture) {}
+  TapeProcessing(Capture &capture);
 
-  void Init() override;
-  void Periodic() override;
+  void Init();
+  void Periodic();
+  void CopyProcessedTrack(cv::Mat &imgProcessedTrack);
+  void GetDisplayMat(cv::Mat &displayMat);
+  cv::Size GetDisplaySize();
+  
 
  private:
   cv::Mat imgHSV;
@@ -28,4 +34,15 @@ class TapeProcessing : public Process {
   std::vector<float> angles;
   std::vector<float> heights;
   std::vector<float> distances;
+  Capture &_capture;
+  cv::Mat _imgProcessing;
+  cv::Mat _imgProcessedTrack;
+  cs::VideoMode _videoMode;
+
+  nt::NetworkTableEntry _usingTapeEntry;
+  bool _useTape;
+	bool _lastUseTape;
+
+ protected:
+  std::mutex _classMutex;
 };

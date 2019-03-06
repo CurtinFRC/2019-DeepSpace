@@ -1,11 +1,9 @@
-#include "VisionRunner.h"
 #include "Capture.h"
 #include "TapeProcessing.h"
-#include "BallProcessing.h"
+#include "ProcessController.h"
 #include "HatchProcessing.h"
 #include "Display.h"
 #include <iostream>
-#include <list>
 #include <networktables/NetworkTableInstance.h>
 
 #ifndef RUNNING_FRC_TESTS
@@ -15,10 +13,13 @@ int main(int argc, char **argv) {
     team = std::stoi(argv[1]);
   }
 
+
 #ifdef __DESKTOP__
   std::cout << "Running on Desktop - imshow enabled" << std::endl;
+  bool isDesktop = true;
 #else
-  std::cout << "Running embedded  -imshow disabled" << std::endl;
+  std::cout << "Running embedded - imshow disabled" << std::endl;
+  bool isDesktop = false;
 #endif
 
   auto ntinst = nt::NetworkTableInstance::GetDefault();
@@ -31,37 +32,39 @@ int main(int argc, char **argv) {
     ntinst.StartServer();
   }
 
-  VisionRunner vision;
-  #ifdef __DESKTOP__
-  Capture capture{1, -100};
-  Capture captureGamePiece{0, 50};
-  #else
-  Capture capture{5, -100};
-  Capture captureGamePiece{4, 50};
-  #endif
-  // HatchProcessing hatchProcess{captureGamePiece};
-  BallProcessing ballProcess{capture};
-  // TapeProcessing tapeProcess{capture};
+  //Capture sideCapture{"HatchSide", isDesktop ? 1 : 5};
+  Capture frontCapture{"FrontSide", isDesktop ? 0 : 4};
   
-  Display displayBall{ballProcess};
-  // Display displayHatch{hatchProcess};
-  // Display displayTape{tapeProcess};
-  
-  // vision.Run(capture);
-  vision.Run(captureGamePiece);
-  vision.Run(ballProcess);
-  // vision.Run(hatchProcess);
-  // vision.Run(tapeProcess);
+  // TapeProcessing tapeSide{sideCapture};
+  // HatchProcessing hatchSide{sideCapture};
+  TapeProcessing tapeFront{frontCapture};
+  HatchProcessing hatchFront{frontCapture};
 
-  vision.Run(displayBall);  //Displays Can't work togethor for shuffleboard
-  // vision.Run(displayHatch);
-  // vision.Run(displayTape);
+  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto visionTable = inst.GetTable("VisionTracking");
 
+  // Processing sideProcess{sideCapture, tapeSide, hatchSide, visionTable->GetEntry("Camera Set Side")};
+  Processing frontProcess{frontCapture, tapeFront, hatchFront, visionTable->GetEntry("Camera Set Front")};
 
-  for (int i = 0; i < vision.workers.size(); i++) {
-    vision.workers[i].join();
-  }
-  
+  // Display sideDisplay{"Side Display", sideProcess};
+  Display frontDisplay{"Front Display", frontProcess};
+
+  // sideCapture.StartThread(30.0);
+  // sideProcess.StartThread(30.0);
+  // sideDisplay.StartThread(30.0);
+
+  frontCapture.StartThread(30.0);
+  frontProcess.StartThread(30.0);
+  frontDisplay.StartThread(30.0);
+
+  // sideCapture.JoinThread();
+  // sideProcess.JoinThread();
+  // sideDisplay.JoinThread();
+
+  frontCapture.JoinThread();
+  frontProcess.JoinThread();
+  frontDisplay.JoinThread();
+
   std::cout << "Vision Program Exited. Broken??" << std::endl;
   return -1;
 }
