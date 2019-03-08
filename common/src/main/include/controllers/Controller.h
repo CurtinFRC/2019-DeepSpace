@@ -39,5 +39,13 @@ namespace curtinfrc {
      protected:
       frc::GenericHID *_cont;
     };
+
+    class GenericHID : public frc::GenericHID {
+     public:
+      using frc::GenericHID::GenericHID;
+
+      virtual double GetX(JoystickHand hand = kRightHand) const override { return GetRawAxis(1); };
+      virtual double GetY(JoystickHand hand = kRightHand) const override { return GetRawAxis(0); };
+    };
   } // ns controllers
 } // ns curtinfrc
