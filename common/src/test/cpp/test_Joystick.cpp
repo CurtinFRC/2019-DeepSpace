@@ -1,57 +1,57 @@
-// #include "gtest/gtest.h"
+#include "gtest/gtest.h"
 
-// #include "controllers/CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 
-// #define EPS 0.00001
+#define EPS 0.00001
 
-// using AxisMap = curtinfrc::controllers::Joystick::AxisMap;
+using AxisMap = curtinfrc::controllers::Joystick::AxisMap;
 
-// namespace testing {
-//   class Joystick : public frc::GenericHID {
-//    public:
-//     using frc::GenericHID::GenericHID;
+namespace testing {
+  class Joystick : public frc::GenericHID {
+   public:
+    using frc::GenericHID::GenericHID;
 
-//     virtual double GetX(JoystickHand hand = kRightHand) const override { return _axis[1]; };
-//     virtual double GetY(JoystickHand hand = kRightHand) const override { return _axis[0]; };
+    virtual double GetX(JoystickHand hand = kRightHand) const override { return _axis[1]; };
+    virtual double GetY(JoystickHand hand = kRightHand) const override { return _axis[0]; };
 
-//     bool GetRawButton(int button) const {
-//       return _buttons[button - 1];
-//     };
+    bool GetRawButton(int button) const {
+      return _buttons[button - 1];
+    };
 
-//     void SetButton(int button, bool val) {
-//       _buttons[button - 1] = val;
-//     };
-
-
-//     double GetRawAxis(int axis) const {
-//       return _axis[axis];
-//     };
-
-//     void SetAxis(int axis, double val) {
-//       _axis[axis] = val;
-//     };
-
-//    private:
-//     bool _buttons[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-//     double _axis[4] = { 0, 0, 0, 0 };
-//   };
-// } // ns testing
+    void SetButton(int button, bool val) {
+      _buttons[button - 1] = val;
+    };
 
 
-// // CONSTRUCTION TEST
+    double GetRawAxis(int axis) const {
+      return _axis[axis];
+    };
 
-// TEST (testing_Joystick, Constructor) {
-//   testing::Joystick raw(0);
-//   curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
-//   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
+    void SetAxis(int axis, double val) {
+      _axis[axis] = val;
+    };
 
-//   ASSERT_EQ(joy.GetPort(), 0);
-//   ASSERT_EQ(joy.GetAxis(AxisMap::kXAxis), 0);
+   private:
+    bool _buttons[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    double _axis[4] = { 0, 0, 0, 0 };
+  };
+} // ns testing
+
+
+// CONSTRUCTION TEST
+
+TEST (testing_Joystick, Constructor) {
+  testing::Joystick raw(0);
+  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  // joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
+
+  ASSERT_EQ(joy.GetPort(), 0);
+  ASSERT_EQ(joy.GetAxis(AxisMap::kXAxis), 0);
 //   ASSERT_EQ(joy.GetAxis(AxisMap::kYAxis), 0);
 //   ASSERT_EQ(joy.GetAxis(AxisMap::kZAxis), 0);
 //   ASSERT_EQ(joy.GetAxis(AxisMap::kTwistAxis), 0);
 //   ASSERT_EQ(joy.GetAxis(AxisMap::kThrottleAxis), 0);
-// }
+}
 
 
 // // SETTER TESTS

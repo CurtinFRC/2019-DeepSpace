@@ -4,7 +4,7 @@ using namespace curtinfrc::controllers::inputs;
 
 
 double Axis::Get() {
-  return _cont.GetAxis(_id);
+  return _cont->GetAxis(_id);
 }
 
 
@@ -39,12 +39,12 @@ double Field::Get(Field::FieldAxisType axis) {
 
 
 bool Button::Get() {
-  return _cont.GetButton(_id);
+  return _cont->GetButton(_id);
 }
 
 
 curtinfrc::controllers::Controller::POVPos POV::Get() {
-  return _cont.GetPOV(_id);
+  return _cont->GetPOV(_id);
 }
 
 

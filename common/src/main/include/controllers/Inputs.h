@@ -39,19 +39,19 @@ namespace curtinfrc {
       template <typename GetType>
       class ContInput {
        public:
-        ContInput(Controller &cont, int id) : _cont(static_cast<Controller&>(cont)), _id(id) {};
+        ContInput(Controller *cont, int id) : _cont(static_cast<Controller*>(cont)), _id(id) {};
 
         virtual GetType Get() = 0;
 
        protected:
-        Controller &_cont;
+        Controller *_cont;
         const int _id;
       };
 
       class ContAxis { public: virtual double Get() = 0; };
       class Axis : public ContInput<double>, public ContAxis {
        public:
-        Axis(Controller &cont, int id) : ContInput(cont, id) {};
+        Axis(Controller *cont, int id) : ContInput(cont, id) {};
 
         virtual double Get() override;
       };
@@ -77,8 +77,7 @@ namespace curtinfrc {
             return GetAxi().second;
           };
 
-          Controller cont_(nullptr);
-          return new Axis(cont_, 0);
+          return new Axis(new Controller(nullptr), 0);
         };
         ContAxis *GetPrimaryAxis() { return GetAxis(primary); };
         ContAxis *GetSecondaryAxis() { return GetAxis(secondary); };
@@ -105,7 +104,7 @@ namespace curtinfrc {
 
       class Button : public ContInput<bool>, public ContButton {
        public:
-        Button(Controller &cont, int id) : ContInput(cont, id) {};
+        Button(Controller *cont, int id) : ContInput(cont, id) {};
 
         virtual bool Get() override;
       };
@@ -113,7 +112,7 @@ namespace curtinfrc {
       class ContPOV { public: virtual Controller::POVPos Get() = 0; };
       class POV : public ContInput<Controller::POVPos>, public ContPOV {
        public:
-        POV(Controller &cont, int id = 0) : ContInput(cont, id) {};
+        POV(Controller *cont, int id = 0) : ContInput(cont, id) {};
 
         virtual Controller::POVPos Get() override; // raw POV output
       };
