@@ -30,7 +30,7 @@ void Robot::RobotInit() {
 
   drivetrain = new Drivetrain(robotmap.drivetrain.config, robotmap.drivetrain.gainsVelocity);
   drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.contGroup));
-  drivetrain->GetConfig().gyro.Reset();
+  drivetrain->GetConfig().gyro->Reset();
   drivetrain->StartLoop(100);
   stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.contGroup, robotmap.drivetrain.gainsFOC);
 
@@ -70,7 +70,7 @@ void Robot::RobotPeriodic() {
   }
 
   if (robotmap.contGroup.GetButtonRise(ControlMap::tapeAlign)) {
-    double offset = drivetrain->GetConfig().gyro.GetAngle();
+    double offset = drivetrain->GetConfig().gyro->GetAngle();
     offset += 0; // get angle from nt
     Schedule(std::make_shared<DrivetrainAngleStrategy>(*drivetrain, robotmap.drivetrain.gainsAlign, offset));
   }

@@ -66,7 +66,8 @@ void TapeProcessing::Periodic() {
     cv::Scalar green = cv::Scalar(0, 255, 0);
     cv::Scalar red = cv::Scalar(0, 0, 255);
 
-    // _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+    _imgProcessedTrack = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
+    _imgProcessing = cv::Mat::zeros(_videoMode.height, _videoMode.width, CV_8UC3);
     for (int i = 0; i < filteredContours.size(); i++) {
       cv::drawContours(_imgProcessedTrack, filteredContours, (int)i, blue, -1);
       cv::RotatedRect rotatedRect = cv::minAreaRect(filteredContours[i]);
