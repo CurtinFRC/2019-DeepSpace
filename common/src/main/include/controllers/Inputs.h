@@ -39,7 +39,7 @@ namespace curtinfrc {
       template <typename GetType>
       class ContInput {
        public:
-        ContInput(Controller *cont, int id) : _cont(static_cast<Controller*>(cont)), _id(id) {};
+        ContInput(Controller *cont, int id) : _cont(cont), _id(id) {};
 
         virtual GetType Get() = 0;
 
