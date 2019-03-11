@@ -1,21 +1,23 @@
 #pragma once
 
 #include "Drivetrain.h"
+
 #include "strategy/Strategy.h"
+#include "controllers/CurtinControllers.h"
 #include "control/PIDController.h"
 
 class BaseDrivetrainTeleopStrategy : public curtinfrc::Strategy {
  public:
-  BaseDrivetrainTeleopStrategy(std::string name, curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup);
+  BaseDrivetrainTeleopStrategy(std::string name, curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup);
 
  protected:
   curtinfrc::Drivetrain &_drivetrain;
-  curtinfrc::ControllerGroup &_contGroup;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };
 
 class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup);
+  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup);
 
   void OnUpdate(double dt) override;
  private:
@@ -24,7 +26,7 @@ class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
 
 class DrivetrainFOCStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainFOCStrategy(curtinfrc::Drivetrain &drive, curtinfrc::ControllerGroup &contGroup, curtinfrc::control::PIDGains gains);
+  DrivetrainFOCStrategy(curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup, curtinfrc::control::PIDGains gains);
 
   void OnUpdate(double dt) override;
  private:
