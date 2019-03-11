@@ -21,7 +21,7 @@ namespace curtinfrc {
      public:
       SmartController(GenericHID *cont, SmartControllerConfig contConfig) : Controller(cont) {
         for (int i = 0; i < contConfig.nAxi; i++) _axi[i] = new inputs::Axis(new Controller(static_cast<Controller>(*this)), i);
-        for (int i = 0; i < contConfig.nButtons; i++) _buttons[i] = new inputs::Button(new Controller(static_cast<Controller>(*this)), i);
+        for (int i = 1; i <= contConfig.nButtons; i++) _buttons[i] = new inputs::Button(new Controller(static_cast<Controller>(*this)), i);
         for (int i = 0; i < contConfig.nPOVs; i++) _POVs[i] = new inputs::POV(new Controller(static_cast<Controller>(*this)), i);
       };
 
