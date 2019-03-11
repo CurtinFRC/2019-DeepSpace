@@ -1,11 +1,12 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 
 namespace curtinfrc {
   class Selector {
    public:
-    Selector(int length = 3, int position = 0) : _length(length), _position(position) {};
+    Selector(int length = 3, int position = 0, bool wrap = false) : _length(length), _position(position), _wrap(wrap) {};
 
     int Get() const { return _position; };
     int GetLength() const { return _length; };
@@ -17,13 +18,20 @@ namespace curtinfrc {
 
     int Shift(int amount) {
       _position += amount;
-      while (_position < 0) _position += _length;
-      _position %= _length;
+
+      if (_wrap) {
+        while (_position < 0) _position += _length;
+        _position %= _length;
+      } else {
+        _position = std::max(0, std::min(_length - 1, _position));
+      }
+
       return Get();
     };
 
    private:
-    int _length;
+    const int _length;
     int _position;
+    const bool _wrap;
   };
 }

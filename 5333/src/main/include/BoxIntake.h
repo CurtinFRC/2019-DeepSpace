@@ -3,7 +3,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "Toggle.h"
 #include "Gearbox.h"
 
@@ -32,7 +32,7 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc:
 
 class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::ControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -42,5 +42,5 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   BoxIntake &_boxIntake;
-  curtinfrc::ControllerGroup &_contGroup;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };
