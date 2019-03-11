@@ -19,7 +19,7 @@ namespace curtinfrc {
 
     class SmartController : public Controller {
      public:
-      SmartController(frc::GenericHID *cont, SmartControllerConfig contConfig) : Controller(cont) {
+      SmartController(GenericHID *cont, SmartControllerConfig contConfig) : Controller(cont) {
         for (int i = 0; i < contConfig.nAxi; i++) _axi[i] = new inputs::Axis(new Controller(static_cast<Controller>(*this)), i);
         for (int i = 0; i < contConfig.nButtons; i++) _buttons[i] = new inputs::Button(new Controller(static_cast<Controller>(*this)), i);
         for (int i = 0; i < contConfig.nPOVs; i++) _POVs[i] = new inputs::POV(new Controller(static_cast<Controller>(*this)), i);

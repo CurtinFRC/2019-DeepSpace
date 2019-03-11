@@ -33,7 +33,7 @@ namespace curtinfrc {
 
     class Joystick : public SmartController {
      public:
-      Joystick(int port, std::pair<tAxis, tAxis> pair = { { -1, kYAxis }, { -1, kXAxis } }) : SmartController(new frc::Joystick(port), { 4, 12, 1 }) {
+      Joystick(int port, std::pair<tAxis, tAxis> pair = { { -1, kYAxis }, { -1, kXAxis } }) : SmartController(new GenericHID(port), { 4, 12, 1 }) {
         if (pair.first != noAxis && pair.second != noAxis) PairAxis(pair.first, pair.second, true);
       };
       
@@ -47,7 +47,7 @@ namespace curtinfrc {
 
     class XboxController : public SmartController {
      public:
-      XboxController(int port) : SmartController(new frc::XboxController(port), { 6, 11, 1 }) {};
+      XboxController(int port) : SmartController(new GenericHID(port), { 6, 11, 1 }) {};
 
       enum AxisMap {
         kLeftXAxis = 0,

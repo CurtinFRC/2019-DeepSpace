@@ -77,7 +77,7 @@ namespace curtinfrc {
             return GetAxi().second;
           };
 
-          return new Axis(new Controller(nullptr), 0);
+          return new Axis(new Controller(new GenericHID(0)), 0);
         };
         ContAxis *GetPrimaryAxis() { return GetAxis(primary); };
         ContAxis *GetSecondaryAxis() { return GetAxis(secondary); };

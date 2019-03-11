@@ -4,9 +4,30 @@
 
 namespace curtinfrc {
   namespace controllers {
+    class ConstructableGenericHID : public frc::GenericHID { // Constructable GenericHID class
+     public:
+      using frc::GenericHID::GenericHID;
+
+      virtual double GetX(JoystickHand hand = kRightHand) const override { return GetRawAxis(1); };
+      virtual double GetY(JoystickHand hand = kRightHand) const override { return GetRawAxis(0); };
+    };
+
+    class GenericHID { // frc::GenericHID wrapper
+     public:
+      GenericHID(int port) : _cont(port) {};
+
+      int GetPort() { return _cont.GetPort(); };
+      virtual double GetRawAxis(int axis) const { return _cont.GetRawAxis(axis); };
+      virtual bool GetRawButton(int button) const { return _cont.GetRawButton(button); };
+      virtual int GetPOV(int POV) const { return _cont.GetPOV(POV); };
+
+     protected:
+      ConstructableGenericHID _cont;
+    };
+
     class Controller {
      public:
-      Controller(frc::GenericHID *cont) : _cont(cont) {};
+      Controller(GenericHID *cont) : _cont(cont) {};
 
       enum ButtonMode {
         RAW = 0,
@@ -37,15 +58,7 @@ namespace curtinfrc {
       virtual POVPos GetPOV(int pov = 0) { return (POVPos)GetRawPOVAngle(pov); };
 
      protected:
-      frc::GenericHID *_cont;
-    };
-
-    class GenericHID : public frc::GenericHID {
-     public:
-      using frc::GenericHID::GenericHID;
-
-      virtual double GetX(JoystickHand hand = kRightHand) const override { return GetRawAxis(1); };
-      virtual double GetY(JoystickHand hand = kRightHand) const override { return GetRawAxis(0); };
+      GenericHID *_cont;
     };
   } // ns controllers
 } // ns curtinfrc
