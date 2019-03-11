@@ -69,6 +69,8 @@ void SmartController::Map(tAxis map_axis, tButton virt_button, double threshold)
   if (Exists(map_axis)) {
     if (Exists(virt_button, false)) {
       _buttons[virt_button.id] = inputs::MakeAxisButton(GetObj(map_axis), threshold).at(0);
+
+      // _axi.erase(_axi.find(map_axis.id));
     }
   }
 }
@@ -80,6 +82,8 @@ void SmartController::Map(tAxis map_axis, std::vector<tButton> virt_buttons) {
       for (int i = 0; i < buttons.size(); i++) {
         if (virt_buttons.at(i) != noButton) _buttons[virt_buttons.at(i).id] = buttons.at(i);
       }
+
+      // _axi.erase(_axi.find(map_axis.id));
     }
   }
 }
@@ -102,6 +106,9 @@ void SmartController::Map(std::pair<tButton, tButton> map_buttons, std::vector<t
       for (int i = 0; i < buttons.size(); i++) {
         if (virt_buttons.at(i) != noButton) _buttons[virt_buttons.at(i).id] = buttons.at(i);
       }
+
+      // _buttons.erase(_buttons.find(map_buttons.first.id));
+      // _buttons.erase(_buttons.find(map_buttons.second.id));
     }
   }
 }
@@ -114,6 +121,8 @@ void SmartController::Map(tPOV map_POV, std::vector<tButton> virt_buttons) {
       for (int i = 0; i < 8; i++) {
         if (virt_buttons.at(i) != noButton) _buttons[virt_buttons.at(i).id] = buttons.at(i);
       }
+
+      // _POVs.erase(_POVs.find(map_POV.id));
     }
   }
 }
@@ -139,4 +148,12 @@ bool SmartController::Get(tButton button, SmartController::ButtonMode mode) {
 curtinfrc::controllers::Controller::POVPos SmartController::Get(tPOV pov) {
   if (Exists(pov, false)) return kNone;
   return GetObj(pov)->Get();
+}
+
+
+
+// --------------------------------------------- UPDATE FUNCS ---------------------------------------------
+
+void SmartController::UpdateButtonSelectors() {
+  for (auto pair : _buttons) UpdateButtonSelector(tButton(-1, pair.first));
 }

@@ -59,6 +59,12 @@ namespace curtinfrc {
       int GetPOVCount() const { return _POVs.size(); };
 
 
+      void Update() { UpdateButtonSelectors(); };
+
+      void UpdateButtonSelectors();
+
+      virtual void UpdateButtonSelector(tButton button) { Get(button); };
+
      protected:
       inputs::ContAxis *GetAxisObj(int axis) { return GetObj(tAxis(-1, axis)); };
       inputs::ContButton *GetButtonObj(int button) { return GetObj(tButton(-1, button)); };
