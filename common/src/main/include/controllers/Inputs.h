@@ -179,7 +179,7 @@ namespace curtinfrc {
 
       class ButtonSelector {
        public:
-        ButtonSelector(std::pair<ContButton*, ContButton*> buttons, int nButtons) : _buttons(buttons), _selector(nButtons) {};
+        ButtonSelector(std::pair<ContButton*, ContButton*> buttons, int nButtons, bool wrap = false) : _buttons(buttons), _selector(nButtons) {};
 
         int Get();
 
@@ -227,7 +227,7 @@ namespace curtinfrc {
 
       std::vector<FieldAxis*> MakeFieldAxi(Field *field);                               // returns 2
 
-      std::vector<ButtonSelectorButton*> MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttons, int n); // returns n
+      std::vector<ButtonSelectorButton*> MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttons, int n, bool wrap = false); // returns n
 
       std::vector<POVButton*> MakePOVButtons(ContPOV *pov);                             // returns 8
     } // ns inputs

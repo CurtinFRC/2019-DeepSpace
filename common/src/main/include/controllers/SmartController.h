@@ -39,7 +39,7 @@ namespace curtinfrc {
       void Map(tAxis map_axis, std::vector<tButton> virt_buttons);
       void PairAxis(tAxis primary_axis, tAxis secondary_axis, bool squared = false);
 
-      void Map(std::pair<tButton, tButton> map_buttons, std::vector<tButton> virt_buttons);
+      void Map(std::pair<tButton, tButton> map_buttons, std::vector<tButton> virt_buttons, bool wrap = false);
 
       void Map(tPOV map_POV, std::vector<tButton> virt_buttons);
 

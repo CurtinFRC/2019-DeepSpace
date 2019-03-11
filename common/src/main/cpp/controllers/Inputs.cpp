@@ -126,7 +126,7 @@ std::vector<FieldAxis*> curtinfrc::controllers::inputs::MakeFieldAxi(Field *fiel
 }
 
 
-std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n) {
+std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n, bool wrap) {
   std::vector<ButtonSelectorButton*> buttons;
 
   ButtonSelector selector(buttonPair, n);
