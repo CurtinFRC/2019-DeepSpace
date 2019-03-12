@@ -5,6 +5,29 @@
 
 // public
 
+std::string curtinfrc::RawElevator::GetState() {
+  switch (_elevator->GetState()) {
+   case curtinfrc::ElevatorState::kStationary:
+    return "kStationary";
+    
+   case curtinfrc::ElevatorState::kMoving:
+    return "kMoving";
+
+   case curtinfrc::ElevatorState::kZeroing:
+    return "kZeroing";
+    
+   case curtinfrc::ElevatorState::kManual:
+    return "kManual";
+  }
+
+  return "<state error>";
+}
+
+
+curtinfrc::devices::RawStateDevice *curtinfrc::Elevator::MakeRawStateDevice(std::string name) {
+  return new curtinfrc::RawElevator(this, name);
+}
+
 void curtinfrc::Elevator::SetManual(double power) {
   SetState(curtinfrc::ElevatorState::kManual);
   _controller.SetSetpoint(power);

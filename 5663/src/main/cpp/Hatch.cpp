@@ -46,8 +46,6 @@ void Hatch::ejectHatch(bool eject) {
 
 void Hatch::lockHatch(bool state) {
     lock->SetTarget(state ? curtinfrc::actuators::kReverse : curtinfrc::actuators::kForward);
-
-    if (lock->IsDone()) lock->Stop();
 }
 
 void Hatch::alignmentPiston(bool extended) {

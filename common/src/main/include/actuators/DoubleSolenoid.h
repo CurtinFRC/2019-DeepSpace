@@ -11,7 +11,11 @@ namespace curtinfrc {
       DoubleSolenoid(int forwardChannel, int reverseChannel, BinaryActuatorState initialState = actuators::kReverse) : frc::DoubleSolenoid(forwardChannel, reverseChannel), BinaryActuator(initialState) {};
       DoubleSolenoid(int pcmID, int forwardChannel, int reverseChannel, BinaryActuatorState initialState = actuators::kReverse) : frc::DoubleSolenoid(pcmID, forwardChannel, reverseChannel), BinaryActuator(initialState) {};
 
-      virtual void Update(double dt) override;
+      virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<DoubleSolenoid>") override {
+        return BinaryActuator::MakeRawStateDevice(name);
+      }
+
+      virtual void UpdateActuator(double dt) override;
       virtual void Stop() final {};
     };
   } // ns actuators

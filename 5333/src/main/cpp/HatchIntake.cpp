@@ -16,7 +16,6 @@ void HatchIntake::StowedPeriodic() { // Stow
 
 void HatchIntakeManualStrategy::OnUpdate(double dt) {
   _hatchIntake.GetConfig().manipulator.Update(dt);
-  if (_hatchIntake.GetConfig().manipulator.IsDone()) _hatchIntake.GetConfig().manipulator.Stop();
 
   if (_enabledToggle.Update(_contGroup.Get(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
 

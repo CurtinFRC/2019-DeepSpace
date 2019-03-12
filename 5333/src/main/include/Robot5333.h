@@ -12,6 +12,7 @@
 
 #include "RobotMap.h"
 #include "strategy/StrategyController.h"
+#include "NTProvider.h"
 
 #include "Toggle.h"
 
@@ -22,7 +23,7 @@
 
 #include "strategies/DriveStrategies.h"
 
-class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController {
+class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, protected curtinfrc::NTProvider {
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
