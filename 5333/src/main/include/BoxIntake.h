@@ -3,7 +3,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "Toggle.h"
 #include "Gearbox.h"
 
@@ -19,6 +19,10 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc:
  public:
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
+  virtual curtinfrc::devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Box Intake>") override {
+    return DeployableDevice::MakeRawStateDevice(name);
+  }
+
  protected:
   virtual void IntakingPeriodic() override;  // Intake a cargo
   virtual void OuttakingPeriodic() override; // Eject a cargo
@@ -32,7 +36,7 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc:
 
 class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::ControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -42,5 +46,5 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   BoxIntake &_boxIntake;
-  curtinfrc::ControllerGroup &_contGroup;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };

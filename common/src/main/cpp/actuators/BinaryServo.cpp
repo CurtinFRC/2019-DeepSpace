@@ -2,7 +2,7 @@
 
 using namespace curtinfrc::actuators;
 
-void BinaryServo::Update(double dt) {
+void BinaryServo::UpdateActuator(double dt) {
   SetAngle(_state == kForward ? _forwardPos : _reversePos);
 }
 

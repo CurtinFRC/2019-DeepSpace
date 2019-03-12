@@ -1,6 +1,6 @@
 #include "actuators/Compressor.h"
 
-void curtinfrc::actuators::Compressor::Update(double dt) {
+void curtinfrc::actuators::Compressor::UpdateActuator(double dt) {
   if (_state == actuators::kForward) { // charge
     Start();
   } else { // off

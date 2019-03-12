@@ -12,7 +12,7 @@ TEST (Selector, DefConstructor) {
 }
 
 TEST (Selector, RawShift) {
-  Selector selector{ 10 };
+  Selector selector{ 10, 0, true };
 
   ASSERT_EQ(selector.Get(), 0);
   ASSERT_EQ(selector.GetLength(), 10);
@@ -26,7 +26,7 @@ TEST (Selector, RawShift) {
 }
 
 TEST (Selector, Set) {
-  Selector selector{ 10 };
+  Selector selector{ 10, 0, true };
 
   ASSERT_EQ(selector.Get(), 0);
   ASSERT_EQ(selector.GetLength(), 10);
@@ -36,6 +36,25 @@ TEST (Selector, Set) {
   ASSERT_EQ(selector.Set(-1), 9);
   ASSERT_EQ(selector.Shift(1), 0);
   ASSERT_EQ(selector.Set(22), 2);
+}
+
+TEST (Selector, NoWrap) {
+  Selector selector{ 10 };
+
+  ASSERT_EQ(selector.Get(), 0);
+  ASSERT_EQ(selector.GetLength(), 10);
+
+  ASSERT_EQ(selector.Set(4), 4);
+  ASSERT_EQ(selector.ShiftLeft(2), 2);
+  ASSERT_EQ(selector.ShiftLeft(2), 0);
+  ASSERT_EQ(selector.ShiftLeft(2), 0);
+
+  ASSERT_EQ(selector.Set(6), 6);
+  ASSERT_EQ(selector.ShiftRight(3), 9);
+  ASSERT_EQ(selector.ShiftRight(3), 9);
+
+  ASSERT_EQ(selector.Set(-2), 0);
+  ASSERT_EQ(selector.Set(12), 9);
 }
 
 TEST (Selector, Shift) {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <utility>
 #include <cmath>
 #include <functional>
+#include <string>
+#include <utility>
 
 #include <frc/SpeedController.h>
 #include <frc/interfaces/Gyro.h>
@@ -15,7 +16,6 @@
 #include "devices/StateDevice.h"
 
 #include "Usage.h"
-#include "CurtinControllers.h"
 #include "Toggle.h"
 
 namespace curtinfrc {
@@ -54,9 +54,13 @@ namespace curtinfrc {
   
   enum class DrivetrainState { kManual = 0, kVelocity, kIdle, kExternalLoop };
 
+  class RawDrivetrain;
+
   class Drivetrain : public devices::StateDevice<DrivetrainState>, public StrategySystem {
    public:
     Drivetrain(DrivetrainConfig config, control::PIDGains gains = { "Drivetrain Velocity" }) : _config(config), _pidLeft(gains), _pidRight(gains) {};
+
+    virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Drivetrain>") override;
 
     void Set(double leftPower, double rightPower);
     void SetVoltage(double left, double right);
@@ -88,6 +92,17 @@ namespace curtinfrc {
 
     Usage<DrivetrainConfig>::Scoped _usage{&_config};
   };
+
+  class RawDrivetrain : public devices::RawStateDevice {
+     public:
+      RawDrivetrain(Drivetrain *drivetrain, std::string name = "<Deployable Device>") : RawStateDevice(name), _drivetrain(drivetrain) {};
+
+      virtual void Update(double dt) { _drivetrain->Update(dt); };
+      virtual std::string GetState();
+
+     private:
+      Drivetrain *_drivetrain;
+    };
 
   class DrivetrainFOCController {
    public:

@@ -2,7 +2,7 @@
 
 #include "Elevator.h"
 
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "strategy/Strategy.h"
 
 class Lift : public curtinfrc::Elevator {
@@ -15,7 +15,7 @@ class Lift : public curtinfrc::Elevator {
 
 class LiftManualStrategy : public curtinfrc::Strategy {
  public:
-  LiftManualStrategy(Lift &lift, curtinfrc::ControllerGroup &contGroup) : Strategy("Lift Manual"), _lift(lift), _contGroup(contGroup) {
+  LiftManualStrategy(Lift &lift, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Lift Manual"), _lift(lift), _contGroup(contGroup) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -25,7 +25,7 @@ class LiftManualStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::ControllerGroup &_contGroup;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };
 
 class LiftGotoStrategy : public curtinfrc::Strategy {

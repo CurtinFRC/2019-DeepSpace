@@ -5,7 +5,7 @@
 #include <frc/PowerDistributionPanel.h>
 
 #include "CurtinCtre.h"
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "Gearbox.h"
 #include "actuators/BinaryServo.h"
 #include "actuators/Compressor.h"
@@ -28,14 +28,14 @@
 #include "BoxIntake.h"
 
 struct RobotMap {
-  curtinfrc::Joystick joy1{ 0 }; // Driver
-  curtinfrc::Joystick joy2{ 1 }; // Co-Driver
+  curtinfrc::controllers::Joystick joy1{ 0 }; // Driver
+  curtinfrc::controllers::Joystick joy2{ 1 }; // Co-Driver
 
   #if N_CONT == 2
-  curtinfrc::ControllerGroup contGroup{ joy1, joy2 };
+  curtinfrc::controllers::SmartControllerGroup contGroup{ joy1, joy2 };
   #elif N_CONT == 3
-  curtinfrc::XboxController xbox{ 2 };
-  curtinfrc::ControllerGroup contGroup{ joy1, joy2, xbox };
+  curtinfrc::controllers::XboxController xbox{ 2 };
+  curtinfrc::controllers::SmartControllerGroup contGroup{ joy1, joy2, xbox };
   #endif
 
   frc::PowerDistributionPanel pdp{0};

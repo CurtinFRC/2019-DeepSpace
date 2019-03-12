@@ -4,7 +4,7 @@
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
 #include "actuators/BinaryActuator.h"
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "Toggle.h"
 
 using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
@@ -20,6 +20,10 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfr
  public:
   HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
+  virtual curtinfrc::devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Hatch Intake>") override {
+    return DeployableDevice::MakeRawStateDevice(name);
+  }
+
   HatchIntakeConfig &GetConfig() { return _config; };
 
  protected:
@@ -33,7 +37,7 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfr
 
 class HatchIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::ControllerGroup &contGroup, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _contGroup(contGroup), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::controllers::SmartControllerGroup &contGroup, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _contGroup(contGroup), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
     Requires(&hatchIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -43,7 +47,7 @@ class HatchIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   HatchIntake &_hatchIntake;
-  curtinfrc::ControllerGroup &_contGroup;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
   curtinfrc::Toggle _enabledToggle;
   bool _enabled;
 };

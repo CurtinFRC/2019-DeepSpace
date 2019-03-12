@@ -1,6 +1,6 @@
 #include "actuators/BinaryLimitMotor.h"
 
-void curtinfrc::actuators::BinaryLimitMotor::Update(double dt) {
+void curtinfrc::actuators::BinaryLimitMotor::UpdateActuator(double dt) {
   if (_state == kForward) {
     _config.motor.transmission->SetVoltage(12);
   } else {
