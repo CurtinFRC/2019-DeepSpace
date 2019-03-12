@@ -147,12 +147,12 @@ namespace curtinfrc {
 
       class AxisSelectorButton : public ContButton {
        public:
-        AxisSelectorButton(AxisSelector &selector, int id) : _selector(selector), _id(id) {};
+        AxisSelectorButton(AxisSelector *selector, int id) : _selector(selector), _id(id) {};
 
         virtual bool Get() override;
 
        private:
-        AxisSelector &_selector;
+        AxisSelector *_selector;
         const int _id;
       };
 
@@ -190,12 +190,12 @@ namespace curtinfrc {
 
       class ButtonSelectorButton : public ContButton {
        public:
-        ButtonSelectorButton(ButtonSelector &selector, int id) : _selector(selector), _id(id) {};
+        ButtonSelectorButton(ButtonSelector *selector, int id) : _selector(selector), _id(id) {};
 
         virtual bool Get() override;
 
        private:
-        ButtonSelector &_selector;
+        ButtonSelector *_selector;
         const int _id;
       };
 
