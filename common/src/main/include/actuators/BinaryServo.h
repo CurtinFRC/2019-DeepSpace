@@ -11,7 +11,7 @@ namespace curtinfrc {
      public:
       BinaryServo(int channel, int forwardPos, int reversePos) : frc::Servo(channel), _forwardPos(forwardPos), _reversePos(reversePos) {};
       
-      virtual void Update(double dt) override;
+      virtual void UpdateActuator(double dt) override;
       virtual void Stop() final {};
       virtual bool IsDone() override;
       

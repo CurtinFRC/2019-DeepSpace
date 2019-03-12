@@ -105,9 +105,6 @@ void Robot::RobotPeriodic() {
   if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   robotmap.controlSystem.compressor.Update(dt);
-  if (robotmap.controlSystem.compressor.IsDone()) {
-    robotmap.controlSystem.compressor.Stop();
-  }
 
   StrategyController::Update(dt);
   NTProvider::Update();

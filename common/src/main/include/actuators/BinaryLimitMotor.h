@@ -15,7 +15,7 @@ namespace curtinfrc {
      public:
       BinaryLimitMotor(BinaryLimitMotorConfig config, BinaryActuatorState initialState = kReverse) : _config(config), BinaryActuator(initialState) {};
 
-      virtual void Update(double dt) override;
+      virtual void UpdateActuator(double dt) override;
       virtual void Stop() override;
       virtual bool IsDone() override;
 

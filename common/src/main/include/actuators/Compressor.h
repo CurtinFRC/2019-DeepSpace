@@ -11,7 +11,7 @@ namespace curtinfrc {
       Compressor(BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(), BinaryActuator(initialState) { SetClosedLoopControl(false); };
       Compressor(int pcmID, BinaryActuatorState initialState = actuators::kReverse) : frc::Compressor(pcmID), BinaryActuator(initialState) { SetClosedLoopControl(false); };
 
-      virtual void Update(double dt) override;
+      virtual void UpdateActuator(double dt) override;
       virtual void Stop() final {};
       virtual bool IsDone() override;
     };

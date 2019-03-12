@@ -8,7 +8,7 @@ namespace devices {
   template <typename StateType>
   class StateDevice : public loops::LoopSystem {
    public:
-    StateDevice() { _state = (StateType)0; };
+    StateDevice(StateType initialState = (StateType)0) : _state(initialState) {};
 
     void Update(double dt) override {
       if (_state != _lastState) {
