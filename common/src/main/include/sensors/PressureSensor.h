@@ -2,14 +2,15 @@
 
 #include <frc/AnalogInput.h>
 
+#include "sensors/DoubleSensor.h"
+
 namespace curtinfrc {
   namespace sensors {
-    class PressureSensor {
+    class PressureSensor : public DoubleSensor {
      public:
-      PressureSensor(int channel);
+      PressureSensor(int channel, std::string name = "<no name>") : DoubleSensor(name, 120), _sensor(channel) {};
 
-      double Get();                        // %, assuming 120psi is 100%
-      double GetPSI() { return Get() * 120; };
+      virtual double Get();  // %, assuming 120psi is 100%
 
      private:
       frc::AnalogInput _sensor;
