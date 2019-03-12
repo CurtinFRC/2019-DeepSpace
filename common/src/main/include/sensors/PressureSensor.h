@@ -8,7 +8,7 @@ namespace curtinfrc {
   namespace sensors {
     class PressureSensor : public DoubleSensor {
      public:
-      PressureSensor(int channel, std::string name = "<no name>") : DoubleSensor(name, 120), _sensor(channel) {};
+      PressureSensor(int channel, std::string name = "<Pressure Sensor>") : DoubleSensor(name, 120), _sensor(channel) {};
 
       virtual double Get();  // %, assuming 120psi is 100%
 

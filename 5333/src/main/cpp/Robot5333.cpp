@@ -56,7 +56,14 @@ void Robot::RobotInit() {
   StrategyController::Register(frontHatchIntake);
   StrategyController::Register(boxIntake);
 
+
   NTProvider::Register(&robotmap.controlSystem.pressureSensor);
+
+  NTProvider::Register(drivetrain->MakeRawStateDevice("Drivetrain"));
+  NTProvider::Register(beElevator->MakeRawStateDevice("beElevator"));
+  NTProvider::Register(sideHatchIntake->MakeRawStateDevice("Demigorgon"));
+  NTProvider::Register(frontHatchIntake->MakeRawStateDevice("Shin Destroyer"));
+  NTProvider::Register(boxIntake->MakeRawStateDevice("Box Intake"));
 }
 
 void Robot::RobotPeriodic() {

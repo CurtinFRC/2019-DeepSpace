@@ -19,6 +19,10 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc:
  public:
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
+  virtual curtinfrc::devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Box Intake>") override {
+    return DeployableDevice::MakeRawStateDevice(name);
+  }
+
  protected:
   virtual void IntakingPeriodic() override;  // Intake a cargo
   virtual void OuttakingPeriodic() override; // Eject a cargo

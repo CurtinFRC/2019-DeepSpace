@@ -16,6 +16,10 @@ namespace curtinfrc {
      public:
       BinaryEncoderMotor(BinaryEncoderMotorConfig config, BinaryActuatorState initialState = kReverse) : _config(config), BinaryActuator(initialState) {};
 
+      virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Binary Encoder Motor>") override {
+        return BinaryActuator::MakeRawStateDevice(name);
+      }
+
       virtual void UpdateActuator(double dt) override;
       virtual void Stop() override;
       virtual bool IsDone() override;

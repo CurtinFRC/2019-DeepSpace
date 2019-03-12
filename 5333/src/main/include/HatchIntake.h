@@ -20,6 +20,10 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfr
  public:
   HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
+  virtual curtinfrc::devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Hatch Intake>") override {
+    return DeployableDevice::MakeRawStateDevice(name);
+  }
+
   HatchIntakeConfig &GetConfig() { return _config; };
 
  protected:

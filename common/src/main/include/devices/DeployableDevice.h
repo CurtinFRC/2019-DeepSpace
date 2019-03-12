@@ -18,7 +18,7 @@ namespace curtinfrc {
      public:
       DeployableDevice(DeployableDeviceConfig config) : _config(config) {};
 
-      virtual RawStateDevice *MakeRawStateDevice(std::string name = "<Deployable Device>") final;
+      virtual RawStateDevice *MakeRawStateDevice(std::string name = "<Deployable Device>") override;
 
       virtual void SetIntaking();
       virtual void SetOuttaking();

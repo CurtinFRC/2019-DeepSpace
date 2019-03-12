@@ -13,7 +13,7 @@ namespace curtinfrc {
       BinaryActuator(BinaryActuatorState initialState = kReverse) : StateDevice(initialState) {};
       using ActuatorState = BinaryActuatorState;
 
-      virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Binary Actuator>") final;
+      virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Binary Actuator>") override;
 
       void SetTarget(BinaryActuatorState state) { SetState(state); Init(); };
       virtual void UpdateActuator(double dt) = 0;

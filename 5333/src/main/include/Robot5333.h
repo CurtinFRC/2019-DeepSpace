@@ -39,11 +39,6 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, p
   void TestInit() override;
   void TestPeriodic() override;
 
-  // void Register(void *system) {
-  //   StrategyController::Register(static_cast<curtinfrc::StrategySystem*>(system));
-  //   NTProvider::Register(static_cast<curtinfrc::devices::RawStateDevice*>(system));
-  // };
-
 
   RobotMap robotmap;
 

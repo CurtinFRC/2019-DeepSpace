@@ -6,7 +6,7 @@ namespace curtinfrc {
   namespace sensors {
     class BinarySensor : public SensorBase<bool> {
      public:
-      BinarySensor(std::string name = "<no name>") : SensorBase(name) {};
+      BinarySensor(std::string name = "<Binary Sensor>") : SensorBase(name) {};
 
       virtual bool Get() = 0;
     };

@@ -7,7 +7,7 @@ namespace curtinfrc {
     template <typename returnType>
     class SensorBase {
      public:
-      SensorBase(std::string name = "<no name>") : _name(name) {};
+      SensorBase(std::string name = "<Sensor Base>") : _name(name) {};
 
       virtual returnType Get() = 0;
 
