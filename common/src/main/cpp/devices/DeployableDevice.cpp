@@ -1,6 +1,36 @@
 #include "devices/DeployableDevice.h"
 
-void curtinfrc::devices::DeployableDevice::SetIntaking() {
+using namespace curtinfrc;
+using namespace curtinfrc::devices;
+
+
+std::string RawDeployableDevice::GetState() {
+  switch (_device->GetState()) {
+   case kStowed:
+    return "kStowed";
+
+   case kStowing:
+    return "kStowing";
+
+   case kDeploying:
+    return "kDeploying";
+
+   case kOuttaking:
+    return "kOuttaking";
+
+   case kIntaking:
+    return "kIntaking";
+  }
+
+  return "<state error>";
+}
+
+
+devices::RawStateDevice *DeployableDevice::MakeRawStateDevice(std::string name) {
+  return new RawDeployableDevice(this, name);
+}
+
+void DeployableDevice::SetIntaking() {
   if (!_config.canEject) { // default
     switch (_state) {
      case kIntaking:
@@ -26,7 +56,7 @@ void curtinfrc::devices::DeployableDevice::SetIntaking() {
   }
 }
 
-void curtinfrc::devices::DeployableDevice::SetOuttaking() {
+void DeployableDevice::SetOuttaking() {
   if (!_config.canEject) { // default
     switch (_state) {
      case kOuttaking:
@@ -57,7 +87,7 @@ void curtinfrc::devices::DeployableDevice::SetOuttaking() {
   }
 }
 
-void curtinfrc::devices::DeployableDevice::SetStowed() {
+void DeployableDevice::SetStowed() {
   switch (_state) {
    case kStowed:
     break;
@@ -68,7 +98,7 @@ void curtinfrc::devices::DeployableDevice::SetStowed() {
   }
 }
 
-void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::DeployableDeviceState state, double dt) {
+void DeployableDevice::OnStatePeriodic(DeployableDeviceState state, double dt) {
   _config.actuator.Update(dt);
 
   switch (state) {

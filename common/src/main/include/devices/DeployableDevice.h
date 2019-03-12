@@ -18,6 +18,8 @@ namespace curtinfrc {
      public:
       DeployableDevice(DeployableDeviceConfig config) : _config(config) {};
 
+      virtual RawStateDevice *MakeRawStateDevice(std::string name = "<Deployable Device>") final;
+
       virtual void SetIntaking();
       virtual void SetOuttaking();
       virtual void SetStowed();
@@ -33,6 +35,17 @@ namespace curtinfrc {
 
      private:
       DeployableDeviceConfig _config;
+    };
+
+    class RawDeployableDevice : public RawStateDevice {
+     public:
+      RawDeployableDevice(DeployableDevice *device, std::string name = "<Deployable Device>") : RawStateDevice(name), _device(device) {};
+
+      virtual void Update(double dt) { _device->Update(dt); };
+      virtual std::string GetState();
+
+     private:
+      DeployableDevice *_device;
     };
   } // ns intakes
 } // ns curtinfrc

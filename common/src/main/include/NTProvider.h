@@ -1,11 +1,14 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <networktables/NetworkTableInstance.h>
 
 #include "sensors/BinarySensor.h"
 #include "sensors/DoubleSensor.h"
+
+#include "devices/StateDevice.h"
 
 namespace curtinfrc {
   class NTProvider {
@@ -17,10 +20,14 @@ namespace curtinfrc {
     void Register(sensors::BinarySensor *binarySensor);
     void Register(sensors::DoubleSensor *doubleSensor);
 
+    void Register(devices::RawStateDevice *stateDevice);
+
    private:
     std::shared_ptr<nt::NetworkTable> _table;
 
     std::vector<sensors::BinarySensor*> _binarySensors;
     std::vector<sensors::DoubleSensor*> _doubleSensors;
+
+    std::vector<devices::RawStateDevice*> _stateDevices;
   };
 }
