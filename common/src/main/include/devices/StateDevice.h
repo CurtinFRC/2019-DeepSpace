@@ -6,12 +6,12 @@
 
 namespace curtinfrc {
   namespace devices {
-    class RawStateDevice {
+    class StateDeviceBase : public loops::LoopSystem {
      public:
-      RawStateDevice(std::string name = "<no name>") : _name(name) {};
+      StateDeviceBase(std::string name = "<no name>") : _name(name) {};
 
-      virtual void Update(double dt) = 0; // unused rn
-      virtual std::string GetState() = 0;
+      virtual void Update(double dt) = 0;
+      virtual std::string GetStateString() = 0;
 
       std::string GetName() { return _name; };
     
@@ -20,14 +20,11 @@ namespace curtinfrc {
     };
 
     template <typename StateType>
-    class StateDevice : public loops::LoopSystem {
+    class StateDevice : public StateDeviceBase {
      public:
-      StateDevice(StateType initialState = (StateType)0) : _state(initialState) {};
+      StateDevice(std::string name = "<State Device>", StateType initialState = (StateType)0) : StateDeviceBase(name), _state(initialState) {};
 
-      virtual RawStateDevice *MakeRawStateDevice(std::string name = "<no name>") = 0;
-
-
-      void Update(double dt) final {
+      virtual void Update(double dt) final {
         if (_state != _lastState) {
           OnStateChange(_state, _lastState);
           _lastState = _state;
@@ -42,7 +39,7 @@ namespace curtinfrc {
       void SetState(StateType state) { _state = state; };
       StateType _state, _lastState;
 
-      virtual void OnStateChange(StateType newState, StateType oldState){};
+      virtual void OnStateChange(StateType newState, StateType oldState) {};
       virtual void OnStatePeriodic(StateType state, double dt) = 0;
     };
   }  // namespace devices

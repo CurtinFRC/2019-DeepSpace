@@ -20,7 +20,7 @@ namespace curtinfrc {
     void Register(sensors::BinarySensor *binarySensor);
     void Register(sensors::DoubleSensor *doubleSensor);
 
-    void Register(devices::RawStateDevice *stateDevice);
+    void Register(devices::StateDeviceBase *stateDevice);
 
    private:
     std::shared_ptr<nt::NetworkTable> _table;
@@ -28,6 +28,6 @@ namespace curtinfrc {
     std::vector<sensors::BinarySensor*> _binarySensors;
     std::vector<sensors::DoubleSensor*> _doubleSensors;
 
-    std::vector<devices::RawStateDevice*> _stateDevices;
+    std::vector<devices::StateDeviceBase*> _stateDevices;
   };
 }

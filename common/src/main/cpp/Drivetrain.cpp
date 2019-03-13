@@ -1,7 +1,7 @@
 #include "Drivetrain.h"
 
-std::string curtinfrc::RawDrivetrain::GetState() {
-  switch (_drivetrain->GetState()) {
+std::string curtinfrc::Drivetrain::GetStateString() {
+  switch (GetState()) {
    case curtinfrc::DrivetrainState::kManual:
     return "kManual";
 
@@ -18,10 +18,6 @@ std::string curtinfrc::RawDrivetrain::GetState() {
   return "<state error>";
 }
 
-
-curtinfrc::devices::RawStateDevice *curtinfrc::Drivetrain::MakeRawStateDevice(std::string name) {
-  return new RawDrivetrain(this, name);
-}
 
 void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
   SetVoltage(leftPower * 12, rightPower * 12);
