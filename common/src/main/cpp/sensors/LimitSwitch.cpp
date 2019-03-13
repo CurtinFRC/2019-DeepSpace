@@ -1,6 +1,6 @@
 #include "sensors/LimitSwitch.h"
 
-curtinfrc::sensors::LimitSwitch::LimitSwitch(int channel, bool invert) : _switch(channel), _inverted(invert) { }
+curtinfrc::sensors::LimitSwitch::LimitSwitch(int channel, bool invert, std::string name) : BinarySensor(name), _switch(channel), _inverted(invert) { }
 
 void curtinfrc::sensors::LimitSwitch::SetInverted(bool invert) {
   _inverted = invert;

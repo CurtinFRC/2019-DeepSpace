@@ -5,6 +5,25 @@
 
 // public
 
+std::string curtinfrc::Elevator::GetStateString() {
+  switch (GetState()) {
+   case curtinfrc::ElevatorState::kStationary:
+    return "kStationary";
+    
+   case curtinfrc::ElevatorState::kMoving:
+    return "kMoving";
+
+   case curtinfrc::ElevatorState::kZeroing:
+    return "kZeroing";
+    
+   case curtinfrc::ElevatorState::kManual:
+    return "kManual";
+  }
+
+  return "<state error>";
+}
+
+
 void curtinfrc::Elevator::SetManual(double power) {
   SetState(curtinfrc::ElevatorState::kManual);
   _controller.SetSetpoint(power);

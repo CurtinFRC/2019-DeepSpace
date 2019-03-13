@@ -50,11 +50,20 @@ void Robot::RobotInit() {
   boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.contGroup));
   boxIntake->StartLoop(50);
 
-  Register(drivetrain);
-  Register(beElevator);
-  Register(sideHatchIntake);
-  Register(frontHatchIntake);
-  Register(boxIntake);
+  StrategyController::Register(drivetrain);
+  StrategyController::Register(beElevator);
+  StrategyController::Register(sideHatchIntake);
+  StrategyController::Register(frontHatchIntake);
+  StrategyController::Register(boxIntake);
+
+
+  NTProvider::Register(&robotmap.controlSystem.pressureSensor);
+
+  NTProvider::Register(drivetrain);
+  NTProvider::Register(beElevator);
+  NTProvider::Register(sideHatchIntake);
+  NTProvider::Register(frontHatchIntake);
+  NTProvider::Register(boxIntake);
 }
 
 void Robot::RobotPeriodic() {
@@ -90,9 +99,6 @@ void Robot::RobotPeriodic() {
   }
   // Need to schedule stratPOV *
 
-  frc::SmartDashboard::PutNumber("PSI", robotmap.controlSystem.pressureSensor.GetPSI());
-  if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
-  
   // Redundant, as it can already be accessed on shuffleboard via nt, but ~
   frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
   frc::SmartDashboard::PutNumber("Hatch X Offset", robotmap.controlSystem.hatchXoffsetEntry.GetDouble(0));
@@ -102,15 +108,13 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
   frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
   
+
+  if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   robotmap.controlSystem.compressor.Update(dt);
-  if (robotmap.controlSystem.compressor.IsDone()) {
-    robotmap.controlSystem.compressor.Stop();
-  }
 
-  Update(dt);
-
-  std::cout << beElevator->GetHeight() << std::endl;
+  StrategyController::Update(dt);
+  NTProvider::Update();
 }
 
 void Robot::DisabledInit() {

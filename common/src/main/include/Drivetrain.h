@@ -1,8 +1,9 @@
 #pragma once
 
-#include <utility>
 #include <cmath>
 #include <functional>
+#include <string>
+#include <utility>
 
 #include <frc/SpeedController.h>
 #include <frc/interfaces/Gyro.h>
@@ -49,13 +50,17 @@ namespace curtinfrc {
     double mass;
 
     bool reversed = false;
+
+    std::string name = "<Drivetrain>";
   };
   
   enum class DrivetrainState { kManual = 0, kVelocity, kIdle, kExternalLoop };
 
   class Drivetrain : public devices::StateDevice<DrivetrainState>, public StrategySystem {
    public:
-    Drivetrain(DrivetrainConfig config, control::PIDGains gains = { "Drivetrain Velocity" }) : _config(config), _pidLeft(gains), _pidRight(gains) {};
+    Drivetrain(DrivetrainConfig config, control::PIDGains gains = { "Drivetrain Velocity" }) : StateDevice(config.name), _config(config), _pidLeft(gains), _pidRight(gains) {};
+
+    virtual std::string GetStateString() final;
 
     void Set(double leftPower, double rightPower);
     void SetVoltage(double left, double right);

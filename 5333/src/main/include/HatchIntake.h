@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
@@ -13,7 +15,7 @@ struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::actuators::BinaryActuator &manipulator;
   curtinfrc::actuators::BinaryActuatorState stowedState;
 
-  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
+  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, std::string name = "<Hatch Intake>", curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
 };
 
 class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc::StrategySystem {

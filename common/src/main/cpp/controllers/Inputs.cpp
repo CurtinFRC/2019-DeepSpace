@@ -70,7 +70,7 @@ int AxisSelector::Get() {
 
 
 bool AxisSelectorButton::Get() {
-  return _selector.Get() == _id;
+  return _selector->Get() == _id;
 }
 
 
@@ -92,7 +92,7 @@ int ButtonSelector::Get() {
 
 
 bool ButtonSelectorButton::Get() {
-  return _selector.Get() == _id;
+  return _selector->Get() == _id;
 }
 
 
@@ -114,8 +114,7 @@ std::vector<AxisButton*> curtinfrc::controllers::inputs::MakeAxisButton(ContAxis
 std::vector<AxisSelectorButton*> curtinfrc::controllers::inputs::MakeAxisSelectorButtons(ContAxis *axis, int n) {
   std::vector<AxisSelectorButton*> buttons;
 
-  AxisSelector selector(axis, n);
-  for (int i = 0; i < n; i++) buttons.push_back(new AxisSelectorButton(selector, i));
+  for (int i = 0; i < n; i++) buttons.push_back(new AxisSelectorButton(new AxisSelector(axis, n), i));
 
   return buttons;
 }
@@ -129,8 +128,7 @@ std::vector<FieldAxis*> curtinfrc::controllers::inputs::MakeFieldAxi(Field *fiel
 std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n, bool wrap) {
   std::vector<ButtonSelectorButton*> buttons;
 
-  ButtonSelector selector(buttonPair, n);
-  for (int i = 0; i < n; i++) buttons.push_back(new ButtonSelectorButton(selector, i));
+  for (int i = 0; i < n; i++) buttons.push_back(new ButtonSelectorButton(new ButtonSelector(buttonPair, n), i));
 
   return buttons;
 }

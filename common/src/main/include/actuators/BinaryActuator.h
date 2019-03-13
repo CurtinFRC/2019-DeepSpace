@@ -1,26 +1,43 @@
 #pragma once
 
+#include <string>
+
+#include "devices/StateDevice.h"
+
 namespace curtinfrc {
   namespace actuators {
-    enum BinaryActuatorState { kForward, kReverse };
+    enum BinaryActuatorState { kReverse = 0, kForward };
 
-    class BinaryActuator { // might implement curtinfrc::StateDevice<BinaryActuatorState> in future?
+    class BinaryActuator : public devices::StateDevice<BinaryActuatorState> {
      public:
-      BinaryActuator(BinaryActuatorState initialState = kReverse) : _state(initialState) {};
+      BinaryActuator(std::string name = "<Binary Actuator>", BinaryActuatorState initialState = kReverse) : StateDevice(name, initialState) {};
       using ActuatorState = BinaryActuatorState;
 
+      virtual std::string GetStateString() final {
+        switch (Get()) {
+         case kReverse:
+          return "kReverse";
+
+         case kForward:
+          return "kForward";
+        }
+
+        return "<state error>";
+      };
+
       void SetTarget(BinaryActuatorState state) { SetState(state); Init(); };
-      virtual void Update(double dt) = 0;
+      virtual void UpdateActuator(double dt) = 0;
       virtual void Stop() {};
       virtual bool IsDone() { return true; };
 
-      BinaryActuatorState Get() { return _state; };
+      BinaryActuatorState Get() { return GetState(); };
 
      protected:
-      void SetState(BinaryActuatorState state) { _state = state; };
-      BinaryActuatorState _state;
-
       virtual void Init() {};
+
+     private:
+      virtual void OnStateChange(BinaryActuatorState newState, BinaryActuatorState oldState) { Init(); };
+      virtual void OnStatePeriodic(BinaryActuatorState state, double dt) { UpdateActuator(dt); if (IsDone()) Stop(); };
     };
   } // ns actuators
 } // ns curtinfrc

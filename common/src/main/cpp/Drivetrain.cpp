@@ -1,5 +1,24 @@
 #include "Drivetrain.h"
 
+std::string curtinfrc::Drivetrain::GetStateString() {
+  switch (GetState()) {
+   case curtinfrc::DrivetrainState::kManual:
+    return "kManual";
+
+   case curtinfrc::DrivetrainState::kVelocity:
+    return "kVelocity";
+
+   case curtinfrc::DrivetrainState::kIdle:
+    return "kIdle";
+
+   case curtinfrc::DrivetrainState::kExternalLoop:
+    return "kExternalLoop";
+  }
+
+  return "<state error>";
+}
+
+
 void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
   SetVoltage(leftPower * 12, rightPower * 12);
 }
