@@ -9,11 +9,7 @@ namespace curtinfrc {
   namespace actuators {
     class BinaryServo : public BinaryActuator, protected frc::Servo {
      public:
-      BinaryServo(int channel, int forwardPos, int reversePos) : frc::Servo(channel), _forwardPos(forwardPos), _reversePos(reversePos) {};
-      
-      virtual devices::RawStateDevice *MakeRawStateDevice(std::string name = "<Binary Servo>") override {
-        return BinaryActuator::MakeRawStateDevice(name);
-      }
+      BinaryServo(int channel, int forwardPos, int reversePos, std::string name = "<Binary Servo>") : frc::Servo(channel), BinaryActuator(name), _forwardPos(forwardPos), _reversePos(reversePos) {};
 
       virtual void UpdateActuator(double dt) override;
       virtual void Stop() final {};

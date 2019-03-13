@@ -5,8 +5,8 @@
 
 // public
 
-std::string curtinfrc::RawElevator::GetState() {
-  switch (_elevator->GetState()) {
+std::string curtinfrc::Elevator::GetStateString() {
+  switch (GetState()) {
    case curtinfrc::ElevatorState::kStationary:
     return "kStationary";
     
@@ -23,10 +23,6 @@ std::string curtinfrc::RawElevator::GetState() {
   return "<state error>";
 }
 
-
-curtinfrc::devices::RawStateDevice *curtinfrc::Elevator::MakeRawStateDevice(std::string name) {
-  return new curtinfrc::RawElevator(this, name);
-}
 
 void curtinfrc::Elevator::SetManual(double power) {
   SetState(curtinfrc::ElevatorState::kManual);

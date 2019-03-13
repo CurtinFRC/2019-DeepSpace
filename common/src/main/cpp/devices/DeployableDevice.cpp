@@ -4,8 +4,8 @@ using namespace curtinfrc;
 using namespace curtinfrc::devices;
 
 
-std::string RawDeployableDevice::GetState() {
-  switch (_device->GetState()) {
+std::string DeployableDevice::GetStateString() {
+  switch (GetState()) {
    case kStowed:
     return "kStowed";
 
@@ -25,10 +25,6 @@ std::string RawDeployableDevice::GetState() {
   return "<state error>";
 }
 
-
-devices::RawStateDevice *DeployableDevice::MakeRawStateDevice(std::string name) {
-  return new RawDeployableDevice(this, name);
-}
 
 void DeployableDevice::SetIntaking() {
   if (!_config.canEject) { // default

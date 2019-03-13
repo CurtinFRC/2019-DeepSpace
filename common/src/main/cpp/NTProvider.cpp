@@ -14,7 +14,7 @@ void NTProvider::Update() {
 
 
   for (auto stateDevice : _stateDevices)
-    _table->GetEntry(stateDevice->GetName()).SetString(stateDevice->GetState());
+    _table->GetEntry(stateDevice->GetName()).SetString(stateDevice->GetStateString());
 }
 
 
@@ -27,6 +27,6 @@ void NTProvider::Register(DoubleSensor *doubleSensor) {
 }
 
 
-void NTProvider::Register(RawStateDevice *stateDevice) {
+void NTProvider::Register(StateDeviceBase *stateDevice) {
   _stateDevices.push_back(stateDevice);
 }
