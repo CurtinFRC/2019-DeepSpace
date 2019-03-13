@@ -83,7 +83,7 @@ struct RobotMap {
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
-    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 30 / 1000.0, 20 };
+    curtinfrc::ElevatorConfig config{ elevatorGearbox, nullptr, &bottomLimit, 2.1, 30 / 1000.0, 20, "beElevator" };
 
     Elevator() {
       liftSpx1.SetUpdateRate(200);
@@ -102,7 +102,7 @@ struct RobotMap {
     curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
     curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
 
-    HatchIntakeConfig config{ servo, solenoid };
+    HatchIntakeConfig config{ servo, solenoid, "Demogorgon" };
   };
 
   SideHatchIntake sideHatchIntake;
@@ -111,7 +111,7 @@ struct RobotMap {
     curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
     curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
 
-    HatchIntakeConfig config{ manipulatorSolenoid, solenoid };
+    HatchIntakeConfig config{ manipulatorSolenoid, solenoid, "Shin Destroyer" };
   };
 
   FrontHatchIntake frontHatchIntake;

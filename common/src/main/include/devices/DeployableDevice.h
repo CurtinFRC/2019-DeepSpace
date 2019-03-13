@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "devices/StateDevice.h"
 #include "actuators/BinaryActuator.h"
 
@@ -8,17 +10,19 @@ namespace curtinfrc {
     enum DeployableDeviceState { kStowed = 0, kStowing, kDeploying, kOuttaking, kIntaking };
 
     struct DeployableDeviceConfig {
+      std::string name;
+
       actuators::BinaryActuator &actuator;
       const bool canEject;
 
-      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn, bool canEjectIn = false) : actuator(actuatorIn), canEject(canEjectIn) {};
+      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn, bool canEjectIn = false, std::string nameIn = "<Deployable Device>") : actuator(actuatorIn), name(nameIn), canEject(canEjectIn) {};
     };
 
     class DeployableDevice : public StateDevice<DeployableDeviceState> {
      public:
-      DeployableDevice(DeployableDeviceConfig config) : _config(config) {};
+      DeployableDevice(DeployableDeviceConfig config) : StateDevice(config.name), _config(config) {};
 
-      virtual RawStateDevice *MakeRawStateDevice(std::string name = "<Deployable Device>") override;
+      virtual std::string GetStateString() final;
 
       virtual void SetIntaking();
       virtual void SetOuttaking();
@@ -35,17 +39,6 @@ namespace curtinfrc {
 
      private:
       DeployableDeviceConfig _config;
-    };
-
-    class RawDeployableDevice : public RawStateDevice {
-     public:
-      RawDeployableDevice(DeployableDevice *device, std::string name = "<Deployable Device>") : RawStateDevice(name), _device(device) {};
-
-      virtual void Update(double dt) { _device->Update(dt); };
-      virtual std::string GetState();
-
-     private:
-      DeployableDevice *_device;
     };
   } // ns intakes
 } // ns curtinfrc
