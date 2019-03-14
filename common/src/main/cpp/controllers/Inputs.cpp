@@ -63,7 +63,7 @@ int AxisSelector::Get() {
   if (value == 1) return _divisions - 1;
 
   double size = 2 / _divisions;
-  if (_divisions % 2) if (std::abs(value) < size * 0.05) return -1; // deadzone - no buttons pressed (only for odd divisions)
+  if (!(_divisions % 2)) if (std::abs(value) < size * 0.05) return -1; // deadzone - no buttons pressed (only for even divisions)
 
   return (value + 1) / size;
 }
