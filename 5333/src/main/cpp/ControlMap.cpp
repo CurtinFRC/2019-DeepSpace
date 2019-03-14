@@ -67,6 +67,14 @@ const std::vector<tButton> ControlMap::compressorOn{ { 2, 2 } };
 #elif N_CONT == 3
 
 void ControlMap::InitSmartControllerGroup(SmartControllerGroup &contGroup) {
+  // Joystick (2) Rebinds
+  const tAxis manualElevator = { 2, Joystick::kYAxis };
+  std::vector<tButton> manualElevatorPair = { { 2, 20 }, { 2, 21 } };
+
+  contGroup.GetController(manualElevator.cont).Map(manualElevator, manualElevatorPair); // note, as Y is inverted, forwards is down
+
+
+  // XBOX Rebinds
   const tButton incElevator = { 3, XboxController::kBumperLeft }, decElevator = { 3, XboxController::kBumperRight };
   std::vector<tButton> selectorElevator;
   for (int i = 0; i < 7; i++) selectorElevator.push_back({ 3, 20 + i });
@@ -98,16 +106,16 @@ const std::vector<tButton> ControlMap::activateFOC{ { 1, 10 } };        // Toggl
 
 
 // BEELEVATOR JOYMAP
-const std::vector<tButton> ControlMap::raiseLift{ { 3, 27 } };
-const std::vector<tButton> ControlMap::lowerLift{ { 3, 28 } };
+const std::vector<tButton> ControlMap::raiseLift{ { 2, 20 }, { 3, 27 } };
+const std::vector<tButton> ControlMap::lowerLift{ { 2, 21 }, { 3, 28 } };
 
 const std::vector<tButton> ControlMap::liftGoalGround{ { 3, 20 } };
-const std::vector<tButton> ControlMap::liftGoalLower1{ { 3, 21 } };
-const std::vector<tButton> ControlMap::liftGoalLower2{ { 3, 22 } };
-const std::vector<tButton> ControlMap::liftGoalMiddle1{ { 3, 23 } };
-const std::vector<tButton> ControlMap::liftGoalMiddle2{ { 3, 24 } };
-const std::vector<tButton> ControlMap::liftGoalUpper1{ { 3, 25 } };
-const std::vector<tButton> ControlMap::liftGoalUpper2{ { 3, 26 } };
+const std::vector<tButton> ControlMap::liftGoalLower1{ { 2, 7 }, { 3, 21 } };
+const std::vector<tButton> ControlMap::liftGoalLower2{ { 2, 8 }, { 3, 22 } };
+const std::vector<tButton> ControlMap::liftGoalMiddle1{ { 2, 9 }, { 3, 23 } };
+const std::vector<tButton> ControlMap::liftGoalMiddle2{ { 2, 10 }, { 3, 24 } };
+const std::vector<tButton> ControlMap::liftGoalUpper1{ { 2, 11 }, { 3, 25 } };
+const std::vector<tButton> ControlMap::liftGoalUpper2{ { 2, 12 }, { 3, 26 } };
 
 const double ControlMap::liftSetpointGround = 0;                                     // Exact values need to be tested
 const double ControlMap::liftSetpointLower1 = 0.46;
@@ -118,17 +126,17 @@ const double ControlMap::liftSetpointUpper1 = 1.89;
 const double ControlMap::liftSetpointUpper2 = 1.7;
 
 // HATCH JOYMAP
-const std::vector<tButton> ControlMap::hatchGrab{ { 1, 3 }, { 3, XboxController::kA } };
-const std::vector<tButton> ControlMap::hatchRelease{ { 1, 5 }, { 3, XboxController::kY } };
-const std::vector<tButton> ControlMap::hatchStow{ { 3, XboxController::kStickRight } };
-const std::vector<tButton> ControlMap::hatchToggleEnabled{ { 1, 8 }, { 3, XboxController::kStart } }; // Changes the currently enabled hatch intake
+const std::vector<tButton> ControlMap::hatchGrab{ { 1, 3 }, { 2, 3 }, { 3, XboxController::kA } };
+const std::vector<tButton> ControlMap::hatchRelease{ { 1, 5 }, { 2, 5 }, { 3, XboxController::kY } };
+const std::vector<tButton> ControlMap::hatchStow{ { 2, 2 }, { 3, XboxController::kStickRight } };
+const std::vector<tButton> ControlMap::hatchToggleEnabled{ { 1, 8 }, { 2, 1 }, { 3, XboxController::kStart } }; // Changes the currently enabled hatch intake
 
 
 
 // BOX INTAKE JOYMAP
-const std::vector<tButton> ControlMap::boxIn{ { 1, 4 }, { 3, XboxController::kB } };   // reversed
-const std::vector<tButton> ControlMap::boxOut{ { 1, 6 }, { 3, XboxController::kX } };  // reversed
-const std::vector<tButton> ControlMap::boxStow{ { 3, XboxController::kStickLeft } };
+const std::vector<tButton> ControlMap::boxIn{ { 1, 4 }, { 2, 4 }, { 3, XboxController::kB } };   // reversed
+const std::vector<tButton> ControlMap::boxOut{ { 1, 6 }, { 2, 6 }, { 3, XboxController::kX } };  // reversed
+const std::vector<tButton> ControlMap::boxStow{ { 2, 1 }, { 3, XboxController::kStickLeft } };
 
 const double ControlMap::boxDeployedThrottle = 0.6;
 const double ControlMap::boxStowingThrottle = 0.4;
