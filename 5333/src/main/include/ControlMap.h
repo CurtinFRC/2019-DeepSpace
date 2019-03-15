@@ -4,7 +4,7 @@
 
 #include "controllers/CurtinControllers.h"
 
-#define N_CONT 2
+#define N_CONT 3
 
 
 class ControlMap {
