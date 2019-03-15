@@ -96,31 +96,32 @@ struct RobotMap {
   Elevator lift;
 
   struct SideHatchIntake {
-    const int forward = 115;
-    const int reverse = 5;
+    // const int forward = 115;
+    // const int reverse = 5;
 
-    curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 7, 6 };
+    // curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
+    curtinfrc::actuators::DoubleSolenoid graspSolenoid{ 2, 4, 5 };
+    curtinfrc::actuators::DoubleSolenoid extendSolenoid{ 2, 6, 7 };
 
-    HatchIntakeConfig config{ servo, solenoid, "Demogorgon" };
+    HatchIntakeConfig config{ graspSolenoid, extendSolenoid, "Demogorgon" };
   };
 
   SideHatchIntake sideHatchIntake;
 
-  struct FrontHatchIntake {
-    curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
+  // struct FrontHatchIntake {
+  //   curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
+  //   curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
 
-    HatchIntakeConfig config{ manipulatorSolenoid, solenoid, "Shin Destroyer" };
-  };
+  //   HatchIntakeConfig config{ manipulatorSolenoid, solenoid, "Shin Destroyer" };
+  // };
 
-  FrontHatchIntake frontHatchIntake;
+  // FrontHatchIntake frontHatchIntake;
 
 
   struct BoxIntake {
     curtinfrc::TalonSrx boxMotor{ 9 };
     curtinfrc::Gearbox boxIntakeGearbox{ &boxMotor, nullptr };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 4, 5 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 };
 
 
     BoxIntakeConfig config{ boxIntakeGearbox, solenoid, true };

@@ -39,12 +39,12 @@ void Robot::RobotInit() {
   beElevator->StartLoop(100);
 
   sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
+  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, true));
   sideHatchIntake->StartLoop(50);
 
-  frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
-  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, true));
-  frontHatchIntake->StartLoop(50);
+  // frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
+  // frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, false));
+  // frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
   boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.contGroup));
@@ -53,7 +53,7 @@ void Robot::RobotInit() {
   StrategyController::Register(drivetrain);
   StrategyController::Register(beElevator);
   StrategyController::Register(sideHatchIntake);
-  StrategyController::Register(frontHatchIntake);
+  // StrategyController::Register(frontHatchIntake);
   StrategyController::Register(boxIntake);
 
 
@@ -62,7 +62,7 @@ void Robot::RobotInit() {
   NTProvider::Register(drivetrain);
   NTProvider::Register(beElevator);
   NTProvider::Register(sideHatchIntake);
-  NTProvider::Register(frontHatchIntake);
+  // NTProvider::Register(frontHatchIntake);
   NTProvider::Register(boxIntake);
 }
 
