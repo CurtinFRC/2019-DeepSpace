@@ -79,6 +79,10 @@ void Robot::RobotPeriodic() {
     else stratFOC->SetDone();
   }
 
+  if (robotmap.contGroup.Get(ControlMap::lowerLift, controllers::Controller::ONRISE) || robotmap.contGroup.Get(ControlMap::raiseLift, controllers::Controller::ONRISE)) {
+    Schedule(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup), true);
+  }
+
   if (robotmap.contGroup.Get(ControlMap::liftGoalGround, controllers::Controller::ONRISE)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
 
