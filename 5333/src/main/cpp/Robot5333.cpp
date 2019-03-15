@@ -109,7 +109,8 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
   
 
-  if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) 
+    robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   robotmap.controlSystem.compressor.Update(dt);
 
