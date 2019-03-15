@@ -39,12 +39,12 @@ void Robot::RobotInit() {
   beElevator->StartLoop(100);
 
   sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, false));
+  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, true));
   sideHatchIntake->StartLoop(50);
 
-  frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
-  frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, true));
-  frontHatchIntake->StartLoop(50);
+  // frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
+  // frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, false));
+  // frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
   boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.contGroup));
@@ -53,7 +53,7 @@ void Robot::RobotInit() {
   StrategyController::Register(drivetrain);
   StrategyController::Register(beElevator);
   StrategyController::Register(sideHatchIntake);
-  StrategyController::Register(frontHatchIntake);
+  // StrategyController::Register(frontHatchIntake);
   StrategyController::Register(boxIntake);
 
 
@@ -62,7 +62,7 @@ void Robot::RobotInit() {
   NTProvider::Register(drivetrain);
   NTProvider::Register(beElevator);
   NTProvider::Register(sideHatchIntake);
-  NTProvider::Register(frontHatchIntake);
+  // NTProvider::Register(frontHatchIntake);
   NTProvider::Register(boxIntake);
 }
 
@@ -77,6 +77,10 @@ void Robot::RobotPeriodic() {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
     else stratFOC->SetDone();
+  }
+
+  if (robotmap.contGroup.Get(ControlMap::lowerLift, controllers::Controller::ONRISE) || robotmap.contGroup.Get(ControlMap::raiseLift, controllers::Controller::ONRISE)) {
+    Schedule(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup), true);
   }
 
   if (robotmap.contGroup.Get(ControlMap::liftGoalGround, controllers::Controller::ONRISE)) {
@@ -107,9 +111,12 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
   frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
   frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
+
+  frc::SmartDashboard::PutNumber("Elev Height", beElevator->GetHeight());
   
 
-  if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) 
+    robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
   
   robotmap.controlSystem.compressor.Update(dt);
 
