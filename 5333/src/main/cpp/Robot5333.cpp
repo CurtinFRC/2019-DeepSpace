@@ -16,8 +16,14 @@ void Robot::RobotInit() {
   lastTimestamp = Timer::GetFPGATimestamp();
   ControlMap::InitSmartControllerGroup(robotmap.contGroup);
 
-  // CameraServer::GetInstance()->StartAutomaticCapture(0);
-  // CameraServer::GetInstance()->StartAutomaticCapture(1);
+  auto cameraFront = CameraServer::GetInstance()->StartAutomaticCapture(0);
+  auto cameraSide = CameraServer::GetInstance()->StartAutomaticCapture(1);
+
+  cameraFront.SetFPS(30);
+  cameraFront.SetFPS(30);
+
+  cameraFront.SetResolution(160, 120);
+  cameraSide.SetResolution(160, 120);
 
   // Our motors are mounted backwards, but the simulation doesn't know about that.
 #ifdef __FRC_ROBORIO__
@@ -38,9 +44,9 @@ void Robot::RobotInit() {
   beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup));
   beElevator->StartLoop(100);
 
-  sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
-  sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, true));
-  sideHatchIntake->StartLoop(50);
+  // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, true));
+  // sideHatchIntake->StartLoop(50);
 
   // frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
   // frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, false));
@@ -52,7 +58,7 @@ void Robot::RobotInit() {
 
   StrategyController::Register(drivetrain);
   StrategyController::Register(beElevator);
-  StrategyController::Register(sideHatchIntake);
+  // StrategyController::Register(sideHatchIntake);
   // StrategyController::Register(frontHatchIntake);
   StrategyController::Register(boxIntake);
 
@@ -61,15 +67,22 @@ void Robot::RobotInit() {
 
   NTProvider::Register(drivetrain);
   NTProvider::Register(beElevator);
-  NTProvider::Register(sideHatchIntake);
+  // NTProvider::Register(sideHatchIntake);
   // NTProvider::Register(frontHatchIntake);
   NTProvider::Register(boxIntake);
 }
+
+static bool goalExtend = actuators::kReverse;
+static bool goalGrasp = actuators::kForward;
 
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
   robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
+
+
+  robotmap.sideHatchIntake.extendSolenoid.Update(dt);
+  robotmap.sideHatchIntake.graspSolenoid.Update(dt);
   
 
   if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
@@ -101,6 +114,27 @@ void Robot::RobotPeriodic() {
   } else if (robotmap.contGroup.Get(ControlMap::liftGoalUpper2, controllers::Controller::ONRISE)) {
     Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
   }
+
+  bool  grasp = robotmap.contGroup.Get(ControlMap::hatchGrab, controllers::Controller::ONRISE),
+        release = robotmap.contGroup.Get(ControlMap::hatchRelease, controllers::Controller::ONRISE),
+        withdraw= robotmap.contGroup.Get(ControlMap::hatchStow, controllers::Controller::ONRISE);
+
+
+  if (grasp || release) {
+    goalExtend = actuators::kForward;
+    goalGrasp = grasp ? actuators::kForward : actuators::kReverse;
+  } else if (withdraw) {
+    goalExtend = actuators::kReverse;
+  }
+
+  if (robotmap.sideHatchIntake.graspSolenoid.IsDone() || goalExtend == actuators::kForward) {
+    robotmap.sideHatchIntake.extendSolenoid.SetTarget(goalExtend ? actuators::kForward : actuators::kReverse);
+  }
+
+  if (robotmap.sideHatchIntake.extendSolenoid.IsDone()) {
+    robotmap.sideHatchIntake.graspSolenoid.SetTarget(goalGrasp ? actuators::kForward : actuators::kReverse);
+  }
+
   // Need to schedule stratPOV *
 
   // Redundant, as it can already be accessed on shuffleboard via nt, but ~

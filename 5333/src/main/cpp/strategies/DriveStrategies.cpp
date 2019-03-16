@@ -19,13 +19,18 @@ DrivetrainManualStrategy::DrivetrainManualStrategy(Drivetrain &drivetrain, Smart
 void DrivetrainManualStrategy::OnUpdate(double dt) {
   double joyForward = 0, joyTurn = 0;
   
-  if (!_contGroup.Get(ControlMap::holdMovement)) {
-    joyForward = -_contGroup.Get(ControlMap::forwardAxis) * 0.9;
-    joyForward *= std::abs(joyForward);
-  }
+  if (_contGroup.Get(ControlMap::chargeForward)) {
+    joyForward = 1;
+    joyTurn = 0;
+  } else {
+    if (!_contGroup.Get(ControlMap::holdMovement)) {
+      joyForward = -_contGroup.Get(ControlMap::forwardAxis) * (1 - _contGroup.Get(ControlMap::drivetrainThrottle)) / 2 * ControlMap::drivetrainForwardThrottle;
+      joyForward *= std::abs(joyForward);
+    }
 
-  joyTurn = _contGroup.Get(ControlMap::turnAxis) * 0.7;
-  // joyTurn *= abs(joyTurn);
+    joyTurn = _contGroup.Get(ControlMap::turnAxis) * (1 - _contGroup.Get(ControlMap::drivetrainThrottle)) / 2 * ControlMap::drivetrainTurnThrottle;
+    // joyTurn *= abs(joyTurn);
+  }
 
   double leftSpeed = joyForward + joyTurn;
   double rightSpeed = joyForward - joyTurn;
