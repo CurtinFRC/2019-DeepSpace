@@ -55,6 +55,8 @@ struct RobotMap {
 
     curtinfrc::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
+    curtinfrc::sensors::NavXGyro pitchGgyro{ navx.Angular(curtinfrc::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
+    curtinfrc::sensors::NavXGyro rollGyro{ navx.Angular(curtinfrc::sensors::AngularAxis::PITCH) };  // pitch <=> roll
 
     curtinfrc::control::PIDGains gainsFOC{ "Drivetrain FOC", 0.008, 0, 0 };
     curtinfrc::control::PIDGains gainsAlign{ "Drivetrain Align", 0.3, 0, 0.04 };

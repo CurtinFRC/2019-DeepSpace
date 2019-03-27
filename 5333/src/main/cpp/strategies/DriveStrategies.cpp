@@ -14,7 +14,7 @@ BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Dri
   SetCanBeReused(true);
 } 
 
-DrivetrainManualStrategy::DrivetrainManualStrategy(Drivetrain &drivetrain, SmartControllerGroup &contGroup) : BaseDrivetrainTeleopStrategy("Drivetrain Manual", drivetrain, contGroup) { }
+DrivetrainManualStrategy::DrivetrainManualStrategy(Drivetrain &drivetrain, Elevator &elevator, SmartControllerGroup &contGroup) : BaseDrivetrainTeleopStrategy("Drivetrain Manual", drivetrain, contGroup), _elevator(elevator) { }
 
 void DrivetrainManualStrategy::OnUpdate(double dt) {
   double joyForward = 0, joyTurn = 0;
@@ -30,6 +30,11 @@ void DrivetrainManualStrategy::OnUpdate(double dt) {
 
     joyTurn = _contGroup.Get(ControlMap::turnAxis) * (1 - _contGroup.Get(ControlMap::drivetrainThrottle)) / 2 * ControlMap::drivetrainTurnThrottle;
     // joyTurn *= abs(joyTurn);
+  }
+
+  if (_elevator.GetHeight() > ControlMap::liftSetpointMiddle2 + 0.2) {
+    joyForward *= 0.55;
+    joyTurn *= 0.55;
   }
 
   double leftSpeed = joyForward + joyTurn;

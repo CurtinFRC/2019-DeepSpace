@@ -130,12 +130,12 @@ const std::vector<tButton> ControlMap::liftGoalUpper1{ { 1, 7 } };
 const std::vector<tButton> ControlMap::liftGoalUpper2{ { 1, 8 } };
 
 const double ControlMap::liftSetpointGround = 0;                                     // Exact values need to be tested
-const double ControlMap::liftSetpointLower1 = 0.3;
-const double ControlMap::liftSetpointLower2 = 0.4;
+const double ControlMap::liftSetpointLower1 = 0.2;
+const double ControlMap::liftSetpointLower2 = 0.3;
 const double ControlMap::liftSetpointMiddle1 = 1.01;
 const double ControlMap::liftSetpointMiddle2 = 1.1;
-const double ControlMap::liftSetpointUpper1 = 1.68;
-const double ControlMap::liftSetpointUpper2 = 1.75;
+const double ControlMap::liftSetpointUpper1 = 1.63;
+const double ControlMap::liftSetpointUpper2 = 1.78;
 
 // HATCH JOYMAP
 const std::vector<tButton> ControlMap::hatchGrab{ { 2, 3 }, { 3, XboxController::kY } };
