@@ -3,6 +3,7 @@
 #include "Drivetrain.h"
 
 #include "strategy/Strategy.h"
+#include "Elevator.h"
 #include "controllers/CurtinControllers.h"
 #include "control/PIDController.h"
 
@@ -17,10 +18,12 @@ class BaseDrivetrainTeleopStrategy : public curtinfrc::Strategy {
 
 class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup);
+  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::Elevator &elevator, curtinfrc::controllers::SmartControllerGroup &contGroup);
 
   void OnUpdate(double dt) override;
+
  private:
+  curtinfrc::Elevator &_elevator;
   curtinfrc::Toggle _invertedToggle;
 };
 

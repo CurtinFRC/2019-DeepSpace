@@ -38,7 +38,7 @@ struct RobotMap {
   curtinfrc::controllers::SmartControllerGroup contGroup{ joy1, joy2, xbox };
   #endif
 
-  frc::PowerDistributionPanel pdp{0};
+  // frc::PowerDistributionPanel pdp{0};
 
   struct DriveTrain {
     curtinfrc::TalonSrx leftSrx{ 3 };
@@ -55,6 +55,8 @@ struct RobotMap {
 
     curtinfrc::sensors::NavX navx{frc::SPI::Port::kMXP, 200};
     curtinfrc::sensors::NavXGyro gyro{ navx.Angular(curtinfrc::sensors::AngularAxis::YAW) };
+    curtinfrc::sensors::NavXGyro pitchGgyro{ navx.Angular(curtinfrc::sensors::AngularAxis::ROLL) }; // navx is 'sideways';
+    curtinfrc::sensors::NavXGyro rollGyro{ navx.Angular(curtinfrc::sensors::AngularAxis::PITCH) };  // pitch <=> roll
 
     curtinfrc::control::PIDGains gainsFOC{ "Drivetrain FOC", 0.008, 0, 0 };
     curtinfrc::control::PIDGains gainsAlign{ "Drivetrain Align", 0.3, 0, 0.04 };
@@ -79,7 +81,7 @@ struct RobotMap {
 
     curtinfrc::sensors::LimitSwitch bottomLimit{9, true};
 
-    curtinfrc::control::PIDGains lower{ "Lower Elevator", 25.0, 0, 1.5 };
+    curtinfrc::control::PIDGains lower{ "Lower Elevator", 30.0, 0.025, 1.5 };
     // curtinfrc::control::PIDGains upper{ "Upper Elevator", 1 };
 
 
@@ -100,8 +102,8 @@ struct RobotMap {
     // const int reverse = 5;
 
     // curtinfrc::actuators::BinaryServo servo{ 0, forward, reverse };
-    curtinfrc::actuators::DoubleSolenoid graspSolenoid{ 2, 4, 5 };
-    curtinfrc::actuators::DoubleSolenoid extendSolenoid{ 2, 6, 7 };
+    curtinfrc::actuators::DoubleSolenoid graspSolenoid{ 2, 4, 5, 0.2 };
+    curtinfrc::actuators::DoubleSolenoid extendSolenoid{ 2, 6, 7, 0.7 };
 
     HatchIntakeConfig config{ graspSolenoid, extendSolenoid, "Demogorgon" };
   };
@@ -109,8 +111,8 @@ struct RobotMap {
   SideHatchIntake sideHatchIntake;
 
   // struct FrontHatchIntake {
-  //   curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2 }; // eject
-  //   curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 }; // deploy
+  //   curtinfrc::actuators::DoubleSolenoid manipulatorSolenoid{ 2, 3, 2, curtinfrc::actuators::DoubleSolenoid::StandardActuationTime }; // eject
+  //   curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1, curtinfrc::actuators::DoubleSolenoid::StandardActuationTime }; // deploy
 
   //   HatchIntakeConfig config{ manipulatorSolenoid, solenoid, "Shin Destroyer" };
   // };
@@ -121,7 +123,7 @@ struct RobotMap {
   struct BoxIntake {
     curtinfrc::TalonSrx boxMotor{ 9 };
     curtinfrc::Gearbox boxIntakeGearbox{ &boxMotor, nullptr };
-    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1 };
+    curtinfrc::actuators::DoubleSolenoid solenoid{ 2, 0, 1, curtinfrc::actuators::DoubleSolenoid::StandardActuationTime };
 
 
     BoxIntakeConfig config{ boxIntakeGearbox, solenoid, true };

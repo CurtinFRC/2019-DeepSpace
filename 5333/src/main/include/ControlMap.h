@@ -25,6 +25,12 @@ class ControlMap {
   static const std::vector<curtinfrc::controllers::tButton> reverseDrivetrain;   // Toggles the direction of the drivetrain
   static const std::vector<curtinfrc::controllers::tButton> holdMovement;        // Makes the robot 'line up' (0 magnitude but still rotating)
   static const std::vector<curtinfrc::controllers::tButton> activateFOC;        // Toggles the drivetrain between Manual and FOC control
+  static const curtinfrc::controllers::tAxis                drivetrainThrottle;
+  static const std::vector<curtinfrc::controllers::tButton> chargeForward;
+
+  static const double drivetrainMinThrottle;
+  static const double drivetrainForwardThrottle;
+  static const double drivetrainTurnThrottle;
 
 
   // BEELEVATOR JOYMAP

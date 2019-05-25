@@ -56,4 +56,5 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, p
 
 
   Lift *beElevator;
+  curtinfrc::Toggle fallToggle;
 };
