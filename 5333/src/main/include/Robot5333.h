@@ -49,11 +49,12 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, p
   std::shared_ptr<DrivetrainAngleStrategy> stratPOV;
 
 
-  HatchIntake *sideHatchIntake, *frontHatchIntake;
+  HatchIntake *sideHatchIntake /*, *frontHatchIntake*/;
 
 
   BoxIntake *boxIntake;
 
 
   Lift *beElevator;
+  curtinfrc::Toggle fallToggle;
 };

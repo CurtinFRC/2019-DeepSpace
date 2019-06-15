@@ -39,6 +39,9 @@ class HatchIntakeManualStrategy : public curtinfrc::Strategy {
     Requires(&hatchIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
+
+    // Make sure it's stowed!
+    hatchIntake.SetStowed();
   }
 
   void OnUpdate(double dt) override;

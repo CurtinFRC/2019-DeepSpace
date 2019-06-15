@@ -54,7 +54,8 @@ namespace curtinfrc {
       enum AxisMap {
         kLeftXAxis = 0,
         kLeftYAxis = 1,
-        // Throttles?
+        kLeftThrottle = 2,
+        kRightThrottle = 3,
         kRightXAxis = 4,
         kRightYAxis = 5,
       };
