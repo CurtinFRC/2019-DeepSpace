@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Elevator.h"
-#include "HarvesterIntake.h"
 
+#include "controllers/CurtinControllers.h"
 #include "strategy/Strategy.h"
 
 class Lift : public curtinfrc::Elevator {
@@ -14,8 +14,8 @@ class Lift : public curtinfrc::Elevator {
 };
 
 class LiftManualStrategy : public curtinfrc::Strategy {
- public: 
-  LiftManualStrategy(Lift &lift, curtinfrc::Joystick &joy) : Strategy("Lift Manual"), _lift(lift), _joy(joy) {
+ public:
+  LiftManualStrategy(Lift &lift, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Lift Manual"), _lift(lift), _contGroup(contGroup) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -25,12 +25,12 @@ class LiftManualStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::Joystick &_joy;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };
 
 class LiftGotoStrategy : public curtinfrc::Strategy {
  public: 
-  LiftGotoStrategy(Lift &lift, curtinfrc::Joystick &joy, double setpoint) : Strategy("Lift Goto"), _lift(lift), _joy(joy), _setpoint(setpoint) {
+  LiftGotoStrategy(Lift &lift, double setpoint) : Strategy("Lift Goto"), _lift(lift), _setpoint(setpoint) {
     Requires(&lift);
     SetCanBeInterrupted(true);
     SetCanBeReused(false);
@@ -41,6 +41,21 @@ class LiftGotoStrategy : public curtinfrc::Strategy {
 
  private:
   Lift &_lift;
-  curtinfrc::Joystick &_joy;
   double _setpoint;
 };
+
+class LiftZeroStrategy : public curtinfrc::Strategy {
+ public: 
+  LiftZeroStrategy(Lift &lift) : Strategy("Lift Zero"), _lift(lift) {
+    Requires(&lift);
+    SetCanBeInterrupted(true);
+    SetCanBeReused(false);
+  };
+
+  void OnStart() override;
+  void OnUpdate(double dt) override;
+
+ private:
+  Lift &_lift;
+};
+

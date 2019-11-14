@@ -55,6 +55,15 @@ class StrategyController {
    */
   void Update(double dt = -1);
 
+
+  /**
+   * Interrupt all Strategy Systems that are registered, stopping the current strategy
+   * and reverting to the default.
+   * 
+   * @param force Should the interrupt be forced? Usually yes.
+   */
+  void InterruptAll(bool force);
+
  private:
   bool DoSchedule(std::shared_ptr<Strategy> strategy, bool force = false);
   double _last_update_time = 0;

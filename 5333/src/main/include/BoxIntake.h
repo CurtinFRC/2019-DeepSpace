@@ -1,8 +1,11 @@
 #pragma once
 
+#include <string>
+
 #include "strategy/Strategy.h"
+#include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
-#include "CurtinControllers.h"
+#include "controllers/CurtinControllers.h"
 #include "Toggle.h"
 #include "Gearbox.h"
 
@@ -11,10 +14,10 @@ using BoxIntakeState = curtinfrc::devices::DeployableDeviceState;
 struct BoxIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
   curtinfrc::Gearbox &motors;
 
-  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn), motors(motorsIn) {};
+  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = true, std::string name = "<Box Intake>") : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), motors(motorsIn) {};
 };
 
-class BoxIntake : public curtinfrc::devices::DeployableDevice {
+class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc::StrategySystem {
  public:
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
@@ -31,7 +34,7 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice {
 
 class BoxIntakeManualStrategy : public curtinfrc::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::Joystick &joy) : Strategy("Box Manual"),  _boxIntake(boxIntake), _joy(joy) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -41,5 +44,5 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   BoxIntake &_boxIntake;
-  curtinfrc::Joystick &_joy;
+  curtinfrc::controllers::SmartControllerGroup &_contGroup;
 };

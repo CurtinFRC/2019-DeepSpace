@@ -1,21 +1,28 @@
 #pragma once
 
+#include <string>
+
 #include "devices/StateDevice.h"
 #include "actuators/BinaryActuator.h"
 
 namespace curtinfrc {
   namespace devices {
-    enum DeployableDeviceState { kIntaking, kOuttaking, kDeploying, kStowing, kStowed };
+    enum DeployableDeviceState { kStowed = 0, kStowing, kDeploying, kOuttaking, kIntaking };
 
     struct DeployableDeviceConfig {
-      actuators::BinaryActuator &actuator;
+      std::string name;
 
-      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn) : actuator(actuatorIn) {};
+      actuators::BinaryActuator &actuator;
+      const bool canEject;
+
+      DeployableDeviceConfig(actuators::BinaryActuator &actuatorIn, bool canEjectIn = false, std::string nameIn = "<Deployable Device>") : actuator(actuatorIn), name(nameIn), canEject(canEjectIn) {};
     };
 
     class DeployableDevice : public StateDevice<DeployableDeviceState> {
      public:
-      DeployableDevice(DeployableDeviceConfig config) : _config(config) {};
+      DeployableDevice(DeployableDeviceConfig config) : StateDevice(config.name), _config(config) {};
+
+      virtual std::string GetStateString() final;
 
       virtual void SetIntaking();
       virtual void SetOuttaking();

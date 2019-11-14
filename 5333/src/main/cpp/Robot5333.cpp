@@ -1,10 +1,13 @@
 #include "Robot5333.h"
 #include "ControlMap.h"
+#include "strategy/MPStrategy.h"
 
 #include <math.h>
 #include <iostream>
 
 #include <cameraserver/CameraServer.h>
+
+#include <frc/DriverStation.h>
 
 using namespace frc;
 using namespace curtinfrc;
@@ -13,88 +16,175 @@ double lastTimestamp;
 
 void Robot::RobotInit() {
   lastTimestamp = Timer::GetFPGATimestamp();
+  ControlMap::InitSmartControllerGroup(robotmap.contGroup);
 
-  table = nt::NetworkTableInstance::GetDefault().GetTable("vision");
-  yOffset = table->GetEntry("yOffset");
-  xOffset = table->GetEntry("xOffset");
-  endAngle = table->GetEntry("endAngle");
+  auto cameraFront = CameraServer::GetInstance()->StartAutomaticCapture(0);
+  auto cameraSide = CameraServer::GetInstance()->StartAutomaticCapture(1);
 
-  CameraServer::GetInstance()->StartAutomaticCapture(0);
-  CameraServer::GetInstance()->StartAutomaticCapture(1);
+  cameraFront.SetFPS(30);
+  cameraFront.SetFPS(30);
 
+  cameraFront.SetResolution(160, 120);
+  cameraSide.SetResolution(160, 120);
+
+  // Our motors are mounted backwards, but the simulation doesn't know about that.
+#ifdef __FRC_ROBORIO__
+  robotmap.drivetrain.rightGearbox.transmission->SetInverted(true); 
+#else
   robotmap.drivetrain.leftGearbox.transmission->SetInverted(true);
-
-  drivetrain = new Drivetrain(robotmap.drivetrain.config);
-  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, robotmap.joy));
-  stratFOC = std::make_shared<DrivetrainFieldOrientedControlStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsFOC);
-  stratPOV = std::make_shared<DrivetrainPOVSnapStrategy>(*drivetrain, robotmap.joy, robotmap.drivetrain.gainsPOV);
+#endif
+  robotmap.lift.elevatorGearbox.transmission->SetInverted(true);
+  robotmap.drivetrain.leftGearbox.encoder->ZeroEncoder();
+  robotmap.drivetrain.rightGearbox.encoder->ZeroEncoder();
 
   beElevator = new Lift(robotmap.lift.config, robotmap.lift.lower);
-  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.joy));
+  beElevator->SetDefault(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup));
   beElevator->StartLoop(100);
 
-  // harvester = new HarvesterIntake(harvesterConfig);
-  // harvester->SetDefault(std::make_shared<HarvesterIntakeManualStrategy>(*harvester, robotmap.joy));
-  // harvester->StartLoop(50);
+  drivetrain = new Drivetrain(robotmap.drivetrain.config, robotmap.drivetrain.gainsVelocity);
+  drivetrain->SetDefault(std::make_shared<DrivetrainManualStrategy>(*drivetrain, *beElevator, robotmap.contGroup));
+  drivetrain->StartLoop(100);
+  stratFOC = std::make_shared<DrivetrainFOCStrategy>(*drivetrain, robotmap.contGroup, robotmap.drivetrain.gainsFOC);
 
-  leftHatchIntake = new HatchIntake(robotmap.leftHatchIntake.config);
-  leftHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*leftHatchIntake, robotmap.joy, false));
-  leftHatchIntake->StartLoop(50);
+  // sideHatchIntake = new HatchIntake(robotmap.sideHatchIntake.config);
+  // sideHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*sideHatchIntake, robotmap.contGroup, true));
+  // sideHatchIntake->StartLoop(50);
 
-  rightHatchIntake = new HatchIntake(robotmap.rightHatchIntake.config);
-  rightHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*rightHatchIntake, robotmap.joy, true));
-  rightHatchIntake->StartLoop(50);
+  // frontHatchIntake = new HatchIntake(robotmap.frontHatchIntake.config);
+  // frontHatchIntake->SetDefault(std::make_shared<HatchIntakeManualStrategy>(*frontHatchIntake, robotmap.contGroup, false));
+  // frontHatchIntake->StartLoop(50);
 
   boxIntake = new BoxIntake(robotmap.boxIntake.config);
-  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.joy));
+  boxIntake->SetDefault(std::make_shared<BoxIntakeManualStrategy>(*boxIntake, robotmap.contGroup));
   boxIntake->StartLoop(50);
 
-  Register(drivetrain);
-  Register(beElevator);
-  // Register(harvester);
-  Register(leftHatchIntake);
-  Register(rightHatchIntake);
-  Register(boxIntake);
+  StrategyController::Register(drivetrain);
+  StrategyController::Register(beElevator);
+  // StrategyController::Register(sideHatchIntake);
+  // StrategyController::Register(frontHatchIntake);
+  StrategyController::Register(boxIntake);
+
+
+  NTProvider::Register(&robotmap.controlSystem.pressureSensor);
+
+  NTProvider::Register(drivetrain);
+  NTProvider::Register(beElevator);
+  // NTProvider::Register(sideHatchIntake);
+  // NTProvider::Register(frontHatchIntake);
+  NTProvider::Register(boxIntake);
 }
+
+static bool goalExtend = actuators::kReverse;
+static bool goalGrasp = actuators::kForward;
 
 void Robot::RobotPeriodic() {
   double dt = Timer::GetFPGATimestamp() - lastTimestamp;
   lastTimestamp = Timer::GetFPGATimestamp();
+  robotmap.contGroup.Update(); // update selectors, etc. [OPTIONAL]
 
-  if (toggleFOC.Update(robotmap.joy.GetRawButton(ControlMap::activateFOC))) {
+
+  robotmap.sideHatchIntake.extendSolenoid.Update(dt);
+  robotmap.sideHatchIntake.graspSolenoid.Update(dt);
+  
+
+  if (enableFOC && drivetrain->GetActiveStrategy() != stratFOC) enableFOC = false;
+  if (robotmap.contGroup.Get(ControlMap::activateFOC, controllers::Controller::ONRISE)) {
     enableFOC = !enableFOC;
     if (enableFOC) Schedule(stratFOC);
-    else Schedule(drivetrain->GetDefaultStrategy());
+    else stratFOC->SetDone();
   }
-  
-  if (robotmap.joy.GetRawButton(ControlMap::goalGround)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0)); // Constants are here for now, due to undefined symbols issue in ControlMap *
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.46));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalLower2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 0.68));
+  double pitch = std::abs(robotmap.drivetrain.pitchGgyro.GetAngle()), roll = std::abs(robotmap.drivetrain.rollGyro.GetAngle());
+  // std::cout << "P: " << pitch << ", R: " << roll << std::endl;
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.18));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalMiddle2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.39));
+  if (pitch > 25 || roll > 20) {//(std::atan(std::sqrt(std::pow(std::tan(pitch), 2) + std::pow(std::tan(roll), 2))) > 30) { // If we're tipping...
+    if (fallToggle.Update(true)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround), true); // force beElevator to ground
 
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper1)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 1.89));
-  } else if (robotmap.joy.GetRawButton(ControlMap::goalUpper2)) {
-    Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, robotmap.joy, 2.10));
+      std::cout << "Grounded beElevator from tipping at " << DriverStation::GetInstance().GetMatchTime() << " sec(s) remaining";
+    }
+  } else {
+    fallToggle.Update(false);
+
+    if (robotmap.contGroup.Get(ControlMap::lowerLift, controllers::Controller::ONRISE) || robotmap.contGroup.Get(ControlMap::raiseLift, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftManualStrategy>(*beElevator, robotmap.contGroup), true);
+    }
+
+    if (robotmap.contGroup.Get(ControlMap::liftGoalGround, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointGround));
+
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalLower1, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower1));
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalLower2, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointLower2));
+
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalMiddle1, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle1));
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalMiddle2, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointMiddle2));
+
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalUpper1, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper1));
+    } else if (robotmap.contGroup.Get(ControlMap::liftGoalUpper2, controllers::Controller::ONRISE)) {
+      Schedule(std::make_shared<LiftGotoStrategy>(*beElevator, ControlMap::liftSetpointUpper2));
+    }
   }
+
+  bool  grasp = robotmap.contGroup.Get(ControlMap::hatchGrab, controllers::Controller::ONRISE),
+        release = robotmap.contGroup.Get(ControlMap::hatchRelease, controllers::Controller::ONRISE),
+        withdraw= robotmap.contGroup.Get(ControlMap::hatchStow, controllers::Controller::ONRISE);
+
+
+  if (grasp || release) {
+    goalExtend = actuators::kForward;
+    goalGrasp = grasp ? actuators::kForward : actuators::kReverse;
+  } else if (withdraw) {
+    goalExtend = actuators::kReverse;
+  }
+
+  if (robotmap.sideHatchIntake.graspSolenoid.IsDone() || goalExtend == actuators::kForward) {
+    robotmap.sideHatchIntake.extendSolenoid.SetTarget(goalExtend ? actuators::kForward : actuators::kReverse);
+  }
+
+  if (robotmap.sideHatchIntake.extendSolenoid.IsDone()) {
+    robotmap.sideHatchIntake.graspSolenoid.SetTarget(goalGrasp ? actuators::kForward : actuators::kReverse);
+  }
+
   // Need to schedule stratPOV *
 
-  Update(dt);
+  // Redundant, as it can already be accessed on shuffleboard via nt, but ~
+  // frc::SmartDashboard::PutNumber("Hatch Distance", robotmap.controlSystem.hatchDistanceEntry.GetDouble(-1));
+  // frc::SmartDashboard::PutNumber("Hatch X Offset", robotmap.controlSystem.hatchXoffsetEntry.GetDouble(0));
+  // frc::SmartDashboard::PutNumber("Hatch Y Offset", robotmap.controlSystem.hatchYoffsetEntry.GetDouble(0));
+  
+  // frc::SmartDashboard::PutNumber("Tape Distance", robotmap.controlSystem.tapeDistanceEntry.GetDouble(-1));
+  // frc::SmartDashboard::PutNumber("Tape Angle", robotmap.controlSystem.tapeAngleEntry.GetDouble(0));
+  // frc::SmartDashboard::PutNumber("Tape Target", robotmap.controlSystem.tapeTargetEntry.GetDouble(-1));
+
+  frc::SmartDashboard::PutNumber("Elev Height", beElevator->GetHeight());
+  
+
+  // if (robotmap.contGroup.Get(ControlMap::compressorOn, controllers::Controller::ONRISE)) 
+    robotmap.controlSystem.compressor.SetTarget(actuators::BinaryActuatorState::kForward);
+  
+  robotmap.controlSystem.compressor.Update(dt);
+
+  StrategyController::Update(dt);
+  NTProvider::Update();
 }
 
-void Robot::AutonomousInit() {}
+void Robot::DisabledInit() {
+  InterruptAll(true);
+}
+
+void Robot::AutonomousInit() {
+  // Schedule(std::make_shared<PathfinderMPStrategy>(*drivetrain, robotmap.drivetrain.gainsPathfinder, "5333", "d2_bM"));
+}
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+}
 
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

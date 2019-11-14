@@ -5,13 +5,31 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 
-class HatchProcessing : public Process {
+class HatchProcessing {
  public:
-  HatchProcessing(Capture &capture) : Process(capture) {}
+  HatchProcessing(Capture &capture);
+  
   nt::NetworkTableEntry HatchDistanceEntry;
-  nt::NetworkTableEntry HatchXoffsetEntry;
-  nt::NetworkTableEntry HatchYoffsetEntry;
+  nt::NetworkTableEntry HatchXOffsetEntry;
+  nt::NetworkTableEntry HatchYOffsetEntry;
 
-  void Init() override;
-  void Periodic() override;
+  void Init();
+  void Periodic();
+  void GetDisplayMat(cv::Mat &displayMat);
+  cv::Size GetDisplaySize();
+  void CopyProcessedTrack(cv::Mat &imgProcessedTrack);
+
+
+ private:
+  cv::Mat imgHSV;
+  cv::Mat _captureMat;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<std::vector<cv::Point>> filteredContours;
+  Capture &_capture;
+  cv::Mat _imgProcessing;
+  cv::Mat _imgProcessedTrack;
+  cs::VideoMode _videoMode;
+
+ protected:
+  std::mutex _classMutex;
 };

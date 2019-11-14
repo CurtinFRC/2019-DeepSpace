@@ -39,12 +39,15 @@ double PIDGains::GetkF() const {
 
 // PIDController
 
-PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0), _movingAverage(LinearFilter::MovingAverage(20)) {}
+PIDController::PIDController(PIDGains gains, double setpoint) : _gains(gains), _setpoint(setpoint), _lastError(0), _filterPos(LinearFilter::MovingAverage(20)), _filterVel(LinearFilter::MovingAverage(20)) {}
 
-void PIDController::SetSetpoint(double setpoint) {
-  Reset();
+void PIDController::SetSetpoint(double setpoint, bool reset) {
+  if (reset) Reset();
   _setpoint = setpoint;
-  if (_threshAvgSet == false) _threshAvg = setpoint * 0.05;
+  if (_threshAvgSet == false) {
+    _threshAvgPos = setpoint * 0.05;
+    _threshAvgVel = setpoint * 0.05;
+  }
 }
 
 double PIDController::GetSetpoint() {
@@ -56,11 +59,12 @@ void PIDController::SetIZone(double threshIZone) {
 }
 
 bool PIDController::IsDone() {
-  return _iterations > 20 && _avgError < _threshAvg;
+  return _iterations > 20 && std::abs(_avgError) < _threshAvgPos && std::abs(_avgVel) < _threshAvgVel;
 }
 
-void PIDController::SetIsDoneThreshold(double threshAvg) {
-  _threshAvg = threshAvg;
+void PIDController::SetIsDoneThreshold(double threshAvgPos, double threshAvgVel) {
+  _threshAvgPos = threshAvgPos;
+  _threshAvgVel = threshAvgVel;
   _threshAvgSet = true;
 }
 
@@ -70,11 +74,12 @@ void PIDController::SetWrap(double range) {
 
 double PIDController::Calculate(double processVariable, double dt, double feedforward) {
   double error = Wrap(_setpoint - processVariable);
-  _avgError = _movingAverage.Get(error);
+  _avgError = _filterPos.Get(error);
 
   if (_threshIZone > 0 && std::abs(error) > _threshIZone) _integral = 0; // I zone
   else _integral += error * dt; // Calc I
   _derivative = dt > 0 ? (error - _lastError) / dt : 0; // Calc D
+  _avgVel = _filterVel.Get(_derivative);
 
   double output = _gains.GetkP() * error + _gains.GetkI() * _integral + _gains.GetkD() * _derivative + _gains.GetkF() * feedforward;
   _lastError = error;
@@ -88,7 +93,8 @@ void PIDController::Reset() {
   _derivative = 0;
   _lastError = 0;
   _iterations = 0;
-  _movingAverage.Reset();
+  _filterPos.Reset();
+  _filterVel.Reset();
   // Does not reset _threshAvg, use SetIZone instead
 }
 

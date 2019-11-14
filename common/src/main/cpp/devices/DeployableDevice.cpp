@@ -1,30 +1,89 @@
 #include "devices/DeployableDevice.h"
 
-void curtinfrc::devices::DeployableDevice::SetIntaking() {
-  switch (_state) {
-   case kIntaking:
-   case kOuttaking:
-    SetState(kIntaking);
-    break;
+using namespace curtinfrc;
+using namespace curtinfrc::devices;
 
-   default:
-    SetState(kDeploying);
+
+std::string DeployableDevice::GetStateString() {
+  switch (GetState()) {
+   case kStowed:
+    return "kStowed";
+
+   case kStowing:
+    return "kStowing";
+
+   case kDeploying:
+    return "kDeploying";
+
+   case kOuttaking:
+    return "kOuttaking";
+
+   case kIntaking:
+    return "kIntaking";
+  }
+
+  return "<state error>";
+}
+
+
+void DeployableDevice::SetIntaking() {
+  if (!_config.canEject) { // default
+    switch (_state) {
+     case kIntaking:
+      break;
+
+     case kOuttaking:
+      SetState(kIntaking);
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
+  } else { // can eject while stowed
+    switch (_state) {
+     case kIntaking:
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
   }
 }
 
-void curtinfrc::devices::DeployableDevice::SetOuttaking() {
-  switch (_state) {
-   case kIntaking:
-   case kOuttaking:
-    SetState(kOuttaking);
-    break;
+void DeployableDevice::SetOuttaking() {
+  if (!_config.canEject) { // default
+    switch (_state) {
+     case kOuttaking:
+      break;
 
-   default:
-    SetState(kDeploying);
+     case kIntaking:
+      SetState(kOuttaking);
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
+  } else { // can eject while stowed
+    switch (_state) {
+     case kOuttaking:
+      break;
+
+     case kIntaking:
+     case kStowed:
+      SetState(kOuttaking);
+      break;
+
+     default:
+      SetState(kDeploying);
+      break;
+    }
   }
 }
 
-void curtinfrc::devices::DeployableDevice::SetStowed() {
+void DeployableDevice::SetStowed() {
   switch (_state) {
    case kStowed:
     break;
@@ -35,7 +94,7 @@ void curtinfrc::devices::DeployableDevice::SetStowed() {
   }
 }
 
-void curtinfrc::devices::DeployableDevice::OnStatePeriodic(curtinfrc::devices::DeployableDeviceState state, double dt) {
+void DeployableDevice::OnStatePeriodic(DeployableDeviceState state, double dt) {
   _config.actuator.Update(dt);
 
   switch (state) {

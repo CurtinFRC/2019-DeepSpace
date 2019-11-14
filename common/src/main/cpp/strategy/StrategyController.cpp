@@ -52,6 +52,17 @@ void StrategyController::Update(double dt) {
   }
 }
 
+void StrategyController::InterruptAll(bool force) {
+  std::lock_guard<std::recursive_mutex> lock(_impl->systemsMtx);
+  for (StrategySystem *sys : _impl->systems) {
+    auto active = sys->GetActiveStrategy();
+    if (active != nullptr && active != sys->GetDefaultStrategy() && (force || active->_can_interrupt)) {
+      sys->StrategyReplace(nullptr);
+      sys->StrategyStatusUpdate();
+    }
+  }
+}
+
 bool StrategyController::DoSchedule(std::shared_ptr<Strategy> strategy, bool force) {
   if (strategy->GetStrategyState() != StrategyState::INITIALIZED && strategy->GetStrategyState() != StrategyState::CANCELLED && !strategy->_can_reuse) {
     throw std::invalid_argument("Cannot reuse a Strategy that has SetCanBeReused(false)");

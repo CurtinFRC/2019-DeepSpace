@@ -1,15 +1,15 @@
 #include "actuators/BinaryLimitMotor.h"
 
-void curtinfrc::actuators::BinaryLimitMotor::Update(double dt) {
+void curtinfrc::actuators::BinaryLimitMotor::UpdateActuator(double dt) {
   if (_state == kForward) {
-    _config.motor.transmission->Set(1);
+    _config.motor.transmission->SetVoltage(12);
   } else {
-    _config.motor.transmission->Set(-1);
+    _config.motor.transmission->SetVoltage(-12);
   }
 }
 
 void curtinfrc::actuators::BinaryLimitMotor::Stop() {
-  _config.motor.transmission->Set(0);
+  _config.motor.transmission->SetVoltage(0);
 }
 
 bool curtinfrc::actuators::BinaryLimitMotor::IsDone() {

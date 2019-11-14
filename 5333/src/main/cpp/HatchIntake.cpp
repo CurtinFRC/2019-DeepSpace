@@ -1,24 +1,30 @@
 #include "HatchIntake.h"
 #include "ControlMap.h"
 
-void HatchIntake::IntakingPeriodic() { // Intake
-  _config.servo.SetAngle(_config.forward);
+void HatchIntake::IntakingPeriodic() { // Primary (e.g. intaking)
+  _config.manipulator.SetTarget(curtinfrc::actuators::kForward);
 }
 
-void HatchIntake::OuttakingPeriodic() { // Eject
-  _config.servo.SetAngle(_config.reverse);
+void HatchIntake::OuttakingPeriodic() { // Reverse (e.g. ejecting)
+  _config.manipulator.SetTarget(curtinfrc::actuators::kReverse);
+}
+
+void HatchIntake::StowedPeriodic() { // Stow
+  _config.manipulator.SetTarget(_config.stowedState);
 }
 
 
 void HatchIntakeManualStrategy::OnUpdate(double dt) {
-  if (_enabledToggle.Update(_joy.GetRawButton(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
+  _hatchIntake.GetConfig().manipulator.Update(dt);
+
+  // if (_enabledToggle.Update(_contGroup.Get(ControlMap::hatchToggleEnabled))) _enabled = !_enabled;
 
   if (_enabled) {
-    if (_joy.GetRawButton(ControlMap::hatchGrab)) {
+    if (_contGroup.Get(ControlMap::hatchGrab)) {
       _hatchIntake.SetIntaking();
-    } else if (_joy.GetRawButton(ControlMap::hatchRelease)) {
+    } else if (_contGroup.Get(ControlMap::hatchRelease)) {
       _hatchIntake.SetOuttaking();
-    } else if (_joy.GetRawButton(ControlMap::hatchStow)) {
+    } else if (_contGroup.Get(ControlMap::hatchStow)) {
       _hatchIntake.SetStowed();
     }
   } else {
