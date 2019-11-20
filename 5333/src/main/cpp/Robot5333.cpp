@@ -22,7 +22,7 @@ void Robot::RobotInit() {
   auto cameraSide = CameraServer::GetInstance()->StartAutomaticCapture(1);
 
   cameraFront.SetFPS(30);
-  cameraFront.SetFPS(30);
+  cameraSide.SetFPS(30);
 
   cameraFront.SetResolution(160, 120);
   cameraSide.SetResolution(160, 120);
