@@ -4,7 +4,7 @@ Description=Curtin FRC Vision Service
 [Service]
 Type=simple
 Restart=always
-ExecStart=/home/vision/run.sh
+ExecStart=/home/vision/curtinFrcVision
 WorkingDirectory=/home/vision
 
 [Install]
