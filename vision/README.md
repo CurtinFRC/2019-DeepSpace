@@ -1,5 +1,5 @@
 Vision Tracking Documentation.
-===
+====
 
 # Getting started
 ### 1. Grab the image:
