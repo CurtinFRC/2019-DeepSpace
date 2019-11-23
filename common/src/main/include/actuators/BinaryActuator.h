@@ -25,7 +25,7 @@ namespace curtinfrc {
         return "<state error>";
       };
 
-      void SetTarget(BinaryActuatorState state) { SetState(state); Init(); };
+      void SetTarget(BinaryActuatorState state) { SetState(state); if (_lastState != _state) Init(); };
       virtual void UpdateActuator(double dt) = 0;
       virtual void Stop() {};
       virtual bool IsDone() { return true; };
