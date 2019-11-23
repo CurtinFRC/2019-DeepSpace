@@ -7,15 +7,15 @@ Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
     motorSrx1->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
         config.slot0.kI = 0;
-        config.slot0.kD = 0.0;
+        config.slot0.kD = 0.002;
         config.slot0.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 20000;
-        config.motionAcceleration = 5000;
+        config.motionCruiseVelocity = 500000;
+        config.motionAcceleration = 90000;
 
         
     });
@@ -23,15 +23,15 @@ Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
     motorSrx2->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
         config.slot0.kI = 0;
-        config.slot0.kD = 0.0;
+        config.slot0.kD = 0.002;
         config.slot0.kF = 0;
 
         config.nominalOutputForward = 0;
         config.nominalOutputReverse = 0;
         config.peakOutputForward = 1;
         config.peakOutputReverse = -1;
-        config.motionCruiseVelocity = 20000;
-        config.motionAcceleration = 5000;
+        config.motionCruiseVelocity = 500000;
+        config.motionAcceleration = 90000;
 
         
     });
@@ -41,14 +41,14 @@ Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
 
 void Cargo::setRotationSpeed(double speed) { //Percent speed
     if(std::abs(speed) < deadzone) speed = 0;
-    motorSrx1->Set(speed);
+    motorSrx1->Set(-speed);
     motorSrx2->Set(speed);
     }
 
 
 void Cargo::setAngle(double newAngle) { //Set intake to a specific angle
     motorSrx1->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
-    motorSrx2->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
+    motorSrx2->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -newAngle);
 }
 
 

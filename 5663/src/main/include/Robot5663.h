@@ -8,6 +8,7 @@
 #include <frc/SpeedControllerGroup.h>
 #include <frc/Compressor.h>
 #include "frc/AnalogInput.h"
+#include "frc/DigitalInput.h"
 #include "frc/I2C.h"
 #include <frc/Timer.h>
 
@@ -54,6 +55,7 @@ class Robot : public frc::TimedRobot {
 
   frc::Compressor *compressor;
   frc::AnalogInput *AI;
+  frc::DigitalInput *DI;
 
   curtinfrc::Toggle lockToggle{};
   bool lockState = true;
@@ -63,10 +65,12 @@ class Robot : public frc::TimedRobot {
   double lastTimer;
   double power;
   bool pressRBumper;
+  bool pressLBumper;
   bool pressBButton;
   std::vector<double> powers;
-  std::shared_ptr<nt::NetworkTable> table;
+  std::shared_ptr<nt::NetworkTable> visionTable, tapeTable, hatchTable;
   nt::NetworkTableEntry targetAngle, targetDistance, targetOffset;
   int stage;
+  int snapshots;
   float avgDistance, avgAngle, avgOffset;
 };

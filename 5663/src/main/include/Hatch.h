@@ -16,7 +16,10 @@ class Hatch {
         void upPosition();
         void ejectHatch(bool eject);
         void lockHatch(bool state);
-        void alignmentPiston(bool extended);     
+        void alignmentPiston(bool extended);   
+        bool isLocked();
+        double encoderIn();
+        double velocityIn();
         void zeroEncoder();
         void update();
     private:
