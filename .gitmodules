@@ -1,0 +1,3 @@
+[submodule "wml"]
+	path = wml
+	url = https://github.com/met4000/wml
