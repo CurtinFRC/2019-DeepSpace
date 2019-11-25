@@ -4,7 +4,7 @@
 
 #include "strategy/Strategy.h"
 #include "Elevator.h"
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 #include "control/PIDController.h"
 
 class BaseDrivetrainTeleopStrategy : public wml::Strategy {

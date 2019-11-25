@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 
 #define EPS 0.00001
 

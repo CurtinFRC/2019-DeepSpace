@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include <frc/DoubleSolenoid.h>
 #include <cmath>
 #include <frc/smartdashboard/SmartDashboard.h>

@@ -7,9 +7,9 @@
 #include <frc/Spark.h>
 #include <frc/Talon.h>
 #include <frc/DoubleSolenoid.h>
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include "Gearbox.h"
 #include "Drivetrain.h"
 

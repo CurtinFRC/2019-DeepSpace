@@ -2,7 +2,7 @@
 
 #include "Elevator.h"
 
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 #include "strategy/Strategy.h"
 
 class Lift : public wml::Elevator {

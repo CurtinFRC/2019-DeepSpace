@@ -5,7 +5,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 #include "Toggle.h"
 #include "Gearbox.h"
 

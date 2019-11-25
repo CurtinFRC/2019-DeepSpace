@@ -1,6 +1,6 @@
 // Simulation harness for the wml::TalonSrx.
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include "simulation/ctre_sim.h"
 
 using namespace wml;

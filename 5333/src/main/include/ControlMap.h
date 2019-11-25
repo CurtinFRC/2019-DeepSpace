@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 
 #define N_CONT 3
 

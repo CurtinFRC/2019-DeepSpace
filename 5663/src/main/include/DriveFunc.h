@@ -1,7 +1,7 @@
 #pragma once
 
 #include <frc/smartdashboard/SmartDashboard.h>
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include "Drivetrain.h"
 #include "control/PIDController.h"
 #include "sensors/NavX.h"

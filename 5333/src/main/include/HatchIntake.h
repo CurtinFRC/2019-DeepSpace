@@ -6,7 +6,7 @@
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
 #include "actuators/BinaryActuator.h"
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 #include "Toggle.h"
 
 using HatchIntakeState = wml::devices::DeployableDeviceState;
