@@ -1,0 +1,58 @@
+apply plugin: 'cpp'
+apply plugin: 'google-test-test-suite'
+apply plugin: 'edu.wpi.first.GradleRIO'
+apply plugin: "org.ysb33r.doxygen"
+
+model {
+  components {
+    wml(NativeLibrarySpec) {
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.roborio
+
+      binaries.all {
+        sources {
+          cpp(CppSourceSet) {
+            def target = targetPlatform.name == wpi.platforms.roborio ? 'robot' : 'simulation'
+            source {
+              srcDir 'src/main/cpp'
+              srcDir "src/${target}/cpp"
+              include '**/*.cpp'
+            }
+            exportedHeaders {
+              srcDir 'src/main/include'
+              srcDir "src/${target}/include"
+            }
+          }
+        }
+      }
+
+      useLibrary(it, 'wpilib')
+      wpi.deps.vendor.cpp(it)
+    }
+  }
+
+  testSuites {
+    wmlTest(GoogleTestTestSuiteSpec) {
+      testing $.components.wml
+
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+        }
+      }
+
+      useLibrary(it, 'wpilib', 'googletest')
+      wpi.deps.vendor.cpp(it)
+    }
+  }
+}
+
+doxygen {
+  executables {
+      doxygen version : '1.8.13'
+  }
+
+  generate_html true
+  javadoc_autobrief true
+  source project.file('src/main/include')
+}
