@@ -3,7 +3,7 @@
 #include <frc/Notifier.h>
 #include <memory>
 
-namespace curtinfrc {
+namespace wml {
 
 class StrategySystem;
 class Strategy;

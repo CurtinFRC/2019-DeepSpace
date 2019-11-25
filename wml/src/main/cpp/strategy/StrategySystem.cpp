@@ -3,7 +3,7 @@
 #include <exception>
 #include <iostream>
 
-using namespace curtinfrc;
+using namespace wml;
 
 void StrategySystem::SetDefault(std::shared_ptr<Strategy> newStrategy) {
   if (newStrategy != nullptr) {

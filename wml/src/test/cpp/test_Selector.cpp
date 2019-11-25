@@ -2,7 +2,7 @@
 
 #include "Selector.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 TEST (Selector, DefConstructor) {
   Selector selectorDef;

@@ -10,7 +10,7 @@
 #include <frc/DriverStation.h>
 
 using namespace frc;
-using namespace curtinfrc;
+using namespace wml;
 
 double lastTimestamp;
 

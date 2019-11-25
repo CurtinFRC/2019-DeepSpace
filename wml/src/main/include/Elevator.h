@@ -11,7 +11,7 @@
 
 #include "Usage.h"
 
-namespace curtinfrc {
+namespace wml {
   struct ElevatorConfig {
     Gearbox &spool;
     
@@ -68,4 +68,4 @@ namespace curtinfrc {
 
     Usage<ElevatorConfig>::Scoped _usage{&_config};
   };
-} // ns curtinfrc
+} // ns wml

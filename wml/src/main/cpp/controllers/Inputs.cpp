@@ -1,6 +1,6 @@
 #include "controllers/Inputs.h"
 
-using namespace curtinfrc::controllers::inputs;
+using namespace wml::controllers::inputs;
 
 
 double Axis::Get() {
@@ -43,7 +43,7 @@ bool Button::Get() {
 }
 
 
-curtinfrc::controllers::Controller::POVPos POV::Get() {
+wml::controllers::Controller::POVPos POV::Get() {
   return _cont->GetPOV(_id);
 }
 
@@ -107,11 +107,11 @@ bool POVButton::Get() {
 // --------------------------------------- 'CONSTRUCTOR' FUNCTIONS ---------------------------------------
 
 
-std::vector<AxisButton*> curtinfrc::controllers::inputs::MakeAxisButton(ContAxis *axis, double threshold) {
+std::vector<AxisButton*> wml::controllers::inputs::MakeAxisButton(ContAxis *axis, double threshold) {
   return { new AxisButton(axis, threshold) };
 }
 
-std::vector<AxisSelectorButton*> curtinfrc::controllers::inputs::MakeAxisSelectorButtons(ContAxis *axis, int n) {
+std::vector<AxisSelectorButton*> wml::controllers::inputs::MakeAxisSelectorButtons(ContAxis *axis, int n) {
   std::vector<AxisSelectorButton*> buttons;
 
   for (int i = 0; i < n; i++) buttons.push_back(new AxisSelectorButton(new AxisSelector(axis, n), i));
@@ -120,12 +120,12 @@ std::vector<AxisSelectorButton*> curtinfrc::controllers::inputs::MakeAxisSelecto
 }
 
 
-std::vector<FieldAxis*> curtinfrc::controllers::inputs::MakeFieldAxi(Field *field) {
+std::vector<FieldAxis*> wml::controllers::inputs::MakeFieldAxi(Field *field) {
   return { new FieldAxis(field, Field::FieldAxisType::primary), new FieldAxis(field, Field::FieldAxisType::secondary) };
 }
 
 
-std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n, bool wrap) {
+std::vector<ButtonSelectorButton*> wml::controllers::inputs::MakeButtonSelectorButtons(std::pair<ContButton*, ContButton*> buttonPair, int n, bool wrap) {
   std::vector<ButtonSelectorButton*> buttons;
 
   for (int i = 0; i < n; i++) buttons.push_back(new ButtonSelectorButton(new ButtonSelector(buttonPair, n), i));
@@ -134,7 +134,7 @@ std::vector<ButtonSelectorButton*> curtinfrc::controllers::inputs::MakeButtonSel
 }
 
 
-std::vector<POVButton*> curtinfrc::controllers::inputs::MakePOVButtons(ContPOV *pov) {
+std::vector<POVButton*> wml::controllers::inputs::MakePOVButtons(ContPOV *pov) {
   std::vector<POVButton*> buttons;
 
   for (int i = 0; i < 8; i++) buttons.push_back(new POVButton(pov, i + 1));

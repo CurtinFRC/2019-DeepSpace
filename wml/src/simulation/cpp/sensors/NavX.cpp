@@ -1,6 +1,6 @@
 #include "simulation/sensors/navx_sim.h"
 
-using namespace curtinfrc::sensors;
+using namespace wml::sensors;
 
 NavX::NavX(frc::SPI::Port spi, uint8_t update_hz) : _port{spi} {
   _impl = std::make_unique<NavX::Impl>();

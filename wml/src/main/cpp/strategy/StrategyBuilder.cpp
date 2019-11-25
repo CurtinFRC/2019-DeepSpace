@@ -3,7 +3,7 @@
 
 #include <exception>
 
-using namespace curtinfrc;
+using namespace wml;
 
 StrategyQueue::StrategyQueue() : Strategy() {
   SetCanBeReused(false);

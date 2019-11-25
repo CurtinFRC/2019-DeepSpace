@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace curtinfrc {
+namespace wml {
 
 class Strategy;
 class StrategyController;

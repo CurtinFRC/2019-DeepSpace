@@ -1,6 +1,6 @@
 #include "actuators/BinaryEncoderMotor.h"
 
-void curtinfrc::actuators::BinaryEncoderMotor::UpdateActuator(double dt) {
+void wml::actuators::BinaryEncoderMotor::UpdateActuator(double dt) {
   int comp = _config.forward - _config.reverse >= 0 ? 1 : -1; // account for situations where forward is less than reverse
 
   if (_state == kForward) {
@@ -10,11 +10,11 @@ void curtinfrc::actuators::BinaryEncoderMotor::UpdateActuator(double dt) {
   }
 }
 
-void curtinfrc::actuators::BinaryEncoderMotor::Stop() {
+void wml::actuators::BinaryEncoderMotor::Stop() {
   _config.motor.transmission->SetVoltage(0);
 }
 
-bool curtinfrc::actuators::BinaryEncoderMotor::IsDone() {
+bool wml::actuators::BinaryEncoderMotor::IsDone() {
   bool done = false;
 
   bool comp = _config.forward - _config.reverse >= 0; // account for situations where forward is less than reverse

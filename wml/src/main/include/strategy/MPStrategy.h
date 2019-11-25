@@ -9,7 +9,7 @@
 
 #include <frc/interfaces/Gyro.h>
 
-namespace curtinfrc {
+namespace wml {
 
   /**
    * Strategy used to work with the RobotPy data characterization program.
@@ -42,4 +42,4 @@ namespace curtinfrc {
     Drivetrain &_drivetrain;
     PathfinderController _pf;
   };
-} // ns curtinfrc
+} // ns wml

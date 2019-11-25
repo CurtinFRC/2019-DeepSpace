@@ -4,10 +4,10 @@
 
 #define EPS 0.00001
 
-using AxisMap = curtinfrc::controllers::Joystick::AxisMap;
+using AxisMap = wml::controllers::Joystick::AxisMap;
 
 namespace testing {
-  class Joystick : public curtinfrc::controllers::GenericHID {
+  class Joystick : public wml::controllers::GenericHID {
    public:
     using GenericHID::GenericHID;
 
@@ -38,7 +38,7 @@ namespace testing {
 // CONSTRUCTION TEST
 
 TEST (testing_Joystick, Constructor) {
-  curtinfrc::controllers::SmartController joy(new testing::Joystick(0), { 4, 12, 1 });
+  wml::controllers::SmartController joy(new testing::Joystick(0), { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   ASSERT_EQ(joy.GetPort(), 0);
@@ -54,7 +54,7 @@ TEST (testing_Joystick, Constructor) {
 
 TEST (testing_Joystick, SetButton) {
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   for (int i = 1; i <= 12; i++) {
@@ -74,7 +74,7 @@ TEST (testing_Joystick, SetButton) {
 
 TEST (testing_Joystick, SetAxis) {
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
 
   raw.SetAxis(AxisMap::kXAxis, 0.5);
   ASSERT_NEAR(joy.GetAxis(AxisMap::kXAxis), 0.5, EPS);
@@ -117,7 +117,7 @@ TEST (testing_Joystick, SetAxis) {
 
 TEST (testing_Joystick, SingleMaxAxis) { // Testing when a single axis is at max magnitude
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   // Front
@@ -147,7 +147,7 @@ TEST (testing_Joystick, SingleMaxAxis) { // Testing when a single axis is at max
 
 TEST (testing_Joystick, SingleHalfMaxAxis) { // Testing when a single axis is at half max magnitude
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   // Front
@@ -177,7 +177,7 @@ TEST (testing_Joystick, SingleHalfMaxAxis) { // Testing when a single axis is at
 
 TEST (testing_Joystick, DualMaxAxis) { // Testing when both axi are at max magnitude
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   // Front/Right
@@ -207,7 +207,7 @@ TEST (testing_Joystick, DualMaxAxis) { // Testing when both axi are at max magni
 
 TEST (testing_Joystick, DualHalfMaxAxis) { // Testing when both axi are at half max magnitude
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   // Front/Right
@@ -237,7 +237,7 @@ TEST (testing_Joystick, DualHalfMaxAxis) { // Testing when both axi are at half 
 
 TEST (testing_Joystick, SplitMaxAxis) { // Testing when one axis is at max mag, and the other at half max mag
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   // Bearing 26.6
@@ -298,7 +298,7 @@ TEST (testing_Joystick, SplitMaxAxis) { // Testing when one axis is at max mag, 
 
 TEST (testing_Joystick, GetButtonRise) {
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   EXPECT_FALSE(joy.Get({ -1, 1 }, joy.ONRISE));
@@ -317,7 +317,7 @@ TEST (testing_Joystick, GetButtonRise) {
 
 TEST (testing_Joystick, GetButtonFall) {
   testing::Joystick raw(0);
-  curtinfrc::controllers::SmartController joy(&raw, { 4, 12, 1 });
+  wml::controllers::SmartController joy(&raw, { 4, 12, 1 });
   joy.PairAxis({ -1, AxisMap::kYAxis }, { -1, AxisMap::kXAxis }, true);
 
   EXPECT_FALSE(joy.Get({ -1, 1 }, joy.ONFALL));

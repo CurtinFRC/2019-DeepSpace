@@ -1,8 +1,8 @@
 #include "Hatch.h"
 
 Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int servoID) {
-    Flooper = new curtinfrc::TalonSrx(motorID, 1024);
-    Flooper->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
+    Flooper = new wml::TalonSrx(motorID, 1024);
+    Flooper->ModifyConfig([](wml::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
         config.slot0.kI = 0.0;
         config.slot0.kD = 0.0;
@@ -19,7 +19,7 @@ Hatch::Hatch(int motorID, int eject, int retract, int align, int faceplant, int 
     ejection = new frc::DoubleSolenoid(9,eject, retract);
     alignment = new frc::DoubleSolenoid(9,align, faceplant);
     Flooper->SetInverted(true);
-    lock = new curtinfrc::actuators::BinaryServo(servoID, 180, 180 - 30);
+    lock = new wml::actuators::BinaryServo(servoID, 180, 180 - 30);
 }
 
 void Hatch::setRotationSpeed(double speed) {
@@ -28,13 +28,13 @@ void Hatch::setRotationSpeed(double speed) {
 }
 
 void Hatch::downPosition() {
-        Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, 30000);
+        Flooper->Set(wml::TalonSrx::ControlMode::MotionMagic, 30000);
         targetpos = false;
         
 }
 
 void Hatch::upPosition() {
-    Flooper->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, -1000);
+    Flooper->Set(wml::TalonSrx::ControlMode::MotionMagic, -1000);
     targetpos = true;
     
 }
@@ -45,7 +45,7 @@ void Hatch::ejectHatch(bool eject) {
 }
 
 void Hatch::lockHatch(bool state) {
-    lock->SetTarget(state ? curtinfrc::actuators::kReverse : curtinfrc::actuators::kForward);
+    lock->SetTarget(state ? wml::actuators::kReverse : wml::actuators::kForward);
 }
 
 void Hatch::alignmentPiston(bool extended) {

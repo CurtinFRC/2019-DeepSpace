@@ -2,7 +2,7 @@
 
 #include "sensors/ContinuousSensor.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace sensors {
     class DoubleSensor : public ContinuousSensor {
      public:
@@ -15,4 +15,4 @@ namespace curtinfrc {
       const double _max, _min;
     };
   } // ns sensors
-} // ns curtinfrc
+} // ns wml

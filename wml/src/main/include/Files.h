@@ -6,8 +6,8 @@
 
 #include <string>
 
-namespace curtinfrc {
+namespace wml {
 namespace files {
   std::string GetDeployDirectory(std::string project);
 }
-}  // namespace curtinfrc
+}  // namespace wml

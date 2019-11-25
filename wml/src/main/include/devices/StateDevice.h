@@ -4,7 +4,7 @@
 
 #include "loops/LoopSystem.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace devices {
     class StateDeviceBase : public loops::LoopSystem {
      public:
@@ -43,4 +43,4 @@ namespace curtinfrc {
       virtual void OnStatePeriodic(StateType state, double dt) = 0;
     };
   }  // namespace devices
-}  // namespace curtinfrc
+}  // namespace wml

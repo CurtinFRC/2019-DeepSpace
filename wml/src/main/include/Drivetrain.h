@@ -18,7 +18,7 @@
 #include "Usage.h"
 #include "Toggle.h"
 
-namespace curtinfrc {
+namespace wml {
   struct DrivetrainConfig {
     Gearbox &leftDrive;
     Gearbox &rightDrive;
@@ -106,4 +106,4 @@ namespace curtinfrc {
     double _bearing = 0;
     bool _hold = false;
   };
-} // ns curtinfrc
+} // ns wml

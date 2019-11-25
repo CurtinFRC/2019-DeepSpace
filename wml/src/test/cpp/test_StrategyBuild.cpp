@@ -3,7 +3,7 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategyBuilder.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 class MockCountingStrategy : public Strategy {
  public:

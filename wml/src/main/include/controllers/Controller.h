@@ -2,7 +2,7 @@
 
 #include <frc/GenericHID.h>
 
-namespace curtinfrc {
+namespace wml {
   namespace controllers {
     class ConstructableGenericHID : public frc::GenericHID { // Constructable GenericHID class
      public:
@@ -61,4 +61,4 @@ namespace curtinfrc {
       GenericHID *_cont;
     };
   } // ns controllers
-} // ns curtinfrc
+} // ns wml

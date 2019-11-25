@@ -6,7 +6,7 @@
 #include <frc/Timer.h>
 #include <wpi/spinlock.h>
 
-using namespace curtinfrc;
+using namespace wml;
 
 struct StrategyController::Impl {
   using SystemsColl = std::set<StrategySystem *>;

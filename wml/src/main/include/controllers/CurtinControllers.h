@@ -8,7 +8,7 @@
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
 
-namespace curtinfrc {
+namespace wml {
   namespace controllers {
     class SmartControllerGroup {
      public:
@@ -74,4 +74,4 @@ namespace curtinfrc {
       };
     };
   } // ns controllers
-} // ns curtinfrc
+} // ns wml

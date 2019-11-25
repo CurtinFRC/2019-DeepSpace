@@ -4,7 +4,7 @@
 
 #include "sensors/DoubleSensor.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace sensors {
     class PressureSensor : public DoubleSensor {
      public:
@@ -16,4 +16,4 @@ namespace curtinfrc {
       frc::AnalogInput _sensor;
     };
   } // ns sensors
-} // ns curtinfrc
+} // ns wml

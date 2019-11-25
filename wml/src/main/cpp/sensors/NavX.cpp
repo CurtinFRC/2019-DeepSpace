@@ -1,6 +1,6 @@
 #include "sensors/NavX.h"
 
-using namespace curtinfrc::sensors;
+using namespace wml::sensors;
 
 NavXGyro NavX::Angular(AngularAxis axis) {
   return NavXGyro{*this, axis};

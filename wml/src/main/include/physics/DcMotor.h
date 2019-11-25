@@ -1,6 +1,6 @@
 #pragma once
 
-namespace curtinfrc {
+namespace wml {
 namespace physics {
 
   struct DcMotor {
@@ -68,4 +68,4 @@ namespace physics {
   }
 
 }  // namespace physics
-}  // namespace curtinfrc
+}  // namespace wml

@@ -6,7 +6,7 @@
 
 #include <memory>
 
-namespace curtinfrc {
+namespace wml {
 namespace sensors {
   /**
    * Angular Axis for any sensor. This is a rotational axis, that is,
@@ -113,4 +113,4 @@ namespace sensors {
     double _offset = 0;
   };
 }  // namespace sensors
-}  // namespace curtinfrc
+}  // namespace wml

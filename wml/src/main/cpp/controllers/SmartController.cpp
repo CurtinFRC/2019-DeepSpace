@@ -1,6 +1,6 @@
 #include "controllers/SmartController.h"
 
-using namespace curtinfrc::controllers;
+using namespace wml::controllers;
 
 
 bool SmartController::Exists(tAxis axis, bool value) {
@@ -145,7 +145,7 @@ bool SmartController::Get(tButton button, SmartController::ButtonMode mode) {
   else return false;
 }
 
-curtinfrc::controllers::Controller::POVPos SmartController::Get(tPOV pov) {
+wml::controllers::Controller::POVPos SmartController::Get(tPOV pov) {
   if (Exists(pov, false)) return kNone;
   return GetObj(pov)->Get();
 }

@@ -2,7 +2,7 @@
 
 #include "strategy/Strategy.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 class MockStrategy : public Strategy {
  public:

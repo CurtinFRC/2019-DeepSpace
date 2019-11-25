@@ -2,11 +2,11 @@
 
 #include "controllers/Controller.h"
 
-using namespace curtinfrc::controllers;
+using namespace wml::controllers;
 
 
 TEST (Controller, Constructor) {
-  Controller cont(new curtinfrc::controllers::GenericHID(0));
+  Controller cont(new wml::controllers::GenericHID(0));
 
   ASSERT_EQ(cont.GetPort(), 0);
 }

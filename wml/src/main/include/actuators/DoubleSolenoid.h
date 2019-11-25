@@ -4,7 +4,7 @@
 
 #include "actuators/BinaryActuator.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace actuators {
     class DoubleSolenoid : public BinaryActuator, protected frc::DoubleSolenoid {
      public:
@@ -24,4 +24,4 @@ namespace curtinfrc {
       double _timer;
     };
   } // ns actuators
-} // ns curtinfrc
+} // ns wml

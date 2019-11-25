@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 
-namespace curtinfrc {
+namespace wml {
 namespace control {
 
   class PIDGains {
@@ -67,4 +67,4 @@ namespace control {
   };
 
 }  // namespace control
-}  // namespace curtinfrc
+}  // namespace wml

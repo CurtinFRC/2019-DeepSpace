@@ -1,8 +1,8 @@
-// Robot code harness for the curtinfrc::TalonSrx.
+// Robot code harness for the wml::TalonSrx.
 
 #include "CurtinCtre.h"
 
-using namespace curtinfrc;
+using namespace wml;
 using namespace ctre::phoenix::motorcontrol;
 
 

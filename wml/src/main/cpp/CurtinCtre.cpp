@@ -2,7 +2,7 @@
 
 #include <frc/RobotController.h>
 
-using namespace curtinfrc;
+using namespace wml;
 
 // SRX
 

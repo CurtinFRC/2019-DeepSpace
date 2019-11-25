@@ -5,18 +5,18 @@
 
 // public
 
-std::string curtinfrc::Elevator::GetStateString() {
+std::string wml::Elevator::GetStateString() {
   switch (GetState()) {
-   case curtinfrc::ElevatorState::kStationary:
+   case wml::ElevatorState::kStationary:
     return "kStationary";
     
-   case curtinfrc::ElevatorState::kMoving:
+   case wml::ElevatorState::kMoving:
     return "kMoving";
 
-   case curtinfrc::ElevatorState::kZeroing:
+   case wml::ElevatorState::kZeroing:
     return "kZeroing";
     
-   case curtinfrc::ElevatorState::kManual:
+   case wml::ElevatorState::kManual:
     return "kManual";
   }
 
@@ -24,64 +24,64 @@ std::string curtinfrc::Elevator::GetStateString() {
 }
 
 
-void curtinfrc::Elevator::SetManual(double power) {
-  SetState(curtinfrc::ElevatorState::kManual);
+void wml::Elevator::SetManual(double power) {
+  SetState(wml::ElevatorState::kManual);
   _controller.SetSetpoint(power);
 }
 
-void curtinfrc::Elevator::SetSetpoint(double setpoint) {
-  SetState(curtinfrc::ElevatorState::kMoving);
+void wml::Elevator::SetSetpoint(double setpoint) {
+  SetState(wml::ElevatorState::kMoving);
   _controller.SetSetpoint(setpoint);
 }
 
-void curtinfrc::Elevator::SetZeroing() { // Reset encoder to zero
-  SetState(curtinfrc::ElevatorState::kZeroing);
+void wml::Elevator::SetZeroing() { // Reset encoder to zero
+  SetState(wml::ElevatorState::kZeroing);
   _controller.SetSetpoint(0);
 }
 
-void curtinfrc::Elevator::SetHold() {
-  SetState(curtinfrc::ElevatorState::kStationary);
+void wml::Elevator::SetHold() {
+  SetState(wml::ElevatorState::kStationary);
   _controller.SetSetpoint(GetHeight() + 0.1);
 }
 
 
-double curtinfrc::Elevator::GetSetpoint() {
+double wml::Elevator::GetSetpoint() {
   return _controller.GetSetpoint();
 }
 
-double curtinfrc::Elevator::GetHeight() {
+double wml::Elevator::GetHeight() {
   double radius = _config.spoolRadius;
   double rotations = _config.spool.encoder->GetEncoderRotations();
   double height = 6.283 * radius * rotations;
   return height;
 }
 
-curtinfrc::ElevatorConfig &curtinfrc::Elevator::GetConfig() {
+wml::ElevatorConfig &wml::Elevator::GetConfig() {
   return _config;
 }
 
-double curtinfrc::Elevator::GetFeedforward() {
+double wml::Elevator::GetFeedforward() {
   // V = IR, I = kt * t, I = kt * m * a * r
   return _config.spool.motor.kt() * _config.mass * -9.81 * _config.spoolRadius;
 }
 
 // virtual
 
-void curtinfrc::Elevator::OnStatePeriodic(curtinfrc::ElevatorState state, double dt) {
+void wml::Elevator::OnStatePeriodic(wml::ElevatorState state, double dt) {
   double voltage = 0;
   
   switch (state) {
-   case curtinfrc::ElevatorState::kManual:
+   case wml::ElevatorState::kManual:
     voltage = _controller.GetSetpoint();
     break;
 
-   case curtinfrc::ElevatorState::kMoving:
+   case wml::ElevatorState::kMoving:
     if (_controller.IsDone()) SetHold(); // Good enough EPS for now
-   case curtinfrc::ElevatorState::kStationary:
+   case wml::ElevatorState::kStationary:
     voltage = _controller.Calculate(GetHeight(), dt, GetFeedforward());
     break;
 
-   case curtinfrc::ElevatorState::kZeroing:
+   case wml::ElevatorState::kZeroing:
     voltage = -2;
     
     if (_config.limitSensorBottom != nullptr) {

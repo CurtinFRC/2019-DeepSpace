@@ -9,7 +9,7 @@
 
 #include <stdexcept>
 
-namespace curtinfrc {
+namespace wml {
 
   class CurtinPathfinder {
   public:
@@ -18,7 +18,7 @@ namespace curtinfrc {
     */
     static int LoadDeployedFile(std::string project, std::string filename, Segment *segments) {
       FILE *fp;
-      std::string base_path = curtinfrc::files::GetDeployDirectory(project);
+      std::string base_path = wml::files::GetDeployDirectory(project);
       std::string full_path = base_path + "/paths/output/" + filename + ".pf1.csv";
       fp = fopen(full_path.c_str(), "r"); 
       int len = pathfinder_deserialize_csv(fp, segments); 
@@ -130,4 +130,4 @@ namespace curtinfrc {
     double _offsetL, _offsetR;
   };
 
-} // ns curtinfrc
+} // ns wml

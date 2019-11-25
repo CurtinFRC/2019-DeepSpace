@@ -1,10 +1,10 @@
 // #include "intakes/WheeledIntake.h"
 
-// void curtinfrc::intakes::WheeledIntake::Set(curtinfrc::intakes::IntakeState state) {
+// void wml::intakes::WheeledIntake::Set(wml::intakes::IntakeState state) {
 //   SetState(state);
 // }
 
-// void curtinfrc::intakes::WheeledIntake::OnStatePeriodic(curtinfrc::intakes::IntakeState state, double dt) {
+// void wml::intakes::WheeledIntake::OnStatePeriodic(wml::intakes::IntakeState state, double dt) {
 //   switch(state){
 //     case kIn:
 //     _config.motors.transmission->Set(1);

@@ -2,7 +2,7 @@
 
 #include <frc/RobotController.h>
 
-using namespace curtinfrc;
+using namespace wml;
 
 actuators::MotorVoltageController::MotorVoltageController(frc::SpeedController *sc) : _speedController(sc) { }
 

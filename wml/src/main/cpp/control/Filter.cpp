@@ -1,6 +1,6 @@
 #include "control/Filter.h"
 
-using namespace curtinfrc::control;
+using namespace wml::control;
 
 LinearFilter::LinearFilter(wpi::ArrayRef<double> gainsFF, wpi::ArrayRef<double> gainsFB) :
   _bufferFF(gainsFF.size()), _bufferFB(gainsFB.size()), _gainsFF(gainsFF), _gainsFB(gainsFB) {}

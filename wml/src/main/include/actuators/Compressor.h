@@ -4,7 +4,7 @@
 
 #include "actuators/BinaryActuator.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace actuators {
     class Compressor : public BinaryActuator, protected frc::Compressor {
       public:
@@ -16,4 +16,4 @@ namespace curtinfrc {
       virtual bool IsDone() override;
     };
   } // ns actuators
-} // ns curtinfrc
+} // ns wml

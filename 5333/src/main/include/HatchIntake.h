@@ -9,16 +9,16 @@
 #include "controllers/CurtinControllers.h"
 #include "Toggle.h"
 
-using HatchIntakeState = curtinfrc::devices::DeployableDeviceState;
+using HatchIntakeState = wml::devices::DeployableDeviceState;
 
-struct HatchIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  curtinfrc::actuators::BinaryActuator &manipulator;
-  curtinfrc::actuators::BinaryActuatorState stowedState;
+struct HatchIntakeConfig : public wml::devices::DeployableDeviceConfig {
+  wml::actuators::BinaryActuator &manipulator;
+  wml::actuators::BinaryActuatorState stowedState;
 
-  HatchIntakeConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, std::string name = "<Hatch Intake>", curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
+  HatchIntakeConfig(wml::actuators::BinaryActuator &manipulatorIn, wml::actuators::BinaryActuator &actuatorIn, std::string name = "<Hatch Intake>", wml::actuators::BinaryActuatorState stowedStateIn = wml::actuators::kForward, bool canEjectIn = false) : wml::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
 };
 
-class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc::StrategySystem {
+class HatchIntake : public wml::devices::DeployableDevice, public wml::StrategySystem {
  public:
   HatchIntake(HatchIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
@@ -33,9 +33,9 @@ class HatchIntake : public curtinfrc::devices::DeployableDevice, public curtinfr
   HatchIntakeConfig _config;
 };
 
-class HatchIntakeManualStrategy : public curtinfrc::Strategy {
+class HatchIntakeManualStrategy : public wml::Strategy {
  public:
-  HatchIntakeManualStrategy(HatchIntake &hatchIntake, curtinfrc::controllers::SmartControllerGroup &contGroup, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _contGroup(contGroup), _enabledToggle(curtinfrc::ONRISE), _enabled(startEnabled) {
+  HatchIntakeManualStrategy(HatchIntake &hatchIntake, wml::controllers::SmartControllerGroup &contGroup, bool startEnabled) : Strategy("Hatch Manual"),  _hatchIntake(hatchIntake), _contGroup(contGroup), _enabledToggle(wml::ONRISE), _enabled(startEnabled) {
     Requires(&hatchIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -48,7 +48,7 @@ class HatchIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   HatchIntake &_hatchIntake;
-  curtinfrc::controllers::SmartControllerGroup &_contGroup;
-  curtinfrc::Toggle _enabledToggle;
+  wml::controllers::SmartControllerGroup &_contGroup;
+  wml::Toggle _enabledToggle;
   bool _enabled;
 };

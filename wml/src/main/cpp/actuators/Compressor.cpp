@@ -1,6 +1,6 @@
 #include "actuators/Compressor.h"
 
-void curtinfrc::actuators::Compressor::UpdateActuator(double dt) {
+void wml::actuators::Compressor::UpdateActuator(double dt) {
   if (_state == actuators::kForward) { // charge
     Start();
   } else { // off
@@ -8,7 +8,7 @@ void curtinfrc::actuators::Compressor::UpdateActuator(double dt) {
   }
 }
 
-bool curtinfrc::actuators::Compressor::IsDone() {
+bool wml::actuators::Compressor::IsDone() {
   if (_state == actuators::kForward) { // charge
     return !Enabled();
   } else { // off

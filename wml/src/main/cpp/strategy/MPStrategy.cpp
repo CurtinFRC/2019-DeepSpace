@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-using namespace curtinfrc;
+using namespace wml;
 
 // CHARACTERIZATION STRATEGY //
 DrivetrainCharacterizationStrategy::DrivetrainCharacterizationStrategy(Drivetrain &drivetrain) : _drivetrain(drivetrain), Strategy("MP Characterization") {

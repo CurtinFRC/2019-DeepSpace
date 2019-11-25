@@ -3,7 +3,7 @@
 #include <frc/SpeedController.h>
 #include <frc/SpeedControllerGroup.h>
 
-namespace curtinfrc {
+namespace wml {
 namespace actuators { 
   /**
    * A VoltageController is analagous to a SpeedController, but in terms of voltage instead
@@ -65,4 +65,4 @@ namespace actuators {
     frc::SpeedController *_speedController;
   };
 }
-}  // namespace curtinfrc
+}  // namespace wml

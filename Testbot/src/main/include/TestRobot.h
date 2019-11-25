@@ -26,11 +26,11 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  curtinfrc::controllers::XboxController *xbox;
+  wml::controllers::XboxController *xbox;
   
   frc::Spark *leftMotors[1], *rightMotors[1];
-  curtinfrc::Gearbox *left, *right;
-  curtinfrc::Drivetrain *drivetrain;
+  wml::Gearbox *left, *right;
+  wml::Drivetrain *drivetrain;
 
   frc::DoubleSolenoid *hatchEjector;
 };

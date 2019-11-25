@@ -1,6 +1,6 @@
 #include "Toggle.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 Toggle::Toggle(ToggleEvent mode) {
   _mode = mode;

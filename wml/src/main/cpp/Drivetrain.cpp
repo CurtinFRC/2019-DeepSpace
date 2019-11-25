@@ -1,17 +1,17 @@
 #include "Drivetrain.h"
 
-std::string curtinfrc::Drivetrain::GetStateString() {
+std::string wml::Drivetrain::GetStateString() {
   switch (GetState()) {
-   case curtinfrc::DrivetrainState::kManual:
+   case wml::DrivetrainState::kManual:
     return "kManual";
 
-   case curtinfrc::DrivetrainState::kVelocity:
+   case wml::DrivetrainState::kVelocity:
     return "kVelocity";
 
-   case curtinfrc::DrivetrainState::kIdle:
+   case wml::DrivetrainState::kIdle:
     return "kIdle";
 
-   case curtinfrc::DrivetrainState::kExternalLoop:
+   case wml::DrivetrainState::kExternalLoop:
     return "kExternalLoop";
   }
 
@@ -19,30 +19,30 @@ std::string curtinfrc::Drivetrain::GetStateString() {
 }
 
 
-void curtinfrc::Drivetrain::Set(double leftPower, double rightPower) {
+void wml::Drivetrain::Set(double leftPower, double rightPower) {
   SetVoltage(leftPower * 12, rightPower * 12);
 }
 
-void curtinfrc::Drivetrain::SetVoltage(double left, double right) {
+void wml::Drivetrain::SetVoltage(double left, double right) {
   _setpoint = std::pair<double, double>{ left, right };
-  SetState(curtinfrc::DrivetrainState::kManual);
+  SetState(wml::DrivetrainState::kManual);
 }
 
-void curtinfrc::Drivetrain::SetVelocity(double left, double right) {
+void wml::Drivetrain::SetVelocity(double left, double right) {
   _setpoint = std::pair<double, double>{ left, right };
-  SetState(curtinfrc::DrivetrainState::kVelocity);
+  SetState(wml::DrivetrainState::kVelocity);
 }
 
-void curtinfrc::Drivetrain::SetExternalLoop(std::function<std::pair<double, double>(curtinfrc::Drivetrain &, double)> func) {
+void wml::Drivetrain::SetExternalLoop(std::function<std::pair<double, double>(wml::Drivetrain &, double)> func) {
   _externalLoop = func;
-  SetState(curtinfrc::DrivetrainState::kExternalLoop);
+  SetState(wml::DrivetrainState::kExternalLoop);
 }
 
-void curtinfrc::Drivetrain::SetIdle() {
-  SetState(curtinfrc::DrivetrainState::kIdle);
+void wml::Drivetrain::SetIdle() {
+  SetState(wml::DrivetrainState::kIdle);
 }
 
-void curtinfrc::Drivetrain::SetInverted(bool inverted) {
+void wml::Drivetrain::SetInverted(bool inverted) {
   if (inverted != _config.reversed) {
     _config.reversed = inverted;
     _config.leftDrive.transmission->SetInverted(!_config.leftDrive.transmission->GetInverted());
@@ -50,14 +50,14 @@ void curtinfrc::Drivetrain::SetInverted(bool inverted) {
   }
 }
 
-double curtinfrc::Drivetrain::GetLeftDistance() {
+double wml::Drivetrain::GetLeftDistance() {
   auto gb = GetLeft();
 
   assert(gb.encoder != nullptr);
   return gb.encoder->GetEncoderRotations() * 3.14159265 * 2 * _config.wheelRadius;
 }
 
-double curtinfrc::Drivetrain::GetRightDistance() {
+double wml::Drivetrain::GetRightDistance() {
   auto gb = GetRight();
 
   assert(gb.encoder != nullptr);
@@ -67,9 +67,9 @@ double curtinfrc::Drivetrain::GetRightDistance() {
 
 // Protected
 
-void curtinfrc::Drivetrain::OnStateChange(DrivetrainState newState, DrivetrainState oldState) {
+void wml::Drivetrain::OnStateChange(DrivetrainState newState, DrivetrainState oldState) {
   switch (newState) {
-   case curtinfrc::DrivetrainState::kVelocity:
+   case wml::DrivetrainState::kVelocity:
     _pidLeft.SetSetpoint(_setpoint.first);
     _pidRight.SetSetpoint(_setpoint.second);
     break;
@@ -79,15 +79,15 @@ void curtinfrc::Drivetrain::OnStateChange(DrivetrainState newState, DrivetrainSt
   }
 }
 
-void curtinfrc::Drivetrain::OnStatePeriodic(curtinfrc::DrivetrainState state, double dt) {
+void wml::Drivetrain::OnStatePeriodic(wml::DrivetrainState state, double dt) {
   std::pair<double, double> outputs{ 0, 0 };
 
   switch (state) {
-   case curtinfrc::DrivetrainState::kManual:
+   case wml::DrivetrainState::kManual:
     outputs = _setpoint;
     break;
 
-   case curtinfrc::DrivetrainState::kVelocity:
+   case wml::DrivetrainState::kVelocity:
     _pidLeft.SetSetpoint(_setpoint.first, false);
     _pidRight.SetSetpoint(_setpoint.second, false);
 
@@ -97,7 +97,7 @@ void curtinfrc::Drivetrain::OnStatePeriodic(curtinfrc::DrivetrainState state, do
     };
     break;
 
-   case curtinfrc::DrivetrainState::kExternalLoop:
+   case wml::DrivetrainState::kExternalLoop:
     outputs = _externalLoop(*this, dt);
     break;
 
@@ -109,24 +109,24 @@ void curtinfrc::Drivetrain::OnStatePeriodic(curtinfrc::DrivetrainState state, do
   GetRight().transmission->SetVoltage(outputs.second); 
 }
 
-curtinfrc::Gearbox &curtinfrc::Drivetrain::GetLeft() {
+wml::Gearbox &wml::Drivetrain::GetLeft() {
   return !_config.reversed ? _config.leftDrive : _config.rightDrive;
 }
 
-curtinfrc::Gearbox &curtinfrc::Drivetrain::GetRight() {
+wml::Gearbox &wml::Drivetrain::GetRight() {
   return !_config.reversed ? _config.rightDrive : _config.leftDrive;
 }
 
 // DrivetrainFOCController
-curtinfrc::DrivetrainFOCController::DrivetrainFOCController(curtinfrc::control::PIDGains gains) : _pid(gains) { }
+wml::DrivetrainFOCController::DrivetrainFOCController(wml::control::PIDGains gains) : _pid(gains) { }
 
-void curtinfrc::DrivetrainFOCController::SetSetpoint(double magnitude, double bearing, bool hold) {
+void wml::DrivetrainFOCController::SetSetpoint(double magnitude, double bearing, bool hold) {
   _magnitude = magnitude;
   _bearing = bearing;
   _hold = hold;
 }
 
-std::pair<double, double> curtinfrc::DrivetrainFOCController::Calculate(double angle, double dt) {
+std::pair<double, double> wml::DrivetrainFOCController::Calculate(double angle, double dt) {
   _pid.SetSetpoint(_bearing);
   _pid.SetWrap(360.0);
 

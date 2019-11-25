@@ -2,7 +2,7 @@
 
 #include "sensors/SensorBase.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace sensors {
     class BinarySensor : public SensorBase<bool> {
      public:
@@ -11,4 +11,4 @@ namespace curtinfrc {
       virtual bool Get() = 0;
     };
   } // ns sensors
-} // ns curtinfrc
+} // ns wml

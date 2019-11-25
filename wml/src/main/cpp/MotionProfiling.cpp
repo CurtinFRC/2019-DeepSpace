@@ -2,7 +2,7 @@
 
 #include <networktables/NetworkTableInstance.h>
 
-using namespace curtinfrc;
+using namespace wml;
 
 PathfinderGains::PathfinderGains(std::string name, double kP, double kI, double kD, double kV, double kA, double kG) : _name(name), _kP(kP), _kI(kI), _kD(kD), _kV(kV), _kA(kA), _kG(kG) {
   _table = nt::NetworkTableInstance::GetDefault().GetTable("PathfinderGains[" + name + "]");

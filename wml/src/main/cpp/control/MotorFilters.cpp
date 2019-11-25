@@ -1,6 +1,6 @@
 #include "control/MotorFilters.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 control::CurrentFFFilter::CurrentFFFilter(double min, double max, Gearbox &gb)
     : _min_curr(min), _max_curr(max), _gearbox(gb) {}
@@ -25,7 +25,7 @@ void control::CurrentFFFilter::SetLimits(double min, double max) {
   _max_curr = max;
 }
 
-static double accel_to_current(curtinfrc::Gearbox &gb, double mass, double radius, double accel) {
+static double accel_to_current(wml::Gearbox &gb, double mass, double radius, double accel) {
   // I = kt * t, t = mar
   return mass * accel * radius * gb.motor.reduce(gb.reduction).kt();
 }

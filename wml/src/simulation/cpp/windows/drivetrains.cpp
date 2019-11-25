@@ -7,7 +7,7 @@
 #include <cmath>
 
 using namespace simulation;
-using namespace curtinfrc;
+using namespace wml;
 
 static std::string _field_name = "2019-field.jpg";
 static ui::point   _field_tl{217, 40}, _field_br{1372, 615}; // Top left and bottom right of the field image, in pixels

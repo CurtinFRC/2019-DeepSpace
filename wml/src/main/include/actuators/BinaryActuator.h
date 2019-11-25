@@ -4,7 +4,7 @@
 
 #include "devices/StateDevice.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace actuators {
     enum BinaryActuatorState { kReverse = 0, kForward };
 
@@ -40,4 +40,4 @@ namespace curtinfrc {
       virtual void OnStatePeriodic(BinaryActuatorState state, double dt) { UpdateActuator(dt); if (IsDone()) Stop(); };
     };
   } // ns actuators
-} // ns curtinfrc
+} // ns wml

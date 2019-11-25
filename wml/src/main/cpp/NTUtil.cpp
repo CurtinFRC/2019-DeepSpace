@@ -1,6 +1,6 @@
 #include "NTUtil.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 NTBoundDouble::NTBoundDouble(std::shared_ptr<nt::NetworkTable> table, std::string name, double *value) : _table(table), _name(name), _val(value) {
   _entry = table->GetEntry(name);

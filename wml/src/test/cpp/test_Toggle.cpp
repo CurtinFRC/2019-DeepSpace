@@ -2,7 +2,7 @@
 
 #include "Toggle.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 TEST (Toggle, DefConstructor) {
   Toggle toggleDef;

@@ -2,7 +2,7 @@
 
 #include <frc/RobotBase.h>
 
-namespace curtinfrc {
+namespace wml {
 
 /**
  * Class to be implemented in src/robot and src/simulation, as its behaviour will change depending
@@ -24,9 +24,9 @@ int StartRobot() {
 }
 
 #ifndef RUNNING_FRC_TESTS
-#define CURTINFRC_ROBOT_MAIN(RobotClz) int main() { curtinfrc::StartRobot<RobotClz>(); }
+#define CURTINFRC_ROBOT_MAIN(RobotClz) int main() { wml::StartRobot<RobotClz>(); }
 #else
 #define CURTINFRC_ROBOT_MAIN(RobotClz)
 #endif
 
-}  // ns curtinfrc
+}  // ns wml

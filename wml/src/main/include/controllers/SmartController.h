@@ -9,7 +9,7 @@
 #include "controllers/Inputs.h"
 #include "Toggle.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace controllers {
     struct SmartControllerConfig {
       const int nAxi;
@@ -80,4 +80,4 @@ namespace curtinfrc {
       std::map<int, inputs::ContPOV*> _POVs;
     };
   } // ns controllers
-} // ns curtinfrc
+} // ns wml

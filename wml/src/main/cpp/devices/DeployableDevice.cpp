@@ -1,7 +1,7 @@
 #include "devices/DeployableDevice.h"
 
-using namespace curtinfrc;
-using namespace curtinfrc::devices;
+using namespace wml;
+using namespace wml::devices;
 
 
 std::string DeployableDevice::GetStateString() {
@@ -107,7 +107,7 @@ void DeployableDevice::OnStatePeriodic(DeployableDeviceState state, double dt) {
     break;
 
    case kDeploying:
-    _config.actuator.SetTarget(curtinfrc::actuators::kForward);
+    _config.actuator.SetTarget(wml::actuators::kForward);
 
     if (_config.actuator.IsDone()) {
       SetState(kIntaking); // Changes to kIntaking (as opposed to kOuttaking) by default
@@ -118,7 +118,7 @@ void DeployableDevice::OnStatePeriodic(DeployableDeviceState state, double dt) {
     break;
 
    case kStowing:
-    _config.actuator.SetTarget(curtinfrc::actuators::kReverse);
+    _config.actuator.SetTarget(wml::actuators::kReverse);
 
     if (_config.actuator.IsDone()) {
       SetState(kStowed);

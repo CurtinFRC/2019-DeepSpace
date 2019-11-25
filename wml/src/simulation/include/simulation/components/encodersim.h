@@ -20,9 +20,9 @@ namespace components {
 
   class talonsrx_encoder : public encoder_sim {
    public:
-    curtinfrc::TalonSrx *talon;
+    wml::TalonSrx *talon;
 
-    talonsrx_encoder(curtinfrc::TalonSrx *t) : talon(t) {}
+    talonsrx_encoder(wml::TalonSrx *t) : talon(t) {}
 
     void set_counts(int count) override {
       ctre::all_talons()[talon->GetPort()].sensor_pos = count;
@@ -35,9 +35,9 @@ namespace components {
 
   class digital_encoder : public encoder_sim {
    public:
-    curtinfrc::sensors::DigitalEncoder *digital;
+    wml::sensors::DigitalEncoder *digital;
 
-    digital_encoder(curtinfrc::sensors::DigitalEncoder *d) : digital(d) {}
+    digital_encoder(wml::sensors::DigitalEncoder *d) : digital(d) {}
 
     void set_counts(int count) override {
       HALSIM_SetEncoderCount(digital->GetSimulationHandle(), count);
@@ -48,14 +48,14 @@ namespace components {
     }
   };
 
-  inline std::shared_ptr<encoder_sim> create_encoder(curtinfrc::sensors::Encoder *enc) {
+  inline std::shared_ptr<encoder_sim> create_encoder(wml::sensors::Encoder *enc) {
     if (enc == nullptr)
       return nullptr;
     
-    if (curtinfrc::TalonSrx *srx = dynamic_cast<curtinfrc::TalonSrx *>(enc)) {
+    if (wml::TalonSrx *srx = dynamic_cast<wml::TalonSrx *>(enc)) {
       // Talon SRX Encoder
       return (std::shared_ptr<encoder_sim>) std::make_shared<talonsrx_encoder>(srx);
-    } else if (curtinfrc::sensors::DigitalEncoder *digital = dynamic_cast<curtinfrc::sensors::DigitalEncoder *>(enc)) {
+    } else if (wml::sensors::DigitalEncoder *digital = dynamic_cast<wml::sensors::DigitalEncoder *>(enc)) {
       // Digital RoboRIO Encoder
       return (std::shared_ptr<encoder_sim>) std::make_shared<digital_encoder>(digital);
     } else {

@@ -2,7 +2,7 @@
 
 #include <frc/Notifier.h>
 
-namespace curtinfrc {
+namespace wml {
 namespace loops {
 
   /**
@@ -42,4 +42,4 @@ namespace loops {
   };
 
 }  // namespace loop
-}  // namespace curtinfrc
+}  // namespace wml

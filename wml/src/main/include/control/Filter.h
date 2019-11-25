@@ -6,7 +6,7 @@
 #include <functional>
 #include <vector>
 
-namespace curtinfrc {
+namespace wml {
 namespace control {
   /**
    * Generic interface for a filter.
@@ -60,4 +60,4 @@ namespace control {
     std::vector<double> _gainsFF, _gainsFB;
   };
 }  // namespace control
-}  // namespace curtinfrc
+}  // namespace wml

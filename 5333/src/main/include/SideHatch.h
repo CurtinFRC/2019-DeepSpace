@@ -9,18 +9,18 @@
 // #include "controllers/CurtinControllers.h"
 // #include "Toggle.h"
 
-// using SideHatchState = curtinfrc::devices::DeployableDeviceState;
+// using SideHatchState = wml::devices::DeployableDeviceState;
 
-// struct SideHatchConfig : public curtinfrc::devices::DeployableDeviceConfig {
-//   curtinfrc::actuators::BinaryActuator &manipulator;
-//   curtinfrc::actuators::BinaryActuatorState stowedState;
+// struct SideHatchConfig : public wml::devices::DeployableDeviceConfig {
+//   wml::actuators::BinaryActuator &manipulator;
+//   wml::actuators::BinaryActuatorState stowedState;
 
-//   SideHatchConfig(curtinfrc::actuators::BinaryActuator &manipulatorIn, curtinfrc::actuators::BinaryActuator &actuatorIn, std::string name = "<Hatch Intake>", curtinfrc::actuators::BinaryActuatorState stowedStateIn = curtinfrc::actuators::kForward, bool canEjectIn = false) : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
+//   SideHatchConfig(wml::actuators::BinaryActuator &manipulatorIn, wml::actuators::BinaryActuator &actuatorIn, std::string name = "<Hatch Intake>", wml::actuators::BinaryActuatorState stowedStateIn = wml::actuators::kForward, bool canEjectIn = false) : wml::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), stowedState(stowedStateIn), manipulator(manipulatorIn) {};
 // };
 
 // enum SideHatchState { kGrab, kWithdraw = 0, kReplace };
 
-// class SideHatch : public curtinfrc::devices::StateDevice<>, public curtinfrc::StrategySystem {
+// class SideHatch : public wml::devices::StateDevice<>, public wml::StrategySystem {
 //  public:
 //   SideHatch(SideHatchConfig config) : DeployableDevice(config), _config(config) {};
 

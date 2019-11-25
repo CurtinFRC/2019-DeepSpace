@@ -2,7 +2,7 @@
 
 #include <frc/Timer.h>
 
-using namespace curtinfrc::loops;
+using namespace wml::loops;
 
 void LoopSystem::UpdateOnce() {
   double dt = frc::Timer::GetFPGATimestamp() - _lastNotifierCall;

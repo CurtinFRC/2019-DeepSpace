@@ -1,6 +1,6 @@
 #include "actuators/BinaryLimitMotor.h"
 
-void curtinfrc::actuators::BinaryLimitMotor::UpdateActuator(double dt) {
+void wml::actuators::BinaryLimitMotor::UpdateActuator(double dt) {
   if (_state == kForward) {
     _config.motor.transmission->SetVoltage(12);
   } else {
@@ -8,10 +8,10 @@ void curtinfrc::actuators::BinaryLimitMotor::UpdateActuator(double dt) {
   }
 }
 
-void curtinfrc::actuators::BinaryLimitMotor::Stop() {
+void wml::actuators::BinaryLimitMotor::Stop() {
   _config.motor.transmission->SetVoltage(0);
 }
 
-bool curtinfrc::actuators::BinaryLimitMotor::IsDone() {
+bool wml::actuators::BinaryLimitMotor::IsDone() {
   return _state == kForward ? _config.forward.Get() : _config.reverse.Get();
 }

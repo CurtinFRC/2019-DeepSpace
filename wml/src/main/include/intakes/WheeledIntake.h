@@ -5,7 +5,7 @@
 // #include "Intake.h"
 // #include "../sensors/BinarySensor.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace intakes {
     struct WheeledIntakeConfig  {
       Gearbox &motors;
@@ -26,4 +26,4 @@ namespace curtinfrc {
 //       WheeledIntakeConfig _config;
 //     };
   } // ns intakes
-} // ns curtinfrc
+} // ns wml

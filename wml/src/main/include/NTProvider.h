@@ -10,7 +10,7 @@
 
 #include "devices/StateDevice.h"
 
-namespace curtinfrc {
+namespace wml {
   class NTProvider {
    public:
     NTProvider(std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("Robot Data")) : _table(table) {};

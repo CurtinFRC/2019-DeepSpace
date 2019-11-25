@@ -5,7 +5,7 @@
 #include "devices/StateDevice.h"
 #include "actuators/BinaryActuator.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace devices {
     enum DeployableDeviceState { kStowed = 0, kStowing, kDeploying, kOuttaking, kIntaking };
 
@@ -41,4 +41,4 @@ namespace curtinfrc {
       DeployableDeviceConfig _config;
     };
   } // ns intakes
-} // ns curtinfrc
+} // ns wml

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-using namespace curtinfrc::sensors;
+using namespace wml::sensors;
 
 struct NavX::Impl : public AHRS {
   using AHRS::AHRS;

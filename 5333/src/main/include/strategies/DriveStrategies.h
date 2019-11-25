@@ -7,43 +7,43 @@
 #include "controllers/CurtinControllers.h"
 #include "control/PIDController.h"
 
-class BaseDrivetrainTeleopStrategy : public curtinfrc::Strategy {
+class BaseDrivetrainTeleopStrategy : public wml::Strategy {
  public:
-  BaseDrivetrainTeleopStrategy(std::string name, curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup);
+  BaseDrivetrainTeleopStrategy(std::string name, wml::Drivetrain &drive, wml::controllers::SmartControllerGroup &contGroup);
 
  protected:
-  curtinfrc::Drivetrain &_drivetrain;
-  curtinfrc::controllers::SmartControllerGroup &_contGroup;
+  wml::Drivetrain &_drivetrain;
+  wml::controllers::SmartControllerGroup &_contGroup;
 };
 
 class DrivetrainManualStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainManualStrategy(curtinfrc::Drivetrain &drive, curtinfrc::Elevator &elevator, curtinfrc::controllers::SmartControllerGroup &contGroup);
+  DrivetrainManualStrategy(wml::Drivetrain &drive, wml::Elevator &elevator, wml::controllers::SmartControllerGroup &contGroup);
 
   void OnUpdate(double dt) override;
 
  private:
-  curtinfrc::Elevator &_elevator;
-  curtinfrc::Toggle _invertedToggle;
+  wml::Elevator &_elevator;
+  wml::Toggle _invertedToggle;
 };
 
 class DrivetrainFOCStrategy : public BaseDrivetrainTeleopStrategy {
  public:
-  DrivetrainFOCStrategy(curtinfrc::Drivetrain &drive, curtinfrc::controllers::SmartControllerGroup &contGroup, curtinfrc::control::PIDGains gains);
+  DrivetrainFOCStrategy(wml::Drivetrain &drive, wml::controllers::SmartControllerGroup &contGroup, wml::control::PIDGains gains);
 
   void OnUpdate(double dt) override;
  private:
-  curtinfrc::DrivetrainFOCController _foc;
-  curtinfrc::Toggle _invertedToggle;
+  wml::DrivetrainFOCController _foc;
+  wml::Toggle _invertedToggle;
 };
 
-class DrivetrainAngleStrategy : public curtinfrc::Strategy {
+class DrivetrainAngleStrategy : public wml::Strategy {
  public:
-  DrivetrainAngleStrategy(curtinfrc::Drivetrain &drivetrain, curtinfrc::control::PIDGains gains, double angle);
+  DrivetrainAngleStrategy(wml::Drivetrain &drivetrain, wml::control::PIDGains gains, double angle);
 
   void OnUpdate(double dt) override;
  private:
-  curtinfrc::Drivetrain &_drivetrain;
-  curtinfrc::control::PIDController _pid;
+  wml::Drivetrain &_drivetrain;
+  wml::control::PIDController _pid;
   double _angle;
 };

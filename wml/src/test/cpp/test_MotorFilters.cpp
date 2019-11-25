@@ -2,7 +2,7 @@
 
 #include "control/MotorFilters.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 class MockEncoder : public sensors::Encoder {
  public:

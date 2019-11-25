@@ -6,7 +6,7 @@
 
 #include "BinarySensor.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace sensors {
     class LimitSwitch : public BinarySensor {
      public:
@@ -20,4 +20,4 @@ namespace curtinfrc {
       bool _inverted;
     };
   } // ns sensors
-} // ns curtinfrc
+} // ns wml

@@ -12,12 +12,12 @@
 #include "sensors/Encoder.h"
 #include "actuators/VoltageController.h"
 
-namespace curtinfrc {
+namespace wml {
 
   /**
    * Curtin FRC Wrapper around the CTRE Talon SRX.
    */
-  class TalonSrx : public curtinfrc::actuators::MotorVoltageController, public frc::SpeedController, public curtinfrc::sensors::Encoder {
+  class TalonSrx : public wml::actuators::MotorVoltageController, public frc::SpeedController, public wml::sensors::Encoder {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::TalonSRXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;
@@ -140,7 +140,7 @@ namespace curtinfrc {
   /**
    * Curtin FRC Wrapper around the CTRE Victor SPX.
    */
-  class VictorSpx : public curtinfrc::actuators::MotorVoltageController, public frc::SpeedController {
+  class VictorSpx : public wml::actuators::MotorVoltageController, public frc::SpeedController {
    public:
     using Configuration = ctre::phoenix::motorcontrol::can::VictorSPXConfiguration;
     using ControlMode = ctre::phoenix::motorcontrol::ControlMode;

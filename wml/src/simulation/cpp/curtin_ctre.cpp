@@ -1,9 +1,9 @@
-// Simulation harness for the curtinfrc::TalonSrx.
+// Simulation harness for the wml::TalonSrx.
 
 #include "CurtinCtre.h"
 #include "simulation/ctre_sim.h"
 
-using namespace curtinfrc;
+using namespace wml;
 
 static std::map<int, simulation::ctre::talon_data> _talons;
 static std::map<int, simulation::ctre::victor_data> _victors;

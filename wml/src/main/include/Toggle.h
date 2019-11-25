@@ -1,6 +1,6 @@
 #pragma once
 
-namespace curtinfrc {
+namespace wml {
   enum ToggleEvent {
     ONFALL,
     ONRISE,
@@ -21,4 +21,4 @@ namespace curtinfrc {
     bool _triggered;
     bool _lstate;
   };
-} // ns curtinfrc
+} // ns wml

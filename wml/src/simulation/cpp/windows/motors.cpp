@@ -8,7 +8,7 @@
 
 using namespace simulation;
 
-using ControlMode = typename curtinfrc::TalonSrx::ControlMode;
+using ControlMode = typename wml::TalonSrx::ControlMode;
 
 motor_window::motor_window() : ui::window("Motors", 250, 400) {}
 

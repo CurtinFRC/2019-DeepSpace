@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace curtinfrc {
+namespace wml {
   namespace sensors {
     template <typename returnType>
     class SensorBase {

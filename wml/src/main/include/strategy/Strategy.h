@@ -8,7 +8,7 @@
 
 #include <wpi/SmallSet.h>
 
-namespace curtinfrc {
+namespace wml {
 
 enum class StrategyState {
   //! Initialized, but never run. The default state.
@@ -220,4 +220,4 @@ class Strategy {
   wpi::SmallSet<StrategySystem *, 8> _requirements;
 };
 
-}  // namespace curtinfrc
+}  // namespace wml

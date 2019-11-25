@@ -7,7 +7,7 @@
 #include <cmath>
 
 using namespace simulation;
-using namespace curtinfrc;
+using namespace wml;
 
 void elevator_window::init() {
   static Usage<ElevatorConfig>::Registry<elevator_window> registry(&ui::init_window<elevator_window, ElevatorConfig *>);

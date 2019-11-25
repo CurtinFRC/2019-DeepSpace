@@ -13,12 +13,12 @@ namespace simulation {
 
       bool inverted;
       double value;
-      curtinfrc::TalonSrx::ControlMode mode = curtinfrc::TalonSrx::ControlMode::Disabled;
+      wml::TalonSrx::ControlMode mode = wml::TalonSrx::ControlMode::Disabled;
 
       int sensor_pos;
       int sensor_vel;
 
-      curtinfrc::TalonSrx::Configuration config;
+      wml::TalonSrx::Configuration config;
     };
 
     struct victor_data {
@@ -26,9 +26,9 @@ namespace simulation {
 
       bool inverted;
       double value;
-      curtinfrc::VictorSpx::ControlMode mode = curtinfrc::VictorSpx::ControlMode::Disabled;
+      wml::VictorSpx::ControlMode mode = wml::VictorSpx::ControlMode::Disabled;
 
-      curtinfrc::VictorSpx::Configuration config;
+      wml::VictorSpx::Configuration config;
     };
 
     static std::map<int, simulation::ctre::talon_data> &all_talons();

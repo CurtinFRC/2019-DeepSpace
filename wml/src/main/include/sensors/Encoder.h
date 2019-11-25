@@ -2,7 +2,7 @@
 
 #include <frc/Encoder.h>
 
-namespace curtinfrc {
+namespace wml {
 namespace sensors {
   class Encoder {
    public:
@@ -44,4 +44,4 @@ namespace sensors {
     frc::Encoder _nativeEncoder;
   };
 }  // namespace sensors
-}  // namespace curtinfrc
+}  // namespace wml

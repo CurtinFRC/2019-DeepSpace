@@ -5,7 +5,7 @@
 #include <cmath>
 #include <fstream>
 
-using namespace curtinfrc::control;
+using namespace wml::control;
 
 using signal_t = std::function<double(double)>;
 

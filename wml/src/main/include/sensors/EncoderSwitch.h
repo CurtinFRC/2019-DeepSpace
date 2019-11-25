@@ -6,7 +6,7 @@
 #include "Encoder.h"
 #include "BinarySensor.h"
 
-namespace curtinfrc {
+namespace wml {
 namespace sensors {
   class EncoderSwitch : public BinarySensor {
    public:
@@ -19,4 +19,4 @@ namespace sensors {
     double _lower, _upper;
   };
 }  // namespace sensors
-}  // namespace curtinfrc
+}  // namespace wml

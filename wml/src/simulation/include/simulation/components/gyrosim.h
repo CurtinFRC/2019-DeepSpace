@@ -15,9 +15,9 @@ namespace components {
 
   class navx_gyro : public gyro_sim {
    public:
-    curtinfrc::sensors::NavXGyro *navx;
+    wml::sensors::NavXGyro *navx;
 
-    navx_gyro(curtinfrc::sensors::NavXGyro *n) : navx(n) {}
+    navx_gyro(wml::sensors::NavXGyro *n) : navx(n) {}
 
     void add_angle(double angle) override {
       navx->GetNavX()._impl->angles[(int)navx->GetAxis()] += angle;
@@ -32,7 +32,7 @@ namespace components {
     if (gyro == nullptr)
       return nullptr;
 
-    if (curtinfrc::sensors::NavXGyro *navx = dynamic_cast<curtinfrc::sensors::NavXGyro *>(gyro)) {
+    if (wml::sensors::NavXGyro *navx = dynamic_cast<wml::sensors::NavXGyro *>(gyro)) {
       return (std::shared_ptr<gyro_sim>) std::make_shared<navx_gyro>(navx);
     } else {
       std::cout << "Unknown Gyro Type" << std::endl; 

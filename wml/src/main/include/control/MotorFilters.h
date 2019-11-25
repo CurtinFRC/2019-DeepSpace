@@ -3,7 +3,7 @@
 #include "Gearbox.h"
 #include "control/Filter.h"
 
-namespace curtinfrc {
+namespace wml {
 namespace control {
   /**
    * The CurrentFFFilter is a feed-forward filter based on the Current given by a motor model.
@@ -25,7 +25,7 @@ namespace control {
      * @param gearbox The gearbox that is being driven, used to obtain current speed (therefore, the encoder mustn't be null), 
      *                and also the motor model and reduction to use.
      */
-    CurrentFFFilter(double min, double max, curtinfrc::Gearbox &gearbox);
+    CurrentFFFilter(double min, double max, wml::Gearbox &gearbox);
 
     /**
      * Calculate the next output of the filter provided an input.
@@ -47,7 +47,7 @@ namespace control {
     virtual void SetLimits(double min, double max);
 
    protected:
-    curtinfrc::Gearbox _gearbox;
+    wml::Gearbox _gearbox;
 
     double _min_curr, _max_curr;
   };
@@ -74,7 +74,7 @@ namespace control {
      * @param radius  The radius of the wheels, in metres.
      * @param mass    The mass of the robot, in kilograms.
      */
-    AccelerationFFFilter(double min, double max, curtinfrc::Gearbox &gearbox, double radius, double mass);
+    AccelerationFFFilter(double min, double max, wml::Gearbox &gearbox, double radius, double mass);
 
     /**
      * Set the minimum and maximum limits for the acceleration.
@@ -90,4 +90,4 @@ namespace control {
     double _radius, _mass;
   };
 }  // namespace control
-}  // namespace curtinfrc
+}  // namespace wml

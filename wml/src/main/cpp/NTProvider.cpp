@@ -1,8 +1,8 @@
 #include "NTProvider.h"
 
-using namespace curtinfrc;
-using namespace curtinfrc::sensors;
-using namespace curtinfrc::devices;
+using namespace wml;
+using namespace wml::sensors;
+using namespace wml::devices;
 
 
 void NTProvider::Update() {

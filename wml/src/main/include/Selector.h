@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace curtinfrc {
+namespace wml {
   class Selector {
    public:
     Selector(int length = 3, int position = 0, bool wrap = false) : _length(length), _position(position), _wrap(wrap) {};

@@ -17,7 +17,7 @@ class drivetrain_window : public ui::window, physics_aware {
  public:
   static void init();
 
-  drivetrain_window(curtinfrc::DrivetrainConfig *config);
+  drivetrain_window(wml::DrivetrainConfig *config);
 
   double get_motor_val(bool left);
   void   update_encoder(bool left, double pos, double vel);
@@ -30,7 +30,7 @@ class drivetrain_window : public ui::window, physics_aware {
   void draw_robot(cv::Mat &img);
 
  private:
-  curtinfrc::DrivetrainConfig *            _config;
+  wml::DrivetrainConfig *            _config;
   std::shared_ptr<components::encoder_sim> _enc_sim_left;
   std::shared_ptr<components::encoder_sim> _enc_sim_right;
   std::shared_ptr<components::gyro_sim>    _gyro_sim;

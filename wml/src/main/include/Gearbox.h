@@ -4,7 +4,7 @@
 #include "physics/DcMotor.h"
 #include "actuators/VoltageController.h"
 
-namespace curtinfrc {
+namespace wml {
 
 /**
  * Struct for motor and encoder pairs.
@@ -34,4 +34,4 @@ struct Gearbox {
    */
   physics::DcMotor motor = physics::DcMotor::mCIM() * 2;
 };
-}  // namespace curtinfrc
+}  // namespace wml

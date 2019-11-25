@@ -8,7 +8,7 @@
 
 #include <cstdarg>
 
-using namespace curtinfrc;
+using namespace wml;
 
 std::string files::GetDeployDirectory(std::string project) {
   // GradleRIO launches sim in the project root. This project is a bit special so 

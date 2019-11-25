@@ -2,7 +2,7 @@
 
 #include <networktables/NetworkTable.h>
 
-namespace curtinfrc {
+namespace wml {
 class NTBoundDouble {
  public:
   NTBoundDouble(std::shared_ptr<nt::NetworkTable> table, std::string name, double *value);
@@ -18,4 +18,4 @@ class NTBoundDouble {
   nt::NetworkTableEntry _entry;
   NT_EntryListener _listener;
 };
-}  // namespace curtinfrc
+}  // namespace wml

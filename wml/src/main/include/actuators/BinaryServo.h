@@ -5,7 +5,7 @@
 
 #include "actuators/BinaryActuator.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace actuators {
     class BinaryServo : public BinaryActuator, protected frc::Servo {
      public:
@@ -20,4 +20,4 @@ namespace curtinfrc {
 
     };
   } // ns actuators
-} // ns curtinfrc
+} // ns wml

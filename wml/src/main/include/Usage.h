@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-namespace curtinfrc {
+namespace wml {
 
 /**
  * Usage Event classification for the lifecycle of a Usage'd object
@@ -109,4 +109,4 @@ class Usage {
   std::vector<TARGET *> _targets;
 };
 
-}  // namespace curtinfrc
+}  // namespace wml

@@ -1,6 +1,6 @@
 #include "ControlMap.h"
 
-using namespace curtinfrc::controllers;
+using namespace wml::controllers;
 
 
 #if N_CONT == 2

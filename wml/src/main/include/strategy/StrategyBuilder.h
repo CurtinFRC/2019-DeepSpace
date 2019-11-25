@@ -5,7 +5,7 @@
 #include <deque>
 #include <wpi/SmallVector.h>
 
-namespace curtinfrc {
+namespace wml {
 
 class StrategyQueue;
 

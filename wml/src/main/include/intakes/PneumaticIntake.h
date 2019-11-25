@@ -4,7 +4,7 @@
 
 // #include "../sensors/BinarySensor.h"
 
-// namespace curtinfrc {
+// namespace wml {
 //   namespace intakes {
 //     struct PneumaticIntakeConfig {
 //       frc::DoubleSolenoid &solenoids;
@@ -25,4 +25,4 @@
 //       PneumaticIntakeConfig _config;
 //     };
 //   } // ns intakes
-// } // ns curtinfrc
+// } // ns wml

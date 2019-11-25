@@ -5,7 +5,7 @@
 #include "BinaryActuator.h"
 #include "../Gearbox.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace actuators {
     struct BinaryEncoderMotorConfig {
       Gearbox &motor; // contains an encoder
@@ -28,4 +28,4 @@ namespace curtinfrc {
       BinaryEncoderMotorConfig _config;
     };
   } // ns actuators
-} // ns curtinfrc
+} // ns wml

@@ -1,6 +1,6 @@
 #include "sensors/Encoder.h"
 
-using namespace curtinfrc::sensors;
+using namespace wml::sensors;
 
 double Encoder::GetEncoderRotations() {
   return GetEncoderTicks() / (double)_encoderTicksPerRotation;

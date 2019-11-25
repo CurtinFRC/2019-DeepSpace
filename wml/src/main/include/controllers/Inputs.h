@@ -9,7 +9,7 @@
 #include "Toggle.h"
 #include "Selector.h"
 
-namespace curtinfrc {
+namespace wml {
   namespace controllers {
     struct tInput {
       int cont, id;
@@ -232,4 +232,4 @@ namespace curtinfrc {
       std::vector<POVButton*> MakePOVButtons(ContPOV *pov);                             // returns 8
     } // ns inputs
   } // ns controllers
-} // ns curtinfrc
+} // ns wml
