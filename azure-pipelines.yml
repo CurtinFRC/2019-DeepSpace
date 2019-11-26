@@ -13,6 +13,7 @@ jobs:
     vmImage: 'VS2017-Win2016'
   steps:
   - template: azure-init.yml
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -28,6 +29,7 @@ jobs:
     vmImage: 'macOS-10.13'
   steps:
   - template: azure-init.yml
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -44,6 +46,7 @@ jobs:
   container: linux
   steps:
   - script: sudo apt-get install -y libusb-1.0-0-dev
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -59,6 +62,7 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: wpilib2019
   steps:
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -74,6 +78,7 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: raspbian
   steps:
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
@@ -89,6 +94,7 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: linux
   steps:
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
