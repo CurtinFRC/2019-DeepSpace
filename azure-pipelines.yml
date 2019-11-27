@@ -116,6 +116,7 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: linux
   steps:
+  - script: git submodule update --init
   - task: Gradle@2
     inputs:
       workingDirectory: ''
