@@ -99,3 +99,6 @@ task "sim${project.name}"(dependsOn: "simulateFrcUserProgram${project.name}${wpi
 
 if (!project.hasProperty('no-common-check'))
   tasks.check.dependsOn(':common:check')
+
+if (!project.hasProperty('no-wml-check'))
+  tasks.check.dependsOn(':wml:check')
