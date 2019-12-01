@@ -1,21 +1,21 @@
 #include "DriveFunc.h"
 
 DriveFunc::DriveFunc(double LSRXID, double RSRXID, double LSPXID, double RSPXID){
-    TalonL = new curtinfrc::TalonSrx(LSRXID, 1024);
-    TalonR = new curtinfrc::TalonSrx(RSRXID, 1024);
+    TalonL = new wml::TalonSrx(LSRXID, 1024);
+    TalonR = new wml::TalonSrx(RSRXID, 1024);
 
-    VictorL = new curtinfrc::VictorSpx(LSPXID);
-    VictorR = new curtinfrc::VictorSpx(RSPXID);
+    VictorL = new wml::VictorSpx(LSPXID);
+    VictorR = new wml::VictorSpx(RSPXID);
     
 
-    VictorL->Set(curtinfrc::VictorSpx::ControlMode::Follower, LSPXID);
-    VictorR->Set(curtinfrc::VictorSpx::ControlMode::Follower, RSPXID);
+    VictorL->Set(wml::VictorSpx::ControlMode::Follower, LSPXID);
+    VictorR->Set(wml::VictorSpx::ControlMode::Follower, RSPXID);
 
-    Nav = new curtinfrc::sensors::NavX(frc::SPI::Port::kMXP);
-    NavG = new curtinfrc::sensors::NavXGyro(*Nav, curtinfrc::sensors::AngularAxis::YAW);
-    _turnController = new curtinfrc::control::PIDController(_gains);
-    _driveControllerR = new curtinfrc::control::PIDController(_driveGains);
-    _driveControllerL = new curtinfrc::control::PIDController(_driveGains);
+    Nav = new wml::sensors::NavX(frc::SPI::Port::kMXP);
+    NavG = new wml::sensors::NavXGyro(*Nav, wml::sensors::AngularAxis::YAW);
+    _turnController = new wml::control::PIDController(_gains);
+    _driveControllerR = new wml::control::PIDController(_driveGains);
+    _driveControllerL = new wml::control::PIDController(_driveGains);
 
 }
 
@@ -35,7 +35,7 @@ std::vector<double> DriveFunc::Forward(double distance, double dt, bool firstPre
 
 
 double DriveFunc::TurnAngle(double TargetAngle, double dt, bool firstPress){
-    Nav->Angular(curtinfrc::sensors::AngularAxis::YAW);
+    Nav->Angular(wml::sensors::AngularAxis::YAW);
     double CurrentAngle = NavG->GetAngle();
     if (firstPress) _turnController->SetSetpoint(CurrentAngle + TargetAngle);
     double power = _turnController->Calculate(CurrentAngle, dt);

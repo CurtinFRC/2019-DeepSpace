@@ -13,7 +13,7 @@
 
 #include <networktables/NetworkTableInstance.h>
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include "Drivetrain.h"
 #include "Gearbox.h"
 
@@ -46,16 +46,16 @@ class Robot : public frc::TimedRobot {
 
   frc::DoubleSolenoid *hatch_deploy1, *hatch_deploy2, *hatch_deploy3, *BIGBOYS;
 
-  curtinfrc::Drivetrain *drivetrain;
-  curtinfrc::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2, *TalonL;
-  curtinfrc::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
+  wml::Drivetrain *drivetrain;
+  wml::TalonSrx *leftTalon, *rightTalon, *rotateTalon1, *rotateTalon2, *TalonL;
+  wml::VictorSpx *leftVictor, *rightVictor, *rotateVictor;
   frc::Spark *ClimbLeft, *ClimbRight;
-  curtinfrc::Gearbox *Left, *Right;
+  wml::Gearbox *Left, *Right;
 
   frc::Compressor *compressor;
   frc::AnalogInput *AI;
 
-  curtinfrc::Toggle lockToggle{};
+  wml::Toggle lockToggle{};
   bool lockState = true;
 
   uint8_t message = 72;

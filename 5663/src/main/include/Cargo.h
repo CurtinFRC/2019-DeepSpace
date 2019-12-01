@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
 class Cargo{
@@ -16,8 +16,8 @@ class Cargo{
 
 
     private:
-        curtinfrc::TalonSrx *motorSrx1, *motorSrx2;
-        curtinfrc::VictorSpx *intakeSpx;
+        wml::TalonSrx *motorSrx1, *motorSrx2;
+        wml::VictorSpx *intakeSpx;
 
         double angle = 0;
 

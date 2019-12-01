@@ -46,6 +46,7 @@ dependencies {
 }
 
 wpi.deps.vendor.loadFrom(project(':common'))
+wpi.deps.vendor.loadFrom(project(':wml'))
 
 model {
   components {
@@ -64,6 +65,7 @@ model {
 
       binaries.all {
         lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+        lib project: ':wml', library: 'wml', linkage: 'static'
       }
 
       useLibrary(it, "wpilib")
@@ -84,6 +86,7 @@ model {
 
       binaries.all {
         lib project: ':common', library: 'curtinFrcCommon', linkage: 'static'
+        lib project: ':wml', library: 'wml', linkage: 'static'
       }
 
       useLibrary(it, "wpilib", "googletest")
@@ -96,3 +99,6 @@ task "sim${project.name}"(dependsOn: "simulateFrcUserProgram${project.name}${wpi
 
 if (!project.hasProperty('no-common-check'))
   tasks.check.dependsOn(':common:check')
+
+if (!project.hasProperty('no-wml-check'))
+  tasks.check.dependsOn(':wml:check')

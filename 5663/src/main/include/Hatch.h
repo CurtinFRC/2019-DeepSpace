@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CurtinCtre.h"
+#include "WMLCtre.h"
 #include <frc/DoubleSolenoid.h>
 #include <cmath>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -20,9 +20,9 @@ class Hatch {
         void zeroEncoder();
         void update();
     private:
-        curtinfrc::TalonSrx *Flooper;
+        wml::TalonSrx *Flooper;
         frc::DoubleSolenoid *ejection, *alignment;
-        curtinfrc::actuators::BinaryServo *lock;
+        wml::actuators::BinaryServo *lock;
         bool targetpos;
         double angle = 0;
 

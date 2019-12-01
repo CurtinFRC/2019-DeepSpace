@@ -5,19 +5,19 @@
 #include "strategy/Strategy.h"
 #include "strategy/StrategySystem.h"
 #include "devices/DeployableDevice.h"
-#include "controllers/CurtinControllers.h"
+#include "controllers/Controllers.h"
 #include "Toggle.h"
 #include "Gearbox.h"
 
-using BoxIntakeState = curtinfrc::devices::DeployableDeviceState;
+using BoxIntakeState = wml::devices::DeployableDeviceState;
 
-struct BoxIntakeConfig : public curtinfrc::devices::DeployableDeviceConfig {
-  curtinfrc::Gearbox &motors;
+struct BoxIntakeConfig : public wml::devices::DeployableDeviceConfig {
+  wml::Gearbox &motors;
 
-  BoxIntakeConfig(curtinfrc::Gearbox &motorsIn, curtinfrc::actuators::BinaryActuator &actuatorIn, bool canEjectIn = true, std::string name = "<Box Intake>") : curtinfrc::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), motors(motorsIn) {};
+  BoxIntakeConfig(wml::Gearbox &motorsIn, wml::actuators::BinaryActuator &actuatorIn, bool canEjectIn = true, std::string name = "<Box Intake>") : wml::devices::DeployableDeviceConfig(actuatorIn, canEjectIn, name), motors(motorsIn) {};
 };
 
-class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc::StrategySystem {
+class BoxIntake : public wml::devices::DeployableDevice, public wml::StrategySystem {
  public:
   BoxIntake(BoxIntakeConfig config) : DeployableDevice(config), _config(config) {};
 
@@ -32,9 +32,9 @@ class BoxIntake : public curtinfrc::devices::DeployableDevice, public curtinfrc:
   BoxIntakeConfig _config;
 };
 
-class BoxIntakeManualStrategy : public curtinfrc::Strategy {
+class BoxIntakeManualStrategy : public wml::Strategy {
  public:
-  BoxIntakeManualStrategy(BoxIntake &boxIntake, curtinfrc::controllers::SmartControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
+  BoxIntakeManualStrategy(BoxIntake &boxIntake, wml::controllers::SmartControllerGroup &contGroup) : Strategy("Box Manual"),  _boxIntake(boxIntake), _contGroup(contGroup) {
     Requires(&boxIntake);
     SetCanBeInterrupted(true);
     SetCanBeReused(true);
@@ -44,5 +44,5 @@ class BoxIntakeManualStrategy : public curtinfrc::Strategy {
 
  private:
   BoxIntake &_boxIntake;
-  curtinfrc::controllers::SmartControllerGroup &_contGroup;
+  wml::controllers::SmartControllerGroup &_contGroup;
 };

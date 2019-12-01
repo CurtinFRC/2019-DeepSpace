@@ -3,8 +3,8 @@
 #include <cmath>
 
 Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
-    motorSrx1 = new curtinfrc::TalonSrx(SrxID1, 1024);
-    motorSrx1->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
+    motorSrx1 = new wml::TalonSrx(SrxID1, 1024);
+    motorSrx1->ModifyConfig([](wml::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
         config.slot0.kI = 0;
         config.slot0.kD = 0.0;
@@ -19,8 +19,8 @@ Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
 
         
     });
-    motorSrx2 = new curtinfrc::TalonSrx(SrxID2, 1024);
-    motorSrx2->ModifyConfig([](curtinfrc::TalonSrx::Configuration &config) {
+    motorSrx2 = new wml::TalonSrx(SrxID2, 1024);
+    motorSrx2->ModifyConfig([](wml::TalonSrx::Configuration &config) {
         config.slot0.kP = 0.1;
         config.slot0.kI = 0;
         config.slot0.kD = 0.0;
@@ -36,7 +36,7 @@ Cargo::Cargo(int SrxID1, int SrxID2, int intakeID) {
         
     });
     motorSrx1->SetInverted(true);
-    intakeSpx = new curtinfrc::VictorSpx(intakeID);
+    intakeSpx = new wml::VictorSpx(intakeID);
 }
 
 void Cargo::setRotationSpeed(double speed) { //Percent speed
@@ -47,8 +47,8 @@ void Cargo::setRotationSpeed(double speed) { //Percent speed
 
 
 void Cargo::setAngle(double newAngle) { //Set intake to a specific angle
-    motorSrx1->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
-    motorSrx2->Set(curtinfrc::TalonSrx::ControlMode::MotionMagic, newAngle);
+    motorSrx1->Set(wml::TalonSrx::ControlMode::MotionMagic, newAngle);
+    motorSrx2->Set(wml::TalonSrx::ControlMode::MotionMagic, newAngle);
 }
 
 

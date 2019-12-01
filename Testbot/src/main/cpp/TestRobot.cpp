@@ -6,18 +6,18 @@
 #include <iostream>
 
 using namespace frc;
-using namespace curtinfrc;
+using namespace wml;
 
 void Robot::RobotInit() {
-  xbox = new curtinfrc::controllers::XboxController(0);
+  xbox = new wml::controllers::XboxController(0);
   
   leftMotors[0] = new Spark(2);
   leftMotors[0]->SetInverted(false);
-  left = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*leftMotors[0])), nullptr};
+  left = new Gearbox{ new wml::actuators::MotorVoltageController(new SpeedControllerGroup(*leftMotors[0])), nullptr};
 
   rightMotors[0] = new Spark(3);
   rightMotors[0]->SetInverted(true);
-  right = new Gearbox{ new curtinfrc::actuators::MotorVoltageController(new SpeedControllerGroup(*rightMotors[0])), nullptr};
+  right = new Gearbox{ new wml::actuators::MotorVoltageController(new SpeedControllerGroup(*rightMotors[0])), nullptr};
 
   hatchEjector = new DoubleSolenoid(0, 1);
 

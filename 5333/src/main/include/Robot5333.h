@@ -23,7 +23,7 @@
 
 #include "strategies/DriveStrategies.h"
 
-class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, protected curtinfrc::NTProvider {
+class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -42,7 +42,7 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, p
 
   RobotMap robotmap;
 
-  curtinfrc::Drivetrain *drivetrain;
+  wml::Drivetrain *drivetrain;
 
   bool enableFOC = false;
   std::shared_ptr<DrivetrainFOCStrategy> stratFOC;
@@ -56,5 +56,5 @@ class Robot : public frc::TimedRobot, protected curtinfrc::StrategyController, p
 
 
   Lift *beElevator;
-  curtinfrc::Toggle fallToggle;
+  wml::Toggle fallToggle;
 };

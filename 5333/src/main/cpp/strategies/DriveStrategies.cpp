@@ -4,8 +4,8 @@
 
 #include "ControlMap.h"
 
-using namespace curtinfrc;
-using namespace curtinfrc::controllers;
+using namespace wml;
+using namespace wml::controllers;
 
 BaseDrivetrainTeleopStrategy::BaseDrivetrainTeleopStrategy(std::string name, Drivetrain &drivetrain, SmartControllerGroup &contGroup)
     : Strategy(name), _drivetrain(drivetrain), _contGroup(contGroup) {
